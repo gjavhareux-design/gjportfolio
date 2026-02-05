@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Coming Soon</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg: #EFE9DD;                 /* warm background */
+      --ink: #1B1B1B;
+      --muted: rgba(27,27,27,.62);
+
+      --rails: 80px;                 /* infinite line position */
+      --railGap: 30px;               /* inner padding from rails */
+      --dotTint: rgba(27,27,27,.15); /* slightly increased contrast */
+
+      --cta: #E4572E;                /* orange-reddish */
+      --ctaHover: #D84C25;
+      --white: #ffffff;
+
+      --radius: 18px;
+    }
+
+    *{ box-sizing:border-box; }
+    html, body{ height:100%; }
+    
+    body{
+      margin:0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color: var(--ink);
+      background-color: var(--bg);
+      /* Static dotted grid background */
+      background-image: radial-gradient(var(--dotTint) 1px, transparent 1px);
+      background-size: 24px 24px;
+      overflow-x:hidden;
+    }
+
+    /* Interactive dots layer */
+    .dot-layer{
+      position: fixed;
+      inset: 0;
+      z-index: 1; /* just above static grid */
+      pointer-events: none; /* let clicks pass through to UI */
+    }
+    canvas{ width:100%; height:100%; display:block; }
+
+    /* Infinite rails */
+    .rails::before,
+    .rails::after{
+      content:"";
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      pointer-events: none;
+      opacity: .9;
+      z-index: 2;
+
+      background-image: repeating-linear-gradient(
+        to bottom,
+        rgba(27,27,27,.28) 0px,
+        rgba(27,27,27,.28) 10px,
+        transparent 10px,
+        transparent 22px
+      );
+      background-size: 100% 44px;
+      animation: drift 1.6s linear infinite;
+    }
+    .rails::before{ left: var(--rails); }
+    .rails::after{ right: var(--rails); }
+
+    @keyframes drift{
+      from { background-position: 0 0; }
+      to   { background-position: 0 44px; }
+    }
+
+    /* Frame to align content between rails */
+    .edge-frame{
+      width: calc(100% - (var(--rails) * 2) - (var(--railGap) * 2));
+      margin-left: calc(var(--rails) + var(--railGap));
+      margin-right: calc(var(--rails) + var(--railGap));
+    }
+
+    .wrap{
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      z-index: 3; /* above dots */
+    }
+
+    /* Logo Header */
+    header.logo-header {
+      padding: 20px 0 0; /* Space at the very top */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Logo Styling */
+    .brand-logo {
+      height: 300px; /* Adjust height to fit your logo */
+      width: auto;
+      display: block;
+      transition: transform 0.3s ease;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.05));
+    }
+
+    .brand-logo:hover {
+      transform: scale(1.02);
+    }
+
+    main{
+      flex: 1;
+      display: grid;
+      place-items: center;
+      padding: 5px 12px;
+    }
+
+    .card{
+      width: min(520px, 100%);
+      border: 1px solid rgba(27,27,27,.1);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.12);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: clamp(10px, 5vw, 14px);
+      display: grid;
+      gap: 10px;
+      text-align: center;
+    }
+
+    h1{
+      margin: 0;
+      font-weight: 500;
+      letter-spacing: -0.03em;
+      font-size: clamp(32px, 5vw, 26px);
+      line-height: 1.1;
+    }
+
+    p{
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(16px, 1.5vw, 12px);
+      line-height: 1.6;
+      max-width: 480px;
+      justify-self: center;
+    }
+
+    /* Bottom area */
+    footer{
+      padding: 40px 20px;
+      display: grid;
+      gap: 14px;
+      align-items: center;
+      justify-items: center;
+    }
+
+    .social{
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-btn{
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 1px solid rgba(27,27,27,.12);
+      background: rgba(255,255,255,.2);
+      display: grid;
+      place-items: center;
+      text-decoration: none;
+      transition: all .2s ease;
+    }
+    .icon-btn:hover{
+      transform: translateY(-2px);
+      background: rgba(255,255,255,.5);
+      border-color: rgba(27,27,27,.3);
+    }
+    .icon{
+      width: 20px;
+      height: 20px;
+      fill: var(--ink);
+    }
+
+    .bottom-actions{
+      display: grid;
+      gap: 12px;
+      justify-items: center;
+      width: min(320px, 90vw);
+    }
+
+    .btn{
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 24px;
+      border-radius: 999px;
+      border: 1px solid rgba(27,27,27,.15);
+      background: rgba(255,255,255,.3);
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all .2s ease;
+      position: relative;
+    }
+
+    .btn:hover{ 
+      transform: translateY(-1px); 
+      background: rgba(255,255,255,0.6);
+      border-color: rgba(27,27,27,0.3);
+    }
+
+    /* Contact CTA with Shimmer and Moving Glow */
+    .btn.contact-cta{
+      background: var(--cta);
+      color: var(--white);
+      border: none;
+      padding: 15px 24px;
+      overflow: hidden; /* For shimmer */
+      z-index: 1;
+    }
+
+    /* Moving Glow Border (Perimeter light) */
+    .btn.contact-cta::before {
+      content: '';
+      position: absolute;
+      inset: -2px; 
+      background: conic-gradient(
+        from 0deg,
+        transparent 0%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.8) 80%,
+        transparent 60%,
+        transparent 100%
+      );
+      border-radius: inherit;
+      animation: rotateGlow 5s linear infinite;
+      z-index: -2;
+      opacity: 0.8;
+    }
+
+    /* Darker inner mask */
+    .btn.contact-cta::after {
+      content: '';
+      position: absolute;
+      inset: 1.5px;
+      background: var(--cta);
+      border-radius: inherit;
+      z-index: -1;
+      transition: background 0.2s ease;
+    }
+
+    .btn.contact-cta:hover::after {
+      background: var(--ctaHover);
+    }
+
+    .btn.contact-cta:hover::before {
+      opacity: 1;
+      filter: blur(2px);
+    }
+
+    /* Shimmer Effect */
+    .shimmer-layer {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+      );
+      transform: translateX(-100%) skewX(-20deg);
+      animation: shimmerMove 2s infinite;
+      pointer-events: none;
+    }
+
+    @keyframes rotateGlow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes shimmerMove {
+      0% { transform: translateX(-150%) skewX(-20deg); }
+      30%, 100% { transform: translateX(150%) skewX(-20deg); }
+    }
+
+    .btn.secondary{
+      background: transparent;
+    }
+
+    /* responsive */
+    @media (max-width: 880px){
+      :root{ --rails: 20px; --railGap: 15px; }
+      header.logo-header { padding-top: 50px; }
+      .brand-logo { height: 48px; }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .rails::before, .rails::after, .btn.contact-cta::before, .shimmer-layer { animation: none; }
+      .btn:hover{ transform: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- interactive dots layer -->
+  <div class="dot-layer" aria-hidden="true">
+    <canvas id="dots"></canvas>
+  </div>
+
+  <div class="wrap rails">
+    <!-- LOGO SECTION (TOP MIDDLE) -->
+    <header class="logo-header edge-frame">
+      <!-- To use your own logo: Replace the 'src' link below with your image path (like 'logo.png') -->
+      <img src="gsj.svg" alt="Logo" class="brand-logo">
+    </header>
+
+    <main class="edge-frame">
+      <section class="card" aria-label="Coming soon">
+        <h1>Prototyping my space on the internet.</h1>
+        <p>
+          Watch this space — Something thoughtful is in the works. 
+          In the meantime, feel free to connect.
+        </p>
+      </section>
+    </main>
+
+    <footer class="edge-frame">
+      <div class="social" aria-label="Social links">
+        <a class="icon-btn" href="https://www.linkedin.com/in/gjuxdesigner/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5ZM.5 24h4V7.98h-4V24ZM8 7.98h3.83v2.19h.05c.53-1 1.83-2.19 3.77-2.19C19.7 7.98 24 10.09 24 15.11V24h-4v-7.72c0-1.84-.03-4.21-2.56-4.21-2.56 0-2.95 2-2.95 4.07V24H10.5V7.98H8Z"/>
+          </svg>
+        </a>
+        <a class="icon-btn" href="https://www.behance.net/ganeshjavhare" target="_blank" rel="noopener noreferrer" aria-label="Behance">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M22 7.2h-6.4V5.4H22v1.8ZM9.2 11.3c.9-.5 1.5-1.4 1.5-2.6 0-2.5-1.8-3.7-4.2-3.7H0V19h6.6c2.9 0 4.8-1.3 4.8-4.1 0-1.7-.8-3-2.2-3.6Zm-6.5-4h3.4c1.2 0 2.1.4 2.1 1.6 0 1.3-.8 1.7-2.1 1.7H2.7V7.3ZM6.3 17H2.7v-4.2h3.8c1.4 0 2.3.6 2.3 2.1 0 1.6-1 2.1-2.5 2.1Zm13.5-7.4c-3.4 0-5.3 2.3-5.3 4.9 0 2.8 1.8 4.9 5.4 4.9 2.4 0 4-1.1 4.8-3.2h-2.4c-.3.9-1.1 1.3-2.3 1.3-1.7 0-2.6-1-2.6-2.4H25c.2-3.2-1.7-5.5-5.2-5.5Zm-2.4 3.6c.2-1.1.9-1.8 2.3-1.8 1.4 0 2.1.8 2.2 1.8h-4.5Z"/>
+          </svg>
+        </a>
+      </div>
+
+      <div class="bottom-actions" aria-label="Actions">
+        <a class="btn contact-cta" href="#contact">
+          <span class="shimmer-layer" aria-hidden="true"></span>
+          Contact me
+        </a>
+        <a class="btn secondary" href="GJUXResume.pdf" target="_blank" rel="noopener noreferrer">
+          Download resume
+        </a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    {
+      const canvas = document.getElementById("dots");
+      const ctx = canvas.getContext("2d");
+
+      let w = 0, h = 0, dpr = window.devicePixelRatio || 1;
+
+      const config = {
+        spacing: 24,
+        radius: 1.5,
+        strength: 70,
+        returnSpeed: 0.05,
+        friction: 0.9
+      };
+
+      const mouse = { x: -9999, y: -9999, active: false };
+      let points = [];
+
+      const resize = () => {
+        w = window.innerWidth;
+        h = window.innerHeight;
+        canvas.width = w * dpr;
+        canvas.height = h * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        points = [];
+        const cols = Math.ceil(w / config.spacing) + 1;
+        const rows = Math.ceil(h / config.spacing) + 1;
+
+        for (let y = 0; y < rows; y++){
+          for (let x = 0; x < cols; x++){
+            const px = x * config.spacing;
+            const py = y * config.spacing;
+            points.push({ ox:px, oy:py, x:px, y:py, vx:0, vy:0 });
+          }
+        }
+      };
+
+      const draw = () => {
+        ctx.clearRect(0, 0, w, h);
+        ctx.fillStyle = "rgba(27,27,27,0.18)";
+
+        for (const p of points){
+          const dx = p.x - mouse.x;
+          const dy = p.y - mouse.y;
+          const dist = Math.sqrt(dx*dx + dy*dy);
+
+          if (mouse.active && dist < config.strength){
+            const force = (1 - dist / config.strength);
+            const angle = Math.atan2(dy, dx);
+            p.vx += Math.cos(angle) * force * 1.5;
+            p.vy += Math.sin(angle) * force * 1.5;
+          }
+
+          p.vx += (p.ox - p.x) * config.returnSpeed;
+          p.vy += (p.oy - p.y) * config.returnSpeed;
+
+          p.vx *= config.friction;
+          p.vy *= config.friction;
+          p.x += p.vx;
+          p.y += p.vy;
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, config.radius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        requestAnimationFrame(draw);
+      };
+
+      window.addEventListener("mousemove", (e) => {
+        mouse.active = true;
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+      });
+
+      window.addEventListener("resize", resize);
+
+      resize();
+      draw();
+    }
+  </script>
+</body>
+</html>

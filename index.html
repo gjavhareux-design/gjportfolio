@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Portfolio — Landing</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg: #EFE9DD;
+      --ink: #1B1B1B;
+      --muted: rgba(27,27,27,.62);
+      --dot: rgba(27,27,27,.12);
+      --light-green: #29AB87;
+
+      --rails: 80px;
+      --radius: 20px;
+    }
+
+    *{ box-sizing:border-box; }
+    html, body{ height:100%; }
+
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: var(--bg);
+      color: var(--ink);
+      overflow-x: hidden;
+      cursor: none; /* This hides your normal mouse arrow */
+    }
+
+    /* ---------- DOTS LAYER ---------- */
+    .dot-layer{
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: auto;
+    }
+
+    canvas{
+      width:100%;
+      height:100%;
+      display:block;
+    }
+
+    /* ---------- RAILS ---------- */
+    .rails::before,
+    .rails::after{
+      content:"";
+      position: fixed;
+      top:0;
+      bottom:0;
+      width:1.5px;
+      z-index:2;
+      pointer-events:none;
+      background-image: repeating-linear-gradient(
+        to bottom,
+        rgba(27,27,27,.28) 0px,
+        rgba(27,27,27,.28) 10px,
+        transparent 10px,
+        transparent 22px
+      );
+      background-size:100% 44px;
+      animation: drift 5.6s linear infinite;
+    }
+    .rails::before{ left: var(--rails); }
+    .rails::after{ right: var(--rails); }
+
+    @keyframes drift{
+      from{ background-position:0 0; }
+      to{ background-position:0 44px; }
+    }
+
+    /* ---------- LAYOUT ---------- */
+    .wrap{
+      min-height:100%;
+      display:flex;
+      flex-direction:column;
+      position:relative;
+      z-index:3;
+    }
+
+    .edge-frame{
+      max-width:1200px;
+      width:100%;
+      margin-inline:auto;
+      padding-inline: clamp(16px, 5vw, 32px);
+    }
+
+    header{
+      padding:20px 0;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+    }
+
+    .brand{
+      font-size: 20px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      text-decoration:none;
+      color:inherit;
+      white-space:nowrap;
+    }
+
+    .logo {
+  width: 50px; /* Match original mark size; adjust as needed */
+  height: 50px;
+  object-fit: contain; /* Ensures the logo fits without distortion */
+  border-radius: 50%; /* Optional: Keep it circular if your logo isn't already */
+  box-shadow: 0 0 0 2px rgba(27,27,27,.08); /* Optional: Retain the shadow effect */
+}
+
+    nav{
+      display:flex;
+      gap:16px;
+    }
+
+    nav a{
+      text-decoration:none;
+      font-size:14px;
+      color:var(--muted);
+      padding:8px 12px;
+      border-radius:999px;
+    }
+    nav a:hover{
+      background:rgba(27,27,27,.16);
+      color:var(--ink);
+    }
+
+    main{
+      flex:1;
+      display:grid;
+      place-items:center;
+      padding-bottom:64px;
+    }
+
+    .hero{
+      width:100%;
+      max-width:900px;
+      background:rgba(255,240,245,.18);
+      border:1.5px solid rgba(27,27,27,.14);
+      border-radius:var(--radius);
+      padding:clamp(22px,4vw,40px);
+      display:grid;
+      gap:22px;
+      backdrop-filter: blur(2px);
+    }
+
+    .eyebrow{
+      font-size:16px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:var(--muted);
+    }
+
+    h1{
+      margin:0;
+      font-weight:500;
+      font-size:clamp(30px,4.5vw,56px);
+      line-height:1.1;
+    }
+
+    .sub{
+      max-width:65ch;
+      color:var(--muted);
+      font-size:clamp(15px,1.6vw,18px);
+      line-height:1.7;
+    }
+
+    .actions{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      padding:12px 16px;
+      border-radius:999px;
+      border:3px solid rgba(27,27,27,.22);
+      text-decoration:none;
+      font-size:14px;
+      color:var(--ink);
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .btn.primary{
+      background:var(--ink);
+      color:var(--bg);
+    }
+
+    .btn:hover{
+      background:var(--ink);
+      color:var(--bg);
+      border-color:var(--ink);
+      transform: scale(1.05);
+    }
+
+    .btn.primary:hover{
+      background:#333;
+      border-color:#333;
+      transform: scale(1.05);
+    }
+
+    .meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      font-size:13px;
+      color:var(--muted);
+    }
+
+    .pill{
+      padding:8px 12px;
+      border-radius:999px;
+      border:1.5px solid rgba(27,27,27,.14);
+      background:rgba(255,255,255,.12);
+    }
+
+    .open-to-work{
+      color: var(--light-green);
+    }
+
+    footer{
+      padding:24px 0;
+      font-size:13px;
+      color:rgba(27,27,27,.55);
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .links{
+      display:flex;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+
+    /* ---------- RESPONSIVE ---------- */
+    @media (max-width:880px){
+      :root{ --rails:26px; }
+      nav{ display:none; }
+    }
+
+    @media (max-width:600px){
+      .actions{ flex-direction:column; }
+      .btn{ width:100%; }
+      .meta{ flex-direction:column; }
+      footer{ flex-direction:column; text-align:center; }
+      .links{ justify-content:center; }
+    }
+/* This creates the maroon dot appearance */
+    #custom-cursor {
+      width: 30px; /* Slightly larger looks better for inversion */
+      height: 30px;
+      background-color: Yellow; /* Use white for the best inversion effect */
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      top: 0;
+      left: 0;
+      /* This makes the dot invert the colors of whatever it is over */
+      mix-blend-mode: difference; 
+      transition: transform 0.1s ease-out;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .rails::before,
+      .rails::after{ animation:none; }
+
+    }
+  </style>
+</head>
+
+<body>
+<div id="custom-cursor"></div>
+<!-- DOT BACKGROUND -->
+<div class="dot-layer" aria-hidden="true">
+  <canvas id="dots"></canvas>
+</div>
+
+<div class="wrap rails">
+  <header class="edge-frame">
+    <a class="brand" href="#">
+  <img src="gsj.svg" alt="" class="logo">
+  <strong>Ganesh Javhare</strong>
+</a>
+
+    <nav>
+      <a href="coming-soon.html" target="_blank" rel="noopener noreferrer">Work</a>
+      <a href="coming-soon.html" target="_blank" rel="noopener noreferrer">About</a>
+      <a href="coming-soon.html" target="_blank" rel="noopener noreferrer">Blog</a>
+      <a href="coming-soon.html" target="_blank" rel="noopener noreferrer">Contact</a>
+    </nav>
+  </header>
+
+  <main class="edge-frame">
+    <section class="hero">
+      <div class="eyebrow">UX / Product Designer</div>
+
+      <h1>
+        Minimal, human-first design<br>
+        for calm digital experiences.
+      </h1>
+
+      <p class="sub">
+        I design thoughtful interfaces and systems—focused on clarity,
+        accessibility, and reducing cognitive load.
+      </p>
+
+      <div class="actions">
+        <a class="btn primary" href="coming-soon.html" target="_blank" rel="noopener noreferrer">
+          View my work →
+        </a>
+        <a class="btn" href="coming-soon.html" target="_blank" rel="noopener noreferrer">
+          Get in touch
+        </a>
+        <a class="btn" href="GJUXResume.pdf" target="_blank" rel="noopener noreferrer">
+          View Resume
+        </a>
+      </div>
+
+      <div class="meta">
+        <span class="pill">Based in: <s>Pune,</s> <s>Mumbai,</s> London</span>
+        <span class="pill open-to-work">Open to work</span>
+        <span class="pill">Focus: UX • UI • Product Design</span>
+      </div>
+    </section>
+  </main>
+
+  <footer class="edge-frame">
+    <span>© <span id="y"></span> Ganesh Javhare</span>
+    <div class="links">
+      <a href="https://www.linkedin.com/in/gjuxdesigner/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+      <a href="https://www.behance.net/ganeshjavhare" target="_blank" rel="noopener noreferrer">Behance</a>
+      <a href="mailto:gjavhare.ux@gmail.com">Email</a>
+    </div>
+  </footer>
+</div>
+
+<script>
+  // year
+  document.getElementById("y").textContent = new Date().getFullYear();
+
+  // ---------- DOT INTERACTION ----------
+  const canvas = document.getElementById("dots");
+  const ctx = canvas.getContext("2d");
+
+  let w = 0, h = 0, dpr = Math.max(1, window.devicePixelRatio || 1);
+
+  const config = {
+    spacing: 12,
+    radius: 1.2,
+    hoverMaxDist: 100,
+    hoverWavelength: 40,
+    hoverFrequency: 2,
+    hoverAmplitude: 12,
+    hoverDecay: 100,
+    rippleAmplitude: 20,
+    rippleWavelength: 50,
+    rippleSpeed: 200, // pixels per second
+    rippleDecayDist: 900,
+    rippleDecayTime: 3, // seconds
+    rippleMaxDuration: 5 // seconds to remove old ripples
+  };
+
+  const mouse = { x: -9999, y: -9999, active: false };
+  let points = [];
+  let ripples = [];
+
+  function resize(){
+    w = canvas.clientWidth;
+    h = canvas.clientHeight;
+    canvas.width = Math.floor(w * dpr);
+    canvas.height = Math.floor(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    points = [];
+    const cols = Math.ceil(w / config.spacing) + 1;
+    const rows = Math.ceil(h / config.spacing) + 1;
+
+    for (let y = 0; y < rows; y++){
+      for (let x = 0; x < cols; x++){
+        const px = x * config.spacing;
+        const py = y * config.spacing;
+        points.push({ ox: px, oy: py });
+      }
+    }
+  }
+
+  function draw(){
+    const t = performance.now() / 1000;
+
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = getComputedStyle(document.documentElement)
+      .getPropertyValue("--dot").trim();
+
+    // Clean up old ripples
+    ripples = ripples.filter(r => (t - r.start) < config.rippleMaxDuration);
+
+    for (const p of points){
+      let dispX = 0;
+      let dispY = 0;
+
+      // Hover effect
+      if (mouse.active){
+        const dx = p.ox - mouse.x;
+        const dy = p.oy - mouse.y;
+        const dist = Math.hypot(dx, dy);
+
+        if (dist > 0 && dist < config.hoverMaxDist){
+          const angle = Math.atan2(dy, dx);
+          const k = 2 * Math.PI / config.hoverWavelength;
+          const omega = 2 * Math.PI * config.hoverFrequency;
+          const phase = omega * t;
+          const disp = config.hoverAmplitude * Math.sin(k * dist - phase) * Math.exp(-dist / config.hoverDecay);
+
+          dispX += Math.cos(angle) * disp;
+          dispY += Math.sin(angle) * disp;
+        }
+      }
+
+      // Ripple effects from clicks
+      for (const ripple of ripples){
+        const dx = p.ox - ripple.x;
+        const dy = p.oy - ripple.y;
+        const dist = Math.hypot(dx, dy);
+        const timeDiff = t - ripple.start;
+
+        if (dist > 0){
+          const angle = Math.atan2(dy, dx);
+          const k = 2 * Math.PI / config.rippleWavelength;
+          const phase = k * dist - (config.rippleSpeed * timeDiff / config.rippleWavelength * 2 * Math.PI);
+          const envelope = Math.exp(-dist / config.rippleDecayDist) * Math.exp(-timeDiff / config.rippleDecayTime);
+          const disp = config.rippleAmplitude * Math.sin(phase) * envelope;
+
+          dispX += Math.cos(angle) * disp;
+          dispY += Math.sin(angle) * disp;
+        }
+      }
+
+      const x = p.ox + dispX;
+      const y = p.oy + dispY;
+
+      ctx.beginPath();
+      ctx.arc(x, y, config.radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener("mousemove", e => {
+    mouse.active = true;
+document.getElementById('custom-cursor').style.transform = `translate(${e.clientX - 10}px, ${e.clientY - 10}px)`;
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+  });
+window.addEventListener("touchstart", e => {
+    // We use e.touches[0] to get the location of the first finger that hits the screen
+    const touch = e.touches[0];
+    ripples.push({ 
+      x: touch.clientX, 
+      y: touch.clientY, 
+      start: performance.now() / 1000 
+    });
+  });
+
+  window.addEventListener("mouseleave", () => {
+    mouse.active = false;
+    mouse.x = -9999;
+    mouse.y = -9999;
+  });
+
+  window.addEventListener("click", e => {
+    ripples.push({ x: e.clientX, y: e.clientY, start: performance.now() / 1000 });
+  });
+
+  window.addEventListener("resize", resize);
+
+  resize();
+  draw();
+</script>
+
+</body>
+</html>
