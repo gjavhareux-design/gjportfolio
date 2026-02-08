@@ -1,498 +1,764 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Portfolio — Landing</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Ganesh Javhare | Senior UX & Product Designer Portfolio</title>
+    <meta name="title" content="Ganesh Javhare | Senior UX & Product Designer Portfolio">
+    <meta name="description" content="Portfolio of Ganesh Javhare, a Senior UX and Product Designer specializing in human-centered design, accessibility, and high-impact digital experiences. Based in Pune, India.">
+    <meta name="keywords" content="UX Designer, Product Designer, Ganesh Javhare, UX Portfolio, UI Design, User Research, Pune Designer, Interaction Design">
+    <meta name="author" content="Ganesh Javhare">
+    <link rel="canonical" href="https://gjuxdesign.in">
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://gjuxdesign.in">
+    <meta property="og:title" content="Ganesh Javhare | Senior UX & Product Designer Portfolio">
+    <meta property="og:description" content="Explore the UX design portfolio of Ganesh Javhare, featuring case studies on e-commerce, fintech, and social platforms.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1586717791821-3f44a563cc4c?q=80&w=1200">
 
-  <style>
-    :root{
-      --bg: #EFE9DD;
-      --ink: #1B1B1B;
-      --muted: rgba(27,27,27,.62);
-      --dot: rgba(27,27,27,.12);
-      --light-green: #29AB87;
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://gjuxdesign.in">
+    <meta property="twitter:title" content="Ganesh Javhare | Senior UX & Product Designer Portfolio">
+    <meta property="twitter:description" content="Explore the UX design portfolio of Ganesh Javhare, featuring case studies on e-commerce, fintech, and social platforms.">
+    <meta property="twitter:image" content="https://images.unsplash.com/photo-1586717791821-3f44a563cc4c?q=80&w=1200">
 
-      --rails: 80px;
-      --radius: 20px;
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org/",
+      "@type": "Person",
+      "name": "Ganesh Javhare",
+      "url": "https://gjuxdesign.in",
+      "image": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200",
+      "sameAs": [
+        "https://www.linkedin.com/in/ganeshjavhare",
+        "https://www.behance.net/ganeshjavhare"
+      ],
+      "jobTitle": "Senior UX Designer",
+      "worksFor": {
+        "@type": "Organization",
+        "name": "Lumina Commerce"
+      },
+      "description": "UX Designer focusing on accessibility and human-centered digital products."
     }
+    </script>
 
-    *{ box-sizing:border-box; }
-    html, body{ height:100%; }
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg: #F9F7F2;
+            --ink: #1A1A1A;
+            --muted: #666666;
+            --accent: #E4572E;
+            --nav-bg: rgba(249, 247, 242, 0.8);
+        }
 
-    body{
-      margin:0;
-      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      background: var(--bg);
-      color: var(--ink);
-      overflow-x: hidden;
-      cursor: none; /* This hides your normal mouse arrow */
-    }
+        .dark {
+            --bg: #121212;
+            --ink: #F9F7F2;
+            --muted: #A0A0A0;
+            --accent: #FF6B3D;
+            --nav-bg: rgba(18, 18, 18, 0.8);
+        }
 
-    /* ---------- DOTS LAYER ---------- */
-    .dot-layer{
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: auto;
-    }
+        body {
+            background-color: var(--bg);
+            color: var(--ink);
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
 
-    canvas{
-      width:100%;
-      height:100%;
-      display:block;
-    }
+        .serif { font-family: 'Playfair Display', serif; }
 
-    /* ---------- RAILS ---------- */
-    .rails::before,
-    .rails::after{
-      content:"";
-      position: fixed;
-      top:0;
-      bottom:0;
-      width:1.5px;
-      z-index:2;
-      pointer-events:none;
-      background-image: repeating-linear-gradient(
-        to bottom,
-        rgba(27,27,27,.28) 0px,
-        rgba(27,27,27,.28) 10px,
-        transparent 10px,
-        transparent 22px
-      );
-      background-size:100% 44px;
-      animation: drift 5.6s linear infinite;
-    }
-    .rails::before{ left: var(--rails); }
-    .rails::after{ right: var(--rails); }
+        ::selection {
+            background: var(--accent);
+            color: white;
+        }
 
-    @keyframes drift{
-      from{ background-position:0 0; }
-      to{ background-position:0 44px; }
-    }
+        /* Project Card Hover */
+        .project-card img {
+            transition: transform 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        .project-card:hover img {
+            transform: scale(1.03);
+        }
 
-    /* ---------- LAYOUT ---------- */
-    .wrap{
-      min-height:100%;
-      display:flex;
-      flex-direction:column;
-      position:relative;
-      z-index:3;
-    }
+        /* Editorial Line */
+        .editorial-line {
+            height: 1px;
+            background: currentColor;
+            opacity: 0.15;
+            width: 100%;
+        }
 
-    .edge-frame{
-      max-width:1200px;
-      width:100%;
-      margin-inline:auto;
-      padding-inline: clamp(16px, 5vw, 32px);
-    }
+        /* Text reveal animation */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade {
+            animation: fadeInUp 0.8s ease forwards;
+        }
 
-    header{
-      padding:20px 0;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:16px;
-    }
+        /* Side Progress Bar */
+        #scroll-progress-container {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 40vh;
+            width: 150px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
 
-    .brand{
-      font-size: 20px;
-      display:flex;
-      align-items:center;
-      gap:10px;
-      text-decoration:none;
-      color:inherit;
-      white-space:nowrap;
-    }
+        .progress-track-wrapper {
+            position: relative;
+            height: 100%;
+            width: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+        }
 
-    .logo {
-  width: 50px; /* Match original mark size; adjust as needed */
-  height: 50px;
-  object-fit: contain; /* Ensures the logo fits without distortion */
-  border-radius: 50%; /* Optional: Keep it circular if your logo isn't already */
-  box-shadow: 0 0 0 2px rgba(27,27,27,.08); /* Optional: Retain the shadow effect */
-}
+        .progress-track {
+            position: relative;
+            height: 100%;
+            width: 2px;
+            background: rgba(0,0,0,0.05);
+        }
+        .dark .progress-track { background: rgba(255,255,255,0.1); }
 
-    nav{
-      display:flex;
-      gap:16px;
-    }
+        #progress-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 0%;
+            background: var(--accent);
+            transition: height 0.1s linear;
+        }
 
-    nav a{
-      text-decoration:none;
-      font-size:14px;
-      color:var(--muted);
-      padding:8px 12px;
-      border-radius:999px;
-    }
-    nav a:hover{
-      background:rgba(27,27,27,.16);
-      color:var(--ink);
-    }
+        .tick {
+            width: 8px;
+            height: 1px;
+            background: var(--ink);
+            opacity: 0.2;
+            margin: 10px 0;
+        }
 
-    main{
-      flex:1;
-      display:grid;
-      place-items:center;
-      padding-bottom:64px;
-    }
+        /* Floating Nav Labels */
+        .progress-labels {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 10% 0;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            transform: translateX(10px);
+            width: 120px;
+            text-align: right;
+            padding-right: 15px;
+        }
 
-    .hero{
-      width:100%;
-      max-width:900px;
-      background:rgba(255,240,245,.18);
-      border:1.5px solid rgba(27,27,27,.14);
-      border-radius:var(--radius);
-      padding:clamp(22px,4vw,40px);
-      display:grid;
-      gap:22px;
-      backdrop-filter: blur(2px);
-    }
+        #scroll-progress-container:hover .progress-labels {
+            opacity: 1;
+            transform: translateX(0);
+        }
 
-    .eyebrow{
-      font-size:16px;
-      letter-spacing:.12em;
-      text-transform:uppercase;
-      color:var(--muted);
-    }
+        .progress-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            white-space: nowrap;
+        }
 
-    h1{
-      margin:0;
-      font-weight:500;
-      font-size:clamp(30px,4.5vw,56px);
-      line-height:1.1;
-    }
+        .progress-label:hover {
+            color: var(--accent);
+            transform: scale(1.15);
+            font-weight: 700;
+        }
 
-    .sub{
-      max-width:65ch;
-      color:var(--muted);
-      font-size:clamp(15px,1.6vw,18px);
-      line-height:1.7;
-    }
+        .progress-label.active {
+            color: var(--accent);
+            font-weight: 700;
+            opacity: 1;
+        }
 
-    .actions{
-      display:flex;
-      gap:12px;
-      flex-wrap:wrap;
-    }
+        /* Scroll Hint Animation */
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-10px);}
+            60% {transform: translateY(-5px);}
+        }
 
-    .btn{
-      padding:12px 16px;
-      border-radius:999px;
-      border:3px solid rgba(27,27,27,.22);
-      text-decoration:none;
-      font-size:14px;
-      color:var(--ink);
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
-    }
+        #scroll-hint {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 50;
+            text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1s ease, visibility 1s ease;
+        }
 
-    .btn.primary{
-      background:var(--ink);
-      color:var(--bg);
-    }
+        #scroll-hint.show {
+            opacity: 1;
+            visibility: visible;
+        }
 
-    .btn:hover{
-      background:var(--ink);
-      color:var(--bg);
-      border-color:var(--ink);
-      transform: scale(1.05);
-    }
+        .bounce-arrow {
+            animation: bounce 2s infinite;
+        }
 
-    .btn.primary:hover{
-      background:#333;
-      border-color:#333;
-      transform: scale(1.05);
-    }
+        /* SPECIFIC EXPERIENCE CHANGES START HERE */
+        .experience-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
 
-    .meta{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      font-size:13px;
-      color:var(--muted);
-    }
+        @media (min-width: 768px) {
+            .experience-row {
+                grid-template-columns: 220px 1fr;
+                gap: 3rem;
+            }
+        }
 
-    .pill{
-      padding:8px 12px;
-      border-radius:999px;
-      border:1.5px solid rgba(27,27,27,.14);
-      background:rgba(255,255,255,.12);
-    }
+        .dark .experience-row { border-bottom-color: rgba(255,255,255,0.05); }
 
-    .open-to-work{
-      color: var(--light-green);
-    }
+        .experience-title {
+            transition: color 0.3s ease;
+        }
 
-    footer{
-      padding:24px 0;
-      font-size:13px;
-      color:rgba(27,27,27,.55);
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      flex-wrap:wrap;
-    }
+        /* Hover effect on heading */
+        .experience-row:hover .experience-title {
+            color: var(--accent);
+        }
 
-    .links{
-      display:flex;
-      gap:14px;
-      flex-wrap:wrap;
-    }
+        /* Click reveal logic */
+        .responsibilities-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+            opacity: 0;
+        }
 
-    /* ---------- RESPONSIVE ---------- */
-    @media (max-width:880px){
-      :root{ --rails:26px; }
-      nav{ display:none; }
-    }
+        .experience-row.active .responsibilities-container {
+            max-height: 500px;
+            opacity: 1;
+            margin-top: 1.5rem;
+        }
+        /* SPECIFIC EXPERIENCE CHANGES END HERE */
 
-    @media (max-width:600px){
-      .actions{ flex-direction:column; }
-      .btn{ width:100%; }
-      .meta{ flex-direction:column; }
-      footer{ flex-direction:column; text-align:center; }
-      .links{ justify-content:center; }
-    }
-/* This creates the maroon dot appearance */
-    #custom-cursor {
-      width: 30px; /* Slightly larger looks better for inversion */
-      height: 30px;
-      background-color: Yellow; /* Use white for the best inversion effect */
-      border-radius: 50%;
-      position: fixed;
-      pointer-events: none;
-      z-index: 9999;
-      top: 0;
-      left: 0;
-      /* This makes the dot invert the colors of whatever it is over */
-      mix-blend-mode: difference; 
-      transition: transform 0.1s ease-out;
-    }
+        /* Menu hover animation */
+        .menu-link {
+            position: relative;
+            overflow: hidden;
+            transition: color 0.3s ease;
+        }
 
-    @media (prefers-reduced-motion: reduce){
-      .rails::before,
-      .rails::after{ animation:none; }
+        .menu-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--accent);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
 
-    }
-  </style>
+        .menu-link:hover::after {
+            transform: translateX(0);
+        }
+
+        .menu-link:hover {
+            color: var(--accent);
+            transform: scale(1.05);
+        }
+
+    </style>
 </head>
+<body class="antialiased">
 
-<body>
-<div id="custom-cursor"></div>
-<!-- DOT BACKGROUND -->
-<div class="dot-layer" aria-hidden="true">
-  <canvas id="dots"></canvas>
-</div>
-
-<div class="wrap rails">
-  <header class="edge-frame">
-    <a class="brand" href="#">
-  <img src="gsj.svg" alt="" class="logo">
-  <strong>Ganesh Javhare</strong>
-</a>
-
-    <nav>
-      <a href="coming-soon.html" target="_blank" rel="noopener noreferrer">Work</a>
-      <a href="coming-soon.html" target="_blank" rel="noopener noreferrer">About</a>
-      <a href="coming-soon.html" target="_blank" rel="noopener noreferrer">Blog</a>
-      <a href="coming-soon.html" target="_blank" rel="noopener noreferrer">Contact</a>
+    <nav class="fixed top-0 w-full z-[60] px-6 py-6 md:px-12 flex justify-between items-center bg-[var(--nav-bg)] backdrop-blur-md transition-colors duration-500 border-b border-black/5 dark:border-white/5">
+        <a href="#" class="serif text-2xl font-semibold tracking-tighter">G.J.</a>
+        
+        <div class="flex items-center gap-8 md:gap-12">
+            <div class="hidden md:flex gap-12 text-sm font-medium uppercase tracking-widest">
+                <a href="#work" class="menu-link flex items-center gap-2 transition-all duration-300">
+                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"></path></svg>
+                    Work
+                </a>
+                <a href="#about" class="menu-link flex items-center gap-2 transition-all duration-300">
+                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    About me
+                </a>
+                <a href="#contact" class="menu-link flex items-center gap-2 transition-all duration-300">
+                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    Contact
+                </a>
+                <a href="#" class="menu-link flex items-center gap-2 transition-all duration-300">
+                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    Resume
+                </a>
+            </div>
+            
+            <div class="flex items-center gap-6">
+                <button onclick="toggleTheme()" class="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors" aria-label="Toggle Theme">
+                    <svg id="theme-icon-sun" class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <svg id="theme-icon-moon" class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+            </div>
+        </div>
     </nav>
-  </header>
 
-  <main class="edge-frame">
-    <section class="hero">
-      <div class="eyebrow">UX / Product Designer</div>
-
-      <h1>
-        Minimal, human-first design<br>
-        for calm digital experiences.
-      </h1>
-
-      <p class="sub">
-        I design thoughtful interfaces and systems—focused on clarity,
-        accessibility, and reducing cognitive load.
-      </p>
-
-      <div class="actions">
-        <a class="btn primary" href="coming-soon.html" target="_blank" rel="noopener noreferrer">
-          View my work →
-        </a>
-        <a class="btn" href="coming-soon.html" target="_blank" rel="noopener noreferrer">
-          Get in touch
-        </a>
-        <a class="btn" href="GJUXResume.pdf" target="_blank" rel="noopener noreferrer">
-          View Resume
-        </a>
-      </div>
-
-      <div class="meta">
-        <span class="pill">Based in: <s>Pune,</s> <s>Mumbai,</s> London</span>
-        <span class="pill open-to-work">Open to work</span>
-        <span class="pill">Focus: UX • UI • Product Design</span>
-      </div>
-    </section>
-  </main>
-
-  <footer class="edge-frame">
-    <span>© <span id="y"></span> Ganesh Javhare</span>
-    <div class="links">
-      <a href="https://www.linkedin.com/in/gjuxdesigner/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-      <a href="https://www.behance.net/ganeshjavhare" target="_blank" rel="noopener noreferrer">Behance</a>
-      <a href="mailto:gjavhare.ux@gmail.com">Email</a>
+    <div id="scroll-progress-container" aria-hidden="true">
+        <div class="progress-labels">
+            <a href="#hero" class="progress-label active" data-section="hero">Introduction</a>
+            <a href="#work" class="progress-label" data-section="work">Selected Work</a>
+            <a href="#about" class="progress-label" data-section="about">Philosophy</a>
+            <a href="#experience" class="progress-label" data-section="experience">Experience</a>
+            <a href="#skills" class="progress-label" data-section="skills">Expertise</a>
+            <a href="#contact" class="progress-label" data-section="contact">Contact</a>
+        </div>
+        <div class="progress-track-wrapper">
+            <div class="progress-track">
+                <div id="progress-indicator"></div>
+                <div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div>
+                <div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div>
+                <div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div>
+            </div>
+        </div>
     </div>
-  </footer>
-</div>
 
-<script>
-  // year
-  document.getElementById("y").textContent = new Date().getFullYear();
+    <div id="scroll-hint">
+        <p class="text-[10px] uppercase tracking-[0.3em] opacity-60 mb-2">Scroll to explore</p>
+        <svg class="w-6 h-6 mx-auto bounce-arrow opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+    </div>
 
-  // ---------- DOT INTERACTION ----------
-  const canvas = document.getElementById("dots");
-  const ctx = canvas.getContext("2d");
+    <header id="hero" class="min-h-screen flex flex-col justify-center px-6 md:px-12 pt-20">
+        <div class="max-w-6xl mx-auto w-full">
+            <p class="uppercase tracking-[0.3em] text-[10px] mb-8 opacity-60 animate-fade" style="animation-delay: 0.1s;">UX / Product Designer</p>
+            <h1 class="serif text-5xl md:text-8xl lg:text-9xl leading-[1.1] md:leading-[1] tracking-tight animate-fade" style="animation-delay: 0.2s;">
+                Designing digital <br>
+                <span class="italic font-light">experiences</span> with <br>
+                human purpose.
+            </h1>
+            <div class="mt-16 md:mt-24 flex flex-col md:flex-row md:items-end justify-between gap-8 animate-fade" style="animation-delay: 0.4s;">
+                <p class="max-w-md text-lg leading-relaxed opacity-70">
+                    Ganesh Javhare — A multi-disciplinary designer focusing on accessibility, system thinking, and delightful micro-interactions.
+                </p>
+                <a href="#work" class="group flex items-center gap-4 serif text-2xl italic">
+                    View Case Studies 
+                    <span class="inline-block transition-transform group-hover:translate-x-2 text-accent">⟶</span>
+                </a>
+            </div>
+        </div>
+    </header>
 
-  let w = 0, h = 0, dpr = Math.max(1, window.devicePixelRatio || 1);
+    <section id="work" class="px-6 md:px-12 py-32 bg-white/10 dark:bg-black/10">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex items-baseline justify-between mb-16">
+                <h2 class="serif text-4xl md:text-5xl italic">Selected Work</h2>
+                <span class="text-xs uppercase tracking-widest opacity-40">01 — 03</span>
+            </div>
 
-  const config = {
-    spacing: 12,
-    radius: 1.2,
-    hoverMaxDist: 100,
-    hoverWavelength: 40,
-    hoverFrequency: 2,
-    hoverAmplitude: 12,
-    hoverDecay: 100,
-    rippleAmplitude: 20,
-    rippleWavelength: 50,
-    rippleSpeed: 200, // pixels per second
-    rippleDecayDist: 900,
-    rippleDecayTime: 3, // seconds
-    rippleMaxDuration: 5 // seconds to remove old ripples
-  };
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-y-24 gap-x-12">
+                <div class="md:col-span-12 group project-card cursor-pointer">
+                    <div class="overflow-hidden rounded-lg bg-[#EAE7E1] dark:bg-[#2A2A2A] aspect-[16/9] mb-8">
+                        <img src="https://images.unsplash.com/photo-1586717791821-3f44a563cc4c?q=80&w=2070&auto=format&fit=crop" 
+                             alt="E-commerce project" 
+                             class="w-full h-full object-cover opacity-90 group-hover:opacity-100">
+                    </div>
+                    <div class="flex flex-col md:flex-row justify-between gap-6">
+                        <div class="max-w-xl">
+                            <h3 class="serif text-3xl md:text-4xl mb-4">MahaRERA Website: Simplifying experience for 4M+ users.</h3>
+                            <div class="flex gap-3">
+                                <span class="px-3 py-1 rounded-full border border-black/10 dark:border-white/10 text-[10px] uppercase tracking-widest">Case Study</span>
+                                <span class="px-3 py-1 rounded-full border border-black/10 dark:border-white/10 text-[10px] uppercase tracking-widest">UX Research</span>
+                            </div>
+                        </div>
+                        <p class="md:text-right max-w-xs opacity-60 text-sm leading-relaxed">
+                            The updated MahaRERA website (launched - Sept 2024) is designed to be more user-friendly, providing faster and efficient access to information for homebuyers, developers, and agents.
+                        </p>
+                    </div>
+                </div>
 
-  const mouse = { x: -9999, y: -9999, active: false };
-  let points = [];
-  let ripples = [];
+                <div class="editorial-line md:col-span-12"></div>
 
-  function resize(){
-    w = canvas.clientWidth;
-    h = canvas.clientHeight;
-    canvas.width = Math.floor(w * dpr);
-    canvas.height = Math.floor(h * dpr);
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                <div class="md:col-span-7 group project-card cursor-pointer">
+                    <div class="overflow-hidden rounded-lg bg-[#EAE7E1] dark:bg-[#2A2A2A] aspect-[4/5] mb-8">
+                        <img src="https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=1964&auto=format&fit=crop" 
+                             alt="Fintech app" 
+                             class="w-full h-full object-cover opacity-90 group-hover:opacity-100">
+                    </div>
+                    <h3 class="serif text-3xl mb-4">XPSarathi: Making travel knowledgeable.</h3>
+                    <p class="opacity-60 text-sm mb-6 max-w-md">Bridging the gap between traveler and history through empathetic UI and AI integration.</p>
+                </div>
 
-    points = [];
-    const cols = Math.ceil(w / config.spacing) + 1;
-    const rows = Math.ceil(h / config.spacing) + 1;
+                <div class="md:col-span-5 group project-card cursor-pointer md:mt-32">
+                    <div class="overflow-hidden rounded-lg bg-[#EAE7E1] dark:bg-[#2A2A2A] aspect-[4/5] mb-8">
+                        <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?q=80&w=1974&auto=format&fit=crop" 
+                             alt="Social platform" 
+                             class="w-full h-full object-cover opacity-90 group-hover:opacity-100">
+                    </div>
+                    <h3 class="serif text-3xl mb-4">Imagine as You Read: Redefining digital reading.</h3>
+                    <p class="opacity-60 text-sm max-w-md">A research-led exploration of changing reading habits and experience.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    for (let y = 0; y < rows; y++){
-      for (let x = 0; x < cols; x++){
-        const px = x * config.spacing;
-        const py = y * config.spacing;
-        points.push({ ox: px, oy: py });
-      }
-    }
-  }
+    <section id="about" class="px-6 md:px-12 py-32 border-t border-black/5 dark:border-white/5">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="serif text-4xl md:text-6xl leading-tight mb-12">
+                I believe great design is <br> 
+                <span class="italic underline decoration-1 underline-offset-8">invisible</span> and 
+                <span class="italic underline decoration-1 underline-offset-8">inclusive</span>.
+            </h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-12 mt-20">
+                <div>
+                    <p class="serif text-4xl mb-2">07+</p>
+                    <p class="text-[10px] uppercase tracking-[0.2em] opacity-50">Years Exp.</p>
+                </div>
+                <div>
+                    <p class="serif text-4xl mb-2">1</p>
+                    <p class="text-[10px] uppercase tracking-[0.2em] opacity-50">Products Dilevered</p>
+                </div>
+                <div>
+                    <p class="serif text-4xl mb-2">99%</p>
+                    <p class="text-[10px] uppercase tracking-[0.2em] opacity-50">User Satisfaction</p>
+                </div>
+                <div>
+                    <p class="serif text-4xl mb-2">4M+</p>
+                    <p class="text-[10px] uppercase tracking-[0.2em] opacity-50">Lives Impacted</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-  function draw(){
-    const t = performance.now() / 1000;
+    <section id="experience" class="px-6 md:px-12 py-32 bg-white/5 dark:bg-zinc-900/20">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex items-baseline justify-between mb-24">
+                <h2 class="serif text-4xl md:text-5xl italic">Career Journey</h2>
+                <span class="text-xs uppercase tracking-widest opacity-40">Click to expand details</span>
+            </div>
 
-    ctx.clearRect(0, 0, w, h);
-    ctx.fillStyle = getComputedStyle(document.documentElement)
-      .getPropertyValue("--dot").trim();
+            <div class="max-w-5xl mx-auto">
+                <div class="experience-row" onclick="this.classList.toggle('active')">
+                    <p class="text-xs uppercase tracking-[0.2em] opacity-50 md:pt-2">2025 — Present</p>
+                    <div>
+                        <h3 class="experience-title serif text-2xl md:text-3xl mb-1">UX Researcher & Designer</h3>
+                        <p class="text-accent font-medium tracking-tight">Kingston University London</p>
+                        
+                        <div class="responsibilities-container">
+                            <ul class="list-disc list-inside space-y-2 opacity-80 leading-relaxed text-sm pt-4 border-t border-black/5 dark:border-white/5 mt-4">
+                                <li>Accelerated product iteration by applying Lean UX principles to rapidly test hypotheses and integrate continuous feedback.</li>
+                                <li>Validated assumptions through journey mapping and high-fidelity MVP prototypes to align stakeholders early in the lifecycle.</li>
+                                <li>Optimized interaction design and accessibility through continuous usability testing cycles, ensuring data-driven pivots.</li>
+                                <li>Architected immersive AI and AR interfaces leveraging real-time contextual data to deliver intuitive digital experiences.</li>
+                                <li>Defined product strategy by uncovering user pain points via research to reduce cognitive load and visual noise.</li>                       
+                            </ul>
+                        </div>
+                    </div>
+                </div>
 
-    // Clean up old ripples
-    ripples = ripples.filter(r => (t - r.start) < config.rippleMaxDuration);
+                <div class="experience-row" onclick="this.classList.toggle('active')">
+                    <p class="text-xs uppercase tracking-[0.2em] opacity-50 md:pt-2">July 2022 — Aug 2024</p>
+                    <div>
+                        <h3 class="experience-title serif text-2xl md:text-3xl mb-1">Assistant Manager (UX & Digital Strategy)</h3>
+                        <p class="text-accent font-medium tracking-tight">MahaRERA, Mumbai</p>
+                        
+                        <div class="responsibilities-container">
+                            <ul class="list-disc list-inside space-y-2 opacity-80 leading-relaxed text-sm pt-4 border-t border-black/5 dark:border-white/5 mt-4">
+                                <li>Achieved 95% accessibility scores by conducting rigorous evaluations and ensuring full GIGW compliance for government portals..</li>
+                                <li>Standardized end-to-end interfaces and design systems in Figma, reducing production iteration time by 25%..</li>
+                                <li>Orchestrated cross-functional teams and Jira-driven workflows to ensure 100% on-time delivery of complex digital features.</li>
+                                <li>Oversaw UAT, API integrations, and vendor collaboration: Managed testing and integrations, reducing launch delays by 40%.</li>
+                                <li>Increased user engagement by 60% through strategic UX roadmaps and the delivery of user-friendly digital transformation projects.</li>
+                                <li>Led cross-departmental UX initiatives that boosted user satisfaction scores by 30% for large-scale public platforms </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
 
-    for (const p of points){
-      let dispX = 0;
-      let dispY = 0;
+                <div class="experience-row" onclick="this.classList.toggle('active')">
+                    <p class="text-xs uppercase tracking-[0.2em] opacity-50 md:pt-2">July 2017 — July 2022</p>
+                    <div>
+                        <h3 class="experience-title serif text-2xl md:text-3xl mb-1">Junior Technical Advisor</h3>
+                        <p class="text-accent font-medium tracking-tight">MahaRERA, Mumbai</p>
+                        
+                        <div class="responsibilities-container">
+                            <ul class="list-disc list-inside space-y-2 opacity-80 leading-relaxed text-sm pt-4 border-t border-black/5 dark:border-white/5 mt-4">
+                                <li>Designed workflows for project registration and SLA dashboards.</li>
+                                <li>Conducted data-driven policy assessments using Power BI.</li>
+                                <li>Drafted user-friendly frameworks for public portals.</li>
+                                <li>Prepared structured documentation for application processes, government dashboards, and performance reports.</li>
+                                <li>Collaborated with legal and finance departments to translate regulatory guidelines into platform functionality.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
 
-      // Hover effect
-      if (mouse.active){
-        const dx = p.ox - mouse.x;
-        const dy = p.oy - mouse.y;
-        const dist = Math.hypot(dx, dy);
+                <div class="experience-row" onclick="this.classList.toggle('active')">
+                    <p class="text-xs uppercase tracking-[0.2em] opacity-50 md:pt-2">DEC 2016 — MAY 2017</p>
+                    <div>
+                        <h3 class="experience-title serif text-2xl md:text-3xl mb-1">Urban Planner (Intern)</h3>
+                        <p class="text-accent font-medium tracking-tight">BHAVITRU Consultants, Pune</p>
+                        
+                        <div class="responsibilities-container">
+                            <ul class="list-disc list-inside space-y-2 opacity-80 leading-relaxed text-sm pt-4 border-t border-black/5 dark:border-white/5 mt-4">
+                                <li>Managed development proposals: Coordinated stakeholder meetings and drafted reports and recommendations for municipal authorities, streamlining project approvals by 20%.</li>
+                                <li>Facilitated public workshops and provided insights: Led meetings to discuss development plans and resource planning, using GIS tools to create maps for data visualization, improving community engagement by 30%.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
 
-        if (dist > 0 && dist < config.hoverMaxDist){
-          const angle = Math.atan2(dy, dx);
-          const k = 2 * Math.PI / config.hoverWavelength;
-          const omega = 2 * Math.PI * config.hoverFrequency;
-          const phase = omega * t;
-          const disp = config.hoverAmplitude * Math.sin(k * dist - phase) * Math.exp(-dist / config.hoverDecay);
+                <div class="experience-row" onclick="this.classList.toggle('active')">
+                    <p class="text-xs uppercase tracking-[0.2em] opacity-50 md:pt-2">Jun 2016 — Nov 2016</p>
+                    <div>
+                        <h3 class="experience-title serif text-2xl md:text-3xl mb-1">Town Planner</h3>
+                        <p class="text-accent font-medium tracking-tight">PLANITECH Consultants, Pune</p>
+                        
+                        <div class="responsibilities-container">
+                            <ul class="list-disc list-inside space-y-2 opacity-80 leading-relaxed text-sm pt-4 border-t border-black/5 dark:border-white/5 mt-4">
+                                <li>Developed town development policies and frameworks: Formulated policies, managed municipal finance, and conducted deficiency analyses using data-driven methods, addressing 90% of identified infrastructure gaps.</li>
+                                <li>Created infrastructure management plans and executed spatial planning: Designed plans and managed reservation demarcation with GIS tools, improving land use efficiency.</li>
+                                <li>Conducted socioeconomic surveys and analysis: Performed surveys and interviews, analysing data to provide actionable insights, enhancing project alignment with community needs.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-          dispX += Math.cos(angle) * disp;
-          dispY += Math.sin(angle) * disp;
+    <section id="skills" class="px-6 md:px-12 py-32 bg-black text-[#F9F7F2]">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex items-baseline justify-between mb-16">
+                <h2 class="serif text-4xl md:text-5xl italic">Expertise</h2>
+                <span class="text-xs uppercase tracking-widest opacity-40">Core Competencies</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-16 md:gap-12">
+                <div>
+                    <h3 class="serif text-2xl mb-8 border-b border-white/10 pb-4 italic">Strategy & Research</h3>
+                    <ul class="space-y-4 text-sm opacity-70 leading-loose">
+                        <li>User Journey Mapping</li>
+                        <li>Stakeholder Interviews</li>
+                        <li>Usability Testing</li>
+                        <li>Competitive Analysis</li>
+                        <li>Information Architecture</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="serif text-2xl mb-8 border-b border-white/10 pb-4 italic">Interface Design</h3>
+                    <ul class="space-y-4 text-sm opacity-70 leading-loose">
+                        <li>Rapid Prototyping</li>
+                        <li>Design Systems (Figma)</li>
+                        <li>Micro-interactions</li>
+                        <li>Visual Storytelling</li>
+                        <li>Responsive Web & App</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="serif text-2xl mb-8 border-b border-white/10 pb-4 italic">Technical Tools</h3>
+                    <ul class="space-y-4 text-sm opacity-70 leading-loose">
+                        <li>Figma / Framer</li>
+                        <li>Adobe Creative Suite</li>
+                        <li>HTML / CSS / JS</li>
+                        <li>Principle / After Effects</li>
+                        <li>Linear / Jira</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="px-6 md:px-12 py-32 overflow-hidden">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex items-baseline justify-between mb-24">
+                <h2 class="serif text-4xl md:text-5xl italic">Kind Words</h2>
+                <span class="text-xs uppercase tracking-widest opacity-40 text-right">What partners say</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-24">
+                <div class="relative">
+                    <span class="serif text-9xl absolute -top-12 -left-8 opacity-5 italic select-none">“</span>
+                    <blockquote class="serif text-2xl md:text-3xl leading-relaxed mb-8 relative z-10">
+                        Ganesh has an uncanny ability to simplify the most complex user flows. He doesn't just design screens; he designs clarity.
+                    </blockquote>
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full bg-black/5 dark:bg-white/5 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=100" alt="SARAH" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold tracking-tight">Marcus Thompson</p>
+                            <p class="text-[10px] uppercase tracking-widest opacity-50">Design Director @ FlowState</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative md:mt-24">
+                    <span class="serif text-9xl absolute -top-12 -left-8 opacity-5 italic select-none">“</span>
+                    <blockquote class="serif text-2xl md:text-3xl leading-relaxed mb-8 relative z-10">
+                        A rare designer who understands the business impact of UX. The conversion lift we saw after his redesign was staggering.
+                    </blockquote>
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full bg-black/5 dark:bg-white/5 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=100" alt="ELENA" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold tracking-tight">Elena Rodriguez</p>
+                            <p class="text-[10px] uppercase tracking-widest opacity-50">Product VP @ Lumina</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact" class="px-6 md:px-12 py-20 bg-gray-100 dark:bg-zinc-950 transition-colors duration-500">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-12">
+            <div>
+                <p class="text-xs uppercase tracking-widest opacity-50 mb-6">Let's build something together</p>
+                <a href="mailto:hello@gjuxdesign.in" class="serif text-4xl md:text-6xl lg:text-7xl hover:italic transition-all">
+                    hello@gjuxdesign.in
+                </a>
+            </div>
+            <div class="flex gap-8">
+                <a href="#" class="text-sm border-b border-current pb-1 opacity-60 hover:opacity-100 transition-opacity">LinkedIn</a>
+                <a href="#" class="text-sm border-b border-current pb-1 opacity-60 hover:opacity-100 transition-opacity">Behance</a>
+                <a href="#" class="text-sm border-b border-current pb-1 opacity-60 hover:opacity-100 transition-opacity">Dribbble</a>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto mt-32 pt-12 border-t border-black/5 dark:border-white/5 flex flex-col md:flex-row justify-between gap-6 opacity-40 text-[10px] uppercase tracking-widest">
+            <p>© 2024 Ganesh Javhare — Portfolio</p>
+            <p>Built with purpose in Pune, India</p>
+        </div>
+    </footer>
+
+    <button id="go-to-top" class="fixed bottom-8 right-8 z-[70] w-12 h-12 bg-black text-white dark:bg-white dark:text-black rounded-full flex items-center justify-center shadow-xl opacity-0 translate-y-4 transition-all duration-300 hover:scale-110 active:scale-95" aria-label="Go to top">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+    </button>
+
+    <script>
+        // --- Theme Management ---
+        const toggleTheme = () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        };
+
+        if (localStorage.getItem('theme') === 'dark' || 
+            (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
         }
-      }
 
-      // Ripple effects from clicks
-      for (const ripple of ripples){
-        const dx = p.ox - ripple.x;
-        const dy = p.oy - ripple.y;
-        const dist = Math.hypot(dx, dy);
-        const timeDiff = t - ripple.start;
+        // --- Scroll Management ---
+        const progressIndicator = document.getElementById('progress-indicator');
+        const goToTopBtn = document.getElementById('go-to-top');
+        const scrollHint = document.getElementById('scroll-hint');
+        const progressLabels = document.querySelectorAll('.progress-label');
+        const sections = ['hero', 'work', 'about', 'experience', 'skills', 'contact'];
 
-        if (dist > 0){
-          const angle = Math.atan2(dy, dx);
-          const k = 2 * Math.PI / config.rippleWavelength;
-          const phase = k * dist - (config.rippleSpeed * timeDiff / config.rippleWavelength * 2 * Math.PI);
-          const envelope = Math.exp(-dist / config.rippleDecayDist) * Math.exp(-timeDiff / config.rippleDecayTime);
-          const disp = config.rippleAmplitude * Math.sin(phase) * envelope;
+        setTimeout(() => {
+            if (window.scrollY < 50) {
+                scrollHint.classList.add('show');
+            }
+        }, 5000);
 
-          dispX += Math.cos(angle) * disp;
-          dispY += Math.sin(angle) * disp;
+        progressLabels.forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').slice(1);
+                const targetElement = document.getElementById(targetId);
+                
+                if (targetElement) {
+                    const headerOffset = 80;
+                    const elementPosition = targetElement.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            
+            if (winScroll > 50) {
+                scrollHint.classList.remove('show');
+            }
+
+            progressIndicator.style.height = scrolled + "%";
+
+            let current = "";
+            sections.forEach((id) => {
+                const section = document.getElementById(id);
+                if (section) {
+                    const sectionTop = section.offsetTop;
+                    if (winScroll >= sectionTop - 200) {
+                        current = id;
+                    }
+                }
+            });
+
+            progressLabels.forEach((label) => {
+                label.classList.remove('active');
+                if (label.getAttribute('data-section') === current) {
+                    label.classList.add('active');
+                }
+            });
+
+            if (winScroll > 600) {
+                goToTopBtn.classList.remove('opacity-0', 'translate-y-4');
+                goToTopBtn.classList.add('opacity-100', 'translate-y-0');
+            } else {
+                goToTopBtn.classList.add('opacity-0', 'translate-y-4');
+                goToTopBtn.classList.remove('opacity-100', 'translate-y-0');
+            }
+        });
+
+        goToTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        const track = document.querySelector('.progress-track');
+        for(let i=0; i<15; i++) {
+            const t = document.createElement('div');
+            t.className = 'tick';
+            track.appendChild(t);
         }
-      }
-
-      const x = p.ox + dispX;
-      const y = p.oy + dispY;
-
-      ctx.beginPath();
-      ctx.arc(x, y, config.radius, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    requestAnimationFrame(draw);
-  }
-
-  window.addEventListener("mousemove", e => {
-    mouse.active = true;
-document.getElementById('custom-cursor').style.transform = `translate(${e.clientX - 10}px, ${e.clientY - 10}px)`;
-    mouse.x = e.clientX;
-    mouse.y = e.clientY;
-  });
-window.addEventListener("touchstart", e => {
-    // We use e.touches[0] to get the location of the first finger that hits the screen
-    const touch = e.touches[0];
-    ripples.push({ 
-      x: touch.clientX, 
-      y: touch.clientY, 
-      start: performance.now() / 1000 
-    });
-  });
-
-  window.addEventListener("mouseleave", () => {
-    mouse.active = false;
-    mouse.x = -9999;
-    mouse.y = -9999;
-  });
-
-  window.addEventListener("click", e => {
-    ripples.push({ x: e.clientX, y: e.clientY, start: performance.now() / 1000 });
-  });
-
-  window.addEventListener("resize", resize);
-
-  resize();
-  draw();
-</script>
-
+    </script>
 </body>
 </html>
