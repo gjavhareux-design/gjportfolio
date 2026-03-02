@@ -179,11 +179,24 @@
         .testimony-role { font-size: 0.85rem; color: var(--secondary-text); }
 
         /* --- FOOTER --- */
-        footer { background: transparent; text-align: center; padding: 80px 20px; display: flex; flex-direction: column; align-items: center; gap: 30px; border-top: 1px solid #e0ddd5; }
-        .footer-logo { font-family: "Brush Script MT", cursive; font-size: 2.5rem; }
-        .social-links { display: flex; gap: 20px; margin-top: 10px; }
-        .social-icon-img { width: 36px; height: 36px; object-fit: contain; transition: 0.3s; opacity: 0.8; }
-        .social-icon-img:hover { opacity: 1; transform: translateY(-5px) scale(1.1); }
+        footer { 
+            /* 1. ADJUST TRANSPARENCY HERE: Change the '0.6' (0.0 is invisible, 1.0 is solid color) */
+            background: rgba(250, 248, 245, 0.6); 
+            
+            /* 2. ADJUST BLURRINESS HERE: Change the '12px' (0px is sharp, 20px+ is very blurry) */
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px); /* For Safari support */
+            
+            text-align: center; 
+            padding: 80px 20px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 30px; 
+            border-top: 1px solid rgba(0,0,0,0.05); 
+            position: relative; 
+            z-index: 10; /* Ensures it sits above the canvas background */
+        }
 
         /* --- MOBILE RESPONSIVE & HAMBURGER --- */
         @media (max-width: 768px) {
