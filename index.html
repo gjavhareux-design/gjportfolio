@@ -235,8 +235,28 @@
             .menu-toggle:checked ~ .hamburger span:nth-child(2) { opacity: 0; }
             .menu-toggle:checked ~ .hamburger span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
 
-            .work-image { width: 100%; }
-            .work-content { position: relative; width: 100%; padding: 30px; top: -50px; left: 0 !important; right: 0 !important; margin: 0 auto; width: 90%; }
+            /* --- UPDATED MOBILE WORK CARDS --- */
+            .work-item { 
+                flex-direction: column; /* This stacks the image on top and text below */
+                margin-bottom: 60px; 
+            }
+            .work-image { 
+                width: 100%; 
+                height: 280px; /* A better, scaled-down height for phone screens */
+                border-radius: 20px;
+            }
+            .work-content { 
+                position: relative; 
+                width: 92%; /* Creates a nice floating margin on the sides */
+                padding: 25px; 
+                top: -40px; /* Slight negative margin keeps that premium overlapping glass effect! */
+                left: 0 !important; 
+                right: 0 !important; 
+                margin: 0 auto; 
+            }
+            .work-content h3 { 
+                font-size: 1.4rem; /* Slightly smaller heading so it fits perfectly on phones */
+            }
             .tools-strip { gap: 20px; padding: 30px 20px; }
         }
     </style>
