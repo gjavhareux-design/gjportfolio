@@ -221,6 +221,31 @@
             opacity: 1; 
             transform: translateY(-5px) scale(1.1); 
         }
+
+        /* --- WIP POPUP CSS --- */
+        .popup-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            z-index: 9999; display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+        }
+        .popup-overlay.show { opacity: 1; pointer-events: all; }
+        .popup-content {
+            background: rgba(255, 255, 255, 0.95); padding: 40px; border-radius: 20px;
+            max-width: 450px; width: 90%; text-align: center; position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2); border: 1px solid rgba(255, 255, 255, 0.6);
+            transform: translateY(20px) scale(0.95); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .popup-overlay.show .popup-content { transform: translateY(0) scale(1); }
+        .popup-content h3 { font-size: 1.5rem; margin-bottom: 15px; color: var(--primary-text); }
+        .popup-content p { color: var(--secondary-text); font-size: 0.95rem; margin-bottom: 12px; }
+        .close-btn {
+            position: absolute; top: 15px; right: 20px; background: none; border: none;
+            font-size: 1.8rem; color: var(--secondary-text); cursor: pointer; transition: 0.2s;
+        }
+        .close-btn:hover { color: var(--accent); transform: scale(1.1); }
+
+        
         /* --- MOBILE RESPONSIVE & HAMBURGER --- */
         @media (max-width: 768px) {
             .hamburger { display: flex; } 
@@ -264,6 +289,16 @@
 <body>
 
     <canvas id="bg-canvas"></canvas>
+
+    <div id="wip-popup" class="popup-overlay">
+        <div class="popup-content">
+            <button id="close-popup" class="close-btn">&times;</button>
+            <h3>🚧 Pardon the Dust!</h3>
+            <p>Welcome to my portfolio! The design and development are still a work in progress, so a few links and buttons might not be fully functional just yet.</p>
+            <p>I would love to hear your thoughts—feedback is always welcome!</p>
+            <button id="got-it-btn" class="cta-button ripple-btn" style="margin-top: 20px; padding: 10px 24px; font-size: 0.95rem;">Got it, thanks!</button>
+        </div>
+    </div>
 
     <nav>
         <a href="#" class="nav-logo"><img src="GJLogo.png" alt="GJ Logo" class="brand-icon">Ganesh Javhare</a>
@@ -556,6 +591,24 @@
                 card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
             });
         });
+
+        // --- 7. WIP POPUP LOGIC ---
+        const popup = document.getElementById('wip-popup');
+        const closeBtn = document.getElementById('close-popup');
+        const gotItBtn = document.getElementById('got-it-btn');
+
+        // Show the popup 1 second after page load (Memory removed for testing!)
+        setTimeout(() => {
+            popup.classList.add('show'); 
+        }, 1000);
+
+        function closePopup() {
+            popup.classList.remove('show');
+        }
+
+        closeBtn.addEventListener('click', closePopup);
+        gotItBtn.addEventListener('click', closePopup);
+
     </script>
 </body>
 </html>
