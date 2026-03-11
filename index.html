@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ganesh Javhare | Product Designer</title>
+    <title>Ganesh Javhare | UX & Product Designer</title>
     <style>
         :root {
             --primary-text: #1a1a1a;
@@ -302,29 +302,7 @@
             }
             .tools-strip { gap: 20px; padding: 30px 20px; }
         }
-    </style>
-    <script type="text/javascript">
-    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-
-    // 1. This hides the floating bubble as soon as the page loads
-    Tawk_API.onLoad = function(){
-        Tawk_API.hideWidget();
-    };
-
-    // 2. This hides it again if the recruiter minimizes the chat box
-    Tawk_API.onChatMinimized = function(){
-        Tawk_API.hideWidget();
-    };
-
-    (function(){
-    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-    s1.async=true;
-    s1.src='https://embed.tawk.to/69ae130e7ac1721c39912761/1jj7vksrb';
-    s1.charset='UTF-8';
-    s1.setAttribute('crossorigin','*');
-    s0.parentNode.insertBefore(s1,s0);
-    })();
-    </script>
+    
 </head>
 <body>
 
@@ -408,7 +386,7 @@
                 </div>
                 <div class="skill-column animate-on-scroll">
                     <h4>Interface Design</h4>
-                    <ul><li>Rapid Prototyping</li><li>Design Systems (Figma)</li><li>Micro-interactions</li><li>Visual Storytelling</li><li>Responsive Web & App</li></ul>
+                    <ul><li>Rapid Prototyping</li><li>Design Systems (Figma)</li><li>Micro-interactions</li><li>Visual Storytelling</li><li>Responsive Web & App</li><li>Vibe Coding</li></ul>
                 </div>
                 <div class="skill-column animate-on-scroll">
                     <h4>Technical Tools</h4>
@@ -475,7 +453,7 @@
             
             <a href="mailto:gjavhare.ux@gmail.com" class="cta-button ripple-btn">Email Me</a>
             
-            <button onclick="Tawk_API.showWidget(); Tawk_API.maximize();" class="cta-button ripple-btn" style="border: none; font-family: inherit; background: #222; color: #fff;">Chat Now</button>
+            <button onclick="startChat()" class="cta-button ripple-btn" style="border: none; font-family: inherit; background: #222; color: #fff;">Chat Now</button>
             
         </div>
        <div class="social-links">
@@ -673,7 +651,41 @@
                 // If the free server is ever busy, it just hides the text smoothly
                 countElement.innerText = "1,000+"; 
             });
+        // --- 9. ON-DEMAND LIVE CHAT LOGIC ---
+        let tawkLoaded = false;
 
+        function startChat() {
+            // If it's already loaded, just show and maximize it
+            if (tawkLoaded && typeof Tawk_API !== 'undefined') {
+                Tawk_API.showWidget();
+                Tawk_API.maximize();
+                return;
+            }
+            
+            // Otherwise, load it for the first time
+            tawkLoaded = true;
+            window.Tawk_API = window.Tawk_API || {};
+            window.Tawk_LoadStart = new Date();
+            
+            // As soon as it finishes loading behind the scenes, pop it open!
+            window.Tawk_API.onLoad = function(){
+                window.Tawk_API.showWidget();
+                window.Tawk_API.maximize();
+            };
+            
+            // Hide it completely if they click the minimize dash
+            window.Tawk_API.onChatMinimized = function(){
+                window.Tawk_API.hideWidget();
+            };
+
+            // Inject the script into the page
+            var s1=document.createElement("script"), s0=document.getElementsByTagName("script")[0];
+            s1.async=true;
+            s1.src='https://embed.tawk.to/69ae130e7ac1721c39912761/1jj7vksrb';
+            s1.charset='UTF-8';
+            s1.setAttribute('crossorigin','*');
+            s0.parentNode.insertBefore(s1,s0);
+        };
     </script>
 </body>
 </html>
