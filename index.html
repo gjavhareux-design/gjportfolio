@@ -25,8 +25,10 @@
             color: var(--primary-text);
             line-height: 1.6;
             position: relative;
+            cursor: none; /* Crucial: hides the default mouse pointer */
         }
-/* ---------- DOTS LAYER ---------- */
+
+        /* ---------- DOTS LAYER ---------- */
         .dot-layer{
             position: fixed;
             inset: 0;
@@ -34,7 +36,7 @@
             pointer-events: auto;
         }
 
-        canvas{
+        canvas {
             width:100%;
             height:100%;
             display:block;
@@ -67,12 +69,6 @@
             transform: translateY(0);
         }
 
-        /* --- INTERACTIVE CANVAS BACKGROUND --- */
-        #bg-canvas {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: -1; pointer-events: none; 
-        }
-
         /* --- NAVIGATION --- */
         nav {
             position: fixed; top: 0; width: 100%; height: var(--nav-height);
@@ -100,7 +96,7 @@
 
         /* --- GLOBAL LAYOUT --- */
         .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
-        section { padding: 100px 0; }
+        section { padding: 100px 0; position: relative; z-index: 2; }
         .section-title { font-size: 2rem; font-weight: 700; margin-bottom: 40px; color: var(--primary-text); }
 
         /* --- HERO SECTION --- */
@@ -177,7 +173,7 @@
         /* --- ABOUT ME SECTION --- */
         .about-grid {
             display: grid;
-            grid-template-columns: 5fr 7fr; /* Recreates that perfect 12-column layout */
+            grid-template-columns: 5fr 7fr; 
             gap: 60px;
             align-items: center;
         }
@@ -193,12 +189,12 @@
         
         .about-image {
             width: 100%; height: 100%; object-fit: cover;
-            filter: grayscale(0%); /* Keeps that high-contrast editorial look */
+            filter: grayscale(0%); 
             transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
         
         .about-image-wrapper:hover .about-image {
-            transform: scale(1.05); /* Smooth zoom on hover */
+            transform: scale(1.05); 
         }
         
         .about-label {
@@ -235,7 +231,7 @@
         }
 
         /* --- EXPERTISE --- */
-        .expertise-section { background: var(--bg-dark); color: white; padding: 80px 0; }
+        .expertise-section { background: var(--bg-dark); color: white; padding: 80px 0; position: relative; z-index: 2; }
         .expertise-section .section-title { color: white; margin-bottom: 10px; }
         .expertise-subtitle { color: #aaa; font-size: 0.9rem; margin-bottom: 40px; }
         .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; }
@@ -244,7 +240,7 @@
         .skill-column li { margin-bottom: 12px; color: #ccc; font-size: 0.95rem; }
 
         /* --- TOOL LOGOS STRIP --- */
-        .tools-strip { background: #ffffff; padding: 30px 0; border-bottom: 1px solid #e0ddd5; display: flex; justify-content: center; align-items: center; gap: 40px; flex-wrap: wrap; }
+        .tools-strip { background: #ffffff; padding: 30px 0; border-bottom: 1px solid #e0ddd5; display: flex; justify-content: center; align-items: center; gap: 40px; flex-wrap: wrap; position: relative; z-index: 2;}
         .tool-icon-img { width: 32px; height: 32px; object-fit: contain; opacity: 0.6; transition: all 0.3s ease; }
         .tool-icon-img:hover { opacity: 1; transform: translateY(-5px) scale(1.1); }
 
@@ -260,7 +256,7 @@
         .career-desc { color: var(--secondary-text); font-size: 0.95rem; line-height: 1.6; }
 
         /* --- KIND WORDS (TESTIMONIALS) --- */
-        .kind-words-section { background: #fff; padding: 100px 0; }
+        .kind-words-section { background: #fff; padding: 100px 0; position: relative; z-index: 2; }
         .testimony-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
         .testimony-card { padding: 40px; background: var(--bg-light); border-radius: 20px; border: 1px solid #e0ddd5; transition: transform 0.4s ease, box-shadow 0.4s ease; }
         .testimony-card:hover { transform: translateY(-8px) scale(1.03); box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
@@ -270,12 +266,9 @@
 
         /* --- FOOTER --- */
         footer { 
-            /* Background color and transparency (0.6) */
             background: rgba(245, 245, 245, 0.3); 
-            /* Blurriness amount (12px) */
             backdrop-filter: blur(5px); 
             -webkit-backdrop-filter: blur(5px); 
-            
             text-align: center; 
             padding: 80px 20px; 
             display: flex; 
@@ -287,48 +280,19 @@
             z-index: 10; 
         }
 
-        .footer-logo { 
-            font-family: "Brush Script MT", cursive; 
-            font-size: 2.5rem; 
-        }
+        .footer-logo { font-family: "Brush Script MT", cursive; font-size: 2.5rem; }
         
-        /* --- UPDATED SOCIAL LINKS CSS --- */
-        .social-links { 
-            display: flex; 
-            gap: 40px; /* Made the gap a bit wider so the text has room to breathe */
-            margin-top: 20px; 
-        }
-        
-        /* THIS KEEPS YOUR ICONS THE CORRECT SIZE */
-        .social-icon-img { 
-            width: 36px; 
-            height: 36px; 
-            object-fit: contain; 
-            transition: 0.3s; 
-            opacity: 0.8; 
-        }
+        .social-links { display: flex; gap: 40px; margin-top: 20px; }
         
         .social-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px; /* Space between the icon and the text */
-            text-decoration: none;
+            display: flex; flex-direction: column; align-items: center; gap: 8px; text-decoration: none;
         }
         .social-icon-img { 
-            width: 36px; height: 36px; object-fit: contain; 
-            transition: all 0.3s ease; opacity: 0.8; 
+            width: 36px; height: 36px; object-fit: contain; transition: all 0.3s ease; opacity: 0.8; 
         }
         
-        /* The Hover Effects */
-        .social-item:hover .social-icon-img { 
-            opacity: 1; 
-            transform: translateY(-5px) scale(1.1); 
-        }
-        
-        .social-item:hover .social-label {
-            color: var(--accent); /* Changes the text to your signature pink! */
-        }
+        .social-item:hover .social-icon-img { opacity: 1; transform: translateY(-5px) scale(1.1); }
+        .social-item:hover .social-label { color: var(--accent); }
 
         /* --- WIP POPUP CSS --- */
         .popup-overlay {
@@ -368,30 +332,14 @@
             .menu-toggle:checked ~ .hamburger span:nth-child(2) { opacity: 0; }
             .menu-toggle:checked ~ .hamburger span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
 
-            /* --- UPDATED MOBILE WORK CARDS --- */
-            .work-item { 
-                flex-direction: column; /* This stacks the image on top and text below */
-                margin-bottom: 60px; 
-            }
-            .work-image { 
-                width: 100%; 
-                height: 280px; /* A better, scaled-down height for phone screens */
-                border-radius: 20px;
-            }
+            .work-item { flex-direction: column; margin-bottom: 60px; }
+            .work-image { width: 100%; height: 280px; border-radius: 20px; }
             .work-content { 
-                position: relative; 
-                width: 92%; /* Creates a nice floating margin on the sides */
-                padding: 25px; 
-                top: -40px; /* Slight negative margin keeps that premium overlapping glass effect! */
-                left: 0 !important; 
-                right: 0 !important; 
-                margin: 0 auto; 
+                position: relative; width: 92%; padding: 25px; 
+                top: -40px; left: 0 !important; right: 0 !important; margin: 0 auto; 
             }
-            .work-content h3 { 
-                font-size: 1.4rem; /* Slightly smaller heading so it fits perfectly on phones */
-            }
+            .work-content h3 { font-size: 1.4rem; }
             .tools-strip { gap: 20px; padding: 30px 20px; }
-            /* Mobile About Section */
             .about-grid { grid-template-columns: 1fr; gap: 40px; }
             .about-image-wrapper { width: 90%; margin: 0 auto; max-width: 400px; }
             .about-headline { font-size: 2.2rem; }
@@ -405,8 +353,6 @@
     <div class="dot-layer" aria-hidden="true">
         <canvas id="dots"></canvas>
     </div>
-
-    <canvas id="bg-canvas"></canvas>
 
     <div id="wip-popup" class="popup-overlay">
         <div class="popup-content">
@@ -474,7 +420,8 @@
             </div>
         </div>
     </section>
-    </section> <section class="about-section" id="about">
+    
+    <section class="about-section" id="about">
         <div class="container about-grid">
             <div class="about-image-wrapper animate-on-scroll">
                 <img src="ganeshgifMD.gif" alt="Ganesh Javhare" class="about-image">
@@ -501,6 +448,7 @@
             </div>
         </div>
     </section>
+    
     <section class="expertise-section" id="expertise">
         <div class="container">
             <h2 class="section-title animate-on-scroll">Expertise</h2>
@@ -576,11 +524,8 @@
         <div class="footer-logo">Lets Build Something together</div>
         
         <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
-            
             <a href="mailto:gjavhare.ux@gmail.com" class="cta-button ripple-btn">Email Me</a>
-            
             <button onclick="startChat()" class="cta-button ripple-btn" style="border: none; font-family: inherit; background: #222; color: #fff;">Chat Now</button>
-            
         </div>
        <div class="social-links">
             <a href="https://www.linkedin.com/in/gjuxdesigner/" target="_blank" aria-label="LinkedIn" class="social-item">
@@ -602,15 +547,13 @@
     </footer>
 
     <script>
-        // --- 1. SCROLL ANIMATION LOGIC (REPEATING) ---
+        // --- 1. SCROLL ANIMATION LOGIC ---
         const observerOptions = { root: null, rootMargin: '0px', threshold: 0.15 };
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    // Add the class to animate in when scrolling down
                     entry.target.classList.add('is-visible');
                 } else {
-                    // Remove the class to reset the animation when scrolling past
                     entry.target.classList.remove('is-visible');
                 }
             });
@@ -625,98 +568,7 @@
             link.addEventListener('click', () => { if(window.innerWidth <= 768) { menuToggle.checked = false; } });
         });
 
-        // --- 3. DISPERSING DOTTED BACKGROUND & WAVES LOGIC ---
-        const canvas = document.getElementById('bg-canvas');
-        const ctx = canvas.getContext('2d');
-        let dots = [];
-        let bgRipples = []; // NEW: Array to hold background wave ripples
-        const spacing = 15; const repelRadius = 50; let mouse = { x: -1000, y: -1000 };
-
-        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; initDots(); }
-        function initDots() {
-            dots = [];
-            for (let x = 0; x < canvas.width; x += spacing) {
-                for (let y = 0; y < canvas.height; y += spacing) {
-                    dots.push({ x: x, y: y, baseX: x, baseY: y });
-                }
-            }
-        }
-        window.addEventListener('resize', resizeCanvas);
-        window.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
-        window.addEventListener('mouseout', () => { mouse.x = -1000; mouse.y = -1000; });
-
-        // NEW: Function to generate a background wave
-        function createBgRipple(x, y) {
-            bgRipples.push({ x: x, y: y, radius: 0, alpha: 0.5 });
-        }
-
-        // NEW: Trigger wave on click/tap
-        window.addEventListener('click', (e) => createBgRipple(e.clientX, e.clientY));
-        window.addEventListener('touchstart', (e) => {
-            if (e.touches.length > 0) createBgRipple(e.touches[0].clientX, e.touches[0].clientY);
-        });
-
-        // NEW: Trigger wave when hovering over interactive elements
-        const hoverElements = document.querySelectorAll('.stat-card, .work-content, .cta-button, .tool-icon-img, .social-icon-img, .testimony-card, .nav-links a, .view-project');
-        hoverElements.forEach(el => {
-            el.addEventListener('mouseenter', (e) => {
-                createBgRipple(e.clientX, e.clientY);
-            });
-        });
-
-        function animateDots() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.08)'; 
-            dots.forEach(dot => {
-                let dx = mouse.x - dot.x; let dy = mouse.y - dot.y; let distance = Math.sqrt(dx * dx + dy * dy);
-                if (distance < repelRadius) {
-                    let force = (repelRadius - distance) / repelRadius; let angle = Math.atan2(dy, dx);
-                    let targetX = dot.x - Math.cos(angle) * force * 15; let targetY = dot.y - Math.sin(angle) * force * 15;
-                    dot.x += (targetX - dot.x) * 0.2; dot.y += (targetY - dot.y) * 0.2;
-                } else {
-                    dot.x += (dot.baseX - dot.x) * 0.1; dot.y += (dot.baseY - dot.y) * 0.1;
-                }
-                ctx.beginPath(); ctx.arc(dot.x, dot.y, 1.5, 0, Math.PI * 2); ctx.fill();
-            });
-
-            // NEW: Render the background waves
-            for (let i = bgRipples.length - 1; i >= 0; i--) {
-                let r = bgRipples[i];
-                
-                // ADJUST SPEED: Higher number = faster wave
-                r.radius += 3; 
-                
-                // ADJUST FADE OUT: Lower number = lasts longer on screen
-                r.alpha -= 0.006; 
-                
-                if (r.alpha <= 0) {
-                    bgRipples.splice(i, 1);
-                } else {
-                    ctx.beginPath();
-                    ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
-                    
-                    // --- 1. ADJUST GLOW ---
-                    ctx.shadowBlur = 20; // Set higher (e.g., 20) for more blur/glow
-                    ctx.shadowColor = `rgba(255, 0, 128, ${r.alpha})`; // Glow color
-                    
-                    // --- 2. ADJUST LINE WIDTH ---
-                    ctx.lineWidth = 1; // Thicker line (was 1.5)
-                    
-                    // --- 3. ADJUST STROKE COLOR ---
-                    ctx.strokeStyle = `rgba(255,120, 255, ${r.alpha})`; // Pink wave
-                    
-                    ctx.stroke();
-                    
-                    // CRITICAL: Turn off glow so the black background dots don't glow!
-                    ctx.shadowBlur = 0; 
-                }
-            }
-
-            requestAnimationFrame(animateDots);
-        }
-        resizeCanvas(); animateDots();
-
-        // --- 4. BUTTON RIPPLE EFFECT LOGIC ---
+        // --- 3. BUTTON RIPPLE EFFECT LOGIC ---
         const buttons = document.querySelectorAll('.ripple-btn');
         buttons.forEach(btn => {
             btn.addEventListener('click', function(e) {
@@ -729,7 +581,7 @@
             });
         });
 
-        // --- 5. STAT CARD SPOTLIGHT GLOW LOGIC ---
+        // --- 4. STAT CARD SPOTLIGHT GLOW LOGIC ---
         document.querySelectorAll('.stat-card').forEach(card => {
             card.addEventListener('mousemove', (e) => {
                 const rect = card.getBoundingClientRect();
@@ -738,7 +590,7 @@
             });
         }); 
 
-        // --- 6. WORK CARD SPOTLIGHT GLOW LOGIC ---
+        // --- 5. WORK CARD SPOTLIGHT GLOW LOGIC ---
         document.querySelectorAll('.work-content').forEach(card => {
             card.addEventListener('mousemove', (e) => {
                 const rect = card.getBoundingClientRect();
@@ -747,64 +599,39 @@
             });
         });
 
-        // --- 7. WIP POPUP LOGIC ---
+        // --- 6. WIP POPUP LOGIC ---
         const popup = document.getElementById('wip-popup');
         const closeBtn = document.getElementById('close-popup');
         const gotItBtn = document.getElementById('got-it-btn');
 
-        // Show the popup 1 second after page load (Memory removed for testing!)
-        setTimeout(() => {
-            popup.classList.add('show'); 
-        }, 1000);
-
-        function closePopup() {
-            popup.classList.remove('show');
-        }
-
+        setTimeout(() => { popup.classList.add('show'); }, 1000);
+        function closePopup() { popup.classList.remove('show'); }
         closeBtn.addEventListener('click', closePopup);
         gotItBtn.addEventListener('click', closePopup);
-        // --- 8. LIVE VISITOR COUNTER ---
+
+        // --- 7. LIVE VISITOR COUNTER ---
         const countElement = document.getElementById('visitor-count');
-        
-        // This contacts a free database, creates a unique tracker for your portfolio, and adds +1
         fetch('https://api.counterapi.dev/v1/ganeshjavhare/portfolio/up')
             .then(response => response.json())
-            .then(data => {
-                // Updates the '...' on your screen with the actual live number!
-                countElement.innerText = data.count;
-            })
-            .catch(error => {
-                // If the free server is ever busy, it just hides the text smoothly
-                countElement.innerText = "1,000+"; 
-            });
-        // --- 9. ON-DEMAND LIVE CHAT LOGIC ---
-        let tawkLoaded = false;
+            .then(data => { countElement.innerText = data.count; })
+            .catch(error => { countElement.innerText = "1,000+"; });
 
+        // --- 8. ON-DEMAND LIVE CHAT LOGIC ---
+        let tawkLoaded = false;
         function startChat() {
-            // If it's already loaded, just show and maximize it
             if (tawkLoaded && typeof Tawk_API !== 'undefined') {
                 Tawk_API.showWidget();
                 Tawk_API.maximize();
                 return;
             }
-            
-            // Otherwise, load it for the first time
             tawkLoaded = true;
             window.Tawk_API = window.Tawk_API || {};
             window.Tawk_LoadStart = new Date();
-            
-            // As soon as it finishes loading behind the scenes, pop it open!
             window.Tawk_API.onLoad = function(){
                 window.Tawk_API.showWidget();
                 window.Tawk_API.maximize();
             };
-            
-            // Hide it completely if they click the minimize dash
-            window.Tawk_API.onChatMinimized = function(){
-                window.Tawk_API.hideWidget();
-            };
-
-            // Inject the script into the page
+            window.Tawk_API.onChatMinimized = function(){ window.Tawk_API.hideWidget(); };
             var s1=document.createElement("script"), s0=document.getElementsByTagName("script")[0];
             s1.async=true;
             s1.src='https://embed.tawk.to/69ae130e7ac1721c39912761/1jj7vksrb';
@@ -813,133 +640,130 @@
             s0.parentNode.insertBefore(s1,s0);
         };
 
-        //-10 ---------- NATURAL FLUID DOT INTERACTION ----------
-    const canvas = document.getElementById("dots");
-    const ctx = canvas.getContext("2d");
+        // --- 9. NATURAL FLUID DOT INTERACTION ---
+        const canvas = document.getElementById("dots");
+        const ctx = canvas.getContext("2d");
+        let w = 0, h = 0, dpr = Math.max(1, window.devicePixelRatio || 1);
 
-    let w = 0, h = 0, dpr = Math.max(1, window.devicePixelRatio || 1);
+        const config = {
+            spacing: 16,             
+            radius: 1.2,
+            hoverMaxDist: 250,       
+            hoverWavelength: 150,    
+            hoverFrequency: 0.8,     
+            hoverAmplitude: 20,      
+            hoverDecay: 150,         
+            rippleAmplitude: 30,     
+            rippleWavelength: 120,
+            rippleSpeed: 150,        
+            rippleDecayDist: 800,
+            rippleDecayTime: 4,      
+            rippleMaxDuration: 6     
+        };
 
-    // --- UPDATED CONFIG FOR NATURAL WAVES ---
-    const config = {
-        spacing: 16,             // Slightly wider spacing for a cleaner look
-        radius: 1.2,
-        hoverMaxDist: 250,       // Wave reaches further out from cursor
-        hoverWavelength: 150,    // Much longer, smoother waves
-        hoverFrequency: 0.8,     // Slower, calmer undulation 
-        hoverAmplitude: 20,      // Gentle peak height
-        hoverDecay: 150,         // Smooth fade out into flat area
-        rippleAmplitude: 30,     // Gentle click ripple
-        rippleWavelength: 120,
-        rippleSpeed: 150,        // Slower ripple speed
-        rippleDecayDist: 800,
-        rippleDecayTime: 4,      
-        rippleMaxDuration: 6     
-    };
+        const mouse = { x: -9999, y: -9999, active: false };
+        let points = [];
+        let ripples = [];
 
-    const mouse = { x: -9999, y: -9999, active: false };
-    let points = [];
-    let ripples = [];
+        function resize(){
+            w = window.innerWidth;
+            h = window.innerHeight;
+            canvas.width = Math.floor(w * dpr);
+            canvas.height = Math.floor(h * dpr);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    function resize(){
-        w = window.innerWidth;
-        h = window.innerHeight;
-        canvas.width = Math.floor(w * dpr);
-        canvas.height = Math.floor(h * dpr);
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            points = [];
+            const cols = Math.ceil(w / config.spacing) + 1;
+            const rows = Math.ceil(h / config.spacing) + 1;
 
-        points = [];
-        const cols = Math.ceil(w / config.spacing) + 1;
-        const rows = Math.ceil(h / config.spacing) + 1;
-
-        for (let y = 0; y < rows; y++){
-            for (let x = 0; x < cols; x++){
-                points.push({ ox: x * config.spacing, oy: y * config.spacing });
-            }
-        }
-    }
-
-    function draw(){
-        const t = performance.now() / 1000;
-
-        ctx.clearRect(0, 0, w, h);
-        ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--dot").trim();
-
-        ripples = ripples.filter(r => (t - r.start) < config.rippleMaxDuration);
-
-        for (const p of points){
-            let dispX = 0;
-            let dispY = 0;
-
-            if (mouse.active){
-                const dx = p.ox - mouse.x;
-                const dy = p.oy - mouse.y;
-                const dist = Math.hypot(dx, dy);
-
-                if (dist > 0 && dist < config.hoverMaxDist){
-                    const angle = Math.atan2(dy, dx);
-                    const k = 2 * Math.PI / config.hoverWavelength;
-                    const omega = 2 * Math.PI * config.hoverFrequency;
-                    const phase = omega * t;
-                    const disp = config.hoverAmplitude * Math.sin(k * dist - phase) * Math.exp(-dist / config.hoverDecay);
-
-                    dispX += Math.cos(angle) * disp;
-                    dispY += Math.sin(angle) * disp;
+            for (let y = 0; y < rows; y++){
+                for (let x = 0; x < cols; x++){
+                    points.push({ ox: x * config.spacing, oy: y * config.spacing });
                 }
             }
-
-            for (const ripple of ripples){
-                const dx = p.ox - ripple.x;
-                const dy = p.oy - ripple.y;
-                const dist = Math.hypot(dx, dy);
-                const timeDiff = t - ripple.start;
-
-                if (dist > 0){
-                    const angle = Math.atan2(dy, dx);
-                    const k = 2 * Math.PI / config.rippleWavelength;
-                    const phase = k * dist - (config.rippleSpeed * timeDiff / config.rippleWavelength * 2 * Math.PI);
-                    const envelope = Math.exp(-dist / config.rippleDecayDist) * Math.exp(-timeDiff / config.rippleDecayTime);
-                    const disp = config.rippleAmplitude * Math.sin(phase) * envelope;
-
-                    dispX += Math.cos(angle) * disp;
-                    dispY += Math.sin(angle) * disp;
-                }
-            }
-
-            ctx.beginPath();
-            ctx.arc(p.ox + dispX, p.oy + dispY, config.radius, 0, Math.PI * 2);
-            ctx.fill();
         }
 
-        requestAnimationFrame(draw);
-    }
+        function draw(){
+            const t = performance.now() / 1000;
 
-    window.addEventListener("mousemove", e => {
-        mouse.active = true;
-        // Adjusted the center point of the 30px cursor (-15px to center it perfectly)
-        document.getElementById('custom-cursor').style.transform = `translate(${e.clientX - 15}px, ${e.clientY - 15}px)`;
-        mouse.x = e.clientX;
-        mouse.y = e.clientY;
-    });
+            ctx.clearRect(0, 0, w, h);
+            ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--dot").trim();
 
-    window.addEventListener("touchstart", e => {
-        const touch = e.touches[0];
-        ripples.push({ x: touch.clientX, y: touch.clientY, start: performance.now() / 1000 });
-    });
+            ripples = ripples.filter(r => (t - r.start) < config.rippleMaxDuration);
 
-    window.addEventListener("mouseleave", () => {
-        mouse.active = false;
-        mouse.x = -9999;
-        mouse.y = -9999;
-    });
+            for (const p of points){
+                let dispX = 0;
+                let dispY = 0;
 
-    window.addEventListener("click", e => {
-        ripples.push({ x: e.clientX, y: e.clientY, start: performance.now() / 1000 });
-    });
+                if (mouse.active){
+                    const dx = p.ox - mouse.x;
+                    const dy = p.oy - mouse.y;
+                    const dist = Math.hypot(dx, dy);
 
-    window.addEventListener("resize", resize);
+                    if (dist > 0 && dist < config.hoverMaxDist){
+                        const angle = Math.atan2(dy, dx);
+                        const k = 2 * Math.PI / config.hoverWavelength;
+                        const omega = 2 * Math.PI * config.hoverFrequency;
+                        const phase = omega * t;
+                        const disp = config.hoverAmplitude * Math.sin(k * dist - phase) * Math.exp(-dist / config.hoverDecay);
 
-    resize();
-    draw();
+                        dispX += Math.cos(angle) * disp;
+                        dispY += Math.sin(angle) * disp;
+                    }
+                }
+
+                for (const ripple of ripples){
+                    const dx = p.ox - ripple.x;
+                    const dy = p.oy - ripple.y;
+                    const dist = Math.hypot(dx, dy);
+                    const timeDiff = t - ripple.start;
+
+                    if (dist > 0){
+                        const angle = Math.atan2(dy, dx);
+                        const k = 2 * Math.PI / config.rippleWavelength;
+                        const phase = k * dist - (config.rippleSpeed * timeDiff / config.rippleWavelength * 2 * Math.PI);
+                        const envelope = Math.exp(-dist / config.rippleDecayDist) * Math.exp(-timeDiff / config.rippleDecayTime);
+                        const disp = config.rippleAmplitude * Math.sin(phase) * envelope;
+
+                        dispX += Math.cos(angle) * disp;
+                        dispY += Math.sin(angle) * disp;
+                    }
+                }
+
+                ctx.beginPath();
+                ctx.arc(p.ox + dispX, p.oy + dispY, config.radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            requestAnimationFrame(draw);
+        }
+
+        window.addEventListener("mousemove", e => {
+            mouse.active = true;
+            document.getElementById('custom-cursor').style.transform = `translate(${e.clientX - 15}px, ${e.clientY - 15}px)`;
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        window.addEventListener("touchstart", e => {
+            const touch = e.touches[0];
+            ripples.push({ x: touch.clientX, y: touch.clientY, start: performance.now() / 1000 });
+        });
+
+        window.addEventListener("mouseleave", () => {
+            mouse.active = false;
+            mouse.x = -9999;
+            mouse.y = -9999;
+        });
+
+        window.addEventListener("click", e => {
+            ripples.push({ x: e.clientX, y: e.clientY, start: performance.now() / 1000 });
+        });
+
+        window.addEventListener("resize", resize);
+
+        resize();
+        draw();
 
     </script>
 </body>
