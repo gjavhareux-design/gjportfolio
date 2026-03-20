@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work in Progress | Ganesh Javhare</title>
+    <style>
+        :root {
+            --primary-text: #1a1a1a;
+            --secondary-text: #666;
+            --accent: #ff0080; 
+            --bg-light: #faf8f5; 
+            --nav-height: 80px;
+            --dot: rgba(27,27,27,.12);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--primary-text);
+            line-height: 1.6;
+            overflow: hidden; /* Keeps the cat from causing scrollbars */
+            height: 100vh;
+            position: relative;
+            cursor: none; /* Hide default cursor to use the custom one */
+        }
+
+        /* ---------- DOTS LAYER ---------- */
+        .dot-layer{
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: auto;
+        }
+
+        canvas{
+            width:100%;
+            height:100%;
+            display:block;
+        }
+
+        /* This creates the custom cursor appearance */
+        #custom-cursor {
+            width: 30px; 
+            height: 30px;
+            background-color: White; 
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            top: 0;
+            left: 0;
+            mix-blend-mode: difference; 
+            transition: transform 0.1s ease-out;
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            position: fixed; top: 0; width: 100%; height: var(--nav-height);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 5%; background: rgba(245, 245, 245, 0.50);
+            backdrop-filter: blur(10px); z-index: 1000;
+        }
+        .nav-logo { 
+            font-family: "Brush Script MT", cursive; font-size: 1.6rem; 
+            text-decoration: none; color: var(--primary-text); 
+            display: flex; align-items: center; gap: 12px; z-index: 1001; 
+        }
+        .brand-icon { height: 32px; width: auto; object-fit: contain; }
+        .nav-links { display: flex; gap: 35px; list-style: none; }
+        .nav-links a { text-decoration: none; color: var(--primary-text); font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--accent); }
+
+        /* --- WIP CENTER CARD --- */
+        .wip-container {
+            height: 100vh; display: flex; justify-content: center; align-items: center;
+            padding: 20px; z-index: 10; position: relative; pointer-events: none;
+        }
+        
+        .wip-card {
+            background: rgba(255, 255, 255, 0.6); padding: 50px; border-radius: 30px;
+            max-width: 500px; text-align: center; pointer-events: auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05); border: 1px solid rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+        }
+        
+        .wip-card h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 15px; letter-spacing: -0.02em; }
+        .wip-card p { color: var(--secondary-text); margin-bottom: 30px; font-size: 1.1rem; }
+        
+        .back-btn {
+            background: var(--primary-text); color: white; padding: 14px 30px; 
+            border-radius: 100px; text-decoration: none; font-weight: 600; 
+            display: inline-block; transition: 0.3s;
+        }
+        .back-btn:hover { background: var(--accent); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(255,0,128,0.3); }
+
+        /* --- THE CAT --- */
+        #cat-wrapper {
+            position: fixed; top: 50%; left: 50%; width: 70px; height: 70px;
+            margin-top: -35px; margin-left: -35px; z-index: 999; pointer-events: none;
+        }
+        #cat-inner { width: 100%; height: 100%; transition: transform 0.2s; }
+        @keyframes walkBounce { 0% { transform: translateY(0); } 50% { transform: translateY(-12px); } 100% { transform: translateY(0); } }
+        .walking #cat-inner { animation: walkBounce 0.3s infinite; }
+
+        @media (max-width: 768px) { .nav-links { display: none; } }
+    </style>
+</head>
+<body>
+    <div id="custom-cursor"></div>
+    
+    <div class="dot-layer" aria-hidden="true">
+        <canvas id="dots"></canvas>
+    </div>
+
+    <nav>
+        <a href="www.gjuxdesign.in" class="nav-logo"><img src="GJLogo.png" alt="GJ Logo" class="brand-icon">Ganesh Javhare</a>
+        <label for="menu-toggle" class="hamburger"><span></span><span></span><span></span></label>
+        <ul class="nav-links">
+            <li><a href="#work">Work</a></li><li><a href="#about">About Me</a></li><li><a href="CS1.html">My Library</a></li><li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <div class="wip-container">
+        <div class="wip-card">
+            <h1>🚧 Brewing Magic</h1>
+            <p>I'm still putting the finishing touches on this section. In the meantime, try moving your mouse around and watch my little assistant!</p>
+            <a href="index.html" class="back-btn">Head Back Home</a>
+        </div>
+    </div>
+
+    <div id="cat-wrapper">
+        <div id="cat-inner">
+            <svg width="70" height="70" viewBox="0 0 100 100">
+                <path d="M 80,70 Q 110,60 90,20" fill="none" stroke="#F58216" stroke-width="8" stroke-linecap="round"/>
+                <rect x="20" y="45" width="60" height="40" rx="20" fill="#F58216" />
+                <ellipse cx="50" cy="70" rx="20" ry="15" fill="#FFE5B4" />
+                <rect x="65" y="70" width="12" height="25" rx="6" fill="#F58216" />
+                <rect x="25" y="70" width="13" height="25" rx="6" fill="#F58216" />
+                <polygon points="20,40 30,10 45,35" fill="#F58216" />
+                <polygon points="25,35 30,20 38,35" fill="#FFA07A" />
+                <polygon points="80,40 70,10 55,35" fill="#F58216" />
+                <polygon points="75,35 70,20 62,35" fill="#FFA07A" />
+                <circle cx="50" cy="45" r="32" fill="#F58216" />
+                <path d="M 45,15 L 45,25 M 35,18 L 40,26 M 65,18 L 60,26" stroke="#d66b0d" stroke-width="2.5" stroke-linecap="round"/>
+                <ellipse cx="50" cy="55" rx="12" ry="8" fill="#FFE5B4" />
+                <circle cx="38" cy="42" r="10" fill="#fff" />
+                <circle cx="62" cy="42" r="10" fill="#fff" />
+                <g id="pupils">
+                    <circle cx="38" cy="42" r="4" fill="#000" />
+                    <circle cx="62" cy="42" r="4" fill="#000" />
+                </g>
+                <polygon points="47,52 53,52 50,56" fill="#ff66b2" />
+            </svg>
+        </div>
+    </div>
+
+    <script>
+    // ---------- NATURAL FLUID DOT INTERACTION ----------
+    const canvas = document.getElementById("dots");
+    const ctx = canvas.getContext("2d");
+
+    let w = 0, h = 0, dpr = Math.max(1, window.devicePixelRatio || 1);
+
+    // --- UPDATED CONFIG FOR NATURAL WAVES ---
+    const config = {
+        spacing: 16,             // Slightly wider spacing for a cleaner look
+        radius: 1.2,
+        hoverMaxDist: 250,       // Wave reaches further out from cursor
+        hoverWavelength: 150,    // Much longer, smoother waves
+        hoverFrequency: 0.8,     // Slower, calmer undulation 
+        hoverAmplitude: 20,      // Gentle peak height
+        hoverDecay: 150,         // Smooth fade out into flat area
+        rippleAmplitude: 30,     // Gentle click ripple
+        rippleWavelength: 120,
+        rippleSpeed: 150,        // Slower ripple speed
+        rippleDecayDist: 800,
+        rippleDecayTime: 4,      
+        rippleMaxDuration: 6     
+    };
+
+    const mouse = { x: -9999, y: -9999, active: false };
+    let points = [];
+    let ripples = [];
+
+    function resize(){
+        w = window.innerWidth;
+        h = window.innerHeight;
+        canvas.width = Math.floor(w * dpr);
+        canvas.height = Math.floor(h * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        points = [];
+        const cols = Math.ceil(w / config.spacing) + 1;
+        const rows = Math.ceil(h / config.spacing) + 1;
+
+        for (let y = 0; y < rows; y++){
+            for (let x = 0; x < cols; x++){
+                points.push({ ox: x * config.spacing, oy: y * config.spacing });
+            }
+        }
+    }
+
+    function draw(){
+        const t = performance.now() / 1000;
+
+        ctx.clearRect(0, 0, w, h);
+        ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--dot").trim();
+
+        ripples = ripples.filter(r => (t - r.start) < config.rippleMaxDuration);
+
+        for (const p of points){
+            let dispX = 0;
+            let dispY = 0;
+
+            if (mouse.active){
+                const dx = p.ox - mouse.x;
+                const dy = p.oy - mouse.y;
+                const dist = Math.hypot(dx, dy);
+
+                if (dist > 0 && dist < config.hoverMaxDist){
+                    const angle = Math.atan2(dy, dx);
+                    const k = 2 * Math.PI / config.hoverWavelength;
+                    const omega = 2 * Math.PI * config.hoverFrequency;
+                    const phase = omega * t;
+                    const disp = config.hoverAmplitude * Math.sin(k * dist - phase) * Math.exp(-dist / config.hoverDecay);
+
+                    dispX += Math.cos(angle) * disp;
+                    dispY += Math.sin(angle) * disp;
+                }
+            }
+
+            for (const ripple of ripples){
+                const dx = p.ox - ripple.x;
+                const dy = p.oy - ripple.y;
+                const dist = Math.hypot(dx, dy);
+                const timeDiff = t - ripple.start;
+
+                if (dist > 0){
+                    const angle = Math.atan2(dy, dx);
+                    const k = 2 * Math.PI / config.rippleWavelength;
+                    const phase = k * dist - (config.rippleSpeed * timeDiff / config.rippleWavelength * 2 * Math.PI);
+                    const envelope = Math.exp(-dist / config.rippleDecayDist) * Math.exp(-timeDiff / config.rippleDecayTime);
+                    const disp = config.rippleAmplitude * Math.sin(phase) * envelope;
+
+                    dispX += Math.cos(angle) * disp;
+                    dispY += Math.sin(angle) * disp;
+                }
+            }
+
+            ctx.beginPath();
+            ctx.arc(p.ox + dispX, p.oy + dispY, config.radius, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        requestAnimationFrame(draw);
+    }
+
+    window.addEventListener("mousemove", e => {
+        mouse.active = true;
+        // Adjusted the center point of the 30px cursor (-15px to center it perfectly)
+        document.getElementById('custom-cursor').style.transform = `translate(${e.clientX - 15}px, ${e.clientY - 15}px)`;
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+    });
+
+    window.addEventListener("touchstart", e => {
+        const touch = e.touches[0];
+        ripples.push({ x: touch.clientX, y: touch.clientY, start: performance.now() / 1000 });
+    });
+
+    window.addEventListener("mouseleave", () => {
+        mouse.active = false;
+        mouse.x = -9999;
+        mouse.y = -9999;
+    });
+
+    window.addEventListener("click", e => {
+        ripples.push({ x: e.clientX, y: e.clientY, start: performance.now() / 1000 });
+    });
+
+    window.addEventListener("resize", resize);
+
+    resize();
+    draw();
+
+    // --- MAGIC CAT LOGIC ---
+    const catWrapper = document.getElementById('cat-wrapper');
+    const catInner = document.getElementById('cat-inner');
+    const pupils = document.getElementById('pupils');
+    
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let catX = window.innerWidth / 2;
+    let catY = window.innerHeight / 2 + 150; 
+    
+    let isWalking = false;
+    let stopTimer;
+
+    window.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+
+        isWalking = false;
+        catWrapper.classList.remove('walking');
+        clearTimeout(stopTimer);
+
+        let dx = mouseX - catX;
+        let dy = mouseY - catY;
+        let angle = Math.atan2(dy, dx);
+        
+        let pupilX = Math.cos(angle) * 3;
+        let pupilY = Math.sin(angle) * 3;
+        
+        if (catInner.style.transform === 'scaleX(-1)') {
+            pupilX = -pupilX;
+        }
+        pupils.style.transform = `translate(${pupilX}px, ${pupilY}px)`;
+
+        stopTimer = setTimeout(() => {
+            isWalking = true;
+            catWrapper.classList.add('walking');
+        }, 600); 
+    });
+
+    function catLoop() {
+        if (isWalking) {
+            let dx = mouseX - catX;
+            let dy = mouseY - catY;
+            let distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance > 80) {
+                catX += dx * 0.03; 
+                catY += dy * 0.03;
+
+                if (dx > 0) {
+                    catInner.style.transform = 'scaleX(1)'; 
+                } else {
+                    catInner.style.transform = 'scaleX(-1)'; 
+                }
+
+                catWrapper.style.left = catX + 'px';
+                catWrapper.style.top = catY + 'px';
+            } else {
+                isWalking = false;
+                catWrapper.classList.remove('walking');
+                pupils.style.transform = `translate(0px, 0px)`;
+            }
+        }
+        requestAnimationFrame(catLoop);
+    }
+
+    catWrapper.style.left = catX + 'px';
+    catWrapper.style.top = catY + 'px';
+    requestAnimationFrame(catLoop);
+    </script>
+</body>
+</html>
