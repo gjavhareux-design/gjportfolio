@@ -12,6 +12,7 @@
             --bg-light: #faf8f5; 
             --bg-dark: #222222;
             --nav-height: 80px;
+            --dot: rgba(27,27,27,.12);
         }
 
         html { scroll-behavior: smooth; }
@@ -24,6 +25,34 @@
             color: var(--primary-text);
             line-height: 1.6;
             position: relative;
+        }
+/* ---------- DOTS LAYER ---------- */
+        .dot-layer{
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: auto;
+        }
+
+        canvas{
+            width:100%;
+            height:100%;
+            display:block;
+        }
+
+        /* This creates the custom cursor appearance */
+        #custom-cursor {
+            width: 30px; 
+            height: 30px;
+            background-color: White; 
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            top: 0;
+            left: 0;
+            mix-blend-mode: difference; 
+            transition: transform 0.1s ease-out;
         }
 
         /* --- SCROLL ANIMATION CLASSES --- */
@@ -371,6 +400,11 @@
     </style>
 </head>
 <body>
+    <div id="custom-cursor"></div>
+    
+    <div class="dot-layer" aria-hidden="true">
+        <canvas id="dots"></canvas>
+    </div>
 
     <canvas id="bg-canvas"></canvas>
 
@@ -385,7 +419,7 @@
     </div>
 
     <nav>
-        <a href="www.gjuxdesign.in" target="_blank" class="nav-logo"><img src="GJLogo.png" alt="GJ Logo" class="brand-icon">Ganesh Javhare</a>
+        <a href="#" class="nav-logo"><img src="GJLogo.png" alt="GJ Logo" class="brand-icon">Ganesh Javhare</a>
         <input type="checkbox" id="menu-toggle" class="menu-toggle">
         <label for="menu-toggle" class="hamburger"><span></span><span></span><span></span></label>
         <ul class="nav-links">
@@ -778,6 +812,135 @@
             s1.setAttribute('crossorigin','*');
             s0.parentNode.insertBefore(s1,s0);
         };
+
+        //-10 ---------- NATURAL FLUID DOT INTERACTION ----------
+    const canvas = document.getElementById("dots");
+    const ctx = canvas.getContext("2d");
+
+    let w = 0, h = 0, dpr = Math.max(1, window.devicePixelRatio || 1);
+
+    // --- UPDATED CONFIG FOR NATURAL WAVES ---
+    const config = {
+        spacing: 16,             // Slightly wider spacing for a cleaner look
+        radius: 1.2,
+        hoverMaxDist: 250,       // Wave reaches further out from cursor
+        hoverWavelength: 150,    // Much longer, smoother waves
+        hoverFrequency: 0.8,     // Slower, calmer undulation 
+        hoverAmplitude: 20,      // Gentle peak height
+        hoverDecay: 150,         // Smooth fade out into flat area
+        rippleAmplitude: 30,     // Gentle click ripple
+        rippleWavelength: 120,
+        rippleSpeed: 150,        // Slower ripple speed
+        rippleDecayDist: 800,
+        rippleDecayTime: 4,      
+        rippleMaxDuration: 6     
+    };
+
+    const mouse = { x: -9999, y: -9999, active: false };
+    let points = [];
+    let ripples = [];
+
+    function resize(){
+        w = window.innerWidth;
+        h = window.innerHeight;
+        canvas.width = Math.floor(w * dpr);
+        canvas.height = Math.floor(h * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        points = [];
+        const cols = Math.ceil(w / config.spacing) + 1;
+        const rows = Math.ceil(h / config.spacing) + 1;
+
+        for (let y = 0; y < rows; y++){
+            for (let x = 0; x < cols; x++){
+                points.push({ ox: x * config.spacing, oy: y * config.spacing });
+            }
+        }
+    }
+
+    function draw(){
+        const t = performance.now() / 1000;
+
+        ctx.clearRect(0, 0, w, h);
+        ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--dot").trim();
+
+        ripples = ripples.filter(r => (t - r.start) < config.rippleMaxDuration);
+
+        for (const p of points){
+            let dispX = 0;
+            let dispY = 0;
+
+            if (mouse.active){
+                const dx = p.ox - mouse.x;
+                const dy = p.oy - mouse.y;
+                const dist = Math.hypot(dx, dy);
+
+                if (dist > 0 && dist < config.hoverMaxDist){
+                    const angle = Math.atan2(dy, dx);
+                    const k = 2 * Math.PI / config.hoverWavelength;
+                    const omega = 2 * Math.PI * config.hoverFrequency;
+                    const phase = omega * t;
+                    const disp = config.hoverAmplitude * Math.sin(k * dist - phase) * Math.exp(-dist / config.hoverDecay);
+
+                    dispX += Math.cos(angle) * disp;
+                    dispY += Math.sin(angle) * disp;
+                }
+            }
+
+            for (const ripple of ripples){
+                const dx = p.ox - ripple.x;
+                const dy = p.oy - ripple.y;
+                const dist = Math.hypot(dx, dy);
+                const timeDiff = t - ripple.start;
+
+                if (dist > 0){
+                    const angle = Math.atan2(dy, dx);
+                    const k = 2 * Math.PI / config.rippleWavelength;
+                    const phase = k * dist - (config.rippleSpeed * timeDiff / config.rippleWavelength * 2 * Math.PI);
+                    const envelope = Math.exp(-dist / config.rippleDecayDist) * Math.exp(-timeDiff / config.rippleDecayTime);
+                    const disp = config.rippleAmplitude * Math.sin(phase) * envelope;
+
+                    dispX += Math.cos(angle) * disp;
+                    dispY += Math.sin(angle) * disp;
+                }
+            }
+
+            ctx.beginPath();
+            ctx.arc(p.ox + dispX, p.oy + dispY, config.radius, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        requestAnimationFrame(draw);
+    }
+
+    window.addEventListener("mousemove", e => {
+        mouse.active = true;
+        // Adjusted the center point of the 30px cursor (-15px to center it perfectly)
+        document.getElementById('custom-cursor').style.transform = `translate(${e.clientX - 15}px, ${e.clientY - 15}px)`;
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+    });
+
+    window.addEventListener("touchstart", e => {
+        const touch = e.touches[0];
+        ripples.push({ x: touch.clientX, y: touch.clientY, start: performance.now() / 1000 });
+    });
+
+    window.addEventListener("mouseleave", () => {
+        mouse.active = false;
+        mouse.x = -9999;
+        mouse.y = -9999;
+    });
+
+    window.addEventListener("click", e => {
+        ripples.push({ x: e.clientX, y: e.clientY, start: performance.now() / 1000 });
+    });
+
+    window.addEventListener("resize", resize);
+
+    resize();
+    draw();
+
     </script>
 </body>
 </html>
