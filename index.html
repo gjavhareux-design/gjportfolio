@@ -185,18 +185,34 @@
     /* 4. A soft shadow to lift it off the page */
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05); border-radius: 40px 40px 0 0; padding-top: 80px; }
         .work-item { position: relative; display: flex; align-items: center; margin-bottom: 80px; min-height: 400px; }
-        .work-image { width: 75%; height: 400px; border-radius: 20px; overflow: hidden; background: #eee; }
+        .work-image { 
+    width: 75%; height: 400px; border-radius: 20px; overflow: hidden; background: #eee; 
+    /* 2. Pushes the image slightly into the background */
+    transform: translateZ(0px); 
+    transition: transform 0.2s ease-out;
+}
         .work-image img { width: 130%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
         .work-item:hover .work-image img { transform: scale(1.06); }
         
         .work-content {
-            position: absolute; width: 45%; padding: 40px; background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.08); z-index: 2; overflow: hidden; 
-            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s ease;
-        }
-        .work-item:hover .work-content { transform: translateY(-10px) scale(1.02); box-shadow: 0 30px 60px rgba(0,0,0,0.15); }
+    position: absolute; width: 45%; padding: 40px; background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.08); z-index: 2; overflow: hidden; 
+    /* 3. Pulls the text box OUT toward the user so it floats above the image */
+    transform: translateZ(60px);
+    transition: transform 0.2s ease-out, box-shadow 0.3s ease;
+}
+        .work-item { 
+    position: relative; 
+    display: flex; 
+    align-items: center; 
+    margin-bottom: 80px; 
+    min-height: 400px; 
+    /* 1. Creates the 3D space */
+    perspective: 1200px; 
+    transform-style: preserve-3d; 
+}
         .work-content::before {
             content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient( 400px circle at var(--mouse-x, -500px) var(--mouse-y, -500px), rgba(255, 194, 7, 0.15), transparent 40% );
@@ -1021,6 +1037,68 @@ function startChat() {
                 navBar.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
             });
         }
+
+// --- 11. CORRECTED 3D TILT + INDEPENDENT PARALLAX ---
+document.querySelectorAll('.work-item').forEach(item => {
+    const imageContainer = item.querySelector('.work-image');
+    const textContainer = item.querySelector('.work-content');
+
+    // Remove transition delays while moving for snappy 1:1 tracking
+    item.addEventListener('mouseenter', () => {
+        item.style.transition = 'none';
+        if(imageContainer) imageContainer.style.transition = 'none';
+        if(textContainer) textContainer.style.transition = 'none';
+    });
+
+    item.addEventListener('mousemove', e => {
+        const rect = item.getBoundingClientRect();
+        const x = e.clientX - rect.left; 
+        const y = e.clientY - rect.top;  
+        
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        
+        // 1. Tilt the main wrapper (The 'perspective' here is the magic fix)
+        const rotateX = ((y - centerY) / centerY) * -6; 
+        const rotateY = ((x - centerX) / centerX) * 6;
+        
+        // ADDED PERSPECTIVE BACK HERE:
+        item.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+
+        // 2. Parallax Image (Moves slightly WITH the mouse, pushed back into the screen)
+        const imgX = ((x - centerX) / centerX) * 10;
+        const imgY = ((y - centerY) / centerY) * 10;
+        if (imageContainer) {
+            imageContainer.style.transform = `translateZ(-30px) translateX(${imgX}px) translateY(${imgY}px)`;
+        }
+
+        // 3. Parallax Text (Moves OPPOSITE to the mouse, floating above the screen)
+        const textX = ((x - centerX) / centerX) * -20;
+        const textY = ((y - centerY) / centerY) * -20;
+        if (textContainer) {
+            textContainer.style.transform = `translateZ(80px) translateX(${textX}px) translateY(${textY}px) scale(1.02)`;
+            textContainer.style.boxShadow = `0 35px 70px rgba(0,0,0,0.15)`; 
+        }
+    });
+
+    // Reset everything smoothly when the mouse leaves the card
+    item.addEventListener('mouseleave', () => {
+        item.style.transition = 'transform 0.5s ease-out';
+        if(imageContainer) imageContainer.style.transition = 'transform 0.5s ease-out';
+        if(textContainer) textContainer.style.transition = 'transform 0.5s ease-out, box-shadow 0.5s ease-out';
+
+        item.style.transform = 'perspective(1200px) rotateX(0deg) rotateY(0deg)';
+        
+        if (imageContainer) {
+            imageContainer.style.transform = 'translateZ(0px) translateX(0px) translateY(0px)';
+        }
+        if (textContainer) {
+            // Resets to your default CSS depth
+            textContainer.style.transform = 'translateZ(60px) translateX(0px) translateY(0px) scale(1)';
+            textContainer.style.boxShadow = `0 20px 40px rgba(0,0,0,0.08)`;
+        }
+    });
+});
     </script>
 </body>
 </html>
