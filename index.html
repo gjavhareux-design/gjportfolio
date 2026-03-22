@@ -29,11 +29,11 @@
         }
 
         /* ---------- DOTS LAYER ---------- */
-        .dot-layer{
+        .dot-layer {
             position: fixed;
             inset: 0;
-            z-index: 0;
-            pointer-events: auto;
+            z-index: -1; /* changed from 0 to -1 to force it entirely behind everything */
+            pointer-events: none; /* ensures the canvas never blocks your clicks */
         }
 
         canvas {
@@ -41,19 +41,29 @@
             height:100%;
             display:block;
         }
+/* ---------- PREMIUM GRAIN OVERLAY ---------- */
+        .grain-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none; /* Crucial: lets you click through the grain */
+            z-index: 9998; /* Puts it over your content and header, but under your custom mouse */
+            opacity: 0.0; /* Change this number to make the grain stronger or softer */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
 
         /* This creates the custom cursor appearance */
         #custom-cursor {
-            width: 30px; 
-            height: 30px;
-            background-color: White; 
+            width: 24px; 
+            height: 24px;
+            background-color: var(--accent); /* This uses your theme's exact pink color */
+            box-shadow: 0 4px 15px rgba(255, 0, 128, 0.4); /* This creates a soft pink glowing shadow */
             border-radius: 50%;
             position: fixed;
             pointer-events: none;
-            z-index: 9999;
-            top: 0;
-            left: 0;
-            mix-blend-mode: difference; 
+            z-index: 999999; /* Absolute highest layer */
             transition: transform 0.1s ease-out;
         }
 
@@ -111,7 +121,7 @@
         .section-title { font-size: 2rem; font-weight: 700; margin-bottom: 40px; color: var(--primary-text); }
 
         /* --- HERO SECTION --- */
-        .hero { text-align: center; padding-top: 160px; padding-bottom: 80px; }
+        .hero { text-align: center; padding-top: 120px; padding-bottom: 40px; }
         h1 { font-size: clamp(2.5rem, 5vw, 3.5rem); line-height: 1.1; font-weight: 800; margin-bottom: 1rem; letter-spacing: -0.02em;}
         h1 span.highlight { color: var(--accent); }
         .sub-headline { font-size: 1.1rem; color: var(--primary-text); font-weight: 500; margin-bottom: 2rem; max-width: 600px; margin-inline: auto; }
@@ -148,7 +158,7 @@
         .hero-quote { margin-top: 3rem; font-style: italic; color: var(--secondary-text); font-size: 1.1rem; }
 
         /* --- SELECTED WORK --- */
-        .work-section { background: #fff; border-radius: 40px 40px 0 0; padding-top: 80px; }
+        .work-section { background: rgba(255, 255, 255, 0.5); border-radius: 40px 40px 0 0; padding-top: 80px; }
         .work-item { position: relative; display: flex; align-items: center; margin-bottom: 80px; min-height: 400px; }
         .work-image { width: 75%; height: 400px; border-radius: 20px; overflow: hidden; background: #eee; }
         .work-image img { width: 130%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -211,24 +221,24 @@
         .about-label {
             font-size: 0.85rem; font-weight: 700; letter-spacing: 0.2em;
             color: var(--accent); text-transform: uppercase;
-            display: block; margin-bottom: 24px;
+            display: block; margin-bottom: 15px;
         }
         
         .about-headline {
-            font-size: clamp(2rem, 4vw, 3rem); font-weight: 800;
+            font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 800;
             line-height: 1.1; margin-bottom: 30px;
             color: var(--primary-text); letter-spacing: -0.02em;
         }
         
         .about-desc p {
             font-size: 1.1rem; color: var(--secondary-text);
-            margin-bottom: 20px; line-height: 1.8;
+            margin-bottom: 15px; line-height: 1.8;
         }
         
         .about-stats {
-            margin-top: 40px; padding-top: 40px;
+            margin-top: 20px; padding-top: 20px;
             border-top: 1px solid rgba(0,0,0,0.1);
-            display: grid; grid-template-columns: 1fr 1fr; gap: 30px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
         }
         
         .about-stat-number {
@@ -242,17 +252,17 @@
         }
 
         /* --- EXPERTISE --- */
-        .expertise-section { background: var(--bg-dark); color: white; padding: 80px 0; position: relative; z-index: 2; }
-        .expertise-section .section-title { color: white; margin-bottom: 10px; }
-        .expertise-subtitle { color: #aaa; font-size: 0.9rem; margin-bottom: 40px; }
-        .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; }
-        .skill-column h4 { font-size: 1.1rem; margin-bottom: 20px; font-weight: 600; }
+        .expertise-section { background: rgba(255,250,240,0.70); color: white; padding: 20px 0; position: relative; z-index: 2; }
+        .expertise-section .section-title { color: #36454F; margin-bottom: 10px; }
+        .expertise-subtitle { color: #36454F; font-size: 0.9rem; margin-bottom: 15px; }
+        .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .skill-column h4 { color: #36454F; font-size: 1.1rem; margin-bottom: 20px; font-weight: 600; }
         .skill-column ul { list-style: none; }
-        .skill-column li { margin-bottom: 12px; color: #ccc; font-size: 0.95rem; }
+        .skill-column li { margin-bottom: 8px; color: #36454F; font-size: 0.95rem; }
 
         /* --- TOOL LOGOS STRIP --- */
-        .tools-strip { background: #ffffff; padding: 30px 0; border-bottom: 1px solid #e0ddd5; display: flex; justify-content: center; align-items: center; gap: 40px; flex-wrap: wrap; position: relative; z-index: 2;}
-        .tool-icon-img { width: 32px; height: 32px; object-fit: contain; opacity: 0.6; transition: all 0.3s ease; }
+        .tools-strip { background: #ffffff; padding: 10px 0; border-bottom: 1px solid #e0ddd5; display: flex; justify-content: center; align-items: center; gap: 40px; flex-wrap: wrap; position: relative; z-index: 2;}
+        .tool-icon-img { width: 32px; height: 20 px; object-fit: contain; opacity: 0.6; transition: all 0.3s ease; }
         .tool-icon-img:hover { opacity: 1; transform: translateY(-5px) scale(1.1); }
 
         /* --- CAREER JOURNEY --- */
@@ -267,7 +277,7 @@
         .career-desc { color: var(--secondary-text); font-size: 0.95rem; line-height: 1.6; }
 
         /* --- KIND WORDS (TESTIMONIALS) --- */
-        .kind-words-section { background: #fff; padding: 100px 0; position: relative; z-index: 2; }
+        .kind-words-section { background: rgba(255, 255, 255, 0.8); padding: 100px 0; position: relative; z-index: 2; }
         .testimony-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
         .testimony-card { padding: 40px; background: var(--bg-light); border-radius: 20px; border: 1px solid #e0ddd5; transition: transform 0.4s ease, box-shadow 0.4s ease; }
         .testimony-card:hover { transform: translateY(-8px) scale(1.03); box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
@@ -277,33 +287,100 @@
 
         /* --- FOOTER --- */
         footer { 
-            background: rgba(245, 245, 245, 0.3); 
-            backdrop-filter: blur(5px); 
-            -webkit-backdrop-filter: blur(5px); 
-            text-align: center; 
-            padding: 80px 20px; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            gap: 30px; 
-            border-top: 1px solid rgba(0,0,0,0.05); 
+            background: rgba(0, 0, 0, 0.8); 
+            padding: 20px 0 30px 0; 
             position: relative; 
             z-index: 10; 
+            color: white;
+            border-top: 1px solid rgba(255,255,255,0.05);
         }
 
-        .footer-logo { font-family: "Brush Script MT", cursive; font-size: 2.5rem; }
-        
-        .social-links { display: flex; gap: 40px; margin-top: 20px; }
-        
-        .social-item {
-            display: flex; flex-direction: column; align-items: center; gap: 8px; text-decoration: none;
+        /* ROW 1: Big Centered Heading */
+        .footer-header { 
+            font-family: "Brush Script MT", cursive; 
+            font-size: clamp(2rem, 5vw, 1rem); 
+            color: white; 
+            text-align: center; 
+            line-height: 1.2; 
+            margin-bottom: 20px; /* Adds breathing room below the text */
         }
+
+        /* ROW 2: Centered 2-Column Grid */
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Two perfectly equal columns */
+            gap: 40px;
+            max-width: 600px; /* This keeps the columns from spreading too far apart */
+            margin: 0 auto; /* This perfectly centers the grid inside the footer */
+        }
+
+        /* Center aligns the content inside each column */
+        .footer-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center; 
+            text-align: center;
+        }
+
+        .footer-col h4 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.15em; color: #888; margin-bottom: 25px; }
+
+        /* The Buttons Column */
+        .footer-actions { display: flex; flex-direction: column; gap: 15px; width: 100%; align-items: center; }
+        
+        /* --- BULLETPROOF BUTTON SIZING --- */
+        .action-btn { 
+            width: 150px !important;     /* Locks the exact width */
+            height: 40px !important;     /* Locks the exact height so they match perfectly */
+            display: flex !important;    /* This perfectly centers the text inside the box */
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 0 !important;       /* Removes the browser's hidden default padding */
+            font-size: 1.1rem !important;
+            font-family: inherit !important; /* Forces the button to use your website's font */
+            box-sizing: border-box;
+            border: none !important;     /* Removes any hidden button borders */
+        } 
+
+        /* Keeps the Chat Button colors looking right */
+        .chat-btn { 
+            background: #eee !important; 
+            color: #555 !important; 
+        }
+
+        /* The Social Links Column */
+        .social-links-grid { display: flex; flex-direction: column; gap: 18px; width: 100%; }
+
+        .social-item { display: flex; align-items: center; justify-content: center; gap: 12px; text-decoration: none; }
+
         .social-icon-img { 
-            width: 36px; height: 36px; object-fit: contain; transition: all 0.3s ease; opacity: 0.8; 
+            width: 24px; 
+            height: 24px; 
+            object-fit: contain; 
+            filter: brightness(0) invert(1); /* Forces logos to be white */
+            opacity: 0.7; 
+            transition: all 0.3s ease; 
         }
-        
-        .social-item:hover .social-icon-img { opacity: 1; transform: translateY(-5px) scale(1.1); }
+
+        .social-label { font-size: 0.9rem; color: #aaa; transition: color 0.3s; }
+
+        .social-item:hover .social-icon-img { opacity: 1; transform: scale(1.1); }
         .social-item:hover .social-label { color: var(--accent); }
+
+        /* ROW 3: Bottom Centered Text */
+        .portfolio-views {
+            text-align: center;
+            margin-top: 15px; /* Pushes it down below the columns */
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1); /* Adds a premium divider line */
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        /* Mobile Responsive adjustment */
+        @media (max-width: 768px) {
+            .footer-grid { grid-template-columns: 1fr; gap: 20px; } /* Stacks the columns neatly on phones */
+            .footer-header { margin-bottom: 40px; }
+        }
 
         /* --- WIP POPUP CSS --- */
         .popup-overlay {
@@ -360,6 +437,7 @@
 </head>
 <body>
     <div id="custom-cursor"></div>
+    <div class="grain-bg"></div>
     
     <div class="dot-layer" aria-hidden="true">
         <canvas id="dots"></canvas>
@@ -532,29 +610,47 @@
     </section>
 
     <footer id="contact" class="animate-on-scroll">
-        <div class="footer-logo">Lets Build Something together</div>
-        
-        <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
-            <a href="mailto:gjavhare.ux@gmail.com" class="cta-button ripple-btn">Email Me</a>
-            <button onclick="startChat()" class="cta-button ripple-btn" style="border: none; font-family: inherit; background: #222; color: #fff;">Chat Now</button>
-        </div>
-       <div class="social-links">
-            <a href="https://www.linkedin.com/in/gjuxdesigner/" target="_blank" aria-label="LinkedIn" class="social-item">
-                <img src="Linkedin.svg" alt="LinkedIn" class="social-icon-img">
-                <span class="social-label">LinkedIn</span>
-            </a>
+        <div class="container">
             
-            <a href="https://www.behance.net/ganeshjavhare" target="_blank" aria-label="Behance" class="social-item">
-                <img src="behance.svg" alt="Behance" class="social-icon-img">
-                <span class="social-label">Behance</span>
-            </a>
+            <div class="footer-header">
+                Let's Build Something Together
+            </div>
 
-            <a href="GJUXResume.pdf" target="_blank" aria-label="Resume" class="social-item">
-                <img src="resume.svg" alt="Resume" class="social-icon-img">
-                <span class="social-label">Resume</span>
-            </a>
+            <div class="footer-grid">
+                
+                <div class="footer-col">
+                    <h4>Get in Touch</h4>
+                    <div class="footer-actions">
+                        <a href="mailto:gjavhare.ux@gmail.com" class="cta-button ripple-btn action-btn">Email Me</a>
+                        <button onclick="startChat()" class="cta-button ripple-btn chat-btn action-btn">Chat Now</button>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Follow My Work</h4>
+                    <div class="social-links-grid">
+                        <a href="https://www.linkedin.com/in/gjuxdesigner/" target="_blank" aria-label="LinkedIn" class="social-item">
+                            <img src="Linkedin.svg" alt="LinkedIn" class="social-icon-img">
+                            <span class="social-label">LinkedIn</span>
+                        </a>
+                        <a href="https://www.behance.net/ganeshjavhare" target="_blank" aria-label="Behance" class="social-item">
+                            <img src="behance.svg" alt="Behance" class="social-icon-img">
+                            <span class="social-label">Behance</span>
+                        </a>
+                        <a href="GJUXResume.pdf" target="_blank" aria-label="Resume" class="social-item">
+                            <img src="resume.svg" alt="Resume" class="social-icon-img">
+                            <span class="social-label">Resume</span>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="portfolio-views">
+                Portfolio Views: <span id="visitor-count" style="font-weight: bold; color: var(--accent);">...</span>
+            </div>
+
         </div>
-        <p style="margin-top: 10px; font-size: 0.85rem; color: var(--secondary-text);">Portfolio Views: <span id="visitor-count" style="font-weight: bold; color: var(--accent);">...</span></p>
     </footer>
 
     <script>
@@ -627,29 +723,36 @@
             .then(data => { countElement.innerText = data.count; })
             .catch(error => { countElement.innerText = "1,000+"; });
 
-        // --- 8. ON-DEMAND LIVE CHAT LOGIC ---
-        let tawkLoaded = false;
-        function startChat() {
-            if (tawkLoaded && typeof Tawk_API !== 'undefined') {
-                Tawk_API.showWidget();
-                Tawk_API.maximize();
-                return;
-            }
-            tawkLoaded = true;
-            window.Tawk_API = window.Tawk_API || {};
-            window.Tawk_LoadStart = new Date();
-            window.Tawk_API.onLoad = function(){
-                window.Tawk_API.showWidget();
-                window.Tawk_API.maximize();
-            };
-            window.Tawk_API.onChatMinimized = function(){ window.Tawk_API.hideWidget(); };
-            var s1=document.createElement("script"), s0=document.getElementsByTagName("script")[0];
-            s1.async=true;
-            s1.src='https://embed.tawk.to/69ae130e7ac1721c39912761/1jj7vksrb';
-            s1.charset='UTF-8';
+        // --- 8. INVISIBLE TRACKING & CUSTOM CHAT BUTTON LOGIC ---
+        
+        // 1. Load Tawk.to immediately in the background to track visitors
+        var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+        (function(){
+            var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+            s1.async = true;
+            s1.src = 'https://embed.tawk.to/69ae130e7ac1721c39912761/1jj7vksrb';
+            s1.charset = 'UTF-8';
             s1.setAttribute('crossorigin','*');
             s0.parentNode.insertBefore(s1,s0);
+        })();
+
+        // 2. As soon as Tawk.to loads, instantly hide the default floating bubble
+        Tawk_API.onLoad = function() {
+            Tawk_API.hideWidget();
         };
+
+        // 3. If a user opens the chat but minimizes it later, hide it again
+        Tawk_API.onChatMinimized = function() {
+            Tawk_API.hideWidget();
+        };
+
+        // 4. This runs ONLY when they click your custom "Chat Now" button
+        function startChat() {
+            if (typeof Tawk_API !== 'undefined') {
+                Tawk_API.showWidget();
+                Tawk_API.maximize();
+            }
+        }
 
         // --- 9. NATURAL FLUID DOT INTERACTION ---
         const canvas = document.getElementById("dots");
@@ -698,31 +801,32 @@
             const t = performance.now() / 1000;
 
             ctx.clearRect(0, 0, w, h);
-            ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--dot").trim();
-
+            
             ripples = ripples.filter(r => (t - r.start) < config.rippleMaxDuration);
 
             for (const p of points){
                 let dispX = 0;
                 let dispY = 0;
+                let distToMouse = 9999; // We track distance to mouse for the glow
 
                 if (mouse.active){
                     const dx = p.ox - mouse.x;
                     const dy = p.oy - mouse.y;
-                    const dist = Math.hypot(dx, dy);
+                    distToMouse = Math.hypot(dx, dy); // Calculate distance to the cursor
 
-                    if (dist > 0 && dist < config.hoverMaxDist){
+                    if (distToMouse > 0 && distToMouse < config.hoverMaxDist){
                         const angle = Math.atan2(dy, dx);
                         const k = 2 * Math.PI / config.hoverWavelength;
                         const omega = 2 * Math.PI * config.hoverFrequency;
                         const phase = omega * t;
-                        const disp = config.hoverAmplitude * Math.sin(k * dist - phase) * Math.exp(-dist / config.hoverDecay);
+                        const disp = config.hoverAmplitude * Math.sin(k * distToMouse - phase) * Math.exp(-distToMouse / config.hoverDecay);
 
                         dispX += Math.cos(angle) * disp;
                         dispY += Math.sin(angle) * disp;
                     }
                 }
 
+                // Ripple math
                 for (const ripple of ripples){
                     const dx = p.ox - ripple.x;
                     const dy = p.oy - ripple.y;
@@ -742,7 +846,24 @@
                 }
 
                 ctx.beginPath();
-                ctx.arc(p.ox + dispX, p.oy + dispY, config.radius, 0, Math.PI * 2);
+                
+                // --- THE GLOW MAGIC ---
+                // If the mouse is close to this specific dot (within 150px)
+                if (mouse.active && distToMouse < 150) {
+                    // Calculate how intense the glow should be based on closeness
+                    const intensity = 1 - (distToMouse / 150);
+                    
+                    // Make the dot slightly bigger as it glows
+                    ctx.arc(p.ox + dispX, p.oy + dispY, config.radius + (intensity * 1.5), 0, Math.PI * 2);
+                    
+                    // Set color to your Accent Pink (#ff0080) and fade it out as it gets further away
+                    ctx.fillStyle = `rgba(255, 0, 128, ${Math.max(0.12, intensity)})`; 
+                } else {
+                    // Normal, non-glowing dot
+                    ctx.arc(p.ox + dispX, p.oy + dispY, config.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = "rgba(27,27,27,0.12)"; // Faint gray
+                }
+                
                 ctx.fill();
             }
 
