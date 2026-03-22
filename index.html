@@ -55,17 +55,30 @@
         }
 
         /* This creates the custom cursor appearance */
-        #custom-cursor {
-            width: 24px; 
-            height: 24px;
-            background-color: var(--accent); /* This uses your theme's exact pink color */
-            box-shadow: 0 4px 15px rgba(255, 0, 128, 0.4); /* This creates a soft pink glowing shadow */
-            border-radius: 50%;
-            position: fixed;
-            pointer-events: none;
-            z-index: 999999; /* Absolute highest layer */
-            transition: transform 0.1s ease-out;
-        }
+        /* Default state: Hide the custom cursor and show the standard pointer */
+#custom-cursor {
+    display: none;
+}
+
+/* Only apply custom cursor logic on Desktop (devices with a mouse) */
+@media (hover: hover) and (pointer: fine) {
+    body {
+        cursor: none; /* Hides default mouse only on desktop */
+    }
+    
+    #custom-cursor {
+        display: block; /* Shows the pink dot only on desktop */
+        width: 24px; 
+        height: 24px;
+        background-color: var(--accent);
+        box-shadow: 0 4px 15px rgba(255, 0, 128, 0.4);
+        border-radius: 50%;
+        position: fixed;
+        pointer-events: none;
+        z-index: 999999;
+        transition: transform 0.1s ease-out;
+    }
+}
 
         /* --- SCROLL ANIMATION CLASSES --- */
         .animate-on-scroll {
@@ -967,12 +980,18 @@ function startChat() {
             requestAnimationFrame(draw);
         }
 
-        window.addEventListener("mousemove", e => {
-            mouse.active = true;
-            document.getElementById('custom-cursor').style.transform = `translate(${e.clientX - 15}px, ${e.clientY - 15}px)`;
-            mouse.x = e.clientX;
-            mouse.y = e.clientY;
-        });
+       window.addEventListener("mousemove", e => {
+    // Only move the cursor if it's actually visible/displayed
+    const customCursor = document.getElementById('custom-cursor');
+    
+    // Check if the cursor is not hidden by our CSS Media Query
+    if (window.getComputedStyle(customCursor).display !== 'none') {
+        mouse.active = true;
+        customCursor.style.transform = `translate(${e.clientX - 12}px, ${e.clientY - 12}px)`;
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+    }
+});
 
         window.addEventListener("touchstart", e => {
             const touch = e.touches[0];
