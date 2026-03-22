@@ -158,7 +158,19 @@
         .hero-quote { margin-top: 3rem; font-style: italic; color: var(--secondary-text); font-size: 1.1rem; }
 
         /* --- SELECTED WORK --- */
-        .work-section { background: rgba(255, 255, 255, 0.5); border-radius: 40px 40px 0 0; padding-top: 80px; }
+        .work-section { /* 1. The semi-transparent background color (White at 15% opacity) */
+    background: rgba(255, 255, 255, 0.15); 
+    
+    /* 2. The magic blur effect */
+    backdrop-filter: blur(16px); 
+    -webkit-backdrop-filter: blur(16px); /* Makes it work on Apple/Safari browsers */
+    
+    /* 3. The shiny glass edges (Optional, but looks highly premium) */
+    border-top: 1px solid rgba(255, 255, 255, 0.4);
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+    
+    /* 4. A soft shadow to lift it off the page */
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05); border-radius: 40px 40px 0 0; padding-top: 80px; }
         .work-item { position: relative; display: flex; align-items: center; margin-bottom: 80px; min-height: 400px; }
         .work-image { width: 75%; height: 400px; border-radius: 20px; overflow: hidden; background: #eee; }
         .work-image img { width: 130%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -252,7 +264,19 @@
         }
 
         /* --- EXPERTISE --- */
-        .expertise-section { background: rgba(255,250,240,0.70); color: white; padding: 20px 0; position: relative; z-index: 2; }
+        .expertise-section { /* 1. The semi-transparent background color (White at 15% opacity) */
+    background: rgba(255, 255, 255, 0.15); 
+    
+    /* 2. The magic blur effect */
+    backdrop-filter: blur(16px); 
+    -webkit-backdrop-filter: blur(16px); /* Makes it work on Apple/Safari browsers */
+    
+    /* 3. The shiny glass edges (Optional, but looks highly premium) */
+    border-top: 1px solid rgba(255, 255, 255, 0.4);
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+    
+    /* 4. A soft shadow to lift it off the page */
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05); color: white; padding: 20px 0; position: relative; z-index: 2; }
         .expertise-section .section-title { color: #36454F; margin-bottom: 10px; }
         .expertise-subtitle { color: #36454F; font-size: 0.9rem; margin-bottom: 15px; }
         .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
@@ -261,7 +285,19 @@
         .skill-column li { margin-bottom: 8px; color: #36454F; font-size: 0.95rem; }
 
         /* --- TOOL LOGOS STRIP --- */
-        .tools-strip { background: #ffffff; padding: 10px 0; border-bottom: 1px solid #e0ddd5; display: flex; justify-content: center; align-items: center; gap: 40px; flex-wrap: wrap; position: relative; z-index: 2;}
+        .tools-strip { /* 1. The semi-transparent background color (White at 15% opacity) */
+    background: rgba(255, 255, 255, 0.15); 
+    
+    /* 2. The magic blur effect */
+    backdrop-filter: blur(16px); 
+    -webkit-backdrop-filter: blur(16px); /* Makes it work on Apple/Safari browsers */
+    
+    /* 3. The shiny glass edges (Optional, but looks highly premium) */
+    border-top: 1px solid rgba(255, 255, 255, 0.4);
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+    
+    /* 4. A soft shadow to lift it off the page */
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05); padding: 10px 0; border-bottom: 1px solid #e0ddd5; display: flex; justify-content: center; align-items: center; gap: 40px; flex-wrap: wrap; position: relative; z-index: 2;}
         .tool-icon-img { width: 32px; height: 20 px; object-fit: contain; opacity: 0.6; transition: all 0.3s ease; }
         .tool-icon-img:hover { opacity: 1; transform: translateY(-5px) scale(1.1); }
 
@@ -277,9 +313,36 @@
         .career-desc { color: var(--secondary-text); font-size: 0.95rem; line-height: 1.6; }
 
         /* --- KIND WORDS (TESTIMONIALS) --- */
-        .kind-words-section { background: rgba(255, 255, 255, 0.8); padding: 100px 0; position: relative; z-index: 2; }
+        .kind-words-section { /* 1. The semi-transparent background color (White at 15% opacity) */
+    background: rgba(255, 255, 255, 0.15); 
+    
+    /* 2. The magic blur effect */
+    backdrop-filter: blur(16px); 
+    -webkit-backdrop-filter: blur(16px); /* Makes it work on Apple/Safari browsers */
+    
+    /* 3. The shiny glass edges (Optional, but looks highly premium) */
+    border-top: 1px solid rgba(255, 255, 255, 0.4);
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+    
+    /* 4. A soft shadow to lift it off the page */
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);; padding: 100px 0; position: relative; z-index: 2; }
+
+	/* Testimony card design */
+
         .testimony-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
-        .testimony-card { padding: 40px; background: var(--bg-light); border-radius: 20px; border: 1px solid #e0ddd5; transition: transform 0.4s ease, box-shadow 0.4s ease; }
+        .testimony-card { padding: 40px; /* 1. The semi-transparent background color (Black at 25% opacity) */
+    background: rgba(0, 0, 0, 0.15); 
+    
+    /* 2. The magic blur effect */
+    backdrop-filter: blur(16px); 
+    -webkit-backdrop-filter: blur(16px); 
+    
+    /* 3. The shiny glass edges (using faint white to catch the light) */
+    border-top: 1px solid rgba(255, 255, 255, 0.8);
+    border-left: 1px solid rgba(255, 255, 255, 0.05);
+    
+    /* 4. A darker shadow */
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2); border-radius: 20px; border: 1px solid #e0ddd5; transition: transform 0.4s ease, box-shadow 0.4s ease; }
         .testimony-card:hover { transform: translateY(-8px) scale(1.03); box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
         .testimony-text { font-size: 1.1rem; font-style: italic; color: var(--primary-text); margin-bottom: 24px; line-height: 1.6; }
         .testimony-author { font-weight: 700; color: var(--primary-text); font-size: 1.05rem; }
@@ -287,7 +350,19 @@
 
         /* --- FOOTER --- */
         footer { 
-            background: rgba(0, 0, 0, 0.8); 
+            /* 1. The semi-transparent background color (Black at 25% opacity) */
+    background: rgba(0, 0, 0, 0.8); 
+    
+    /* 2. The magic blur effect */
+    backdrop-filter: blur(16px); 
+    -webkit-backdrop-filter: blur(16px); 
+    
+    /* 3. The shiny glass edges (using faint white to catch the light) */
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: 1px solid rgba(255, 255, 255, 0.05);
+    
+    /* 4. A darker shadow */
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2); 
             padding: 20px 0 30px 0; 
             position: relative; 
             z-index: 10; 
@@ -433,6 +508,21 @@
             .about-headline { font-size: 2.2rem; }
             .about-desc p { font-size: 1rem; }
         }
+/* Forces the default Tawk.to bubble to be invisible and unclickable */
+#tawk-container, 
+.tawk-min-container, 
+iframe[title*="chat"] {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+/* This allows the window to show up ONLY when it is opened/maximized */
+.tawk-chat-window-opened iframe[title*="chat"] {
+    display: block !important;
+    visibility: visible !important;
+    pointer-events: all !important;
+}
     </style>
 </head>
 <body>
@@ -724,35 +814,42 @@
             .catch(error => { countElement.innerText = "1,000+"; });
 
         // --- 8. INVISIBLE TRACKING & CUSTOM CHAT BUTTON LOGIC ---
-        
-        // 1. Load Tawk.to immediately in the background to track visitors
-        var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
-        (function(){
-            var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
-            s1.async = true;
-            s1.src = 'https://embed.tawk.to/69ae130e7ac1721c39912761/1jj7vksrb';
-            s1.charset = 'UTF-8';
-            s1.setAttribute('crossorigin','*');
-            s0.parentNode.insertBefore(s1,s0);
-        })();
 
-        // 2. As soon as Tawk.to loads, instantly hide the default floating bubble
-        Tawk_API.onLoad = function() {
-            Tawk_API.hideWidget();
-        };
+var Tawk_API = Tawk_API || {};
+var Tawk_LoadStart = new Date();
 
-        // 3. If a user opens the chat but minimizes it later, hide it again
-        Tawk_API.onChatMinimized = function() {
-            Tawk_API.hideWidget();
-        };
+(function(){
+    var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+    s1.async = true;
+    s1.src = 'https://embed.tawk.to/69ae130e7ac1721c39912761/1jj7vksrb';
+    s1.charset = 'UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+})();
 
-        // 4. This runs ONLY when they click your custom "Chat Now" button
-        function startChat() {
-            if (typeof Tawk_API !== 'undefined') {
-                Tawk_API.showWidget();
-                Tawk_API.maximize();
-            }
-        }
+// Hide the widget as soon as it initializes
+Tawk_API.onLoad = function() {
+    Tawk_API.hideWidget();
+};
+
+// Ensure it hides again if the user closes or minimizes the chat
+Tawk_API.onChatMaximized = function() {
+    // When open, make sure it's visible (needed if using the CSS fix)
+    const frames = document.querySelectorAll('iframe[title*="chat"]');
+    frames.forEach(f => f.style.display = 'block');
+};
+
+Tawk_API.onChatMinimized = function() {
+    Tawk_API.hideWidget();
+};
+
+// Updated startChat function
+function startChat() {
+    if (typeof Tawk_API !== 'undefined' && Tawk_API.showWidget) {
+        Tawk_API.showWidget();
+        Tawk_API.maximize();
+    }
+}
 
         // --- 9. NATURAL FLUID DOT INTERACTION ---
         const canvas = document.getElementById("dots");
