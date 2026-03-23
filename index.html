@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ganesh Javhare | UX Designer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Courgette&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-text: #1a1a1a;
@@ -103,9 +106,14 @@
         nav:hover::before { opacity: 1; }
 
         .nav-logo { 
-            font-family: "Brush Script MT", cursive; font-size: 1.6rem; 
-            text-decoration: none; color: var(--primary-text); 
-            display: flex; align-items: center; gap: 12px; z-index: 1001; 
+            font-family: 'Courgette', cursive; 
+            font-size: 1.5rem; 
+            text-decoration: none; 
+            color: var(--primary-text); 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            z-index: 1001; 
         }
         .brand-icon { height: 32px; width: auto; object-fit: contain; }
         .nav-links { display: flex; gap: 35px; list-style: none; }
@@ -362,8 +370,15 @@
             border-top: 1px solid rgba(255, 255, 255, 0.1); border-left: 1px solid rgba(255, 255, 255, 0.05); 
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2); padding: 20px 0 30px 0; position: relative; z-index: 10; color: white; border-top: 1px solid rgba(255,255,255,0.05);
         }
-        .footer-header { font-family: "Brush Script MT", cursive; font-size: clamp(2rem, 5vw, 1rem); color: white; text-align: center; line-height: 1.2; margin-bottom: 20px; }
-        .footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; max-width: 600px; margin: 0 auto; }
+        .footer-header { 
+            font-family: 'Courgette', cursive; 
+            font-size: clamp(2rem, 5vw, 1rem); 
+            color: white; 
+            text-align: center; 
+            line-height: 1.2; 
+            margin-bottom: 30px; 
+        }
+        .footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 10px; max-width: 600px; margin: 0 auto; }
         .footer-col { display: flex; flex-direction: column; align-items: center;  text-align: center; }
         .footer-col h4 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.15em; color: #888; margin-bottom: 25px; }
         .footer-actions { display: flex; flex-direction: column; gap: 15px; width: 100%; align-items: center; }
@@ -379,7 +394,7 @@
         .social-label { font-size: 0.9rem; color: #aaa; transition: color 0.3s; }
         .social-item:hover .social-icon-img { opacity: 1; transform: scale(1.1); }
         .social-item:hover .social-label { color: var(--accent); }
-        .portfolio-views { text-align: center; margin-top: 15px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1); font-size: 0.85rem; color: #888; }
+        .portfolio-views { text-align: center; margin-top: 10px; padding-top: 10px; margin-bottom: 10px; border-top: 1px solid rgba(255, 255, 255, 0.1); font-size: 0.85rem; color: #888; }
 
         @media (max-width: 768px) {
             .footer-grid { grid-template-columns: 1fr; gap: 20px; } 
