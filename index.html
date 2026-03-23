@@ -518,6 +518,107 @@
             40% { transform: translateY(-4px); }
             60% { transform: translateY(-2px); }
         }
+/* --- DYNAMIC HEADER TEXT --- */
+        .dynamic-nav-text {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%); /* Perfectly centers horizontally and vertically */
+            height: var(--nav-height);
+            width: 400px; /* Wider to prevent any cropping */
+            overflow: hidden; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none; 
+        }
+
+        .greeting-roller {
+            display: flex;
+            flex-direction: column;
+            transition: opacity 0.3s ease;
+            animation: rollGreeting 6s cubic-bezier(0.64, 0, 0.35, 1) infinite;
+        }
+
+        .greeting-item {
+            height: var(--nav-height);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Courgette', cursive; 
+            font-size: 1rem; 
+            font-weight: 600;
+            color: var(--accent); 
+            width: 100%;
+            white-space: nowrap;
+        }
+
+        @keyframes rollGreeting {
+            0%, 30% { transform: translateY(0); } 
+            35%, 65% { transform: translateY(calc(var(--nav-height) * -1)); } 
+            70%, 95% { transform: translateY(calc(var(--nav-height) * -2)); } 
+            100% { transform: translateY(calc(var(--nav-height) * -3)); } 
+        }
+
+        /* --- THE SECTION TITLE --- */
+        #section-title-display {
+            position: absolute;
+            inset: 0; /* fills the container */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Courgette', cursive !important;
+            font-size: 1rem !important;
+            color: #bbb !important;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            white-space: nowrap;
+        }
+
+        /* Logic for when scrolling happens */
+        .dynamic-nav-text.scrolled .greeting-roller {
+            opacity: 0;
+            visibility: hidden;
+        }
+        .dynamic-nav-text.scrolled #section-title-display {
+            opacity: 1;
+            transform: translateY(0);
+        } {
+            .dynamic-nav-text { display: none; }
+        }
+
+        /* The section name that appears on scroll */
+        .section-title-display {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary-text);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            white-space: nowrap;
+        }
+
+        /* When JS applies '.scrolled', hide greeting and show section title */
+        .dynamic-nav-text.scrolled .greeting-roller {
+            opacity: 0;
+        }
+        .dynamic-nav-text.scrolled .section-title-display {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Hide on mobile to prevent crowding the logo and hamburger */
+        @media (max-width: 768px) {
+            .dynamic-nav-text { display: none; }
+        }
     </style>
 </head>
 <body>
@@ -545,6 +646,16 @@
         <ul class="nav-links">
             <li><a href="#work">Work</a></li><li><a href="#about">About Me</a></li><li><a href="CS1.html">My Library</a></li><li><a href="#contact">Contact</a></li>
         </ul>
+        
+        <div id="dynamic-nav-text" class="dynamic-nav-text">
+            <div class="greeting-roller">
+                <div class="greeting-item">नमस्ते</div>
+                <div class="greeting-item">Welcome</div>
+		<div class="greeting-item">Hello</div>
+		<div class="greeting-item">Bonjour</div> <div class="greeting-item">नमस्ते</div>
+                </div>
+            <div id="section-title-display"></div>
+        </div>
     </nav>
 
     <div id="scroll-progress"></div>
@@ -1123,7 +1234,50 @@
         idleTimer = setTimeout(() => { 
             if (scrollPrompt) scrollPrompt.classList.add('show'); 
         }, 5000);
+// --- 11. NEW: DYNAMIC HEADER TEXT (SCROLL SPY) ---
+        const dynamicNavText = document.getElementById('dynamic-nav-text');
+        const sectionTitleDisplay = document.getElementById('section-title-display');
+        const pageSections = document.querySelectorAll('section');
 
+        function updateHeaderTitle() {
+            if (window.scrollY < 200) {
+                dynamicNavText.classList.remove('scrolled');
+                sectionTitleDisplay.innerText = ''; // Clear text at top
+                return;
+            }
+
+            // 2. Determine which section is currently on screen
+            let currentSectionName = '';
+            
+            pageSections.forEach(sec => {
+                // Changed offset to 200 to trigger earlier as you scroll
+                const sectionTop = sec.offsetTop - 200; 
+                
+                if (window.scrollY >= sectionTop) {
+                    if (sec.id === 'work') currentSectionName = 'Selected Work';
+                    // ... keep the rest of your else if lines same ...
+                    else if (sec.id === 'about') currentSectionName = 'About Me';
+                    else if (sec.id === 'expertise') currentSectionName = 'Expertise';
+                    else if (sec.id === 'experience') currentSectionName = 'Career Journey';
+                    else if (sec.id === 'testimonials') currentSectionName = 'Kind Words';
+                }
+            });
+
+            // Also check if they hit the footer
+            const footer = document.querySelector('footer');
+            if (footer && window.scrollY >= footer.offsetTop - 300) {
+                currentSectionName = 'Contact';
+            }
+
+            // 3. Update the text and trigger the animation
+            if (currentSectionName) {
+                dynamicNavText.classList.add('scrolled');
+                sectionTitleDisplay.innerText = currentSectionName;
+            }
+        }
+
+        // Run this whenever the user scrolls
+        window.addEventListener('scroll', updateHeaderTitle);
     </script>
 </body>
 </html>
