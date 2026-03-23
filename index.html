@@ -33,10 +33,14 @@
 
         /* ---------- DOTS LAYER ---------- */
         .dot-layer {
-            position: fixed;
-            inset: 0;
+            position: absolute; /* Unpins it so it scrolls natively */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             z-index: -1; 
             pointer-events: none; 
+            overflow: hidden;
         }
 
         canvas {
@@ -67,8 +71,8 @@
             body { cursor: none; }
             #custom-cursor {
                 display: block; 
-                width: 24px; 
-                height: 24px;
+                width: 20px; 
+                height: 20px;
                 background-color: var(--accent);
                 box-shadow: 0 4px 15px rgba(255, 0, 128, 0.4);
                 border-radius: 50%;
@@ -107,7 +111,7 @@
 
         .nav-logo { 
             font-family: 'Courgette', cursive; 
-            font-size: 1.5rem; 
+            font-size: 1.2rem; 
             text-decoration: none; 
             color: var(--primary-text); 
             display: flex; 
@@ -966,14 +970,10 @@
         const observerOptions = { root: null, rootMargin: '0px', threshold: 0.15 };
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('is-visible');
-                } else {
-                    entry.target.classList.remove('is-visible');
-                }
+                if (entry.isIntersecting) { entry.target.classList.add('is-visible'); }
+                else { entry.target.classList.remove('is-visible'); }
             });
         }, observerOptions);
-
         document.querySelectorAll('.animate-on-scroll').forEach(el => { observer.observe(el); });
 
         // --- 2. MOBILE MENU AUTO-CLOSE ---
@@ -983,7 +983,7 @@
             link.addEventListener('click', () => { if(window.innerWidth <= 768) { menuToggle.checked = false; } });
         });
 
-        // --- 3. BUTTON RIPPLE EFFECT LOGIC ---
+        // --- 3. BUTTON RIPPLE EFFECT ---
         const buttons = document.querySelectorAll('.ripple-btn');
         buttons.forEach(btn => {
             btn.addEventListener('click', function(e) {
@@ -996,7 +996,7 @@
             });
         });
 
-        // --- 4. STAT CARD SPOTLIGHT GLOW LOGIC ---
+        // --- 4. STAT CARD SPOTLIGHT GLOW ---
         document.querySelectorAll('.stat-card').forEach(card => {
             card.addEventListener('mousemove', (e) => {
                 const rect = card.getBoundingClientRect();
@@ -1009,275 +1009,415 @@
         const popup = document.getElementById('wip-popup');
         const closeBtn = document.getElementById('close-popup');
         const gotItBtn = document.getElementById('got-it-btn');
-
-        setTimeout(() => { popup.classList.add('show'); }, 1000);
-        function closePopup() { popup.classList.remove('show'); }
-        closeBtn.addEventListener('click', closePopup);
-        gotItBtn.addEventListener('click', closePopup);
+        if (popup) setTimeout(() => { popup.classList.add('show'); }, 1000);
+        function closePopup() { if (popup) popup.classList.remove('show'); }
+        if (closeBtn) closeBtn.addEventListener('click', closePopup);
+        if (gotItBtn) gotItBtn.addEventListener('click', closePopup);
 
         // --- 6. LIVE VISITOR COUNTER ---
         const countElement = document.getElementById('visitor-count');
         fetch('https://api.counterapi.dev/v1/ganeshjavhare/portfolio/up')
             .then(response => response.json())
-            .then(data => { countElement.innerText = data.count; })
-            .catch(error => { countElement.innerText = "1,000+"; });
+            .then(data => { if (countElement) countElement.innerText = data.count; })
+            .catch(error => { if (countElement) countElement.innerText = "1,000+"; });
 
-        // --- 7. INVISIBLE TRACKING & CUSTOM CHAT BUTTON LOGIC ---
+        // --- 7. TAWK.TO LOGIC ---
         var Tawk_API = Tawk_API || {};
         var Tawk_LoadStart = new Date();
-
         (function(){
             var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
-            s1.async = true;
-            s1.src = 'https://embed.tawk.to/69ae130e7ac1721c39912761/1jj7vksrb';
-            s1.charset = 'UTF-8';
-            s1.setAttribute('crossorigin','*');
+            s1.async = true; s1.src = 'https://embed.tawk.to/69ae130e7ac1721c39912761/1jj7vksrb';
+            s1.charset = 'UTF-8'; s1.setAttribute('crossorigin','*');
             s0.parentNode.insertBefore(s1,s0);
         })();
-
-        Tawk_API.onLoad = function() {
-            Tawk_API.hideWidget();
-        };
-
+        Tawk_API.onLoad = function() { Tawk_API.hideWidget(); };
         Tawk_API.onChatMaximized = function() {
             const frames = document.querySelectorAll('iframe[title*="chat"]');
             frames.forEach(f => f.style.display = 'block');
         };
-
-        Tawk_API.onChatMinimized = function() {
-            Tawk_API.hideWidget();
-        };
-
+        Tawk_API.onChatMinimized = function() { Tawk_API.hideWidget(); };
         function startChat() {
             if (typeof Tawk_API !== 'undefined' && Tawk_API.showWidget) {
-                Tawk_API.showWidget();
-                Tawk_API.maximize();
+                Tawk_API.showWidget(); Tawk_API.maximize();
             }
         }
 
-        // --- 8. NATURAL FLUID DOT INTERACTION ---
-        const canvas = document.getElementById("dots");
-        const ctx = canvas.getContext("2d");
-        let w = 0, h = 0, dpr = Math.max(1, window.devicePixelRatio || 1);
-
-        const config = {
-            spacing: 16,             
-            radius: 1.2,
-            hoverMaxDist: 250,       
-            hoverWavelength: 150,    
-            hoverFrequency: 0.8,     
-            hoverAmplitude: 20,      
-            hoverDecay: 150,         
-            rippleAmplitude: 30,     
-            rippleWavelength: 120,
-            rippleSpeed: 150,        
-            rippleDecayDist: 800,
-            rippleDecayTime: 4,      
-            rippleMaxDuration: 6     
-        };
-
-        const mouse = { x: -9999, y: -9999, active: false };
-        let points = [];
-        let ripples = [];
-
-        function resize(){
-            w = window.innerWidth;
-            h = window.innerHeight;
-            canvas.width = Math.floor(w * dpr);
-            canvas.height = Math.floor(h * dpr);
-            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-            points = [];
-            const cols = Math.ceil(w / config.spacing) + 1;
-            const rows = Math.ceil(h / config.spacing) + 1;
-
-            for (let y = 0; y < rows; y++){
-                for (let x = 0; x < cols; x++){
-                    points.push({ ox: x * config.spacing, oy: y * config.spacing });
-                }
-            }
+        // --- 8. NAV BAR SPOTLIGHT GLOW ---
+        const navBar = document.querySelector('nav');
+        if (navBar) {
+            navBar.addEventListener('mousemove', (e) => {
+                const rect = navBar.getBoundingClientRect();
+                navBar.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+                navBar.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+            });
         }
 
-        function draw(){
-            const t = performance.now() / 1000;
-            ctx.clearRect(0, 0, w, h);
-            
-            ripples = ripples.filter(r => (t - r.start) < config.rippleMaxDuration);
-
-            for (const p of points){
-                let dispX = 0;
-                let dispY = 0;
-                let distToMouse = 9999; 
-
-                if (mouse.active){
-                    const dx = p.ox - mouse.x;
-                    const dy = p.oy - mouse.y;
-                    distToMouse = Math.hypot(dx, dy); 
-
-                    if (distToMouse > 0 && distToMouse < config.hoverMaxDist){
-                        const angle = Math.atan2(dy, dx);
-                        const k = 2 * Math.PI / config.hoverWavelength;
-                        const omega = 2 * Math.PI * config.hoverFrequency;
-                        const phase = omega * t;
-                        const disp = config.hoverAmplitude * Math.sin(k * distToMouse - phase) * Math.exp(-distToMouse / config.hoverDecay);
-
-                        dispX += Math.cos(angle) * disp;
-                        dispY += Math.sin(angle) * disp;
-                    }
-                }
-
-                for (const ripple of ripples){
-                    const dx = p.ox - ripple.x;
-                    const dy = p.oy - ripple.y;
-                    const dist = Math.hypot(dx, dy);
-                    const timeDiff = t - ripple.start;
-
-                    if (dist > 0){
-                        const angle = Math.atan2(dy, dx);
-                        const k = 2 * Math.PI / config.rippleWavelength;
-                        const phase = k * dist - (config.rippleSpeed * timeDiff / config.rippleWavelength * 2 * Math.PI);
-                        const envelope = Math.exp(-dist / config.rippleDecayDist) * Math.exp(-timeDiff / config.rippleDecayTime);
-                        const disp = config.rippleAmplitude * Math.sin(phase) * envelope;
-
-                        dispX += Math.cos(angle) * disp;
-                        dispY += Math.sin(angle) * disp;
-                    }
-                }
-
-                ctx.beginPath();
-                
-                if (mouse.active && distToMouse < 150) {
-                    const intensity = 1 - (distToMouse / 150);
-                    ctx.arc(p.ox + dispX, p.oy + dispY, config.radius + (intensity * 1.5), 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(255, 0, 128, ${Math.max(0.12, intensity)})`; 
-                } else {
-                    ctx.arc(p.ox + dispX, p.oy + dispY, config.radius, 0, Math.PI * 2);
-                    ctx.fillStyle = "rgba(27,27,27,0.12)";
-                }
-                
-                ctx.fill();
-            }
-            requestAnimationFrame(draw);
-        }
-
-        window.addEventListener("mousemove", e => {
-            const customCursor = document.getElementById('custom-cursor');
-            if (window.getComputedStyle(customCursor).display !== 'none') {
-                mouse.active = true;
-                customCursor.style.transform = `translate(${e.clientX - 12}px, ${e.clientY - 12}px)`;
-                mouse.x = e.clientX;
-                mouse.y = e.clientY;
-            }
-        });
-
-        window.addEventListener("touchstart", e => {
-            const touch = e.touches[0];
-            ripples.push({ x: touch.clientX, y: touch.clientY, start: performance.now() / 1000 });
-        });
-
-        window.addEventListener("mouseleave", () => {
-            mouse.active = false;
-            mouse.x = -9999;
-            mouse.y = -9999;
-        });
-
-        window.addEventListener("click", e => {
-            ripples.push({ x: e.clientX, y: e.clientY, start: performance.now() / 1000 });
-        });
-
-        window.addEventListener("resize", resize);
-        resize();
-        draw();
-
-        // --- 9. NAV BAR SPOTLIGHT GLOW LOGIC ---
-        const navBar = document.querySelector('nav');
-        if (navBar) {
-            navBar.addEventListener('mousemove', (e) => {
-                const rect = navBar.getBoundingClientRect();
-                navBar.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
-                navBar.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
-            });
-        }
-
-        // --- 10. NEW: SCROLL PROGRESS & IDLE PROMPT LOGIC ---
+        // --- 9. SCROLL PROGRESS & IDLE PROMPT ---
         const progressBar = document.getElementById('scroll-progress');
         const scrollPrompt = document.getElementById('scroll-prompt');
         let idleTimer;
-
         function updateScrollAndIdle() {
-            // 1. Update the Progress Bar width
             const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
             const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            if (progressBar) {
-                progressBar.style.width = (winScroll / height) * 100 + "%";
-            }
-
-            // 2. Hide prompt and reset the 5-second timer
+            if (progressBar) progressBar.style.width = (winScroll / height) * 100 + "%";
             if (scrollPrompt) scrollPrompt.classList.remove('show');
             clearTimeout(idleTimer);
-            
-            // 3. Only set the timer to show the prompt if they aren't at the very bottom
             if ((winScroll / height) < 0.9) {
-                idleTimer = setTimeout(() => {
-                    if (scrollPrompt) scrollPrompt.classList.add('show');
-                }, 5000); // 5000ms = 5 seconds
+                idleTimer = setTimeout(() => { if (scrollPrompt) scrollPrompt.classList.add('show'); }, 5000); 
             }
         }
-
-        // Listen for user activity to track scroll and reset the idle timer
         window.addEventListener('scroll', updateScrollAndIdle);
         window.addEventListener('mousemove', updateScrollAndIdle);
         window.addEventListener('touchstart', updateScrollAndIdle);
         window.addEventListener('keydown', updateScrollAndIdle);
+        idleTimer = setTimeout(() => { if (scrollPrompt) scrollPrompt.classList.add('show'); }, 5000);
 
-        // Start the 5-second timer immediately when the page loads
-        idleTimer = setTimeout(() => { 
-            if (scrollPrompt) scrollPrompt.classList.add('show'); 
-        }, 5000);
-// --- 11. NEW: DYNAMIC HEADER TEXT (SCROLL SPY) ---
+        // --- 10. DYNAMIC HEADER TEXT (SCROLL SPY) ---
         const dynamicNavText = document.getElementById('dynamic-nav-text');
         const sectionTitleDisplay = document.getElementById('section-title-display');
         const pageSections = document.querySelectorAll('section');
-
         function updateHeaderTitle() {
             if (window.scrollY < 200) {
-                dynamicNavText.classList.remove('scrolled');
-                sectionTitleDisplay.innerText = ''; // Clear text at top
+                if (dynamicNavText) dynamicNavText.classList.remove('scrolled');
+                if (sectionTitleDisplay) sectionTitleDisplay.innerText = ''; 
                 return;
             }
-
-            // 2. Determine which section is currently on screen
             let currentSectionName = '';
-            
             pageSections.forEach(sec => {
-                // Changed offset to 200 to trigger earlier as you scroll
                 const sectionTop = sec.offsetTop - 200; 
-                
                 if (window.scrollY >= sectionTop) {
                     if (sec.id === 'work') currentSectionName = 'Selected Work';
-                    // ... keep the rest of your else if lines same ...
                     else if (sec.id === 'about') currentSectionName = 'About Me';
                     else if (sec.id === 'expertise') currentSectionName = 'Expertise';
                     else if (sec.id === 'experience') currentSectionName = 'Career Journey';
                     else if (sec.id === 'testimonials') currentSectionName = 'Kind Words';
                 }
             });
-
-            // Also check if they hit the footer
             const footer = document.querySelector('footer');
-            if (footer && window.scrollY >= footer.offsetTop - 300) {
-                currentSectionName = 'Contact';
-            }
-
-            // 3. Update the text and trigger the animation
-            if (currentSectionName) {
+            if (footer && window.scrollY >= footer.offsetTop - 300) currentSectionName = 'Contact';
+            if (currentSectionName && dynamicNavText && sectionTitleDisplay) {
                 dynamicNavText.classList.add('scrolled');
                 sectionTitleDisplay.innerText = currentSectionName;
             }
         }
-
-        // Run this whenever the user scrolls
         window.addEventListener('scroll', updateHeaderTitle);
-    </script>
+
+
+        // =====================================================================
+        // --- 11. ULTIMATE BACKGROUND GRID (Lines, Text, Zones, and Circuits) ---
+        // =====================================================================
+        const canvas = document.getElementById("dots");
+        const ctx = canvas.getContext("2d");
+        let w = 0, h = 0, dpr = Math.max(1, window.devicePixelRatio || 1);
+        let cols = 0, rows = 0;
+
+        let points = [];
+        let activeWords = [];
+        let circuits = [];
+        
+        let occupiedCells = new Set(); 
+        let exclusionZones = [];       
+
+        const config = {
+            spacing: 25, 
+            radius: 1.5,
+            dotColorIdle: "27, 27, 27",       
+            dotColorHover: "255, 0, 128",     
+            snapLineColor: "255, 0, 128",     
+            circuitColor: "194, 197, 204",      // neon gold- 255, 200, 50  grey- 194, 197, 204
+            textColor: "0, 0, 0",             
+            
+            lineDist: 80, 
+            lineOpacity: 0.9, 
+            lineWidth: 1.5,          
+            
+            fontSize: 9, 
+            fadeSpeed: 0.01, 
+            holdTime: 300, 
+            maxWords: 1000,
+            words: ["GRAPHICS DESIGN", "Portfolio 2026", "UI DESIGN", "PRODUCT DESIGN", "UX DESIGN", "RESEARCH", "DATA ANALYTICS", "DESIGN MANAGEMENT"],
+            
+            maxCircuits: 1000,
+            circuitSpeed: 0.08, 
+            circuitHold: 100    
+        };
+
+        const mouse = { x: -9999, y: -9999, active: false };
+
+        function calculateExclusionZones() {
+            exclusionZones = [];
+            const bgSections = document.querySelectorAll('.work-section, .expertise-section, .kind-words-section, .tools-strip, footer');
+            
+            bgSections.forEach(el => {
+                const rect = el.getBoundingClientRect();
+                exclusionZones.push({
+                    top: rect.top + window.scrollY,
+                    bottom: rect.bottom + window.scrollY,
+                    left: 0,
+                    right: window.innerWidth
+                });
+            });
+
+            const centerWidth = 1000;
+            exclusionZones.push({
+                top: 0,
+                bottom: document.body.scrollHeight,
+                left: (window.innerWidth / 2) - (centerWidth / 2),
+                right: (window.innerWidth / 2) + (centerWidth / 2)
+            });
+        }
+
+        function isZoneClear(px, py) {
+            for (let z of exclusionZones) {
+                if (px >= z.left && px <= z.right && py >= z.top && py <= z.bottom) {
+                    return false; 
+                }
+            }
+            return true; 
+        }
+
+        function resize(){
+            w = window.innerWidth;
+            h = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight, window.innerHeight);
+
+            canvas.width = Math.floor(w * dpr);
+            canvas.height = Math.floor(h * dpr);
+            canvas.style.width = w + "px";
+            canvas.style.height = h + "px"; 
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+            points = []; activeWords = []; circuits = [];
+            occupiedCells.clear(); 
+            calculateExclusionZones(); 
+
+            cols = Math.ceil(w / config.spacing) + 1;
+            rows = Math.ceil(h / config.spacing) + 1;
+
+            for (let y = 0; y < rows; y++){
+                for (let x = 0; x < cols; x++){
+                    points.push({ ox: x * config.spacing, oy: y * config.spacing, col: x, row: y });
+                }
+            }
+        }
+
+        function updateWords() {
+            if (activeWords.length < config.maxWords && Math.random() < 0.5) {
+                let rawText = config.words[Math.floor(Math.random() * config.words.length)];
+                let textLines = rawText.split(" "); 
+                let maxL = Math.max(...textLines.map(t => t.length));
+
+                // --- NEW EDGE CONSTRAINT LOGIC ---
+                // Minimum allowed is 2nd column (index 1)
+                let minCol = 1;
+                // Maximum allowed is 2nd to last column (cols - 2), minus the length of the word
+                let maxAllowedCol = (cols - 2) - maxL + 1; 
+
+                // If screen is too narrow to fit the word safely, abort
+                if (maxAllowedCol < minCol) return; 
+
+                let col = minCol + Math.floor(Math.random() * (maxAllowedCol - minCol + 1));
+                
+                // Add top/bottom padding to prevent words hitting extreme top or bottom
+                let row = Math.floor(2 + Math.random() * (rows - textLines.length - 4));
+
+                let isBlocked = false;
+                for (let l = 0; l < textLines.length; l++) {
+                    for (let c = 0; c < textLines[l].length; c++) {
+                        let px = (col + c) * config.spacing;
+                        let py = (row + l) * config.spacing;
+                        
+                        if (!isZoneClear(px, py) || occupiedCells.has(`${col + c},${row + l}`)) {
+                            isBlocked = true; break;
+                        }
+                    }
+                    if (isBlocked) break;
+                }
+
+                if (!isBlocked) {
+                    textLines.forEach((line, l) => {
+                        for (let c = 0; c < line.length; c++) occupiedCells.add(`${col + c},${row + l}`);
+                    });
+                    activeWords.push({ lines: textLines, col, row, opacity: 0, state: 'in', timer: 0 });
+                }
+            }
+
+            for (let i = activeWords.length - 1; i >= 0; i--) {
+                let w = activeWords[i];
+                if (w.state === 'in') {
+                    w.opacity += config.fadeSpeed;
+                    if (w.opacity >= 0.4) { w.opacity = 0.4; w.state = 'hold'; w.timer = config.holdTime + Math.random() * 200; }
+                } else if (w.state === 'hold') {
+                    w.timer--;
+                    if (w.timer <= 0) w.state = 'out';
+                } else if (w.state === 'out') {
+                    w.opacity -= config.fadeSpeed;
+                    if (w.opacity <= 0) {
+                        w.lines.forEach((line, l) => {
+                            for (let c = 0; c < line.length; c++) occupiedCells.delete(`${w.col + c},${w.row + l}`);
+                        });
+                        activeWords.splice(i, 1); 
+                    }
+                }
+            }
+        }
+
+        function updateAndDrawCircuits() {
+            if (circuits.length < config.maxCircuits && Math.random() < 0.99) {
+                let startCol = Math.floor(Math.random() * cols);
+                let startRow = Math.floor(Math.random() * rows);
+                
+                let px = startCol * config.spacing;
+                let py = startRow * config.spacing;
+
+                if (isZoneClear(px, py) && !occupiedCells.has(`${startCol},${startRow}`)) {
+                    let path = [{col: startCol, row: startRow}];
+                    occupiedCells.add(`${startCol},${startRow}`);
+                    
+                    let currCol = startCol; let currRow = startRow;
+                    let targetLen = 6 + Math.floor(Math.random() * 6); 
+                    
+                    for (let i = 0; i < targetLen - 1; i++) {
+                        let dirs = [ {c: 1, r: 0}, {c: -1, r: 0}, {c: 0, r: 1}, {c: 0, r: -1} ];
+                        dirs.sort(() => Math.random() - 0.5); 
+                        
+                        let moved = false;
+                        for (let d of dirs) {
+                            let nc = currCol + d.c; let nr = currRow + d.r;
+                            let npx = nc * config.spacing; let npy = nr * config.spacing;
+
+                            if (nc >= 0 && nc < cols && nr >= 0 && nr < rows && 
+                                isZoneClear(npx, npy) && !occupiedCells.has(`${nc},${nr}`)) {
+                                
+                                path.push({col: nc, row: nr});
+                                occupiedCells.add(`${nc},${nr}`);
+                                currCol = nc; currRow = nr;
+                                moved = true; break;
+                            }
+                        }
+                        if (!moved) break; 
+                    }
+                    
+                    if (path.length > 1) {
+                        circuits.push({ path: path, drawProgress: 0, eraseProgress: 0, state: 'drawing', timer: config.circuitHold });
+                    } else {
+                        occupiedCells.delete(`${startCol},${startRow}`); 
+                    }
+                }
+            }
+
+            for (let i = circuits.length - 1; i >= 0; i--) {
+                let c = circuits[i];
+                
+                if (c.state === 'drawing') {
+                    c.drawProgress += config.circuitSpeed;
+                    if (c.drawProgress >= c.path.length - 1) { c.drawProgress = c.path.length - 1; c.state = 'holding'; }
+                } else if (c.state === 'holding') {
+                    c.timer--;
+                    if (c.timer <= 0) c.state = 'erasing';
+                } else if (c.state === 'erasing') {
+                    c.eraseProgress += config.circuitSpeed;
+                    if (c.eraseProgress >= c.path.length - 1) {
+                        c.path.forEach(n => occupiedCells.delete(`${n.col},${n.row}`));
+                        circuits.splice(i, 1); continue;
+                    }
+                }
+
+                ctx.beginPath();
+                for (let j = 0; j < c.path.length - 1; j++) {
+                    let sRatio = Math.max(0, c.eraseProgress - j);
+                    let eRatio = Math.min(1, c.drawProgress - j);
+                    
+                    if (sRatio < 1 && eRatio > 0 && eRatio > sRatio) {
+                        let n1 = c.path[j]; let n2 = c.path[j+1];
+                        let x1 = n1.col * config.spacing; let y1 = n1.row * config.spacing;
+                        let x2 = n2.col * config.spacing; let y2 = n2.row * config.spacing;
+                        
+                        let sx = x1 + (x2 - x1) * sRatio; let sy = y1 + (y2 - y1) * sRatio;
+                        let ex = x1 + (x2 - x1) * eRatio; let ey = y1 + (y2 - y1) * eRatio;
+                        
+                        ctx.moveTo(sx, sy); ctx.lineTo(ex, ey);
+                    }
+                }
+                ctx.strokeStyle = `rgba(${config.circuitColor}, 0.4)`; 
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+            }
+        }
+
+        function draw(){
+            ctx.clearRect(0, 0, w, h);
+            
+            updateWords(); 
+            
+            const scrollY = window.scrollY || document.documentElement.scrollTop;
+            const viewportH = window.innerHeight;
+
+            let charMap = {};
+            activeWords.forEach(word => {
+                word.lines.forEach((line, lIdx) => {
+                    for(let c=0; c<line.length; c++) charMap[`${word.col+c},${word.row+lIdx}`] = { char: line[c], opacity: word.opacity };
+                });
+            });
+
+            for (let i = 0; i < points.length; i++){
+                const p = points[i];
+                
+                if (p.oy < scrollY - 150 || p.oy > scrollY + viewportH + 150) continue; 
+
+                const col = p.col; const row = p.row;
+                let distToMouse = 9999; 
+
+                if (mouse.active){
+                    const dx = p.ox - mouse.x; const dy = p.oy - mouse.y;
+                    distToMouse = Math.hypot(dx, dy); 
+
+                    if (distToMouse < config.lineDist) {
+                        ctx.beginPath(); ctx.moveTo(p.ox, p.oy); ctx.lineTo(mouse.x, mouse.y);
+                        const opacity = (1 - (distToMouse / config.lineDist)) * config.lineOpacity;
+                        ctx.strokeStyle = `rgba(${config.snapLineColor}, ${opacity})`; ctx.lineWidth = config.lineWidth; ctx.stroke();
+                    }
+                }
+
+                const cellData = charMap[`${col},${row}`];
+
+                if (cellData) {
+                    ctx.font = `bold ${config.fontSize}px monospace`;
+                    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+                    ctx.fillStyle = `rgba(${config.textColor}, ${cellData.opacity})`; 
+                    ctx.fillText(cellData.char, p.ox, p.oy);
+                } else {
+                    ctx.beginPath();
+                    if (mouse.active && distToMouse < 150) {
+                        const intensity = 1 - (distToMouse / 150);
+                        ctx.arc(p.ox, p.oy, config.radius + (intensity * 1.5), 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(${config.dotColorHover}, ${Math.max(0.12, intensity)})`; 
+                    } else {
+                        ctx.arc(p.ox, p.oy, config.radius, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(${config.dotColorIdle}, 0.12)`;
+                    }
+                    ctx.fill();
+                }
+            }
+
+            updateAndDrawCircuits();
+            requestAnimationFrame(draw);
+        }
+
+        window.addEventListener("mousemove", e => {
+            const customCursor = document.getElementById('custom-cursor');
+            if (customCursor && window.getComputedStyle(customCursor).display !== 'none') {
+                mouse.active = true;
+                customCursor.style.transform = `translate(${e.clientX - 12}px, ${e.clientY - 12}px)`;
+                mouse.x = e.pageX; mouse.y = e.pageY;
+            }
+        });
+        window.addEventListener("mouseleave", () => { mouse.active = false; mouse.x = -9999; mouse.y = -9999; });
+        
+        window.addEventListener("resize", resize);
+        window.addEventListener("load", resize);
+        
+        resize(); 
+        draw();
+    </script>
 </body>
 </html>
