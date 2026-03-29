@@ -18,7 +18,6 @@
             --dot: rgba(27,27,27,.12);
         }
 
-        html { scroll-behavior: smooth; }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -49,20 +48,7 @@
             display:block;
         }
         
-        /* ---------- PREMIUM GRAIN OVERLAY ---------- */
-        .grain-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none; 
-            z-index: 999999; 
-            opacity: 0.0; 
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-        }
-
-        /* ---------- CUSTOM CURSOR ---------- */
+                /* ---------- CUSTOM CURSOR ---------- */
         #custom-cursor {
             display: none;
         }
@@ -334,140 +320,344 @@
         @keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
         .hero-quote { margin-top: 3rem; font-style: italic; color: var(--secondary-text); font-size: 1.1rem; }
 
-        /* --- GLASS WORK SECTION --- */
+/* --- PREMIUM FULL WIDTH CASCADING WORK SECTION --- */
         .work-section { 
-            padding: 20px 40px; 
             position: relative; 
             z-index: 2; 
-
-            /* --- NEW GLASS PROPERTIES --- */
-            background: rgba(0, 0, 0, 0.25); /* matching other sections */
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-top: 1px solid rgba(255, 255, 255, 0.4);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+            background: transparent; /* Completely removes the section background */
+            padding: 0 !important; 
         }
 
-        .folder-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 100px 80px;
-            margin-top: 80px;
-		margin-bottom: 80px;
+        .cascading-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%; 
         }
 
-        .glass-folder-card {
-            perspective: 1000px;
-            position: relative;
-            cursor: pointer;
-        }
-        
-        @media(min-width: 768px) {
-            .glass-folder-card:nth-child(even) { margin-top: 80px; }
-        }
-
-        .peek-image {
-            position: absolute;
-            top: -24px;
-            right: -16px;
-            width: 90%;
-            height: 70%;
-            z-index: 0;
-            border-radius: 16px;
-            overflow: hidden;
-            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        .peek-image img {
-            width: 100%; height: 100%; object-fit: cover;
-            opacity: 0.6; filter: grayscale(100%);
-            transition: all 0.7s ease;
-        }
-        
-        .folder-inner {
-            position: relative;
-            z-index: 10;
-            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            transform-style: preserve-3d;
-        }
-
-        .glass-folder-card:hover .folder-inner {
-            transform: rotateX(4deg) rotateY(-4deg);
-        }
-        .glass-folder-card:hover .peek-image {
-            transform: scale(1.05) translateY(-12px) translateX(8px);
-        }
-        .glass-folder-card:hover .peek-image img {
-            opacity: 1; filter: grayscale(0%);
-        }
-	/* --- FADED COUNT NUMBER --- */
-        /* --- UPDATED FOLDER TAB --- */
-        .folder-tab {
-            width: 160px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-            border-top: 1px solid rgba(255, 255, 255, 0.6);
-            border-left: 1px solid rgba(255, 255, 255, 0.6);
-            clip-path: polygon(0 0, 80% 0, 100% 100%, 0% 100%);
-            margin-left: 16px;
-            border-radius: 12px 12px 0 0;
+        .project-card {
+            position: sticky;
+            top: 0; 
+            height: 100vh; 
+            width: 100%;
+            /* NO margin-bottom! This is the secret to perfect, natural sticky stacking. */
             
-            /* This centers the number vertically inside the tab */
+            background: rgba(250, 248, 245, 0.85);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            display: grid;
+            grid-template-columns: 45% 55%; 
+            overflow: hidden;
+            border-top: 1px solid rgba(0,0,0,0.05); 
+            /* Adds a beautiful subtle shadow to the top edge so the cards visibly pop as they overlap */
+            box-shadow: 0 -20px 40px rgba(0,0,0,0.03); 
+            transform-origin: center top;
+        }
+
+        .project-content {
+            /* CRITICAL FIX: 100px top & bottom padding mathematically locks it to the image height! */
+            padding: 140px 8% 120px 15%; 
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; 
+            height: 100vh; 
+            position: relative;
+        }
+
+        /* --- CARD HEADER (Top Left & Top Right) --- */
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .project-type {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent); /* Pink accent for the type */
+        }
+
+        .project-read-time {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--secondary-text);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* --- CARD MIDDLE (Overlapping Title & Number) --- */
+        .project-middle {
+            position: relative;
+            margin: auto 0; /* Centers it perfectly between the top and bottom */
+        }
+
+        .project-faded-num {
+            position: absolute;
+            top: -70px; /* Pulls it up so the title overlaps the bottom of the number */
+            left: -15px;
+            font-size: 16rem; 
+            font-weight: 900; /* Ultra bold */
+            color: rgba(0, 0, 0, 0.04); /* Beautifully faded */
+            line-height: 1;
+            z-index: 0;
+            letter-spacing: -0.05em;
+            pointer-events: none;
+        }
+
+        .project-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--primary-text); 
+            margin-bottom: 20px;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            position: relative; /* Brings it to the front, overlapping the number */
+            z-index: 1;
+        }
+
+        .project-desc {
+            font-size: 1.1rem;
+            color: var(--secondary-text); 
+            line-height: 1.6;
+            max-width: 90%;
+            position: relative;
+            z-index: 1;
+        }
+
+       /* --- CARD FOOTER (Bottom Left & Bottom Right) --- */
+        .project-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end; 
+            width: 100%;
+            padding-bottom: 0; /* Removed the extra padding so the bottom sits flush with the image box */
+        }
+
+        .project-capsules {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            max-width: 60%; /* Prevents capsules from pushing into the button */
+        }
+
+        .capsule {
+            padding: 6px 14px;
+            background: rgba(0,0,0,0.04);
+            border: 1px solid rgba(0,0,0,0.08);
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--secondary-text);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .highlighted-btn {
+            background: var(--primary-text); /* Solid dark pill button */
+            color: white !important;
+            padding: 12px 28px;
+            border-radius: 100px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             display: flex;
             align-items: center;
-            padding-left: 15px; 
-            box-sizing: border-box;
+            gap: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            white-space: nowrap;
         }
 
-        /* --- THE FADED NUMBER INSIDE THE TAB --- */
-        .tab-number {
-            font-size: 1.3rem;
-            font-weight: 600;
-            font-family: monospace;
-            color: #aaa; /* Your signature pink */
-            line-height: 1;
-            opacity: 0.5;
-            transition: opacity 0.3s ease, transform 0.3s ease;
+        .highlighted-btn span {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
         }
 
-        /* Makes the number pop slightly when hovering the card */
-        .glass-folder-card:hover .tab-number {
-            opacity: 1;
-            transform: scale(1.05); 
+        .highlighted-btn:hover {
+            background: var(--accent); /* Turns pink on hover */
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(255, 0, 128, 0.25);
         }
 
-        .folder-body {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
+        .highlighted-btn:hover span {
+            transform: translateX(6px);
+        }
+
+      
+        /* --- PROJECT GALLERY UI --- */
+        .project-image-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            /* Reduced right padding to make the image wider (40px -> 20px) */
+            /* Increased bottom padding to lift it higher (40px -> 100px) */
+            padding: 100px 20px 100px 0; 
+            display: flex;
+            flex-direction: column; 
+            gap: 20px; 
+        }
+
+        .gallery-main {
+            position: relative;
+            width: 100%;
+            /* CRITICAL FIX: Forces the container to strictly obey the flex space, ignoring image height */
+            flex: 1 1 0; 
+            min-height: 0; 
+            
             border-radius: 20px;
-            border-top-left-radius: 0; 
-            padding: 40px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.04);
-            transition: box-shadow 0.5s ease;
-            display: flex; flex-direction: column; min-height: 320px;
-        }
-        
-        .glass-folder-card:hover .folder-body {
-            box-shadow: 0 30px 60px rgba(255, 0, 128, 0.1); 
+            overflow: hidden;
+            background: #111;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        .folder-header { display: flex; justify-content: space-between; margin-bottom: 30px; }
-        .folder-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--accent); }
-        .folder-time { font-size: 0.8rem; color: var(--secondary-text); font-weight: 500;}
+        .gallery-main img {
+            /* CRITICAL FIX: Absolute positioning entirely removes the image's natural size from the layout math */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.3s ease; 
+        }
+
+        .gallery-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
         
-        .folder-body h3 { font-size: 1.8rem; font-weight: 800; margin-bottom: 15px; color: var(--primary-text); transition: color 0.3s; }
-        .glass-folder-card:hover .folder-body h3 { color: var(--accent); }
+        .gallery-arrow:hover { 
+            background: var(--accent); 
+            border-color: var(--accent); 
+            transform: translateY(-50%) scale(1.1); 
+        }
         
-        .folder-body p { color: var(--secondary-text); font-size: 0.95rem; line-height: 1.6; margin-bottom: 30px; flex-grow: 1;}
+        .prev-arrow { left: 20px; }
+        .next-arrow { right: 20px; }
+
+        .gallery-thumbs {
+            display: flex;
+            justify-content: center; /* THIS IS THE MAGIC LINE: Centers the thumbnails perfectly! */
+            align-items: center;
+            gap: 15px;
+            height: 90px; /* Height of the thumbnail strip */
+            width: 100%;
+            overflow-x: auto; /* Allows horizontal scrolling */
+            scrollbar-width: none; /* Hides scrollbar in Firefox */
+            scroll-behavior: smooth;
+        }
+        .gallery-thumbs::-webkit-scrollbar { display: none; } /* Hides scrollbar in Chrome/Safari */
+
+        .thumb-img {
+            width: 140px; /* Width of each thumbnail */
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+            cursor: pointer;
+            opacity: 0.3; /* Faded by default */
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            flex-shrink: 0; /* Prevents thumbnails from squishing */
+        }
+
+        .thumb-img:hover { opacity: 0.7; }
         
-        .folder-footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;}
-        .folder-tags { display: flex; gap: 8px; }
-        .folder-tags span { background: rgba(0,0,0,0.05); padding: 6px 12px; border-radius: 100px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--secondary-text); }
-        
-        .folder-link { font-size: 0.9rem; font-weight: 700; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 5px; transition: transform 0.3s;}
-        .glass-folder-card:hover .folder-link { transform: translateX(5px); }
+        .thumb-img.active {
+            opacity: 1;
+            border-color: var(--accent); /* Highlights the active image */
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 900px) {
+            .project-card {
+                grid-template-columns: 1fr;
+                height: auto;
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+            .project-content {
+                padding: 120px 25px 40px 25px;
+                order: 1;
+            }
+            .project-image-wrapper {
+                padding: 0 25px 40px 25px;
+                height: 50vh;
+                order: 2;
+            }
+            .project-faded-num { font-size: 6rem; }
+            .project-title { font-size: 2.5rem; }
+        }
+	
+	/* --- EXPLORE MORE PROJECTS STRIP --- */
+        .explore-strip {
+            padding: 40Px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 5;
+            
+            /* The White Background */
+            background: rgba(255, 255, 255, 0.05); 
+		backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            
+            /* Subtle definition lines */
+            border-top: 1px solid rgba(0, 0, 0, 0.03);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+            
+            /* Soft shadow to give it a slight 'lift' over the scrolling cards */
+            box-shadow: 0 10px 50px rgba(0,0,0,0.02);
+        }
+
+        .explore-btn {
+            display: inline-block;
+            padding: 20px 50px;
+            /* The Glass Effect */
+            background: rgba(255, 255, 255, 0.05); 
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 100px;
+            
+            color: var(--primary-text);
+            font-weight: 700;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.85rem;
+            
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+        }
+
+        .explore-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(255, 0, 128, 0.1);
+        }
 
         /* --- ABOUT ME SECTION --- */
         .about-grid { display: grid; grid-template-columns: 5fr 7fr; gap: 60px; align-items: center; }
@@ -811,8 +1001,7 @@
 </head>
 <body>
     <div id="custom-cursor"></div>
-    <div class="grain-bg"></div>
-    
+     
     <div class="dot-layer" aria-hidden="true">
         <canvas id="dots"></canvas>
     </div>
@@ -925,137 +1114,183 @@
 
 
     <section class="work-section" id="work">
-        <div class="container">
-            <h2 class="section-title animate-on-scroll">Selected Work </h2>
-
-            <div class="folder-grid">
-  
-             
-                <div class="glass-folder-card animate-on-scroll" onclick="window.location.href='CS1.html';">
-                    <div class="peek-image">
-                        <img src="MahaRERA.png" alt="MahaRERA" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop'">
-                    </div>
+        <div class="cascading-container">
+            
+            <!-- Project 01 -->
+            <div class="project-card">
+                <div class="project-content">
                     
-                    <div class="folder-inner">  			
-                        <div class="folder-tab">
-			<span class="tab-number">01</span>
-        </div>
-                        <div class="folder-body">
-                            <div class="folder-header">
-                                <span class="folder-label">Web Design</span>
-                                <span class="folder-time">15 min read</span>
-                            </div>
-                            <h3>MahaRERA Portal</h3>
-                            <p>Architecting a scalable regulatory platform. Simplifying the complex digital journey for over 6M+ users.</p>
-                            
-                            <div class="folder-footer">
-                                <div class="folder-tags">
-                                    <span>Gov Tech</span>
-                                    <span>UX/UI</span>
-					<span>Research</span>
-                                </div>
-                                <span class="folder-link">View Project →</span>
-                            </div>
+                    <!-- TOP ROW -->
+                    <div class="project-header">
+                        <span class="project-type">Web Design</span>
+                        <span class="project-read-time">15 min read</span>
+                    </div>
+
+                    <!-- MIDDLE ROW -->
+                    <div class="project-middle">
+                        <div class="project-faded-num">01</div>
+                        <h3 class="project-title">MahaRERA Portal</h3>
+                        <p class="project-desc">Architecting a scalable regulatory platform. Simplifying the complex digital journey for over 6M+ users with an intuitive, standardized ecosystem.</p>
+                    </div>
+
+                    <!-- BOTTOM ROW -->
+                    <div class="project-footer">
+                        <div class="project-capsules">
+                            <span class="capsule">User Research</span>
+                            <span class="capsule">Gov Tech</span>
+                            <span class="capsule">UX/UI Design</span>
                         </div>
+                        <a href="CS1.html" class="highlighted-btn">View Project <span>→</span></a>
                     </div>
-                </div>
 
-        
-
-                <div class="glass-folder-card animate-on-scroll" onclick="window.location.href='CS1.html';">
-                    <div class="peek-image">
-                        <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?q=80&w=1000&auto=format&fit=crop" alt="Imagine as you read">
-                    </div>
-                    
-                    <div class="folder-inner">
-			
-    			<div class="folder-tab">
-			<span class="tab-number">02</span>
-        </div>
-                        <div class="folder-body">
-                            <div class="folder-header">
-                                <span class="folder-label">AI & AR Application</span>
-                                <span class="folder-time">12 min read</span>
-                            </div>
-                            <h3>Imagine As You Read</h3>
-                            <p>A research-led exploration of changing reading habits and experiences in the modern digital era.</p>
-                            
-                            <div class="folder-footer">
-                                <div class="folder-tags">
-                                    <span>Research</span>
-                                    <span>UI/UX Design</span>
-                                </div>
-                                <span class="folder-link">View Project →</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-              
-                <div class="glass-folder-card animate-on-scroll" onclick="window.location.href='CS1.html';">
-                    <div class="peek-image">
-                        <img src="https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=1000&auto=format&fit=crop" alt="XPSarathi">
-                    </div>
-                    
-                    <div class="folder-inner">
-			
-                        <div class="folder-tab">
-			<span class="tab-number">03</span>
-        </div>
-                        <div class="folder-body">
-                            <div class="folder-header">
-                                <span class="folder-label">Mobile App</span>
-                                <span class="folder-time">10 min read</span>
-                            </div>
-                            <h3>XPSarathi AI</h3>
-                            <p>Bridging the gap between traveler and history through empathetic UI and generative AI integration.</p>
-                            
-                            <div class="folder-footer">
-                                <div class="folder-tags">
-                                    <span>AI Integration</span>
-                                    <span>UX Design</span>
-                                </div>
-                                <span class="folder-link">View Project →</span>
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 
-
-
-                <div class="glass-folder-card animate-on-scroll" onclick="window.location.href='CS1.html';">
-                    <div class="peek-image">
-                        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop" alt="FocusXR">
+                <div class="project-image-wrapper gallery-wrapper">
+                    <div class="gallery-main">
+                        <button class="gallery-arrow prev-arrow">❮</button>
+                        <img src="MahaRERA.png" class="main-display-img" alt="MahaRERA Portal" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop'">
+                        <button class="gallery-arrow next-arrow">❯</button>
                     </div>
-                    
-                    <div class="folder-inner">
-			
-  			<div class="folder-tab">
-			<span class="tab-number">04</span>
-        </div>
-                        <div class="folder-body">
-                            <div class="folder-header">
-                                <span class="folder-label">XR App</span>
-                                <span class="folder-time">8 min read</span>
-                            </div>
-                            <h3>FocusXR: Learn with AI & XR</h3>
-                            <p>FocusXR is an immersive AR/VR experience that transforms passive content into intuitive, engaging, and context-aware interactions.</p>
-                            
-                            <div class="folder-footer">
-                                <div class="folder-tags">
-                                    <span>UX Design</span>
-                                    <span>Prototyping</span>
-                                </div>
-                                <span class="folder-link">View Project →</span>
-                            </div>
-                        </div>
+                    <div class="gallery-thumbs" data-lenis-prevent>
+                        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop" class="thumb-img active" alt="Preview 1">
+                        <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?q=80&w=1000&auto=format&fit=crop" class="thumb-img" alt="Preview 2">
+                        <img src="https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=1000&auto=format&fit=crop" class="thumb-img" alt="Preview 3">
+                        <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1000&auto=format&fit=crop" class="thumb-img" alt="Preview 4">
+                        <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1000&auto=format&fit=crop" class="thumb-img" alt="Preview 5">
                     </div>
                 </div>
-
             </div>
+
+            <!-- Project 02 -->
+            <div class="project-card">
+                <div class="project-content">
+                    
+                    <div class="project-header">
+                        <span class="project-type">AI & AR App</span>
+                        <span class="project-read-time">12 min read</span>
+                    </div>
+
+                    <div class="project-middle">
+                        <div class="project-faded-num">02</div>
+                        <h3 class="project-title">Imagine As You Read</h3>
+                        <p class="project-desc">A research-led exploration of changing reading habits and experiences in the modern digital era, integrating AI for immersive storytelling.</p>
+                    </div>
+
+                    <div class="project-footer">
+                        <div class="project-capsules">
+                            <span class="capsule">Research</span>
+                            <span class="capsule">AI & AR</span>
+                            <span class="capsule">Prototyping</span>
+                        </div>
+                        <a href="CS1.html" class="highlighted-btn">View Project <span>→</span></a>
+                    </div>
+
+                </div>
+                
+                <div class="project-image-wrapper gallery-wrapper">
+                    <div class="gallery-main">
+                        <button class="gallery-arrow prev-arrow">❮</button>
+                        <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?q=80&w=1000&auto=format&fit=crop" class="main-display-img" alt="Imagine As You Read">
+                        <button class="gallery-arrow next-arrow">❯</button>
+                    </div>
+                    <div class="gallery-thumbs" data-lenis-prevent>
+                        <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?q=80&w=1000&auto=format&fit=crop" class="thumb-img active" alt="Preview 1">
+                        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop" class="thumb-img" alt="Preview 2">
+                        <img src="https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=1000&auto=format&fit=crop" class="thumb-img" alt="Preview 3">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 03 -->
+            <div class="project-card">
+                <div class="project-content">
+                    
+                    <div class="project-header">
+                        <span class="project-type">Mobile App</span>
+                        <span class="project-read-time">10 min read</span>
+                    </div>
+
+                    <div class="project-middle">
+                        <div class="project-faded-num">03</div>
+                        <h3 class="project-title">XPSarathi AI</h3>
+                        <p class="project-desc">Bridging the gap between the modern traveler and historical narratives through empathetic UI and generative AI integration.</p>
+                    </div>
+
+                    <div class="project-footer">
+                        <div class="project-capsules">
+                            <span class="capsule">AI Integration</span>
+                            <span class="capsule">Mobile App</span>
+                            <span class="capsule">UX Strategy</span>
+                        </div>
+                        <a href="CS1.html" class="highlighted-btn">View Project <span>→</span></a>
+                    </div>
+
+                </div>
+                
+                <div class="project-image-wrapper gallery-wrapper">
+                    <div class="gallery-main">
+                        <button class="gallery-arrow prev-arrow">❮</button>
+                        <img src="https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=1000&auto=format&fit=crop" class="main-display-img" alt="XPSarathi AI">
+                        <button class="gallery-arrow next-arrow">❯</button>
+                    </div>
+                    <div class="gallery-thumbs" data-lenis-prevent>
+                        <img src="https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=1000&auto=format&fit=crop" class="thumb-img active" alt="Preview 1">
+                        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop" class="thumb-img" alt="Preview 2">
+                        <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?q=80&w=1000&auto=format&fit=crop" class="thumb-img" alt="Preview 3">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 04 -->
+            <div class="project-card">
+                <div class="project-content">
+                    
+                    <div class="project-header">
+                        <span class="project-type">XR App</span>
+                        <span class="project-read-time">8 min read</span>
+                    </div>
+
+                    <div class="project-middle">
+                        <div class="project-faded-num">04</div>
+                        <h3 class="project-title">FocusXR</h3>
+                        <p class="project-desc">An immersive AR/VR experience that transforms passive educational content into intuitive, engaging, and context-aware spatial interactions.</p>
+                    </div>
+
+                    <div class="project-footer">
+                        <div class="project-capsules">
+                            <span class="capsule">Spatial Design</span>
+                            <span class="capsule">Prototyping</span>
+                            <span class="capsule">XR App</span>
+                        </div>
+                        <a href="CS1.html" class="highlighted-btn">View Project <span>→</span></a>
+                    </div>
+
+                </div>
+                
+                <div class="project-image-wrapper gallery-wrapper">
+                    <div class="gallery-main">
+                        <button class="gallery-arrow prev-arrow">❮</button>
+                        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop" class="main-display-img" alt="FocusXR">
+                        <button class="gallery-arrow next-arrow">❯</button>
+                    </div>
+                    <div class="gallery-thumbs" data-lenis-prevent>
+                        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop" class="thumb-img active" alt="Preview 1">
+                        <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?q=80&w=1000&auto=format&fit=crop" class="thumb-img" alt="Preview 2">
+                        <img src="https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=1000&auto=format&fit=crop" class="thumb-img" alt="Preview 3">
+                    </div>
+                </div>
+            </div>
+
         </div>
     </section>
+	<!-- EXPLORE MORE STRIP -->
+    <div class="explore-strip animate-on-scroll">
+        <div class="container" style="text-align: center;">
+            <a href="https://www.behance.net/ganeshjavhare" target="_blank" class="explore-btn">
+                Explore More Projects
+            </a>
+        </div>
+    </div>
     
     <section class="about-section" id="about">
         <div class="container about-grid">
@@ -1742,6 +1977,93 @@
         
         resize(); 
         draw();
+// =====================================================================
+        // --- 12. INTERACTIVE PHOTO GALLERY LOGIC ---
+        // =====================================================================
+        const galleries = document.querySelectorAll('.gallery-wrapper');
+
+        galleries.forEach(gallery => {
+            const mainImg = gallery.querySelector('.main-display-img');
+            const thumbs = gallery.querySelectorAll('.thumb-img');
+            const prevBtn = gallery.querySelector('.prev-arrow');
+            const nextBtn = gallery.querySelector('.next-arrow');
+            
+            let currentIndex = 0;
+
+            // Function to update the main image and active thumbnail
+            function updateGallery(index) {
+                // Fade out main image slightly for a smooth transition
+                mainImg.style.opacity = 0.5;
+                
+                setTimeout(() => {
+                    // Swap the source to the clicked thumbnail's source
+                    mainImg.src = thumbs[index].src;
+                    mainImg.style.opacity = 1;
+                }, 150);
+
+                // Remove active class from all, add to the current one
+                thumbs.forEach(t => t.classList.remove('active'));
+                thumbs[index].classList.add('active');
+
+                // Automatically scroll the thumbnail container to keep the active image in view
+                thumbs[index].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+
+            // Click event for thumbnails
+            thumbs.forEach((thumb, index) => {
+                thumb.addEventListener('click', () => {
+                    currentIndex = index;
+                    updateGallery(currentIndex);
+                });
+            });
+
+            // Click event for Next Arrow
+            if (nextBtn) {
+                nextBtn.addEventListener('click', () => {
+                    currentIndex = (currentIndex + 1) % thumbs.length; // Loops back to 0 if at the end
+                    updateGallery(currentIndex);
+                });
+            }
+
+            // Click event for Prev Arrow
+            if (prevBtn) {
+                prevBtn.addEventListener('click', () => {
+                    currentIndex = (currentIndex - 1 + thumbs.length) % thumbs.length; // Loops to end if at 0
+                    updateGallery(currentIndex);
+                });
+            }
+        });    
+    </script>
+
+    <!-- Premium Smooth Scroll (Restored!) -->
+    <script src="https://unpkg.com/lenis@1.1.2/dist/lenis.min.js"></script>
+    <script>
+        // Initialize Lenis WITHOUT autoRaf
+        const lenis = new Lenis({
+            duration: 1.5,         
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) 
+        });
+
+        // CRITICAL FIX: The manual engine that forces Lenis to actually scroll the page
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+
+        // Update UI elements on scroll
+        lenis.on('scroll', (e) => {
+            if (typeof updateScrollAndIdle === 'function') updateScrollAndIdle(); 
+            if (typeof updateHeaderTitle === 'function') updateHeaderTitle();
+        });
+
+        // Ensures smooth scrolling works for your anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                lenis.scrollTo(this.getAttribute('href'));
+            });
+        });
     </script>
 </body>
 </html>
