@@ -627,8 +627,33 @@
             background: var(--accent);
             opacity: 0.4;
         }   
+        /* --- CUSTOM 3D MODEL --- */
+        .hero { position: relative; overflow: hidden; }
+        .hero .container { position: relative; z-index: 2; pointer-events: none; }
+        .hero .container * { pointer-events: auto; }
+        
+        #custom-3d-model {
+            position: absolute;
+            top: 20%;
+            left: 50%; /* Pushes it to the horizontal center */
+            transform: translate(-50%, -50%); /* Perfectly centers it on both axes */
+            width: 900px; /* Made the canvas slightly larger for a background effect */
+            height: 900px;
+            z-index: 0; /* This strictly keeps it BEHIND your z-index: 2 text */
+            opacity: 0.4; /* Fades it so your tagline remains highly readable */
+            pointer-events: none; /* Ensures you can still click the "Let's Connect" button over it */
+        }
+        
+        #custom-3d-model { right: 2%; }
+        #custom-3d-model-left { left: 2%; } /* Puts the new one on the left */
+
+        /* Hides both on mobile so they don't block your text */
+        @media (max-width: 1100px) {
+            #custom-3d-model, #custom-3d-model-left { display: none !important; } 
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 </head>
 <body>
     <div id="custom-cursor"></div>
@@ -698,9 +723,11 @@
     </div>
 
     <section class="hero">
+        
+        <div id="custom-3d-model"></div>
+
         <div class="container">
-            <h1 class="animate-on-scroll slide-right-to-left no-base-anim speak-text" data-start-delay="0">Bridging Screens & <span class="highlight">Beating Hearts</span></h1>
-            
+            <h1 class="animate-on-scroll slide-right-to-left no-base-anim speak-text" data-start-delay="0">Bridging Screens & <span class="highlight">Beating Hearts</span></h1>    
             <p class="sub-headline animate-on-scroll slide-right-to-left no-base-anim speak-text" data-start-delay="0.5">UX Designer blending research, strategy, and design to create meaningful experiences for over 6 million users.</p>
             
             <div class="tag-container animate-on-scroll slide-right-to-left">
@@ -1850,6 +1877,90 @@
             animate();
         }
 
-        initDNA(); </script>
+        initDNA(); 
+        // =====================================================================
+        // --- 14. LOAD CUSTOM .GLB MODEL ---
+        // =====================================================================
+        function loadCustomModels() {
+            const loader = new THREE.GLTFLoader();
+
+            // ----------------------------------------------------
+            // 1. SETUP RIGHT MODEL (HEART)
+            // ----------------------------------------------------
+            const rightContainer = document.getElementById('custom-3d-model');
+            if (rightContainer) {
+                const sceneRight = new THREE.Scene();
+                const camRight = new THREE.PerspectiveCamera(45, rightContainer.clientWidth / rightContainer.clientHeight, 0.1, 1000);
+                camRight.position.z = 10; 
+                const renRight = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+                renRight.setSize(rightContainer.clientWidth, rightContainer.clientHeight);
+                renRight.setPixelRatio(window.devicePixelRatio);
+                rightContainer.appendChild(renRight.domElement);
+
+                sceneRight.add(new THREE.AmbientLight(0xffffff, 0.2));
+                const dirLightR = new THREE.DirectionalLight(0xffffff, 1.5);
+                dirLightR.position.set(5, 10, 7);
+                sceneRight.add(dirLightR);
+
+                let modelRight;
+                // ---> CHANGE 'model.glb' TO YOUR RIGHT MODEL FILENAME
+                loader.load('heart.glb', function(gltf) {
+                    modelRight = gltf.scene;
+                    modelRight.scale.set(2, 2, 2); // Adjust size here
+                    modelRight.position.set(0, 0, 0);
+                    sceneRight.add(modelRight);
+                });
+
+                function animateRight() {
+                    requestAnimationFrame(animateRight);
+                    if (modelRight) {
+                        modelRight.rotation.y += 0.005; 
+                        modelRight.position.y = (Math.sin(Date.now() * 0.002) * 0.2) - 1; 
+                    }
+                    renRight.render(sceneRight, camRight);
+                }
+                animateRight();
+            }
+
+            // ----------------------------------------------------
+            // 2. SETUP LEFT MODEL (MOBILE SCREEN)
+            // ----------------------------------------------------
+            const leftContainer = document.getElementById('custom-3d-model-left');
+            if (leftContainer) {
+                const sceneLeft = new THREE.Scene();
+                const camLeft = new THREE.PerspectiveCamera(45, leftContainer.clientWidth / leftContainer.clientHeight, 0.1, 1000);
+                camLeft.position.z = 10; 
+                const renLeft = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+                renLeft.setSize(leftContainer.clientWidth, leftContainer.clientHeight);
+                renLeft.setPixelRatio(window.devicePixelRatio);
+                leftContainer.appendChild(renLeft.domElement);
+
+                sceneLeft.add(new THREE.AmbientLight(0xffffff, 1.2));
+                const dirLightL = new THREE.DirectionalLight(0xffffff, 1.5);
+                dirLightL.position.set(-5, 10, 7);
+                sceneLeft.add(dirLightL);
+
+                let modelLeft;
+                // ---> CHANGE 'mobile.glb' TO YOUR NEW LEFT MODEL FILENAME
+                loader.load('mobile.glb', function(gltf) {
+                    modelLeft = gltf.scene;
+                    modelLeft.scale.set(25, 25, 25); // Adjust size here
+                    modelLeft.position.set(1, 1, 0); // Adjust position here
+                    sceneLeft.add(modelLeft);
+                });
+
+                function animateLeft() {
+                    requestAnimationFrame(animateLeft);
+                    if (modelLeft) {
+                        modelLeft.rotation.y -= 0.005; // Spins in the opposite direction!
+                        modelLeft.position.y = (Math.cos(Date.now() * 0.002) * 0.2) - 1; 
+                    }
+                    renLeft.render(sceneLeft, camLeft);
+                }
+                animateLeft();
+            }
+        }
+        
+        window.addEventListener('DOMContentLoaded', loadCustomModels); </script>
 </body>
 </html>
