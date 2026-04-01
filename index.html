@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ganesh Javhare | UX Designer</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Courgette&display=swap" rel="stylesheet">
     <style>
@@ -18,7 +18,6 @@
             --dot: rgba(27,27,27,.12);
         }
 
-
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
@@ -27,12 +26,12 @@
             color: var(--primary-text);
             line-height: 1.6;
             position: relative;
-            cursor: none; /* Crucial: hides the default mouse pointer */
+            cursor: none; 
         }
 
         /* ---------- DOTS LAYER ---------- */
         .dot-layer {
-            position: absolute; /* Unpins it so it scrolls natively */
+            position: absolute; 
             top: 0;
             left: 0;
             width: 100%;
@@ -48,7 +47,7 @@
             display:block;
         }
         
-                /* ---------- CUSTOM CURSOR ---------- */
+        /* ---------- CUSTOM CURSOR ---------- */
         #custom-cursor {
             display: none;
         }
@@ -118,7 +117,6 @@
             border-radius: 22px;
             background: rgba(0, 0, 0, 0.04);
             border: 1px solid rgba(0,0,0,0.05);
-            /* This bezier curve creates that 'springy/fluid' feel */
             transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s, color 0.3s;
             overflow: hidden;
             text-decoration: none;
@@ -143,7 +141,7 @@
         }
 
         .fluid-nav-btn:hover {
-            width: 120px; /* Expands to fit the word */
+            width: 120px; 
             background: var(--accent);
             color: white;
             border-color: var(--accent);
@@ -151,12 +149,12 @@
 
         .fluid-nav-btn:hover .nav-icon {
             opacity: 0;
-            transform: translateY(-20px) scale(0.8); /* Slides up and disappears */
+            transform: translateY(-20px) scale(0.8); 
         }
 
         .fluid-nav-btn:hover .nav-text {
             opacity: 1;
-            transform: translateY(0) scale(1); /* Slides up into view */
+            transform: translateY(0) scale(1); 
         }
 
         .menu-toggle { display: none; }
@@ -172,30 +170,16 @@
         .section-title { font-size: 2rem; font-weight: 700; margin-bottom: 40px; color: var(--primary-text); }
 
         /* --- HERO SECTION --- */
-
-        /* ========================================= */
-        /* --- 1. RIGHT-TO-LEFT ENTRANCE (TEXT)  --- */
-        /* ========================================= */
-        .hero .slide-right-to-left {
-            opacity: 0;
-        }
-
-        /* Uses an animation for a slow entrance */
-        .hero .slide-right-to-left.is-visible {
-            animation: slideInRight 0.8s ease-out forwards;
-        }
+        .hero .slide-right-to-left { opacity: 0; }
+        .hero .slide-right-to-left.is-visible { animation: slideInRight 0.8s ease-out forwards; }
 
         @keyframes slideInRight {
             0% { transform: translateX(80px); opacity: 0; }
             100% { transform: translateX(0); opacity: 1; }
         }
 
-        .hero .no-base-anim {
-            animation: none !important;
-            opacity: 1 !important;
-        }
+        .hero .no-base-anim { animation: none !important; opacity: 1 !important; }
 
-        /* Word-by-word speaking effect */
         .speaking-word {
             display: inline-block;
             opacity: 0;
@@ -209,17 +193,12 @@
             transform: translateX(0);
         }
 
-        /* --- Enforce Delays --- */
         .hero h1.slide-right-to-left { animation-delay: 0.0s; }
         .hero .sub-headline.slide-right-to-left { animation-delay: 0.15s; }
         .hero .tag-container.slide-right-to-left { animation-delay: 1.3s; }
         .hero .cta-button.slide-right-to-left { animation-delay: 1.7s; }
         .hero .hero-quote.slide-right-to-left { animation-delay: 1.9s; }
 
-
-        /* ========================================= */
-        /* --- 2. BOTTOM-TO-TOP ENTRANCE (CARDS) --- */
-        /* ========================================= */
         .stat-card {
             background: #f0ece1;
             padding: 20px 30px;
@@ -230,38 +209,31 @@
             overflow: hidden;
             opacity: 0;
             transform: translateY(60px);
-            
-            /* Snappy 0.3s transition used exclusively for hovering! */
             transition: all 1s ease; 
         }
 
-        /* Visible State plays the 1.2s slow entrance animation */
-        .stats-grid.is-visible .stat-card {
-            animation: flyUpCard 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
+        .stats-grid.is-visible .stat-card { animation: flyUpCard 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
 
         @keyframes flyUpCard {
             0% { transform: translateY(60px); opacity: 0; }
             100% { transform: translateY(0); opacity: 1; }
         }
 
-        /* Staggered Delays */
         .stats-grid.is-visible .stat-card:nth-child(1) { animation-delay: 1.5s; }
         .stats-grid.is-visible .stat-card:nth-child(2) { animation-delay: 1.6s; }
         .stats-grid.is-visible .stat-card:nth-child(3) { animation-delay: 1.7s; }
         .stats-grid.is-visible .stat-card:nth-child(4) { animation-delay: 1.8s; }
 
-        /* Restored Hover Effect */
         .stat-card:hover {
             transform: translateY(-8px) scale(1.05) !important;
             box-shadow: 0 15px 30px rgba(255, 0, 128, 0.15) !important; 
             z-index: 2;
         }
-        /* --- CYLINDRICAL ROLLING COUNTER --- */
+
         .stat-number { 
             display: inline-flex !important; 
             justify-content: center;
-            height: 1em; /* Perfectly matches the font size */
+            height: 1em; 
             line-height: 1;
             overflow: hidden; 
         }
@@ -272,19 +244,13 @@
             will-change: transform;
         }
         .roll-digit span {
-            height: 1em; /* Exact height per number */
+            height: 1em; 
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        .roll-suffix {
-            opacity: 0;
-            transition: opacity 0.8s ease;
-        }
+        .roll-suffix { opacity: 0; transition: opacity 0.8s ease; }
         .hero { text-align: center; padding-top: 120px; padding-bottom: 40px; }
-
-        
-
 
         h1 { font-size: clamp(5rem, 3vw, 5rem); line-height: 1.1; font-weight: 900; margin-bottom: 1rem; letter-spacing: -0.02em;}
         h1 span.highlight { color: var(--accent); }
@@ -310,7 +276,6 @@
             display: inline-block; transition: 0.3s; box-shadow: 0 8px 25px rgba(255, 0, 128, 0.4); position: relative; overflow: hidden; cursor: pointer;
         }
         
-        /* Updated Hover Effect - Forces the browser to play the animation */
         .cta-button:hover { 
             transform: translateY(-4px) !important; 
             box-shadow: 0 15px 35px rgba(255, 0, 128, 0.7) !important; 
@@ -320,11 +285,11 @@
         @keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
         .hero-quote { margin-top: 2rem; font-style: italic; color: var(--secondary-text); font-size: 1.1rem; }
 
-/* --- PREMIUM FULL WIDTH CASCADING WORK SECTION --- */
+        /* --- PREMIUM FULL WIDTH CASCADING WORK SECTION --- */
         .work-section { 
             position: relative; 
             z-index: 2; 
-            background: transparent; /* Completely removes the section background */
+            background: transparent; 
             padding: 0 !important; 
         }
 
@@ -332,7 +297,7 @@
             display: flex;
             flex-direction: column;
             width: 100%; 
-            padding-bottom: 2px; /* FIX: Invisible buffer to stop the boundary calculation glitch */
+            padding-bottom: 2px; 
         }
 
         .project-card {
@@ -340,8 +305,6 @@
             top: 0; 
             height: 100vh; 
             width: 100%;
-            /* NO margin-bottom! This is the secret to perfect, natural sticky stacking. */
-            
             background: rgba(250, 248, 245, 0.85);
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
@@ -349,17 +312,13 @@
             grid-template-columns: 45% 50%; 
             overflow: hidden;
             border-top: 1px solid rgba(0,0,0,0.05); 
-            /* Adds a beautiful subtle shadow to the top edge so the cards visibly pop as they overlap */
             box-shadow: 0 -20px 40px rgba(0,0,0,0.03); 
             transform-origin: center top;
-            
-            /* FIX: Hardware acceleration to stop vibration during smooth scrolling */
             will-change: transform; 
             transform: translateZ(0);
         }
 
         .project-content {
-            /* CRITICAL FIX: 100px top & bottom padding mathematically locks it to the image height! */
             padding: 120px 8% 120px 15%; 
             display: flex;
             flex-direction: column;
@@ -368,7 +327,6 @@
             position: relative;
         }
 
-        /* --- CARD HEADER (Top Left & Top Right) --- */
         .project-header {
             display: flex;
             justify-content: space-between;
@@ -376,357 +334,65 @@
             width: 100%;
         }
 
-        .project-type {
-            font-size: 0.85rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--accent); /* Pink accent for the type */
-        }
+        .project-type { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--accent); }
+        .project-read-time { font-size: 0.8rem; font-weight: 600; color: var(--secondary-text); text-transform: uppercase; letter-spacing: 1px; }
 
-        .project-read-time {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--secondary-text);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* --- CARD MIDDLE (Overlapping Title & Number) --- */
-        .project-middle {
-            position: relative;
-            margin: auto 0; /* Centers it perfectly between the top and bottom */
-        }
+        .project-middle { position: relative; margin: auto 0; }
 
         .project-faded-num {
-            position: absolute;
-            top: -120px; /* Pulls it up so the title overlaps the bottom of the number */
-            left: -15px;
-            font-size: 12rem; 
-            font-weight: 900; /* Ultra bold */
-            color: rgba(0, 0, 0, 0.04); /* Beautifully faded */
-            line-height: 1;
-            z-index: 0;
-            letter-spacing: -0.05em;
-            pointer-events: none;
+            position: absolute; top: -120px; left: -15px; font-size: 12rem; font-weight: 900; 
+            color: rgba(0, 0, 0, 0.04); line-height: 1; z-index: 0; letter-spacing: -0.05em; pointer-events: none;
         }
 
-        .project-title {
-            font-size: 3.5rem;
-            font-weight: 800;
-            color: var(--primary-text); 
-            margin-bottom: 20px;
-            line-height: 1.1;
-            letter-spacing: -0.02em;
-            position: relative; /* Brings it to the front, overlapping the number */
-            z-index: 1;
-        }
+        .project-title { font-size: 3.5rem; font-weight: 800; color: var(--primary-text); margin-bottom: 20px; line-height: 1.1; letter-spacing: -0.02em; position: relative; z-index: 1; }
+        .project-desc { font-size: 1.1rem; color: var(--secondary-text); line-height: 1.6; max-width: 90%; position: relative; z-index: 1; }
 
-        .project-desc {
-            font-size: 1.1rem;
-            color: var(--secondary-text); 
-            line-height: 1.6;
-            max-width: 90%;
-            position: relative;
-            z-index: 1;
-        }
-
-       /* --- CARD FOOTER (Bottom Left & Bottom Right) --- */
-        .project-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end; 
-            width: 100%;
-            padding-bottom: 0; /* Removed the extra padding so the bottom sits flush with the image box */
-        }
-
-        .project-capsules {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            max-width: 60%; /* Prevents capsules from pushing into the button */
-        }
-
-        .capsule {
-            padding: 6px 14px;
-            background: rgba(0,0,0,0.04);
-            border: 1px solid rgba(0,0,0,0.08);
-            border-radius: 100px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--secondary-text);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+        .project-footer { display: flex; justify-content: space-between; align-items: flex-end; width: 100%; padding-bottom: 0; }
+        .project-capsules { display: flex; gap: 10px; flex-wrap: wrap; max-width: 60%; }
+        .capsule { padding: 6px 14px; background: rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.08); border-radius: 100px; font-size: 0.75rem; font-weight: 600; color: var(--secondary-text); text-transform: uppercase; letter-spacing: 1px; }
 
         .highlighted-btn {
-            background: var(--primary-text); /* Solid dark pill button */
-            color: white !important;
-            padding: 12px 28px;
-            border-radius: 100px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            white-space: nowrap;
+            background: var(--primary-text); color: white !important; padding: 12px 28px; border-radius: 100px; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; text-decoration: none; transition: all 0.3s ease; white-space: nowrap;
         }
 
-        .highlighted-btn span {
-            font-size: 1.2rem;
-            transition: transform 0.3s ease;
-        }
+        .highlighted-btn span { font-size: 1.2rem; transition: transform 0.3s ease; }
+        .highlighted-btn:hover { background: var(--accent); transform: translateY(-4px); box-shadow: 0 10px 20px rgba(255, 0, 128, 0.25); }
+        .highlighted-btn:hover span { transform: translateX(6px); }
 
-        .highlighted-btn:hover {
-            background: var(--accent); /* Turns pink on hover */
-            transform: translateY(-4px);
-            box-shadow: 0 10px 20px rgba(255, 0, 128, 0.25);
-        }
+        .project-image-wrapper { position: relative; width: 100%; height: 100vh; padding: 100px 20px 100px 0; display: flex; flex-direction: column; gap: 20px; }
+        .gallery-main { position: relative; width: 100%; flex: 1 1 0; min-height: 0; border-radius: 20px; overflow: hidden; background: #111; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .gallery-main img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity 0.3s ease; }
 
-        .highlighted-btn:hover span {
-            transform: translateX(6px);
-        }
+        .gallery-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: white; border: 1px solid rgba(255,255,255,0.2); width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: all 0.3s ease; z-index: 10; }
+        .gallery-arrow:hover { background: var(--accent); border-color: var(--accent); transform: translateY(-50%) scale(1.1); }
+        .prev-arrow { left: 20px; } .next-arrow { right: 20px; }
 
-      
-        /* --- PROJECT GALLERY UI --- */
-        .project-image-wrapper {
-            position: relative;
-            width: 100%;
-            height: 100vh;
-            /* Reduced right padding to make the image wider (40px -> 20px) */
-            /* Increased bottom padding to lift it higher (40px -> 100px) */
-            padding: 100px 20px 100px 0; 
-            display: flex;
-            flex-direction: column; 
-            gap: 20px; 
-        }
-
-        .gallery-main {
-            position: relative;
-            width: 100%;
-            /* CRITICAL FIX: Forces the container to strictly obey the flex space, ignoring image height */
-            flex: 1 1 0; 
-            min-height: 0; 
-            
-            border-radius: 20px;
-            overflow: hidden;
-            background: #111;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        .gallery-main img {
-            /* CRITICAL FIX: Absolute positioning entirely removes the image's natural size from the layout math */
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* Fills the entire container, ignoring aspect ratio */
-            transition: opacity 0.3s ease; 
-        }
-
-        .gallery-arrow {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.2);
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            transition: all 0.3s ease;
-            z-index: 10;
-        }
-        
-        .gallery-arrow:hover { 
-            background: var(--accent); 
-            border-color: var(--accent); 
-            transform: translateY(-50%) scale(1.1); 
-        }
-        
-        .prev-arrow { left: 20px; }
-        .next-arrow { right: 20px; }
-
-        .gallery-thumbs {
-            display: flex;
-            justify-content: center; /* THIS IS THE MAGIC LINE: Centers the thumbnails perfectly! */
-            align-items: center;
-            gap: 10px;
-            height: 90px; /* Height of the thumbnail strip */
-            width: 100%;
-            overflow-x: auto; /* Allows horizontal scrolling */
-            scrollbar-width: none; /* Hides scrollbar in Firefox */
-            scroll-behavior: smooth;
-        }
-        .gallery-thumbs::-webkit-scrollbar { display: none; } /* Hides scrollbar in Chrome/Safari */
-
-        .thumb-img {
-            width: 100px; /* Width of each thumbnail */
-            height: 80%;
-            object-fit: cover;
-            border-radius: 12px;
-            cursor: pointer;
-            opacity: 0.2; /* Faded by default */
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-            flex-shrink: 0; /* Prevents thumbnails from squishing */
-        }
-
+        .gallery-thumbs { display: flex; justify-content: center; align-items: center; gap: 10px; height: 90px; width: 100%; overflow-x: auto; scrollbar-width: none; scroll-behavior: smooth; }
+        .gallery-thumbs::-webkit-scrollbar { display: none; }
+        .thumb-img { width: 100px; height: 80%; object-fit: cover; border-radius: 12px; cursor: pointer; opacity: 0.2; transition: all 0.3s ease; border: 2px solid transparent; flex-shrink: 0; }
         .thumb-img:hover { opacity: 0.7; }
-        
-        .thumb-img.active {
-            opacity: 1;
-            border-color: var(--accent); /* Highlights the active image */
-        }
+        .thumb-img.active { opacity: 1; border-color: var(--accent); }
 
-        /* Mobile Adjustments */
         @media (max-width: 900px) {
-            .project-card {
-                grid-template-columns: 1fr;
-                height: auto;
-                min-height: auto; /* Lets the card flow naturally */
-                display: flex;
-                flex-direction: column;
-                padding: 80px 25px 40px 25px;
-            }
-            
-            /* Flatten these containers so we can reorder everything inside them */
-            .project-content, .project-middle {
-                display: contents;
-            }
-
-            /* 1. The Title */
-            .project-title {
-                order: 1;
-                font-size: 2.2rem !important;
-                margin-bottom: 20px !important;
-                line-height: 1.2;
-            }
-            
-            /* Hide the giant faded number on mobile to keep it clean */
-            .project-faded-num {
-                display: none !important;
-            }
-
-            /* 2. The Horizontal Image Slider */
-            .project-image-wrapper {
-                order: 2;
-                padding: 0 !important; 
-                height: auto !important; 
-                width: 100vw;
-                margin-left: -25px; /* Pulls images edge-to-edge ignoring parent padding */
-                margin-bottom: 25px;
-            }
+            .project-card { grid-template-columns: 1fr; height: auto; min-height: auto; display: flex; flex-direction: column; padding: 80px 25px 40px 25px; }
+            .project-content, .project-middle { display: contents; }
+            .project-title { order: 1; font-size: 2.2rem !important; margin-bottom: 20px !important; line-height: 1.2; }
+            .project-faded-num { display: none !important; }
+            .project-image-wrapper { order: 2; padding: 0 !important; height: auto !important; width: 100vw; margin-left: -25px; margin-bottom: 25px; }
             .gallery-main { display: none !important; }
-            .gallery-thumbs {
-                height: 280px !important; 
-                justify-content: flex-start !important; 
-                padding: 0 25px !important; 
-                gap: 15px !important;
-                scroll-snap-type: x mandatory; 
-                -webkit-overflow-scrolling: touch;
-            }
-            .thumb-img {
-                width: 80vw !important; 
-                height: 100% !important;
-                opacity: 1 !important; 
-                border: none !important; 
-                border-radius: 12px !important;
-                scroll-snap-align: center; 
-                box-shadow: 0 10px 20px rgba(0,0,0,0.1); 
-            }
+            .gallery-thumbs { height: 280px !important; justify-content: flex-start !important; padding: 0 25px !important; gap: 15px !important; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
+            .thumb-img { width: 80vw !important; height: 100% !important; opacity: 1 !important; border: none !important; border-radius: 12px !important; scroll-snap-align: center; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
             .thumb-img:hover { opacity: 1 !important; }
-
-            /* 3. The Type & Read Time */
-            .project-header {
-                order: 3;
-                width: 100%;
-                margin-bottom: 15px;
-            }
-
-            /* 4. The Description */
-            .project-desc {
-                order: 4;
-                max-width: 100% !important;
-                margin-bottom: 25px;
-                font-size: 1rem;
-            }
-
-            /* 5. The Tags and Button */
-            .project-footer {
-                order: 5;
-                flex-direction: column;
-                align-items: flex-start !important;
-                gap: 25px;
-                padding-bottom: 20px;
-            }
-            .project-capsules {
-                max-width: 100% !important;
-            }
-        }
-	
-	/* --- EXPLORE MORE PROJECTS STRIP --- */
-        .explore-strip {
-            padding: 20Px 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            z-index: 5;
-            
-            /* The White Background */
-            background: rgba(36, 34, 34, 0.05); 
-		backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            
-            /* Subtle definition lines */
-            border-top: 1px solid rgba(0, 0, 0, 0.03);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.03);
-            
-            /* Soft shadow to give it a slight 'lift' over the scrolling cards */
-            box-shadow: 0 10px 50px rgba(0,0,0,0.02);
+            .project-header { order: 3; width: 100%; margin-bottom: 15px; }
+            .project-desc { order: 4; max-width: 100% !important; margin-bottom: 25px; font-size: 1rem; }
+            .project-footer { order: 5; flex-direction: column; align-items: flex-start !important; gap: 25px; padding-bottom: 20px; }
+            .project-capsules { max-width: 100% !important; }
         }
 
-        .explore-btn {
-            display: inline-block;
-            padding: 10px 50px;
-            /* The Glass Effect */
-            background: rgba(255, 255, 255, 0.05); 
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            border-radius: 100px;
-            
-            color: var(--primary-text);
-            font-weight: 700;
-            text-decoration: none;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 0.85rem;
-            
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
-        }
-
-        .explore-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: var(--accent);
-            color: var(--accent);
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(255, 0, 128, 0.1);
-        }
+        /* --- EXPLORE MORE PROJECTS STRIP --- */
+        .explore-strip { padding: 20Px 0; display: flex; justify-content: center; align-items: center; position: relative; z-index: 5; background: rgba(36, 34, 34, 0.05); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-top: 1px solid rgba(0, 0, 0, 0.03); border-bottom: 1px solid rgba(0, 0, 0, 0.03); box-shadow: 0 10px 50px rgba(0,0,0,0.02); }
+        .explore-btn { display: inline-block; padding: 10px 50px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 100px; color: var(--primary-text); font-weight: 700; text-decoration: none; text-transform: uppercase; letter-spacing: 2px; font-size: 0.85rem; transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); }
+        .explore-btn:hover { background: rgba(255, 255, 255, 0.2); border-color: var(--accent); color: var(--accent); transform: translateY(-8px); box-shadow: 0 20px 40px rgba(255, 0, 128, 0.1); }
 
         /* --- ABOUT ME SECTION --- */
         .about-grid { display: grid; grid-template-columns: 5fr 7fr; gap: 60px; align-items: center; }
@@ -740,25 +406,8 @@
         .about-stat-number { display: block; font-size: 2.5rem; font-weight: 900; color: var(--primary-text); margin-bottom: 5px; }
         .about-stat-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--secondary-text); font-weight: 600; }
 
-        /* --- EXPERTISE --- */
-        .expertise-section { 
-            background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); 
-            border-top: 1px solid rgba(255, 255, 255, 0.4); border-left: 1px solid rgba(255, 255, 255, 0.2); 
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05); color: white; padding: 20px 0; position: relative; z-index: 2; 
-        }
-        .expertise-section .section-title { color: #36454F; margin-bottom: 10px; }
-        .expertise-subtitle { color: #36454F; font-size: 0.9rem; margin-bottom: 15px; }
-        .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
-        .skill-column h4 { color: #36454F; font-size: 1.1rem; margin-bottom: 20px; font-weight: 600; }
-        .skill-column ul { list-style: none; }
-        .skill-column li { margin-bottom: 8px; color: #36454F; font-size: 0.95rem; }
-
         /* --- TOOL LOGOS STRIP --- */
-        .tools-strip { 
-            background: rgba(0, 0, 0, 0.15); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); 
-            border-top: 1px solid rgba(255, 255, 255, 0.4); border-left: 1px solid rgba(255, 255, 255, 0.2); 
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05); padding: 10px 0; border-bottom: 1px solid #e0ddd5; display: flex; justify-content: center; align-items: center; gap: 40px; flex-wrap: wrap; position: relative; z-index: 2;
-        }
+        .tools-strip { background: rgba(0, 0, 0, 0.15); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(255, 255, 255, 0.4); border-left: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05); padding: 10px 0; border-bottom: 1px solid #e0ddd5; display: flex; justify-content: center; align-items: center; gap: 40px; flex-wrap: wrap; position: relative; z-index: 2; }
         .tool-icon-img { width: 32px; height: 32px; object-fit: contain; opacity: 0.6; transition: all 0.3s ease; }
         .tool-icon-img:hover { opacity: 1; transform: translateY(-5px) scale(1.1); }
 
@@ -774,45 +423,22 @@
         .career-desc { color: var(--secondary-text); font-size: 0.95rem; line-height: 1.6; }
 
         /* --- KIND WORDS (TESTIMONIALS) --- */
-        .kind-words-section { 
-            background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); 
-            border-top: 1px solid rgba(255, 255, 255, 0.4); border-left: 1px solid rgba(255, 255, 255, 0.2); 
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05); padding: 100px 0; position: relative; z-index: 2; 
-        }
+        .kind-words-section { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(255, 255, 255, 0.4); border-left: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05); padding: 100px 0; position: relative; z-index: 2; }
         .testimony-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
-        .testimony-card { 
-            padding: 40px; background: rgba(0, 0, 0, 0.15); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); 
-            border-top: 1px solid rgba(255, 255, 255, 0.8); border-left: 1px solid rgba(255, 255, 255, 0.05); 
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2); border-radius: 20px; border: 1px solid #e0ddd5; transition: transform 0.4s ease, box-shadow 0.4s ease; 
-        }
+        .testimony-card { padding: 40px; background: rgba(0, 0, 0, 0.15); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(255, 255, 255, 0.8); border-left: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2); border-radius: 20px; border: 1px solid #e0ddd5; transition: transform 0.4s ease, box-shadow 0.4s ease; }
         .testimony-card:hover { transform: translateY(-8px) scale(1.03); box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
         .testimony-text { font-size: 1.1rem; font-style: italic; color: var(--primary-text); margin-bottom: 24px; line-height: 1.6; }
         .testimony-author { font-weight: 700; color: var(--primary-text); font-size: 1.05rem; }
         .testimony-role { font-size: 0.85rem; color: var(--secondary-text); }
 
         /* --- FOOTER --- */
-        footer { 
-            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); 
-            border-top: 1px solid rgba(255, 255, 255, 0.1); border-left: 1px solid rgba(255, 255, 255, 0.05); 
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2); padding: 20px 0 30px 0; position: relative; z-index: 10; color: white; border-top: 1px solid rgba(255,255,255,0.05);
-        }
-        .footer-header { 
-            font-family: 'Courgette', cursive; 
-            font-size: clamp(2rem, 5vw, 1rem); 
-            color: white; 
-            text-align: center; 
-            line-height: 1.2; 
-            margin-bottom: 30px; 
-        }
+        footer { background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(255, 255, 255, 0.1); border-left: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2); padding: 20px 0 30px 0; position: relative; z-index: 10; color: white; border-top: 1px solid rgba(255,255,255,0.05); }
+        .footer-header { font-family: 'Courgette', cursive; font-size: clamp(2rem, 5vw, 1rem); color: white; text-align: center; line-height: 1.2; margin-bottom: 30px; }
         .footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 10px; max-width: 600px; margin: 0 auto; }
         .footer-col { display: flex; flex-direction: column; align-items: center;  text-align: center; }
         .footer-col h4 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.15em; color: #888; margin-bottom: 25px; }
         .footer-actions { display: flex; flex-direction: column; gap: 15px; width: 100%; align-items: center; }
-        .action-btn { 
-            width: 150px !important; height: 40px !important; display: flex !important; align-items: center !important;
-            justify-content: center !important; padding: 0 !important; font-size: 1.1rem !important; font-family: inherit !important; 
-            box-sizing: border-box; border: none !important; 
-        } 
+        .action-btn { width: 150px !important; height: 40px !important; display: flex !important; align-items: center !important; justify-content: center !important; padding: 0 !important; font-size: 1.1rem !important; font-family: inherit !important; box-sizing: border-box; border: none !important; } 
         .chat-btn { background: #eee !important; color: #555 !important; }
         .social-links-grid { display: flex; flex-direction: column; gap: 18px; width: 100%; }
         .social-item { display: flex; align-items: center; justify-content: center; gap: 12px; text-decoration: none; }
@@ -822,25 +448,12 @@
         .social-item:hover .social-label { color: var(--accent); }
         .portfolio-views { text-align: center; margin-top: 10px; padding-top: 10px; margin-bottom: 10px; border-top: 1px solid rgba(255, 255, 255, 0.1); font-size: 0.85rem; color: #888; }
 
-        @media (max-width: 768px) {
-            .footer-grid { grid-template-columns: 1fr; gap: 20px; } 
-            .footer-header { margin-bottom: 40px; }
-        }
+        @media (max-width: 768px) { .footer-grid { grid-template-columns: 1fr; gap: 20px; } .footer-header { margin-bottom: 40px; } }
 
         /* --- WIP POPUP CSS --- */
-        .popup-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-            z-index: 9999; display: flex; justify-content: center; align-items: center;
-            opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
-        }
+        .popup-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 9999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
         .popup-overlay.show { opacity: 1; pointer-events: all; }
-        .popup-content {
-            background: rgba(255, 255, 255, 0.95); padding: 40px; border-radius: 20px;
-            max-width: 450px; width: 90%; text-align: center; position: relative;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2); border: 1px solid rgba(255, 255, 255, 0.6);
-            transform: translateY(20px) scale(0.95); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
+        .popup-content { background: rgba(255, 255, 255, 0.95); padding: 40px; border-radius: 20px; max-width: 450px; width: 90%; text-align: center; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.2); border: 1px solid rgba(255, 255, 255, 0.6); transform: translateY(20px) scale(0.95); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .popup-overlay.show .popup-content { transform: translateY(0) scale(1); }
         .popup-content h3 { font-size: 1.5rem; margin-bottom: 15px; color: var(--primary-text); }
         .popup-content p { color: var(--secondary-text); font-size: 0.95rem; margin-bottom: 12px; }
@@ -849,253 +462,181 @@
 
         @media (max-width: 768px) {
             .hamburger { display: flex; } 
-            .nav-links { 
-                position: absolute; top: 100%; left: 0; width: 100%; background: rgba(250, 248, 245, 0.98); 
-                flex-direction: column; text-align: center; padding: 20px 0; box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-                clip-path: circle(0% at top right); transition: clip-path 0.4s ease-in-out;
-            }
-            .fluid-nav-btn {
-                width: 90%;
-                margin: 0 auto;
-                height: 50px;
-                border-radius: 12px;
-                background: transparent;
-                border: none;
-                justify-content: center;
-                gap: 15px;
-            }
-            /* Override the hover animations for mobile */
-            .fluid-nav-btn .nav-icon, .fluid-nav-btn .nav-text {
-                position: relative;
-                transform: none !important;
-                opacity: 1 !important;
-                font-size: 1.2rem;
-            }
-            .fluid-nav-btn:hover {
-                width: 90%;
-                background: rgba(0,0,0,0.05);
-                color: var(--accent);
-            }
+            .nav-links { position: absolute; top: 100%; left: 0; width: 100%; background: rgba(250, 248, 245, 0.98); flex-direction: column; text-align: center; padding: 20px 0; box-shadow: 0 10px 20px rgba(0,0,0,0.05); clip-path: circle(0% at top right); transition: clip-path 0.4s ease-in-out; }
+            .fluid-nav-btn { width: 90%; margin: 0 auto; height: 50px; border-radius: 12px; background: transparent; border: none; justify-content: center; gap: 15px; }
+            .fluid-nav-btn .nav-icon, .fluid-nav-btn .nav-text { position: relative; transform: none !important; opacity: 1 !important; font-size: 1.2rem; }
+            .fluid-nav-btn:hover { width: 90%; background: rgba(0,0,0,0.05); color: var(--accent); }
             .menu-toggle:checked ~ .nav-links { clip-path: circle(150% at top right); }
             .menu-toggle:checked ~ .hamburger span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
             .menu-toggle:checked ~ .hamburger span:nth-child(2) { opacity: 0; }
             .menu-toggle:checked ~ .hamburger span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
-
             .tools-strip { gap: 20px; padding: 30px 20px; }
             .about-grid { grid-template-columns: 1fr; gap: 40px; }
             .about-image-wrapper { width: 90%; margin: 0 auto; max-width: 400px; }
             .about-headline { font-size: 2.2rem; }
             .about-desc p { font-size: 1rem; }
-            
-            /* Responsive adjustments for new folders */
             .folder-grid { grid-template-columns: 1fr; }
         }
 
-        /* Forces the default Tawk.to bubble to be invisible and unclickable */
-        #tawk-container, 
-        .tawk-min-container, 
-        iframe[title*="chat"] {
-            display: none !important;
-            visibility: hidden !important;
-            pointer-events: none !important;
-        }
-
-        /* This allows the window to show up ONLY when it is opened/maximized */
-        .tawk-chat-window-opened iframe[title*="chat"] {
-            display: block !important;
-            visibility: visible !important;
-            pointer-events: all !important;
-        }
+        #tawk-container, .tawk-min-container, iframe[title*="chat"] { display: none !important; visibility: hidden !important; pointer-events: none !important; }
+        .tawk-chat-window-opened iframe[title*="chat"] { display: block !important; visibility: visible !important; pointer-events: all !important; }
 
         /* --- NEW: SCROLL PROGRESS BAR --- */
-        /* --- NEW: SCROLL PROGRESS BAR --- */
-        #scroll-progress {
-            position: fixed;               
-            top: var(--nav-height);        
-            left: 0;
-            width: 0%; 
-            height: 1.5px; 
-            background: var(--accent); 
-            z-index: 1002;
-            transition: width 0.1s ease-out;
-            pointer-events: none; 
-            
-            /* --- THE NEW GLOW EFFECT --- */
-            box-shadow: 0 0 10px rgba(255, 0, 128, 0.8), 
-                        0 0 20px rgba(255, 0, 128, 0.4);
-            border-radius: 0 1px 1px 0; /* Slightly rounds the leading edge of the line */
-        }
+        #scroll-progress { position: fixed; top: var(--nav-height); left: 0; width: 0%; height: 1.5px; background: var(--accent); z-index: 1002; transition: width 0.1s ease-out; pointer-events: none; box-shadow: 0 0 10px rgba(255, 0, 128, 0.8), 0 0 20px rgba(255, 0, 128, 0.4); border-radius: 0 1px 1px 0; }
 
         /* --- NEW: IDLE SCROLL PROMPT --- */
-        .scroll-prompt {
-            position: fixed;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%) translateY(20px);
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            padding: 10px 24px;
-            border-radius: 100px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        .scroll-prompt { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(20px); background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.6); padding: 10px 24px; border-radius: 100px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 10px; z-index: 9998; opacity: 0; pointer-events: none; transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        .scroll-prompt.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .scroll-prompt span { font-size: 0.9rem; font-weight: 600; color: var(--primary-text); }
+        .scroll-prompt .arrow-down { color: var(--accent); font-weight: bold; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-4px); } 60% { transform: translateY(-2px); } }
+
+        /* --- DYNAMIC HEADER TEXT --- */
+        .dynamic-nav-text { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); height: var(--nav-height); width: 400px; overflow: hidden; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+        .greeting-roller { display: flex; flex-direction: column; transition: opacity 0.3s ease; animation: rollGreeting 6s cubic-bezier(0.64, 0, 0.35, 1) infinite; }
+        .greeting-item { height: var(--nav-height); display: flex; align-items: center; justify-content: center; font-family: 'Courgette', cursive; font-size: 1rem; font-weight: 600; color: var(--accent); width: 100%; white-space: nowrap; }
+        @keyframes rollGreeting { 0%, 30% { transform: translateY(0); } 35%, 65% { transform: translateY(calc(var(--nav-height) * -1)); } 70%, 95% { transform: translateY(calc(var(--nav-height) * -2)); } 100% { transform: translateY(calc(var(--nav-height) * -3)); } }
+
+        /* --- THE SECTION TITLE --- */
+        #section-title-display { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Courgette', cursive !important; font-size: 1rem !important; color: #bbb !important; opacity: 0; transform: translateY(20px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); white-space: nowrap; }
+        .dynamic-nav-text.scrolled .greeting-roller { opacity: 0; visibility: hidden; }
+        .dynamic-nav-text.scrolled #section-title-display { opacity: 1; transform: translateY(0); } 
+        .section-title-display { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 600; color: var(--primary-text); text-transform: uppercase; letter-spacing: 0.15em; opacity: 0; transform: translateY(20px); transition: opacity 0.4s ease, transform 0.4s ease; white-space: nowrap; }
+        .dynamic-nav-text.scrolled .greeting-roller { opacity: 0; }
+        .dynamic-nav-text.scrolled .section-title-display { opacity: 1; transform: translateY(0); }
+        @media (max-width: 768px) { .dynamic-nav-text { display: none; } }
+
+        /* --- VIGNETTE OVERLAY SETTINGS --- */
+        :root {
+            --vignette-center-width: 50%; 
+            --vignette-darkness: 0.1;     
+        }
+        #vignette-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 0; background: radial-gradient(circle at center, transparent var(--vignette-center-width), rgba(20, 44, 55, var(--vignette-darkness)) 150%); }
+
+        /* --- NEW EXPERTISE DESIGN & 3D LAYOUT --- */
+        .expertise-section { 
+            position: relative; 
+            padding: 30px 0; 
+            overflow: hidden; 
+            background: rgba(250, 248, 245, 0.7); 
+            border-top: 1px solid rgba(0,0,0,0.05);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        #dna-canvas-container {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0; 
+            pointer-events: none; 
+            opacity: 0.6; 
+        }
+
+        .relative-z { position: relative; z-index: 2; }
+
+        .new-skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .new-skill-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(0,0,0,0.05);
+            border-radius: 24px;
+            padding: 10px 20px;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .new-skill-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(255, 0, 128, 0.08);
+        }
+
+        .exp-fluid-btn {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px; 
+            height: 50px;
+            border-radius: 25px;
+            background: #fff;
+            border: 1px solid rgba(0,0,0,0.08);
+            transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s;
+            overflow: hidden;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            color: var(--primary-text);
+        }
+
+        .exp-fluid-btn .exp-icon {
+            width: 24px !important; 
+            height: 24px !important;
+            min-width: 24px;
+            flex-shrink: 0; 
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .exp-fluid-btn .exp-text {
+            position: absolute;
+            opacity: 0;
+            transform: translateY(20px) scale(0.8);
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            white-space: nowrap;
+            font-size: 0.95rem; 
+            font-weight: 700;
+        }
+
+        .new-skill-card:hover .exp-fluid-btn {
+            width: 200px; 
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .new-skill-card:hover .exp-icon {
+            opacity: 0;
+            transform: translateY(-20px) scale(0.5); 
+        }
+
+        .new-skill-card:hover .exp-text {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .exp-list { list-style: none; }
+        .exp-list li {
+            margin-bottom: 12px;
+            color: var(--secondary-text);
+            font-size: 0.95rem;
             display: flex;
             align-items: center;
             gap: 10px;
-            z-index: 9998;
-            opacity: 0;
-            pointer-events: none; 
-            transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .scroll-prompt.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0); 
-        }
-        .scroll-prompt span {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--primary-text);
-        }
-        .scroll-prompt .arrow-down {
-            color: var(--accent);
-            font-weight: bold;
-            animation: bounce 2s infinite; 
-        }
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-4px); }
-            60% { transform: translateY(-2px); }
-        }
-/* --- DYNAMIC HEADER TEXT --- */
-        .dynamic-nav-text {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%); /* Perfectly centers horizontally and vertically */
-            height: var(--nav-height);
-            width: 400px; /* Wider to prevent any cropping */
-            overflow: hidden; 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            pointer-events: none; 
-        }
-
-        .greeting-roller {
-            display: flex;
-            flex-direction: column;
-            transition: opacity 0.3s ease;
-            animation: rollGreeting 6s cubic-bezier(0.64, 0, 0.35, 1) infinite;
-        }
-
-        .greeting-item {
-            height: var(--nav-height);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Courgette', cursive; 
-            font-size: 1rem; 
-            font-weight: 600;
-            color: var(--accent); 
-            width: 100%;
-            white-space: nowrap;
-        }
-
-        @keyframes rollGreeting {
-            0%, 30% { transform: translateY(0); } 
-            35%, 65% { transform: translateY(calc(var(--nav-height) * -1)); } 
-            70%, 95% { transform: translateY(calc(var(--nav-height) * -2)); } 
-            100% { transform: translateY(calc(var(--nav-height) * -3)); } 
-        }
-
-        /* --- THE SECTION TITLE --- */
-        #section-title-display {
-            position: absolute;
-            inset: 0; /* fills the container */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Courgette', cursive !important;
-            font-size: 1rem !important;
-            color: #bbb !important;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            white-space: nowrap;
-        }
-
-        /* Logic for when scrolling happens */
-        .dynamic-nav-text.scrolled .greeting-roller {
-            opacity: 0;
-            visibility: hidden;
-        }
-        .dynamic-nav-text.scrolled #section-title-display {
-            opacity: 1;
-            transform: translateY(0);
-        } {
-            .dynamic-nav-text { display: none; }
-        }
-
-        /* The section name that appears on scroll */
-        .section-title-display {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--primary-text);
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.4s ease, transform 0.4s ease;
-            white-space: nowrap;
-        }
-
-        /* When JS applies '.scrolled', hide greeting and show section title */
-        .dynamic-nav-text.scrolled .greeting-roller {
-            opacity: 0;
-        }
-        .dynamic-nav-text.scrolled .section-title-display {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Hide on mobile to prevent crowding the logo and hamburger */
-        @media (max-width: 768px) {
-            .dynamic-nav-text { display: none; }
-        }
-/* --- VIGNETTE OVERLAY SETTINGS --- */
-        :root {
-            /* TWEAK HERE: Change 30% to make the clear center wider (e.g., 50%) or narrower (e.g., 20%) */
-            --vignette-center-width: 50%; 
-            
-            /* TWEAK HERE: Change 0.5 to make edges darker (e.g., 0.8) or lighter (e.g., 0.3). Max is 1. */
-            --vignette-darkness: 0.1;     
-        }
-
-        #vignette-overlay {
-            position: fixed;
-            top: 0; 
-            left: 0; 
-            width: 100vw; 
-            height: 100vh;
-            pointer-events: none; /* Crucial: lets you click right through it */
-            z-index: 0; /* Sits perfectly between your background dots and your content */
-            background: radial-gradient(circle at center, transparent var(--vignette-center-width), rgba(20, 44, 55, var(--vignette-darkness)) 150%);
-        }
-    </style>
+        .exp-list li::before {
+            content: '';
+            display: inline-block;
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+            opacity: 0.4;
+        }   
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
     <div id="custom-cursor"></div>
-	<div id="vignette-overlay"></div>
+    <div id="vignette-overlay"></div>
 
-       
     <div class="dot-layer" aria-hidden="true">
         <canvas id="dots"></canvas>
     </div>
-	<div id="vignette-overlay"></div>
 
     <div id="wip-popup" class="popup-overlay">
         <div class="popup-content">
@@ -1114,28 +655,24 @@
         <ul class="nav-links">
             <li>
                 <a href="#work" class="fluid-nav-btn">
-                    <!-- Grid/Briefcase Icon -->
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
                     <span class="nav-text">Work</span>
                 </a>
             </li>
             <li>
                 <a href="#about" class="fluid-nav-btn">
-                    <!-- User Icon -->
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                     <span class="nav-text">About Me</span>
                 </a>
             </li>
             <li>
                 <a href="CS1.html" class="fluid-nav-btn">
-                    <!-- Book/Library Icon -->
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
                     <span class="nav-text">Library</span>
                 </a>
             </li>
             <li>
                 <a href="#contact" class="fluid-nav-btn">
-                    <!-- Mail/Contact Icon -->
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
                     <span class="nav-text">Contact</span>
                 </a>
@@ -1146,8 +683,8 @@
             <div class="greeting-roller">
                 <div class="greeting-item">नमस्ते</div>
                 <div class="greeting-item">Welcome</div>
-		<div class="greeting-item">Hello</div>
-		<div class="greeting-item">Bonjour</div> <div class="greeting-item">नमस्ते</div>
+        <div class="greeting-item">Hello</div>
+        <div class="greeting-item">Bonjour</div> <div class="greeting-item">नमस्ते</div>
                 </div>
             <div id="section-title-display"></div>
         </div>
@@ -1367,8 +904,7 @@
 
         </div>
     </section>
-	<!-- EXPLORE MORE STRIP -->
-    <div class="explore-strip animate-on-scroll">
+<div class="explore-strip animate-on-scroll">
         <div class="container" style="text-align: center;">
             <a href="https://www.behance.net/ganeshjavhare" target="_blank" class="explore-btn">
                 Explore More Projects
@@ -1405,22 +941,61 @@
     </section>
     
     <section class="expertise-section" id="expertise">
-        <div class="container">
-            <h2 class="section-title animate-on-scroll">Expertise</h2>
-            <p class="expertise-subtitle animate-on-scroll">Core Competency</p>
-            <div class="skills-grid">
-                <div class="skill-column animate-on-scroll">
-                    <h4>Strategy & Research</h4>
-                    <ul><li>User Journey Mapping</li><li>Stakeholder Interviews</li><li>Usability Testing</li><li>Competitive Analysis</li><li>Information Architecture</li></ul>
+        <div id="dna-canvas-container"></div>
+        
+        <div class="container relative-z">
+            <h2 class="section-title animate-on-scroll" style="color: var(--primary-text); margin-bottom: 10px;">Expertise</h2>
+            <p class="expertise-subtitle animate-on-scroll" style="color: var(--secondary-text); margin-bottom: 50px;">The building blocks of my process.</p>
+            
+            <div class="new-skills-grid">
+                
+                <div class="new-skill-card animate-on-scroll">
+                    <div class="exp-fluid-btn">
+                        <div class="exp-icon-wrapper">
+    <svg class="exp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+</div>
+                        <span class="exp-text">Strategy & Research</span>
+                    </div>
+                    <ul class="exp-list">
+                        <li>User Journey Mapping</li>
+                        <li>Stakeholder Interviews</li>
+                        <li>Usability Testing</li>
+                        <li>Competitive Analysis</li>
+                        <li>Information Architecture</li>
+                    </ul>
                 </div>
-                <div class="skill-column animate-on-scroll">
-                    <h4>Interface Design</h4>
-                    <ul><li>Rapid Prototyping</li><li>Design Systems (Figma)</li><li>Micro-interactions</li><li>Visual Storytelling</li><li>Responsive Web & App</li><li>Vibe Coding</li></ul>
+
+                <div class="new-skill-card animate-on-scroll" style="transition-delay: 0.1s;">
+                    <div class="exp-fluid-btn">
+                        <svg class="exp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path><path d="M2 2l7.586 7.586"></path><circle cx="11" cy="11" r="2"></circle></svg>
+                        <span class="exp-text">Interface Design</span>
+                    </div>
+                    <ul class="exp-list">
+                        <li>Rapid Prototyping</li>
+                        <li>Design Systems (Figma)</li>
+                        <li>Micro-interactions</li>
+                        <li>Visual Storytelling</li>
+                        <li>Responsive Web & App</li>
+                        <li>Vibe Coding</li>
+                    </ul>
                 </div>
-                <div class="skill-column animate-on-scroll">
-                    <h4>Technical Tools</h4>
-                    <ul><li>Figma / Framer</li><li>Adobe Creative Suite</li><li>HTML / CSS / JS</li><li>Principle / After Effects</li><li>Linear / Jira</li></ul>
+
+                <div class="new-skill-card animate-on-scroll" style="transition-delay: 0.2s;">
+                    <div class="exp-fluid-btn">
+                        <div class="exp-icon-wrapper">
+    <svg class="exp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+</div>
+                        <span class="exp-text">Technical Tools</span>
+                    </div>
+                    <ul class="exp-list">
+                        <li>Figma / Framer</li>
+                        <li>Adobe Creative Suite</li>
+                        <li>HTML / CSS / JS</li>
+                        <li>Principle / After Effects</li>
+                        <li>Linear / Jira</li>
+                    </ul>
                 </div>
+
             </div>
         </div>
     </section>
@@ -1759,16 +1334,16 @@
         let circuits = [];
         
         let occupiedCells = new Set(); 
-        let exclusionZones = [];       
+        let exclusionZones = [];        
 
         const config = {
             spacing: 25, 
             radius: 1.5,
-            dotColorIdle: "27, 27, 27",       
-            dotColorHover: "255, 0, 128",     
-            snapLineColor: "255, 0, 128",     
+            dotColorIdle: "27, 27, 27",        
+            dotColorHover: "255, 0, 128",      
+            snapLineColor: "255, 0, 128",      
             circuitColor: "194, 197, 204",      // neon gold- 255, 200, 50  grey- 194, 197, 204
-            textColor: "0, 0, 0",             
+            textColor: "0, 0, 0",              
             
             lineDist: 80, 
             lineOpacity: 0.9, 
@@ -2116,10 +1691,9 @@
                     updateGallery(currentIndex);
                 });
             }
-        });    
+        });   
     </script>
 
-    <!-- Premium Smooth Scroll (Restored!) -->
     <script src="https://unpkg.com/lenis@1.1.2/dist/lenis.min.js"></script>
     <script>
         // Initialize Lenis WITHOUT autoRaf
@@ -2148,6 +1722,134 @@
                 lenis.scrollTo(this.getAttribute('href'));
             });
         });
-    </script>
+// =====================================================================
+        // --- 13. 3D DNA BACKGROUND (THREE.JS) ---
+        // =====================================================================
+        // =====================================================================
+        // --- 13. 3D DNA BACKGROUND WITH TEXT LINKS (THREE.JS) ---
+        // =====================================================================
+        function initDNA() {
+            const container = document.getElementById('dna-canvas-container');
+            if (!container) return;
+
+            // The words you want inside your DNA bonds!
+            const dnaWords = [
+                "RESEARCH", "PROTOTYPING", 
+                "UI DESIGN", "UX Design", "Product Des", "ACCESSIBILITY",
+                "HTML / CSS", "INTERACTION", "A/B TESTING", "ANALYTICS"
+            ];
+
+            // 1. Setup Scene, Camera, and Renderer
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(35, container.clientWidth / container.clientHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true }); 
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            container.appendChild(renderer.domElement);
+
+            // 2. Create the DNA Group
+            const dnaGroup = new THREE.Group();
+            scene.add(dnaGroup);
+
+            // 3. Materials for the outer backbone spheres
+            const sphereGeo = new THREE.SphereGeometry(0.4, 16, 16); 
+            const mat1 = new THREE.MeshBasicMaterial({ color: 0xff0080 }); 
+            const mat2 = new THREE.MeshBasicMaterial({ color: 0x444444 });
+
+            // Helper function to create a texture with text on it
+            function createTextMaterial(text) {
+                const canvas = document.createElement('canvas');
+                canvas.width = 256;
+                canvas.height = 64;
+                const context = canvas.getContext('2d');
+                
+                // Draw background (slightly transparent grey so the bond is visible)
+                context.fillStyle = 'rgba(200, 200, 200, 0.2)';
+                context.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw text
+                context.font = 'bold 28px sans-serif';
+                context.fillStyle = '#ff0080'; // Pink text!
+                context.textAlign = 'center';
+                context.textBaseline = 'middle';
+                context.fillText(text, canvas.width / 2, canvas.height / 2);
+                
+                const texture = new THREE.CanvasTexture(canvas);
+                // Make the material transparent so the background of the canvas fades out
+                return new THREE.MeshBasicMaterial({ map: texture, transparent: true, side: THREE.DoubleSide });
+            }
+
+            // 4. Build the Double Helix
+            const numPairs = 40;
+            const ySpacing = 0.6;
+            const radius = 2.5;
+            const rotationStep = 0.3;
+
+            for (let i = 0; i < numPairs; i++) {
+                const y = (i - numPairs / 2) * ySpacing;
+                const angle = i * rotationStep;
+
+                // Position 1 (Left strand)
+                const x1 = Math.cos(angle) * radius;
+                const z1 = Math.sin(angle) * radius;
+                const sphere1 = new THREE.Mesh(sphereGeo, mat1);
+                sphere1.position.set(x1, y, z1);
+                dnaGroup.add(sphere1);
+
+                // Position 2 (Right strand)
+                const x2 = Math.cos(angle + Math.PI) * radius;
+                const z2 = Math.sin(angle + Math.PI) * radius;
+                const sphere2 = new THREE.Mesh(sphereGeo, mat2);
+                sphere2.position.set(x2, y, z2);
+                dnaGroup.add(sphere2);
+
+                // Create the text bond
+                // We use a plane (a flat rectangle) instead of a cylinder so the text reads clearly
+                const word = dnaWords[i % dnaWords.length]; // Loops through your words
+                const textMat = createTextMaterial(word);
+                const textGeo = new THREE.PlaneGeometry(radius * 1.8, 0.6); 
+                
+                const bond = new THREE.Mesh(textGeo, textMat);
+                bond.position.set((x1 + x2)/2, y, (z1 + z2)/2);
+                
+                // Make the text face outward perfectly
+                bond.lookAt(sphere1.position);
+                // Rotate it so it stands upright between the spheres
+                bond.rotateY(Math.PI / 2);
+                
+                dnaGroup.add(bond);
+            }
+
+            // 5. Position, Scale, and Camera
+            dnaGroup.position.x = 12; 
+            dnaGroup.scale.set(1, 1, 1); 
+
+            camera.position.set(0, 0, 30);
+            camera.lookAt(scene.position);
+            dnaGroup.rotation.z = Math.PI / 7; 
+
+            // 6. Animate on Scroll & Render Loop
+            let targetRotationY = 0;
+
+            window.addEventListener('scroll', () => {
+                targetRotationY = window.scrollY * 0.003; 
+            });
+
+            window.addEventListener('resize', () => {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            });
+
+            function animate() {
+                requestAnimationFrame(animate);
+                dnaGroup.rotation.y += (targetRotationY - dnaGroup.rotation.y) * 0.05;
+                dnaGroup.rotation.y += 0.002; 
+                renderer.render(scene, camera);
+            }
+            animate();
+        }
+
+        initDNA(); </script>
 </body>
 </html>
