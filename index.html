@@ -1038,10 +1038,10 @@
 /* --- VIGNETTE OVERLAY SETTINGS --- */
         :root {
             /* TWEAK HERE: Change 30% to make the clear center wider (e.g., 50%) or narrower (e.g., 20%) */
-            --vignette-center-width: 30%; 
+            --vignette-center-width: 50%; 
             
             /* TWEAK HERE: Change 0.5 to make edges darker (e.g., 0.8) or lighter (e.g., 0.3). Max is 1. */
-            --vignette-darkness: 0.5;     
+            --vignette-darkness: 0.1;     
         }
 
         #vignette-overlay {
@@ -1052,7 +1052,7 @@
             height: 100vh;
             pointer-events: none; /* Crucial: lets you click right through it */
             z-index: 0; /* Sits perfectly between your background dots and your content */
-            background: radial-gradient(circle at center, transparent var(--vignette-center-width), rgba(0, 0, 0, var(--vignette-darkness)) 150%);
+            background: radial-gradient(circle at center, transparent var(--vignette-center-width), rgba(20, 44, 55, var(--vignette-darkness)) 150%);
         }
     </style>
 </head>
