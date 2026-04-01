@@ -595,59 +595,90 @@
             .project-card {
                 grid-template-columns: 1fr;
                 height: auto;
-                min-height: 100vh;
+                min-height: auto; /* Lets the card flow naturally */
                 display: flex;
                 flex-direction: column;
+                padding: 80px 25px 40px 25px;
             }
-            .project-content {
-                padding: 120px 25px 40px 25px;
+            
+            /* Flatten these containers so we can reorder everything inside them */
+            .project-content, .project-middle {
+                display: contents;
+            }
+
+            /* 1. The Title */
+            .project-title {
                 order: 1;
+                font-size: 2.2rem !important;
+                margin-bottom: 20px !important;
+                line-height: 1.2;
             }
             
-            /* --- NEW MOBILE HORIZONTAL SLIDER --- */
-            .project-image-wrapper {
-                padding: 0 0 60px 0 !important; /* Full width edge-to-edge */
-                height: auto !important; 
-                order: 2;
-            }
-            
-            /* Hides the main big image viewer and arrows on mobile */
-            .gallery-main {
+            /* Hide the giant faded number on mobile to keep it clean */
+            .project-faded-num {
                 display: none !important;
             }
 
-            /* Converts the thumbnail strip into a horizontal scrollable carousel */
+            /* 2. The Horizontal Image Slider */
+            .project-image-wrapper {
+                order: 2;
+                padding: 0 !important; 
+                height: auto !important; 
+                width: 100vw;
+                margin-left: -25px; /* Pulls images edge-to-edge ignoring parent padding */
+                margin-bottom: 25px;
+            }
+            .gallery-main { display: none !important; }
             .gallery-thumbs {
-                height: 350px !important; /* Make images tall enough */
+                height: 280px !important; 
                 justify-content: flex-start !important; 
                 padding: 0 25px !important; 
                 gap: 15px !important;
-                scroll-snap-type: x mandatory; /* Snaps image to center when scrolling */
+                scroll-snap-type: x mandatory; 
                 -webkit-overflow-scrolling: touch;
             }
-
-            /* Styles the individual images in the carousel */
             .thumb-img {
-                width: 80vw !important; /* Takes up 80% of screen width so the next image peeks out */
+                width: 80vw !important; 
                 height: 100% !important;
-                opacity: 1 !important; /* Removes the faded look */
-                border: none !important; /* Removes the pink active border */
-                border-radius: 16px !important;
-                scroll-snap-align: center; /* Locks image in the middle when you stop swiping */
+                opacity: 1 !important; 
+                border: none !important; 
+                border-radius: 12px !important;
+                scroll-snap-align: center; 
                 box-shadow: 0 10px 20px rgba(0,0,0,0.1); 
             }
-            
-            /* Overrides the hover transparency for touch screens */
             .thumb-img:hover { opacity: 1 !important; }
-            /* ------------------------------------ */
 
-            .project-faded-num { font-size: 6rem; }
-            .project-title { font-size: 2.5rem; }
+            /* 3. The Type & Read Time */
+            .project-header {
+                order: 3;
+                width: 100%;
+                margin-bottom: 15px;
+            }
+
+            /* 4. The Description */
+            .project-desc {
+                order: 4;
+                max-width: 100% !important;
+                margin-bottom: 25px;
+                font-size: 1rem;
+            }
+
+            /* 5. The Tags and Button */
+            .project-footer {
+                order: 5;
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 25px;
+                padding-bottom: 20px;
+            }
+            .project-capsules {
+                max-width: 100% !important;
+            }
         }
 	
 	/* --- EXPLORE MORE PROJECTS STRIP --- */
         .explore-strip {
-            padding: 40Px 0;
+            padding: 20Px 0;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -669,7 +700,7 @@
 
         .explore-btn {
             display: inline-block;
-            padding: 20px 50px;
+            padding: 10px 50px;
             /* The Glass Effect */
             background: rgba(255, 255, 255, 0.05); 
             backdrop-filter: blur(15px);
@@ -1176,25 +1207,21 @@
     <section class="work-section" id="work">
         <div class="cascading-container">
             
-            <!-- Project 01 -->
             <div class="project-card">
                 <div class="project-content">
                     
-                    <!-- TOP ROW -->
-                    <div class="project-header">
+                    <div class="project-header animate-on-scroll">
                         <span class="project-type">Web Design</span>
                         <span class="project-read-time">15 min read</span>
                     </div>
 
-                    <!-- MIDDLE ROW -->
-                    <div class="project-middle">
+                    <div class="project-middle animate-on-scroll" style="transition-delay: 0.1s;">
                         <div class="project-faded-num">01</div>
                         <h3 class="project-title">MahaRERA Portal</h3>
                         <p class="project-desc">Architecting a scalable regulatory platform. Simplifying the complex digital journey for over 6M+ users with an intuitive, standardized ecosystem.</p>
                     </div>
 
-                    <!-- BOTTOM ROW -->
-                    <div class="project-footer">
+                    <div class="project-footer animate-on-scroll" style="transition-delay: 0.2s;">
                         <div class="project-capsules">
                             <span class="capsule">User Research</span>
                             <span class="capsule">Gov Tech</span>
@@ -1206,12 +1233,12 @@
                 </div>
                 
                 <div class="project-image-wrapper gallery-wrapper">
-                    <div class="gallery-main">
+                    <div class="gallery-main animate-on-scroll" style="transition-delay: 0.3s;">
                         <button class="gallery-arrow prev-arrow">❮</button>
                         <img src="MahaRERA.png" class="main-display-img" alt="MahaRERA Portal" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop'">
                         <button class="gallery-arrow next-arrow">❯</button>
                     </div>
-                    <div class="gallery-thumbs" data-lenis-prevent>
+                    <div class="gallery-thumbs animate-on-scroll" style="transition-delay: 0.4s;" data-lenis-prevent>
                         <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop" class="thumb-img active" alt="Preview 1">
                         <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?q=80&w=1000&auto=format&fit=crop" class="thumb-img" alt="Preview 2">
                         <img src="https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=1000&auto=format&fit=crop" class="thumb-img" alt="Preview 3">
@@ -1221,22 +1248,21 @@
                 </div>
             </div>
 
-            <!-- Project 02 -->
             <div class="project-card">
                 <div class="project-content">
                     
-                    <div class="project-header">
+                    <div class="project-header animate-on-scroll">
                         <span class="project-type">AI & AR App</span>
                         <span class="project-read-time">12 min read</span>
                     </div>
 
-                    <div class="project-middle">
+                    <div class="project-middle animate-on-scroll" style="transition-delay: 0.1s;">
                         <div class="project-faded-num">02</div>
                         <h3 class="project-title">Imagine As You Read</h3>
                         <p class="project-desc">A research-led exploration of changing reading habits and experiences in the modern digital era, integrating AI for immersive storytelling.</p>
                     </div>
 
-                    <div class="project-footer">
+                    <div class="project-footer animate-on-scroll" style="transition-delay: 0.2s;">
                         <div class="project-capsules">
                             <span class="capsule">Research</span>
                             <span class="capsule">AI & AR</span>
@@ -1248,12 +1274,12 @@
                 </div>
                 
                 <div class="project-image-wrapper gallery-wrapper">
-                    <div class="gallery-main">
+                    <div class="gallery-main animate-on-scroll" style="transition-delay: 0.3s;">
                         <button class="gallery-arrow prev-arrow">❮</button>
                         <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?q=80&w=1000&auto=format&fit=crop" class="main-display-img" alt="Imagine As You Read">
                         <button class="gallery-arrow next-arrow">❯</button>
                     </div>
-                    <div class="gallery-thumbs" data-lenis-prevent>
+                    <div class="gallery-thumbs animate-on-scroll" style="transition-delay: 0.4s;" data-lenis-prevent>
                         <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?q=80&w=1000&auto=format&fit=crop" class="thumb-img active" alt="Preview 1">
                         <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop" class="thumb-img" alt="Preview 2">
                         <img src="https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=1000&auto=format&fit=crop" class="thumb-img" alt="Preview 3">
@@ -1261,22 +1287,21 @@
                 </div>
             </div>
 
-            <!-- Project 03 -->
             <div class="project-card">
                 <div class="project-content">
                     
-                    <div class="project-header">
+                    <div class="project-header animate-on-scroll">
                         <span class="project-type">Mobile App</span>
                         <span class="project-read-time">10 min read</span>
                     </div>
 
-                    <div class="project-middle">
+                    <div class="project-middle animate-on-scroll" style="transition-delay: 0.1s;">
                         <div class="project-faded-num">03</div>
                         <h3 class="project-title">XPSarathi AI</h3>
                         <p class="project-desc">Bridging the gap between the modern traveler and historical narratives through empathetic UI and generative AI integration.</p>
                     </div>
 
-                    <div class="project-footer">
+                    <div class="project-footer animate-on-scroll" style="transition-delay: 0.2s;">
                         <div class="project-capsules">
                             <span class="capsule">AI Integration</span>
                             <span class="capsule">Mobile App</span>
@@ -1288,12 +1313,12 @@
                 </div>
                 
                 <div class="project-image-wrapper gallery-wrapper">
-                    <div class="gallery-main">
+                    <div class="gallery-main animate-on-scroll" style="transition-delay: 0.3s;">
                         <button class="gallery-arrow prev-arrow">❮</button>
                         <img src="https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=1000&auto=format&fit=crop" class="main-display-img" alt="XPSarathi AI">
                         <button class="gallery-arrow next-arrow">❯</button>
                     </div>
-                    <div class="gallery-thumbs" data-lenis-prevent>
+                    <div class="gallery-thumbs animate-on-scroll" style="transition-delay: 0.4s;" data-lenis-prevent>
                         <img src="https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=1000&auto=format&fit=crop" class="thumb-img active" alt="Preview 1">
                         <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop" class="thumb-img" alt="Preview 2">
                         <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?q=80&w=1000&auto=format&fit=crop" class="thumb-img" alt="Preview 3">
@@ -1301,22 +1326,21 @@
                 </div>
             </div>
 
-            <!-- Project 04 -->
             <div class="project-card">
                 <div class="project-content">
                     
-                    <div class="project-header">
+                    <div class="project-header animate-on-scroll">
                         <span class="project-type">XR App</span>
                         <span class="project-read-time">8 min read</span>
                     </div>
 
-                    <div class="project-middle">
+                    <div class="project-middle animate-on-scroll" style="transition-delay: 0.1s;">
                         <div class="project-faded-num">04</div>
                         <h3 class="project-title">FocusXR</h3>
                         <p class="project-desc">An immersive AR/VR experience that transforms passive educational content into intuitive, engaging, and context-aware spatial interactions.</p>
                     </div>
 
-                    <div class="project-footer">
+                    <div class="project-footer animate-on-scroll" style="transition-delay: 0.2s;">
                         <div class="project-capsules">
                             <span class="capsule">Spatial Design</span>
                             <span class="capsule">Prototyping</span>
@@ -1328,12 +1352,12 @@
                 </div>
                 
                 <div class="project-image-wrapper gallery-wrapper">
-                    <div class="gallery-main">
+                    <div class="gallery-main animate-on-scroll" style="transition-delay: 0.3s;">
                         <button class="gallery-arrow prev-arrow">❮</button>
                         <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop" class="main-display-img" alt="FocusXR">
                         <button class="gallery-arrow next-arrow">❯</button>
                     </div>
-                    <div class="gallery-thumbs" data-lenis-prevent>
+                    <div class="gallery-thumbs animate-on-scroll" style="transition-delay: 0.4s;" data-lenis-prevent>
                         <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop" class="thumb-img active" alt="Preview 1">
                         <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?q=80&w=1000&auto=format&fit=crop" class="thumb-img" alt="Preview 2">
                         <img src="https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=1000&auto=format&fit=crop" class="thumb-img" alt="Preview 3">
