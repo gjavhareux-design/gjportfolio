@@ -11,10 +11,10 @@
         :root {
             --primary-text: #292828;
             --secondary-text: #666;
-            --accent: #ff0080; 
+            --accent: #ff0080; /*#ff0080*/
             --bg-light: #faf8f5; 
             --bg-dark: #222222;
-            --nav-height: 80px;
+            --nav-height: 65px;
             --dot: rgba(27,27,27,.12);
         }
 
@@ -80,10 +80,15 @@
 
         /* --- NAVIGATION --- */
         nav {
-            position: fixed; top: 0; width: 100%; height: var(--nav-height);
+            position: fixed; width: 100%; height: var(--nav-height);
             display: flex; justify-content: space-between; align-items: center;
             padding: 0 5%; background: rgba(245, 245, 245, 0.50);
             backdrop-filter: blur(10px); z-index: 1000;
+            border: 2px solid rgba(0, 0, 0, 0.05);
+            border-top: 3px solid rgba(255, 255, 255, 0.8); 
+            border-left: 2px solid rgba(255, 255, 255, 0.5); 
+            border-radius: 0px;
+           
         }
         nav::before {
             content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -164,8 +169,8 @@
         /* ========================================= */
         
         .hero { 
-            padding-top: 120px; 
-            padding-bottom: 80px; 
+            padding-top: 100px; 
+            padding-bottom: 85px; 
             text-align: left; 
             overflow: hidden; 
         }
@@ -182,16 +187,16 @@
 
         .hero-content { display: flex; flex-direction: column; align-items: flex-start; }
         .hero-content h1, .hero-content p, .hero-content .hero-quote { text-align: center; }
-        .hero-content .sub-headline { margin-inline: 0; font-size: 1rem; color: var(--secondary-text); font-weight: 500; margin-bottom: 1rem; max-width: 600px;}
-        .hero-content h1 { font-size: clamp(3rem, 4vw, 5rem); line-height: 1.1; font-weight: 900; margin-bottom: 1rem; letter-spacing: -0.02em;}
+        .hero-content .sub-headline { margin-inline: 0; font-size: 1rem; color: var(--secondary-text); font-weight: 600; margin-bottom: 1.2rem; max-width: 520px;}
+        .hero-content h1 { font-size: clamp(4rem, 4vw, 5rem); line-height: 1.1; font-weight: 900; margin-bottom: 2rem; letter-spacing: -0.02em;}
         .hero-content h1 span.highlight { color: var(--accent); }
-        .hero-content .tag-container { display: flex; gap: 10px; margin-bottom: 2rem; flex-wrap: wrap; justify-content: flex-start; }
-        .tag { padding: 6px 16px; border: 1px solid #e0ddd5; border-radius: 100px; font-size: 0.85rem; background: transparent; }
+        .hero-content .tag-container { display: flex; gap: 20px; margin-bottom: 2rem; flex-wrap: wrap; justify-content: flex-start; }
+        .tag { padding: 6px 16px; border: 1.5px solid #e0ddd5; border-radius: 100px; font-size: 0.85rem; background: transparent; }
 
-        .stats-grid { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 2rem; justify-content: flex-start; }
+        .stats-grid { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 2rem; justify-content: flex-end; }
         .stat-card {
-    background: #f0ece1; padding: 15px 25px; border-radius: 16px; text-align: center;
-    width: 100px; /* Fixed width for uniformity */
+    background: #f0ece1; padding: 15px 35px; border-radius: 16px; text-align: center;
+    width: 150px; /* Fixed width for uniformity */
     position: relative; overflow: hidden; opacity: 0; transform: translateY(60px);
     transition: all 1s ease; 
     display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -223,13 +228,13 @@
 
  /* --- DESIGNCODE 3D SCENE --- */
         .hero-visuals {
-            perspective: 1000px; /* Deep perspective for 3D effect */
+            perspective: 800px; /* Deep perspective for 3D effect */
             width: 100%;
             max-width: 400px;
             height: 500px;
             position: relative;
             margin: 0 auto;
-            margin-top: 10px;
+            margin-top: 40px;
             z-index: 5;
         }
 
@@ -367,26 +372,27 @@
             max-width: 1100px;
             margin: 0 auto;
             padding: 0 30px;
-            text-align: center;
+            text-align: left;
             margin-bottom: 60px;
         }
 
-        .glass-header-box {
-            background: rgba(0, 0, 0, 0.03); /* Barely visible dark tint for the glass */
-            backdrop-filter: blur(16px);
+       /*{ 
+       .glass-header-box { background: rgba(0, 0, 0, 0.03); 
+            backdrop-filter: blur(16px); 
             -webkit-backdrop-filter: blur(16px);
             border: 2px solid rgba(0, 0, 0, 0.05);
-            border-top: 3px solid rgba(255, 255, 255, 0.8); /* Shines the top edge */
-            border-left: 2px solid rgba(255, 255, 255, 0.5); /* Shines the left edge */
+            border-top: 3px solid rgba(255, 255, 255, 0.8); 
+            border-left: 2px solid rgba(255, 255, 255, 0.5); 
             border-radius: 24px;
-            padding: 10px 25px;
+            padding: 10px 205px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05), inset 0 2px 20px rgba(255, 255, 255, 0.4);
-            display: inline-block; /* Keeps the glass wrapped tightly around the text */
-        }
+            display: inline-block; 
+        } 
+        */
 
         .dark-glass-text {
-            font-size: 2.2rem;
-            font-weight: 800;
+            font-size: 2.3rem;
+            font-weight: 700;
             /* Creates the dark, reflective glass text effect */
             background: linear-gradient(135deg, rgba(20, 20, 20, 0.95) 0%, rgba(100, 100, 100, 0.4) 100%);
             -webkit-background-clip: text;
@@ -510,17 +516,17 @@
         /* --- Square Cards Specifics (Bottom Row) --- */
         .square-body {
             position: relative;
-            height: 480px; 
-            display: flex;
+            height: 580px; 
+            display: fit-content;
             flex-direction: column;
             background: transparent; /* Made transparent for glass effect */
         }
 
         .square-image {
             width: 100%;
-            height: 55%;
-            object-fit: cover;
-            object-position: top;
+            height: 70%;
+            object-fit: fill;
+            object-position: center;
         }
 
         /* The white fade-up overlay on the square cards */
@@ -529,19 +535,36 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 65%;
+            height: 55%;
             /* Glassy fade instead of solid white fade */
             background: linear-gradient(to top, rgba(255, 255, 255, 0.95) 45%, rgba(255, 255, 255, 0.6) 80%, transparent 100%);
             backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(12px);
             padding: 30px;
             display: flex;
             flex-direction: column;
-            justify-content: flex-end;
+            justify-content: flex-start;
             align-items: center;
             text-align: center;
         }
 
+        /* --- Square Cards Specifics (Bottom Row) --- */
+        .square-body2 {
+            position: relative;
+            height: 580px; 
+            display: cover;
+            flex-direction: column;
+            background: transparent; /* Made transparent for glass effect */
+        }
+
+        .square-image2 {
+            width: 100%;
+            height: 100%;
+            object-fit: fill;
+            object-position: center;
+        }
+
+        
         /* --- Typography & Elements --- */
         .frame-title {
             color: var(--accent);
@@ -1181,12 +1204,12 @@
 
             <div class="frame-card animate-on-scroll">
                 <div class="frame-header">
-                    <span>App Design</span>
+                    <span>Mobile App Design</span>
                     <span>10 min Reading</span>
                 </div>
                 
                 <div class="square-body">
-                    <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?q=80&w=1000&auto=format&fit=crop" alt="Imagine As You Read" class="square-image">
+                    <img src="iar.png" alt="Imagine As You Read" class="square-image">
                     
                     <div class="square-content-overlay">
                         <h3 class="frame-title">Imagine As You Read</h3>
@@ -1207,12 +1230,12 @@
 
             <div class="frame-card stagger-down animate-on-scroll">
                 <div class="frame-header">
-                    <span>App Design</span>
+                    <span>Extended Reality App</span>
                     <span>8 min Reading</span>
                 </div>
                 
-                <div class="square-body">
-                    <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop" alt="FocusXR" class="square-image">
+                <div class="square-body2">
+                    <img src="focusxr.gif" alt="FocusXR" class="square-image2">
                     
                     <div class="square-content-overlay">
                         <h3 class="frame-title">FocusXR</h3>
@@ -1224,8 +1247,8 @@
                         
                         <div class="frame-tags">
                             <span class="tag-grey">UX design</span>
-                            <span class="tag-grey">User Research</span>
-                            <span class="tag-grey">Service Design</span>
+                            <span class="tag-grey">AI Integration</span>
+                            <span class="tag-grey">AR & VR </span>
                         </div>
                     </div>
                 </div>
