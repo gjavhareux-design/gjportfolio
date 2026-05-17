@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Imagine As You Read — UX Case Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+ *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: rgba(19, 18, 18, 0.881);
+    --border: rgba(255,255,255,0.07);
+    --text: #e8e6f0;
+    --muted: #7a7890;
+    --accent: #c8f060;
+    --accent2: #7b6cff;
+    --accent3: #ff6b8a;
+    --card-bg: #14141e;
+    
+    --serif: 'Syne', sans-serif;
+    --sans: 'DM Sans', sans-serif;
+    --radius: 20px;
+    --radius-sm: 12px;
+    --shadow: 0 10px 30px rgba(0,0,0,0.3);
+    --shadow-hover: 0 24px 60px rgba(0,0,0,0.5);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    cursor: none; /* Hide default cursor for custom one */
+  }
+
+  /* ── Custom Cursor ── */
+  #cursor {
+    position: fixed; top: 0; left: 0;
+    width: 12px; height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.15s ease, width 0.25s ease, height 0.25s ease, background 0.2s;
+    transform: translate(-50%, -50%);
+  }
+  #cursor-ring {
+    position: fixed; top: 0; left: 0;
+    width: 36px; height: 36px;
+    border: 1.5px solid rgba(200,240,96,0.4);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.08s linear, width 0.25s ease, height 0.25s ease, border-color 0.2s;
+  }
+  body:hover #cursor { opacity: 1; }
+
+  /* ── Noise Overlay ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 1000; opacity: 0.4;
+  }
+
+  /* ---------- DOTS LAYER ---------- */
+  .dot-layer {
+      position: absolute; 
+      top: 0; left: 0; width: 100%; min-height: 100vh;
+      z-index: -1; pointer-events: none; 
+  }
+  .dot-layer canvas { width: 100%; height: 100%; display: block; }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: linear-gradient(to bottom, rgba(10,10,15,0.95), transparent);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 24px 2rem;
+    transition: background 0.3s, backdrop-filter 0.3s;
+  }
+  .nav-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 2rem;
+  }
+  .nav-logo {
+    font-family: var(--serif); font-size: 1.1rem; font-weight: 800;
+    color: var(--text); text-decoration: none; letter-spacing: -0.02em;
+  }
+  .nav-logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 36px; list-style: none; align-items: center; }
+  .nav-links a {
+    font-size: 0.85rem; font-weight: 400; color: var(--muted);
+    text-decoration: none; letter-spacing: 0.04em; text-transform: uppercase;
+    position: relative; padding: 8px 0; transition: color 0.25s ease, transform 0.25s ease;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: -4px; left: 0;
+    width: 0; height: 2px; background: var(--accent); border-radius: 999px;
+    transition: width 0.3s ease;
+  }
+  .nav-links a:hover { color: var(--accent); transform: translateY(-1px); }
+  .nav-links a:hover::after { width: 100%; }
+  
+  /* Nav Button Highlight */
+  .nav-links a.nav-cta {
+    background: var(--accent);
+    color: #0a0a0f !important;
+    padding: 10px 24px;
+    border-radius: 100px;
+    font-weight: 600;
+    font-family: var(--serif);
+  }
+  .nav-links a.nav-cta::after {
+    display: none; /* Removes the underline hover effect for the button */
+  }
+  .nav-links a.nav-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(200,240,96,0.3);
+    background: rgba(200,240,96,0.95);
+  }
+
+  /* ── LAYOUT ── */
+  .page { max-width: 1100px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 2; }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 120px 2rem 80px; max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 380px; gap: 4rem; align-items: start;
+    position: relative; z-index: 2;
+  }
+  .hero-eyebrow {
+    font-size: 0.78rem; font-weight: 500; color: var(--accent);
+    letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 28px;
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .hero-eyebrow::before {
+    content: ''; width: 6px; height: 6px; background: var(--accent); border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
+  
+  .hero h1 {
+    font-family: var(--serif); font-size: clamp(2.5rem, 2.5vw, 3.5rem);
+    font-weight: 800; line-height: 1.12; letter-spacing: -0.02em; color: var(--text); margin-bottom: 32px;
+  }
+  .hero h1 em { font-style: normal; color: var(--accent); }
+  .hero-sub {
+    font-size: 1.1rem; font-weight: 300; color: var(--muted);
+    line-height: 1.7; max-width: 520px; margin-bottom: 48px;
+  }
+  .hero-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;}
+  .tag {
+    display: inline-flex; align-items: center; padding: 6px 16px;
+    border-radius: 100px; font-size: 0.8rem; color: var(--muted);
+    border: 1px solid var(--border); background: transparent; transition: all 0.2s;
+  }
+  .tag.accent { border-color: rgba(123,108,255,0.4); color: var(--accent2); background: rgba(123,108,255,0.1); }
+  
+  /* METADATA CARD */
+  .meta-card {
+    background: var(--card-bg); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow);
+    position: sticky; top: 100px;
+  }
+  .meta-card h3 {
+    font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.14em;
+    color: var(--accent); font-weight: 500; margin-bottom: 24px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .meta-row { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+  .meta-item label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 3px; font-weight: 500; }
+  .meta-item p { font-size: 0.9rem; color: var(--text); line-height: 1.5; font-weight: 500;}
+  .tools-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tool-chip {
+    background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+    padding: 6px 12px; font-size: 0.8rem; color: var(--muted);
+  }
+  .hero-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 24px; background: var(--accent); color: #0a0a0f;
+    border-radius: 100px; font-size: 0.9rem; font-weight: 600; text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s; margin-top: 1rem;
+    font-family: var(--serif); letter-spacing: 0.02em;
+  }
+  .hero-cta:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(200,240,96,0.35); }
+
+  /* ── SECTION SYSTEM ── */
+  section { padding: 100px 0; border-top: 1px solid var(--border); position: relative;}
+  .section-header { margin-bottom: 64px; }
+  .section-num {
+    font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--accent); font-weight: 500; margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-num::before { content: ''; width: 24px; height: 1px; background: var(--accent); }
+  .section-header h2 {
+    font-family: var(--serif); font-size: clamp(2rem, 4vw, 3.2rem);
+    letter-spacing: -0.02em; line-height: 1.15; color: var(--text); margin-bottom: 20px; font-weight: 700;
+  }
+  .section-header p { font-size: 1rem; color: var(--muted); max-width: 640px; line-height: 1.7; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--card-bg); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+  .card:hover { transform: translateY(-6px); box-shadow: var(--shadow-hover); border-color: rgba(255,255,255,0.12);}
+  .card-label {
+    font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--muted); font-weight: 500; margin-bottom: 16px;
+  }
+  .card h3 { font-family: var(--serif); font-size: 1.25rem; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+  .card p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+  /* ── GRIDS ── */
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+
+  /* ── STAT BLOCKS ── */
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 64px; }
+  .stat-block { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; text-align: center; }
+  .stat-num { font-family: var(--serif); font-size: 3rem; font-weight: 700; color: var(--text); line-height: 1; margin-bottom: 12px; }
+  .stat-label { font-size: 0.85rem; color: var(--muted); }
+
+  /* ── PERSONA CARDS ── */
+  .persona-card {
+    background: var(--card-bg); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden; transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .persona-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-6px); }
+  .persona-header { padding: 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 16px; background: var(--bg);}
+  .persona-avatar {
+    width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-family: var(--serif); font-size: 1.2rem; font-weight: 700; flex-shrink: 0; color: #0a0a0f;
+  }
+  .persona-avatar.v { background: linear-gradient(135deg, var(--accent), #40c0c0); }
+  .persona-avatar.j { background: linear-gradient(135deg, var(--accent2), var(--accent3)); }
+  .persona-avatar.e { background: linear-gradient(135deg, var(--accent3), #ff9900); }
+  .persona-name { font-family: var(--serif); font-weight: 700; font-size: 1.2rem; color: var(--text); margin-bottom: 4px; }
+  .persona-role { font-size: 0.75rem; color: var(--muted); }
+  .persona-body { padding: 24px; }
+  .persona-quote {
+    font-family: var(--sans); font-size: 0.9rem; color: var(--accent); line-height: 1.6;
+    border-left: 2px solid var(--border); padding-left: 16px; margin-bottom: 24px; font-style: italic;
+  }
+  .persona-section-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 500; margin-bottom: 12px; margin-top: 24px; }
+  .persona-list { list-style: none; }
+  .persona-list li { font-size: 0.85rem; color: var(--muted); padding: 4px 0 4px 16px; position: relative; line-height: 1.6; }
+  .persona-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-size: 0.8rem; }
+
+  /* ── ARTIFACT ZONES ── */
+  .artifact-zone {
+    border: 1px solid var(--border); border-radius: var(--radius);
+    background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 48px 32px; transition: all 0.3s; position: relative; overflow: hidden; min-height: 260px;
+  }
+  .artifact-zone:hover { border-color: var(--accent); background: var(--card-bg); transform: translateY(-4px); }
+  .artifact-icon {
+    width: 64px; height: 64px; border-radius: 16px; background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
+    margin-bottom: 20px; font-size: 1.5rem;
+  }
+  .artifact-zone h4 { font-family: var(--serif); font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+  .artifact-zone p { font-size: 0.85rem; color: var(--muted); max-width: 280px; line-height: 1.6; }
+  .artifact-badge {
+    display: inline-flex; align-items: center; gap: 8px; margin-top: 24px; padding: 6px 16px;
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 100px;
+    font-size: 0.75rem; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; font-weight: 500;
+  }
+  .artifact-badge.filled { color: var(--accent); border-color: rgba(200,240,96,0.3); }
+  .artifact-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+  /* ── FIDELITY STRIP ── */
+  .fidelity-strip {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px;
+    background: var(--border); border: 1px solid var(--border); border-radius: var(--radius);
+    overflow: hidden; margin-bottom: 48px;
+  }
+  .fidelity-step { background: var(--bg); padding: 24px 20px; text-align: center; transition: background 0.3s; }
+  .fidelity-step.active { background: var(--card-bg); }
+  .fidelity-step-num { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 500; margin-bottom: 8px; }
+  .fidelity-step-name { font-family: var(--serif); font-size: 1.1rem; font-weight: 700; color: var(--text); }
+  .fidelity-step.active .fidelity-step-name { color: var(--accent); }
+  .fidelity-step-desc { font-size: 0.8rem; color: var(--muted); margin-top: 8px; }
+
+  /* ── TESTING TABLE ── */
+  .test-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  .test-table th {
+    text-align: left; padding: 16px 24px; font-size: 0.75rem; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--muted); font-weight: 500;
+    border-bottom: 1px solid var(--border); background: var(--bg);
+  }
+  .test-table td { padding: 16px 24px; border-bottom: 1px solid var(--border); color: var(--muted); vertical-align: middle; }
+  .test-table tr:last-child td { border-bottom: none; }
+  .test-table tr:hover td { background: var(--bg); }
+  .pass-badge { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 100px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
+  .pass-badge.pass { background: rgba(200,240,96,0.1); color: var(--accent); }
+  .pass-badge.fail { background: rgba(255,107,138,0.1); color: var(--accent3); }
+  .score-bar-wrap { display: flex; align-items: center; gap: 12px; }
+  .score-bar { height: 4px; border-radius: 4px; background: var(--border); flex: 1; overflow: hidden; }
+  .score-fill { height: 100%; border-radius: 4px; }
+  .score-fill.green { background: linear-gradient(90deg, var(--accent2), var(--accent)); }
+  .score-fill.amber { background: var(--accent2); }
+  .score-fill.red { background: var(--accent3); }
+  .score-val { font-size: 0.85rem; font-weight: 600; min-width: 32px; }
+
+  /* ── ITERATION BEFORE/AFTER ── */
+  .iteration-block {
+    background: var(--card-bg); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden; margin-bottom: 32px; transition: transform 0.3s;
+  }
+  .iteration-block:hover { transform: translateY(-4px); border-color: var(--accent); }
+  .iteration-header { padding: 24px 32px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 16px; background: var(--bg);}
+  .iter-num {
+    width: 36px; height: 36px; border-radius: 10px; background: var(--accent); color: #0a0a0f;
+    font-family: var(--serif); font-size: 1rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .iteration-header h3 { font-family: var(--serif); font-size: 1.1rem; font-weight: 700; color: var(--text); }
+  .iteration-body { display: grid; grid-template-columns: 1fr 1fr; }
+  .iter-before, .iter-after { padding: 32px; }
+  .iter-before { border-right: 1px solid var(--border); background: var(--bg); }
+  .iter-before-label, .iter-after-label {
+    font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em;
+    font-weight: 500; margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+  }
+  .iter-before-label { color: var(--accent3); }
+  .iter-after-label { color: var(--accent); }
+  .iter-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .iter-dot.red { background: var(--accent3); }
+  .iter-dot.green { background: var(--accent); }
+  .iter-before p, .iter-after p { font-size: 0.85rem; color: var(--muted); line-height: 1.7; }
+
+  /* ── INSIGHT CALLOUT ── */
+  .insight-callout {
+    background: rgba(123,108,255,0.05); border: 1px solid rgba(123,108,255,0.2);
+    border-left: 4px solid var(--accent2); border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 24px 32px; margin: 48px 0;
+  }
+  .insight-callout p { font-size: 0.95rem; color: var(--text); line-height: 1.7; font-style: italic; }
+
+  /* ── METHODOLOGY STEPS ── */
+  .method-steps { display: flex; flex-direction: column; gap: 0; }
+  .method-step { display: flex; gap: 24px; padding: 32px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+  .method-step:last-child { border-bottom: none; }
+  .method-step-icon {
+    width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; flex-shrink: 0; background: var(--bg); border: 1px solid var(--border); color: var(--accent);
+  }
+  .method-step h4 { font-family: var(--serif); font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+  .method-step p { font-size: 0.85rem; color: var(--muted); line-height: 1.7; }
+
+  /* ── PHASE TIMELINE ── */
+  .phase-timeline {
+    display: flex; align-items: stretch; gap: 0; margin: 48px 0;
+    border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
+  }
+  .phase { flex: 1; padding: 32px 24px; border-right: 1px solid var(--border); background: var(--card-bg); transition: background 0.3s; }
+  .phase:hover { background: var(--surface); }
+  .phase:last-child { border-right: none; }
+  .phase-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 500; margin-bottom: 16px; color: var(--accent);}
+  .phase.think .phase-label { color: var(--accent); }
+  .phase.make .phase-label { color: var(--accent2); }
+  .phase.check .phase-label { color: var(--accent3); }
+  .phase h4 { font-family: var(--serif); font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; color: var(--text); }
+  .phase ul { list-style: none; }
+  .phase ul li { font-size: 0.85rem; color: var(--muted); padding: 4px 0 4px 16px; position: relative; }
+  .phase ul li::before { content: '→'; position: absolute; left: 0; color: var(--border); }
+
+  /* ── COMPETITOR TABLE ── */
+  .comp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 48px; }
+  .comp-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow); }
+  .comp-name { font-family: var(--serif); font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 20px; }
+  .comp-row { display: flex; gap: 12px; margin-bottom: 12px; align-items: flex-start; }
+  .comp-icon { font-size: 1rem; flex-shrink: 0; }
+  .comp-text { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+  /* ── HYPOTHESIS LIST ── */
+  .hypothesis-list { display: flex; flex-direction: column; gap: 2px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .hypothesis-item { background: var(--bg); padding: 24px 32px; display: flex; align-items: flex-start; gap: 20px; transition: background 0.3s; }
+  .hypothesis-item:hover { background: var(--card-bg); }
+  .hyp-num { font-family: var(--serif); font-size: 1rem; font-weight: 700; color: var(--accent); min-width: 32px; }
+  .hyp-text { font-size: 0.9rem; color: var(--muted); line-height: 1.7; }
+  .hyp-text strong { color: var(--text); font-weight: 500; }
+
+  /* ── OUTCOME PILLARS ── */
+  .outcome-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .outcome-card {
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 32px; box-shadow: var(--shadow); transition: transform 0.3s; position: relative; overflow: hidden;
+  }
+  .outcome-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.12); }
+  .outcome-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; }
+  .outcome-card.green::before { background: var(--accent); }
+  .outcome-card.amber::before { background: var(--accent2); }
+  .outcome-card.blue::before { background: var(--accent3); }
+  .outcome-card h4 { font-family: var(--serif); font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+  .outcome-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.7; }
+
+  /* ── NEXT STEPS ── */
+  .next-steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .next-step { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow); }
+  .next-step-phase {
+    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 20px;
+    padding: 6px 12px; border-radius: 100px; display: inline-block; background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--border);
+  }
+  .next-step-phase.immediate { color: var(--accent); border-color: rgba(200,240,96,0.3); }
+  .next-step-phase.short { color: var(--accent2); border-color: rgba(123,108,255,0.3); }
+  .next-step-phase.long { color: var(--accent3); border-color: rgba(255,107,138,0.3); }
+  .next-step h4 { font-family: var(--serif); font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 16px; }
+  .next-step ul { list-style: none; }
+  .next-step ul li { font-size: 0.85rem; color: var(--muted); padding: 6px 0 6px 20px; position: relative; line-height: 1.6; }
+  .next-step ul li::before { content: '→'; position: absolute; left: 0; color: var(--border); }
+
+  /* ── CLOSING QUOTE ── */
+  .closing-quote {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 80px 48px; text-align: center; margin: 64px 0; position: relative; overflow: hidden;
+  }
+  .closing-quote blockquote {
+    font-family: var(--serif); font-size: clamp(1.5rem, 3vw, 2.2rem); font-weight: 700;
+    line-height: 1.4; color: var(--text); max-width: 800px; margin: 0 auto 32px; letter-spacing: -0.01em;
+  }
+  .closing-quote blockquote em { color: var(--accent); font-style: normal; }
+  .closing-quote cite { font-size: 0.85rem; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border); padding: 40px 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    max-width: 1100px; margin: 0 auto; position: relative; z-index: 2;
+  }
+  footer p { font-size: 0.85rem; color: var(--muted); }
+  footer a { color: var(--accent); text-decoration: none; transition: color 0.2s;}
+  footer a:hover { color: var(--text); }
+
+  /* ── OVERRIDES for inline styles present in the original HTML ── */
+  /* This prevents having to change inline HTML CSS */
+  .card, .artifact-zone, .iteration-block, .stat-block, .method-step, .hypothesis-item, .outcome-card {
+    border-left: 1px solid var(--border) !important;
+    border-top: 1px solid var(--border) !important;
+  }
+  .outcome-card.green, .outcome-card.amber, .outcome-card.blue { border-top-width: 3px !important; }
+  div[style*="background:white"], div[style*="background: white"], div[style*="background:#fff"] { background: var(--card-bg) !important; border-color: var(--border) !important; color: var(--text) !important;}
+  span[style*="color:#3b6d11"], span[style*="color:#854f0b"], span[style*="color:#a32d2d"] { color: var(--text) !important; }
+
+  /* ── ANIMATIONS ── */
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translate(0, 0); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; gap: 2.5rem; }
+    .meta-card { position: static; }
+    .grid-3, .grid-4 { grid-template-columns: repeat(2, 1fr); }
+    .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    .fidelity-strip { grid-template-columns: repeat(2, 1fr); }
+    .iteration-body { grid-template-columns: 1fr; }
+    .iter-before { border-right: none; border-bottom: 1px solid var(--border); }
+    .phase-timeline { flex-direction: column; }
+    .phase { border-right: none; border-bottom: 1px solid var(--border); }
+    .outcome-grid, .next-steps-grid { grid-template-columns: 1fr; }
+    .comp-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .hero { padding: 100px 1.5rem 64px; }
+    .page { padding: 0 1.5rem; }
+    section { padding: 64px 0;}
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    footer { flex-direction: column; gap: 1rem; text-align: center; }
+    nav { padding: 16px; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="dot-layer"><canvas id="dots"></canvas></div>
+<div id="cursor"></div><div id="cursor-ring"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">Imagine As You <span>Read</span></a>
+    <ul class="nav-links">
+      <li><a href="#overview">Overview</a></li>
+      <!--<li><a href="#research">Process</a></li>-->
+      <li><a href="#design">Design</a></li>
+      <!--<li><a href="#prototypes">Process</a></li>-->
+      <!--<li><a href="#testing">Testing</a></li>-->
+      <li><a href="#outcomes">Outcomes</a></li>
+      <li><a href="https://www.gjuxdesign.in/#work" class="nav-cta">Back to Portfolio ↗</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-content">
+    <p class="hero-eyebrow">UX Design Case Study · Kingston University CI7801</p>
+    <h1>Imagine As You <em>Read</em> — Designing an AI-Powered Immersive Reading Companion</h1>
+    <p class="hero-sub">Transforming passive, text-only reading into a dynamic visual experience — using Generative AI and AR/VR, with the reader always in control.</p>
+    <div class="hero-tags">
+      <span class="tag accent">Lean UX</span>
+      <span class="tag">User Research</span>
+      <span class="tag">Generative AI</span>
+      <span class="tag">AR / VR</span>
+      <span class="tag">Mobile-First</span>
+      <span class="tag">Accessibility</span>
+    </div>
+  </div>
+  <div class="meta-card">
+    <h3>Project Details</h3>
+    <div class="meta-row">
+      <div class="meta-item"><label>Student</label><p>Ganesh Suresh Javhare</p></div>
+      <div class="meta-item"><label>Role</label><p>UX Researcher & Designer (Solo)</p></div>
+      <div class="meta-item"><label>Institution</label><p>Kingston University</p></div>
+      <div class="meta-item"><label>Timeline</label><p>2025–2026</p></div>
+      <div class="meta-item"><label>Methodology</label><p>Lean UX (Think → Make → Check)</p></div>
+    </div>
+    <div class="meta-item" style="margin-bottom:1.5rem;">
+      <label>Tools Used</label>
+      <div class="tools-grid" style="margin-top:6px;">
+        <span class="tool-chip">Figma</span>
+        <span class="tool-chip">Miro</span>
+        <span class="tool-chip">Google Forms</span>
+        <span class="tool-chip">Lean UX Canvas</span>
+        <span class="tool-chip">Microsoft Office</span>
+      </div>
+    </div>
+    <a href="https://www.figma.com/proto/FUiwSOdjXdBgcrDTNjoepJ/Imagine-as-you-reasd?node-id=4-1357&t=XblD2iKXE9lO7PX1-0&scaling=scale-down&content-scaling=fixed&page-id=0%3A1" target="_blank" class="hero-cta">View Figma Prototype →</a>
+  </div>
+</div>
+
+<!-- OVERVIEW -->
+<section id="overview">
+  <div class="page">
+    <div class="section-header">
+      <p class="section-num">01 — Overview</p>
+      <h2>The Challenge & The Solution</h2>
+      <p>Reading is declining — not because stories matter less, but because text-only formats aren't meeting readers where they are cognitively and visually.</p>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:2.5rem;">
+      <div class="card" style="border-left:4px solid var(--accent);">
+        <div class="card-label">The Core Problem</div>
+        <h3>Digital tools digitised text without transforming the reading experience</h3>
+        <p>Existing reading platforms preserve the very problem they claim to solve. Readers who struggle to visualise scenes, sustain focus, or emotionally connect with narrative — particularly visual learners, students, and attention-challenged individuals — have no meaningful support beyond the same wall of text, now on a screen.</p>
+      </div>
+      <div class="card" style="border-left:4px solid var(--teal);">
+        <div class="card-label">The Design Solution</div>
+        <h3>AI-generated visuals, on demand, under the reader's control</h3>
+        <p>"Imagine As You Read" is a mobile-first reading companion that uses Generative AI to transform selected text into contextual visual scenes — user-triggered, non-intrusive, and designed to support imagination without ever replacing the act of reading itself.</p>
+      </div>
+    </div>
+
+    <div class="phase-timeline">
+      <div class="phase think">
+        <div class="phase-label">Think</div>
+        <h4>Research & Ideation</h4>
+        <ul>
+          <li>Literature review</li>
+          <li>User interviews (n=8)</li>
+          <li>Survey (n=66)</li>
+          <li>Affinity mapping</li>
+          <li>Competitor analysis</li>
+          <li>Assumptions mapping</li>
+        </ul>
+      </div>
+      <div class="phase make">
+        <div class="phase-label">Make</div>
+        <h4>Design & Prototype</h4>
+        <ul>
+          <li>Card sorting / IA</li>
+          <li>User flows</li>
+          <li>Lo-Fi paper prototype</li>
+          <li>Mid-Fi digital prototype</li>
+          <li>Hi-Fi Figma prototype</li>
+          <li>Accessibility review</li>
+        </ul>
+      </div>
+      <div class="phase check">
+        <div class="phase-label">Check</div>
+        <h4>Test & Validate</h4>
+        <ul>
+          <li>Lo-Fi prototype testing</li>
+          <li>Mid-Fi usability testing</li>
+          <li>Hi-Fi usability testing</li>
+          <li>Hypothesis validation</li>
+          <li>Weighted scoring</li>
+          <li>Qualitative feedback</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="insight-callout">
+      <p>"The most important design decision was the one I didn't make — choosing not to make visual generation automatic, resisting the temptation to showcase AI capability. Research consistently and emphatically said: give users control."</p>
+    </div>
+  </div>
+</section>
+
+<!-- RESEARCH -->
+<section id="research">
+  <div class="page">
+    <div class="section-header">
+      <p class="section-num">02 — Research & Discovery</p>
+      <h2>What the Data Revealed</h2>
+      <p>A mixed-methods approach — combining qualitative depth with quantitative breadth — to ensure design decisions were grounded in real user behaviour, not assumptions.</p>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-block">
+        <div class="stat-num">8</div>
+        <div class="stat-label">Semi-structured interviews conducted</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-num">66</div>
+        <div class="stat-label">Survey responses collected</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-num">77%</div>
+        <div class="stat-label">Find visuals significantly helpful for comprehension</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-num">50%</div>
+        <div class="stat-label">Preferred text with optional visuals — not automatic</div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:2.5rem;">
+      <div>
+        <div class="card-label" style="margin-bottom:1rem;">Methodology</div>
+        <div class="method-steps">
+          <div class="method-step">
+            <div class="method-step-icon orange">🎙</div>
+            <div>
+              <h4>Semi-Structured Interviews</h4>
+              <p>8 participants screened and interviewed using an 11-question open-ended script. Moved from surface reading habits to deep emotional territory — the precise moment a reader loses focus or hits cognitive friction.</p>
+            </div>
+          </div>
+          <div class="method-step">
+            <div class="method-step-icon blue">📋</div>
+            <div>
+              <h4>Quantitative Survey</h4>
+              <p>66 responses across students and working professionals. Captured reading frequency, device usage, attitudes toward visual content, and openness to AI and AR features. Validated patterns at scale.</p>
+            </div>
+          </div>
+          <div class="method-step">
+            <div class="method-step-icon teal">🗂</div>
+            <div>
+              <h4>Literature Review</h4>
+              <p>Reviewed cognitive load theory, visual learning research, digital reading behaviour, generative AI capabilities, and existing AR/VR educational applications to ground hypotheses in evidence.</p>
+            </div>
+          </div>
+          <div class="method-step">
+            <div class="method-step-icon amber">🔍</div>
+            <div>
+              <h4>Competitor Analysis</h4>
+              <p>Mapped Wonderscope, Google Learn Your Way, Microsoft Copilot, and Google Gemini against 8 dimensions to identify the precise gap "Imagine As You Read" was designed to fill.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card-label" style="margin-bottom:1rem;">Key Qualitative Findings</div>
+        <div style="display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">
+          <div style="background:white;padding:1.1rem 1.5rem;">
+            <div style="font-size:12px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;">Finding 01 — The Overwhelmed Student</div>
+            <p style="font-size:14px;color:var(--ink-mid);line-height:1.6;">Students reported hitting a cognitive wall with text-heavy academic content — not from lack of ability, but from lack of visual scaffolding to anchor abstract concepts.</p>
+          </div>
+          <div style="background:white;padding:1.1rem 1.5rem;">
+            <div style="font-size:12px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;">Finding 02 — The Disconnected Reader</div>
+            <p style="font-size:14px;color:var(--ink-mid);line-height:1.6;">Young adults who loved fiction lost their reading thread mid-chapter because digital environments fractured attention. The story wasn't the problem — the context was.</p>
+          </div>
+          <div style="background:white;padding:1.1rem 1.5rem;">
+            <div style="font-size:12px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;">Finding 03 — Notifications as Cognitive Disruptors</div>
+            <p style="font-size:14px;color:var(--ink-mid);line-height:1.6;">6 of 8 interview participants named mobile notifications as their primary reading disruptor. The interface itself was rarely the problem — the surrounding environment was.</p>
+          </div>
+          <div style="background:white;padding:1.1rem 1.5rem;">
+            <div style="font-size:12px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;">Finding 04 — Control Over Automation</div>
+            <p style="font-size:14px;color:var(--ink-mid);line-height:1.6;">Users were curious about AI-assisted reading but consistently cautious. The defining concern: "I don't want something interrupting my focus." User-triggered always outperforms automated.</p>
+          </div>
+          <div style="background:white;padding:1.1rem 1.5rem;">
+            <div style="font-size:12px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;">Finding 05 — Screen Fatigue is Underreported</div>
+            <p style="font-size:14px;color:var(--ink-mid);line-height:1.6;">5 of 8 participants reported eye strain or screen fatigue — a barrier that existing digital reading tools largely ignore in their feature design.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ARTIFACT: Affinity Diagram -->
+    <div class="grid-2" style="margin-bottom:1.25rem;">
+      <div class="artifact-zone">
+        <div class="artifact-icon">🗂</div>
+        <h4>Affinity Diagram</h4>
+        <p>Observations clustered into 5 themes: Reading Behaviour, Visual Cognition, Digital Engagement, Generative AI, and AR/VR.</p>
+        <span class="artifact-badge filled"><span class="dot"></span>Upload Affinity Diagram Image</span>
+      </div>
+      <div class="artifact-zone">
+        <div class="artifact-icon">🃏</div>
+        <h4>Card Sorting Results</h4>
+        <p>Mental model mapping that directly shaped the app's Information Architecture and mode structure.</p>
+        <span class="artifact-badge filled"><span class="dot"></span>Upload Card Sort Image</span>
+      </div>
+    </div>
+
+    <div class="comp-grid">
+      <div class="comp-card">
+        <div class="comp-name">Wonderscope</div>
+        <div class="comp-row"><span class="comp-icon">✅</span><span class="comp-text">AR storytelling, engaging for children, strong imagination support</span></div>
+        <div class="comp-row"><span class="comp-icon">❌</span><span class="comp-text">Predefined content only; no dynamic text-to-visual generation; limited to children</span></div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-name">Google Learn Your Way</div>
+        <div class="comp-row"><span class="comp-icon">✅</span><span class="comp-text">GenAI-powered; alternative visual representations; educational depth</span></div>
+        <div class="comp-row"><span class="comp-icon">❌</span><span class="comp-text">Education-only; no AR/VR; visuals not integrated into continuous reading flow</span></div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-name">Microsoft Copilot</div>
+        <div class="comp-row"><span class="comp-icon">✅</span><span class="comp-text">Powerful text-to-image; strong contextual understanding; fast generation</span></div>
+        <div class="comp-row"><span class="comp-icon">❌</span><span class="comp-text">Not reading-centred; requires manual prompting; disrupts reading flow</span></div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-name">Google Gemini</div>
+        <div class="comp-row"><span class="comp-icon">✅</span><span class="comp-text">Multimodal; strong semantic understanding; flexible content generation</span></div>
+        <div class="comp-row"><span class="comp-icon">❌</span><span class="comp-text">Task-based, not reading-centred; no immersive interface; not embedded in long-form reading</span></div>
+      </div>
+    </div>
+    <div class="insight-callout">
+      <p>No competitor integrated real-time text interpretation, generative visualisation, and reading-focused UX in a single product. This was the gap "Imagine As You Read" was designed to fill.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PERSONAS -->
+<section id="personas">
+  <div class="page">
+    <div class="section-header">
+      <p class="section-num">03 — User Personas</p>
+      <h2>Three Distinct Readers, One Shared Need</h2>
+      <p>Evidence-based archetypes built from interviews, surveys, and literature — not invented profiles, but real patterns observed in the research data.</p>
+    </div>
+
+    <div class="grid-3">
+      <div class="persona-card">
+        <div class="persona-header">
+          <div class="persona-avatar v">V</div>
+          <div>
+            <div class="persona-name">Vishnu</div>
+            <div class="persona-role">Student, 22–25 · The Overwhelmed Reader</div>
+          </div>
+        </div>
+        <div class="persona-body">
+          <div class="persona-quote">"I don't want reading to feel harder — I just want a bit of help imagining things when I need it."</div>
+          <div class="persona-section-title">Goals</div>
+          <ul class="persona-list">
+            <li>Understand complex material more quickly</li>
+            <li>Stay focused during long digital sessions</li>
+            <li>Make reading feel less cognitively overwhelming</li>
+          </ul>
+          <div class="persona-section-title">Pain Points</div>
+          <ul class="persona-list">
+            <li>Notifications shatter reading context instantly</li>
+            <li>Struggles to visualise abstract concepts from prose</li>
+            <li>Resents any visual that interrupts reading flow</li>
+            <li>Finds most digital tools either too basic or too distracting</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="persona-card">
+        <div class="persona-header">
+          <div class="persona-avatar j">J</div>
+          <div>
+            <div class="persona-name">Josh</div>
+            <div class="persona-role">Young Professional, 28–32 · The Disconnected Reader</div>
+          </div>
+        </div>
+        <div class="persona-body">
+          <div class="persona-quote">"I love stories, but digital reading just doesn't pull me in enough."</div>
+          <div class="persona-section-title">Goals</div>
+          <ul class="persona-list">
+            <li>Re-establish reading as a genuine leisure habit</li>
+            <li>Visualise scenes and narratives more vividly</li>
+            <li>Find a tool that fits naturally into commuting</li>
+          </ul>
+          <div class="persona-section-title">Pain Points</div>
+          <ul class="persona-list">
+            <li>Digital text feels flat compared to podcasts and video</li>
+            <li>Loses interest in long-form content mid-way</li>
+            <li>Doesn't want complexity — just story-enhancing support</li>
+            <li>Switches media formats out of boredom, not choice</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="persona-card">
+        <div class="persona-header">
+          <div class="persona-avatar e">E</div>
+          <div>
+            <div class="persona-name">Emma</div>
+            <div class="persona-role">Student, 18–22 · The Anxious Visual Learner</div>
+          </div>
+        </div>
+        <div class="persona-body">
+          <div class="persona-quote">"I understand things better when I can see them, not just read about them."</div>
+          <div class="persona-section-title">Goals</div>
+          <ul class="persona-list">
+            <li>Feel confident tackling difficult academic subjects</li>
+            <li>Tools that reduce cognitive stress, not add to it</li>
+            <li>Stay focused without burning out during study</li>
+          </ul>
+          <div class="persona-section-title">Pain Points</div>
+          <ul class="persona-list">
+            <li>Dense historical/scientific content genuinely difficult to retain</li>
+            <li>Switches apps when overwhelmed — avoidance as coping</li>
+            <li>Boring or complex study apps actively discourage use</li>
+            <li>Needs predictable, calm UI — surprise changes increase anxiety</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DESIGN -->
+<section id="design">
+  <div class="page">
+    <div class="section-header">
+      <p class="section-num">04 — Design Approach</p>
+      <h2>From Insights to Architecture</h2>
+      <p>Every structural decision traces directly to a specific research finding. The design rationale is as important as the design itself.</p>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:2.5rem;align-items:start;">
+      <div>
+        <div class="card-label" style="margin-bottom:1rem;">Core Design Principle</div>
+        <div class="card" style="margin-bottom:1.25rem;">
+          <h3 style="margin-bottom:0.5rem;">Progressive Disclosure — Users Always Feel in Control</h3>
+          <p>The IA was structured around a single governing principle: users should always feel in control of how deep they go. This meant separating the experience into clearly defined modes rather than layering everything onto one interface. Survey data showed 50% of users explicitly wanted "text with optional visuals." Burying visual features inside reading mode would have violated their primary expectation.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-bottom:0.5rem;">MoSCoW: Cutting With Intention</h3>
+          <p>MoSCoW prioritisation was applied ruthlessly to prevent feature bloat — which would have directly contradicted the core research insight that users wanted simplicity and control. The "Won't Have" list was as important as the "Must Have" list. Each item on it represented a real assumption that testing could not yet validate.</p>
+        </div>
+      </div>
+      <div>
+        <div class="card-label" style="margin-bottom:1rem;">Information Architecture</div>
+        <div style="background:white;border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;box-shadow:var(--shadow);">
+          <div style="text-align:center;margin-bottom:1.25rem;">
+            <div style="display:inline-block;background:var(--ink);color:white;padding:8px 20px;border-radius:6px;font-size:14px;font-weight:500;">Home / Library</div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;margin-bottom:1rem;">
+            <div style="background:var(--accent-soft);border:1px solid rgba(200,68,10,0.2);border-radius:8px;padding:10px 6px;">
+              <div style="font-size:12px;font-weight:500;color:var(--accent);margin-bottom:4px;">Library</div>
+              <div style="font-size:11px;color:var(--ink-soft);">Books, History, Saved</div>
+            </div>
+            <div style="background:var(--teal-soft);border:1px solid rgba(15,110,86,0.2);border-radius:8px;padding:10px 6px;">
+              <div style="font-size:12px;font-weight:500;color:var(--teal);margin-bottom:4px;">Read Mode</div>
+              <div style="font-size:11px;color:var(--ink-soft);">Text-first, minimal</div>
+            </div>
+            <div style="background:var(--blue-soft);border:1px solid rgba(24,95,165,0.2);border-radius:8px;padding:10px 6px;">
+              <div style="font-size:12px;font-weight:500;color:var(--blue);margin-bottom:4px;">Visualise</div>
+              <div style="font-size:11px;color:var(--ink-soft);">AI visuals, on demand</div>
+            </div>
+            <div style="background:var(--amber-soft);border:1px solid rgba(133,79,11,0.2);border-radius:8px;padding:10px 6px;">
+              <div style="font-size:12px;font-weight:500;color:var(--amber);margin-bottom:4px;">Immersive</div>
+              <div style="font-size:11px;color:var(--ink-soft);">AR/VR, opt-in only</div>
+            </div>
+          </div>
+          <p style="font-size:13px;color:var(--ink-soft);text-align:center;font-style:italic;">AR/VR features surface only after user engages with core reading → prevents cognitive overload for new users</p>
+        </div>
+
+        <div style="margin-top:1.25rem;">
+          <div class="card-label" style="margin-bottom:0.75rem;">MoSCoW Priority Split</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="background:white;border:1px solid var(--border);border-radius:8px;padding:10px 14px;display:flex;gap:10px;align-items:flex-start;">
+              <span style="font-size:11px;font-weight:500;color:#3b6d11;background:#eaf3de;padding:2px 8px;border-radius:100px;white-space:nowrap;margin-top:1px;">Must Have</span>
+              <span style="font-size:13px;color:var(--ink-mid);">User-triggered visuals · Disable at any time · Side-panel display · One visual maximum · Clean interface</span>
+            </div>
+            <div style="background:white;border:1px solid var(--border);border-radius:8px;padding:10px 14px;display:flex;gap:10px;align-items:flex-start;">
+              <span style="font-size:11px;font-weight:500;color:#185fa5;background:#e6f1fb;padding:2px 8px;border-radius:100px;white-space:nowrap;margin-top:1px;">Should Have</span>
+              <span style="font-size:13px;color:var(--ink-mid);">Intensity controls · Diagram visuals · Regenerate/dismiss · Study vs Leisure modes</span>
+            </div>
+            <div style="background:white;border:1px solid var(--border);border-radius:8px;padding:10px 14px;display:flex;gap:10px;align-items:flex-start;">
+              <span style="font-size:11px;font-weight:500;color:#a32d2d;background:#fcebeb;padding:2px 8px;border-radius:100px;white-space:nowrap;margin-top:1px;">Won't Have</span>
+              <span style="font-size:13px;color:var(--ink-mid);">Always-on AR/VR · Cinematic animations · Auto visuals without consent · Gamification</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ARTIFACT: IA + User Flow -->
+    <div class="grid-2" style="margin-bottom:1.25rem;">
+      <div class="artifact-zone">
+        <div class="artifact-icon">🗺</div>
+        <h4>Information Architecture Diagram</h4>
+        <p>Full IA map showing Library, Reading Mode, Visualise Mode, Immersive Mode, and Settings hierarchies.</p>
+        <span class="artifact-badge filled"><span class="dot"></span>Upload IA Diagram</span>
+      </div>
+      <div class="artifact-zone">
+        <div class="artifact-icon">➡️</div>
+        <h4>User Flow Diagrams</h4>
+        <p>Onboarding flow and Home Screen feature flow — showing every branch and return path to reading state.</p>
+        <span class="artifact-badge filled"><span class="dot"></span>Upload User Flow Diagrams</span>
+      </div>
+    </div>
+
+    <!-- ARTIFACT: Assumption + Hypothesis -->
+    <div class="grid-2">
+      <div class="artifact-zone">
+        <div class="artifact-icon">⚖️</div>
+        <h4>Assumption Prioritisation Matrix</h4>
+        <p>Risk vs. value matrix plotting user and business assumptions to identify what to test first.</p>
+        <span class="artifact-badge filled"><span class="dot"></span>Upload Assumption Map</span>
+      </div>
+      <div class="artifact-zone">
+        <div class="artifact-icon">🎯</div>
+        <h4>Bull's Eye Diagram</h4>
+        <p>Feature prioritisation — core value centre ring vs. future enhancements vs. out-of-scope items.</p>
+        <span class="artifact-badge filled"><span class="dot"></span>Upload Bull's Eye Diagram</span>
+      </div>
+    </div>
+
+    <div style="margin-top:2.5rem;">
+      <div class="card-label" style="margin-bottom:1rem;">Key Hypotheses Tested</div>
+      <div class="hypothesis-list">
+        <div class="hypothesis-item">
+          <span class="hyp-num">H1</span>
+          <span class="hyp-text">We believe <strong>increased reading engagement</strong> will be achieved if students attain <strong>improved understanding of complex material</strong> with optional AI-generated visuals triggered during reading.</span>
+        </div>
+        <div class="hypothesis-item">
+          <span class="hyp-num">H2</span>
+          <span class="hyp-text">We believe <strong>longer reading session time</strong> will be achieved if students and professionals attain <strong>sustained focus and reduced distraction</strong> with user-controlled text-to-visual generation.</span>
+        </div>
+        <div class="hypothesis-item">
+          <span class="hyp-num">H3</span>
+          <span class="hyp-text">We believe <strong>improved comprehension and retention</strong> will be achieved if visual learners attain <strong>clear mental imagery</strong> with concept-based visuals such as diagrams and simplified representations.</span>
+        </div>
+        <div class="hypothesis-item">
+          <span class="hyp-num">H5</span>
+          <span class="hyp-text">We believe <strong>increased user trust</strong> will be achieved if academic readers attain <strong>confidence that visuals support rather than replace reading</strong> with visual intensity controls and dismiss/regenerate options.</span>
+        </div>
+        <div class="hypothesis-item">
+          <span class="hyp-num">H9</span>
+          <span class="hyp-text">We believe <strong>greater user control</strong> will be achieved if students attain <strong>a sense of autonomy during reading</strong> with manual activation of visual features.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROTOTYPES -->
+<section id="prototypes">
+  <div class="page">
+    <div class="section-header">
+      <p class="section-num">05 — Prototyping</p>
+      <h2>Three Fidelity Levels, One Consistent Philosophy</h2>
+      <p>Each prototype level was designed to answer specific, bounded questions — not to demonstrate completeness, but to validate one layer of assumption at a time.</p>
+    </div>
+
+    <div class="fidelity-strip">
+      <div class="fidelity-step">
+        <div class="fidelity-step-num">Stage 1</div>
+        <div class="fidelity-step-name">Wireframes</div>
+        <div class="fidelity-step-desc">Concept sketches & layout exploration</div>
+      </div>
+      <div class="fidelity-step">
+        <div class="fidelity-step-num">Stage 2</div>
+        <div class="fidelity-step-name">Lo-Fi Paper</div>
+        <div class="fidelity-step-desc">Hand-drawn interaction model testing</div>
+      </div>
+      <div class="fidelity-step">
+        <div class="fidelity-step-num">Stage 3</div>
+        <div class="fidelity-step-name">Mid-Fi Digital</div>
+        <div class="fidelity-step-desc">Navigation & flow validation</div>
+      </div>
+      <div class="fidelity-step active">
+        <div class="fidelity-step-num">Stage 4</div>
+        <div class="fidelity-step-name">Hi-Fi Figma</div>
+        <div class="fidelity-step-desc">Full visual & interactive simulation</div>
+      </div>
+    </div>
+
+    <!-- WIREFRAMES -->
+    <div style="margin-bottom:2.5rem;">
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;">
+        <div style="width:32px;height:32px;background:var(--paper-mid);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;">✏️</div>
+        <h3 style="font-size:18px;font-weight:500;">Wireframes — Sketching the Concept</h3>
+      </div>
+      <p style="font-size:15px;color:var(--ink-mid);max-width:680px;margin-bottom:1.5rem;line-height:1.65;">Initial concept sketches exploring the core layout patterns — text-first reading experience, mode-switching architecture, and the side-panel visual placement that became the defining structural decision of the project.</p>
+      <div class="grid-3">
+        <div class="artifact-zone" style="min-height:220px;">
+          <div class="artifact-icon">📄</div>
+          <h4>Home Screen Wireframe</h4>
+          <p>Layout exploration for the central library hub and navigation architecture</p>
+          <span class="artifact-badge filled"><span class="dot"></span>Upload Wireframe</span>
+        </div>
+        <div class="artifact-zone" style="min-height:220px;">
+          <div class="artifact-icon">📄</div>
+          <h4>Reading Mode Wireframe</h4>
+          <p>Text-first layout with side-panel visual zone placement and minimal chrome</p>
+          <span class="artifact-badge filled"><span class="dot"></span>Upload Wireframe</span>
+        </div>
+        <div class="artifact-zone" style="min-height:220px;">
+          <div class="artifact-icon">📄</div>
+          <h4>Mode Transition Wireframe</h4>
+          <p>Read → Visualise → Immersive mode switching flow and progressive escalation</p>
+          <span class="artifact-badge filled"><span class="dot"></span>Upload Wireframe</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- LO-FI -->
+    <div style="margin-bottom:2.5rem;">
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;">
+        <div style="width:32px;height:32px;background:var(--accent-soft);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;">✍️</div>
+        <h3 style="font-size:18px;font-weight:500;">Lo-Fi Paper Prototype — Testing the Concept, Not the Pixels</h3>
+      </div>
+      <p style="font-size:15px;color:var(--ink-mid);max-width:680px;margin-bottom:1.5rem;line-height:1.65;">Paper prototypes created psychological safety — participants gave honest feedback because it was clearly unfinished. The goal was to validate whether user-triggered visual generation made intuitive sense, not whether the button colour was right.</p>
+      <div class="grid-2" style="margin-bottom:1rem;">
+        <div class="artifact-zone" style="min-height:280px;">
+          <div class="artifact-icon">📝</div>
+          <h4>Lo-Fi Paper Prototype — Screens 1–8</h4>
+          <p>Home, Onboarding, Text-to-Visual interaction, Mode switching, Settings, Immersive entry</p>
+          <span class="artifact-badge filled"><span class="dot"></span>Upload Lo-Fi Photos</span>
+        </div>
+        <div class="artifact-zone" style="min-height:280px;">
+          <div class="artifact-icon">📝</div>
+          <h4>Lo-Fi Paper Prototype — Screens 9–16</h4>
+          <p>Visual Mode panel, Regenerate/Dismiss flow, Reading Mode return, Accessibility settings</p>
+          <span class="artifact-badge filled"><span class="dot"></span>Upload Lo-Fi Photos</span>
+        </div>
+      </div>
+      <div class="insight-callout" style="margin:0;">
+        <p>Key discovery from Lo-Fi testing: users immediately looked for a way to dismiss a generated visual. The "dismiss/regenerate" control — which became a core feature — was discovered here, not designed in advance.</p>
+      </div>
+    </div>
+
+    <!-- MID-FI -->
+    <div style="margin-bottom:2.5rem;">
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;">
+        <div style="width:32px;height:32px;background:var(--teal-soft);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;">🖥</div>
+        <h3 style="font-size:18px;font-weight:500;">Mid-Fi Digital Prototype — Testing Interaction Logic</h3>
+      </div>
+      <p style="font-size:15px;color:var(--ink-mid);max-width:680px;margin-bottom:1.5rem;line-height:1.65;">Grayscale digital layouts with realistic content placeholders. Validated navigation flows, mode-switching behaviour, and visual control comprehension. Participants found mode transitions more intuitive than expected — the separation of modes as distinct "spaces" mapped well to their mental models.</p>
+      <div class="grid-3" style="margin-bottom:1rem;">
+        <div class="artifact-zone" style="min-height:260px;">
+          <div class="artifact-icon">🖥</div>
+          <h4>Mid-Fi — Reading Mode</h4>
+          <p>Text layout, scroll behaviour, bookmarking, and the AI visual trigger placement</p>
+          <span class="artifact-badge filled"><span class="dot"></span>Upload Mid-Fi Screen</span>
+        </div>
+        <div class="artifact-zone" style="min-height:260px;">
+          <div class="artifact-icon">🖥</div>
+          <h4>Mid-Fi — Visualise Mode</h4>
+          <p>Side-panel visual zone, intensity toggle, regenerate/dismiss controls</p>
+          <span class="artifact-badge filled"><span class="dot"></span>Upload Mid-Fi Screen</span>
+        </div>
+        <div class="artifact-zone" style="min-height:260px;">
+          <div class="artifact-icon">🖥</div>
+          <h4>Mid-Fi — Immersive Mode</h4>
+          <p>AR/VR entry flow, mode switching, pause/disable controls</p>
+          <span class="artifact-badge filled"><span class="dot"></span>Upload Mid-Fi Screen</span>
+        </div>
+      </div>
+      <div class="insight-callout" style="margin:0;">
+        <p>Mid-Fi testing revealed that participants wanted finer-grained visual intensity control than the initial three-state toggle provided — directly shaping the slider design in the Hi-Fi prototype.</p>
+      </div>
+    </div>
+
+    <!-- HI-FI -->
+    <div>
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;">
+        <div style="width:32px;height:32px;background:var(--blue-soft);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;">✨</div>
+        <h3 style="font-size:18px;font-weight:500;">Hi-Fi Figma Prototype — The Full Experience</h3>
+      </div>
+      <p style="font-size:15px;color:var(--ink-mid);max-width:680px;margin-bottom:1.5rem;line-height:1.65;">A complete, realistic simulation covering 5 critical user flows. Full colour, typography, micro-interactions, WCAG 2.1 AA accessibility compliance, and ethical AI transparency indicators built in at every visual generation point.</p>
+      <div class="grid-2" style="margin-bottom:1.25rem;">
+        <div class="artifact-zone" style="min-height:320px;">
+          <div class="artifact-icon">🎨</div>
+          <h4>Hi-Fi — Onboarding & Library</h4>
+          <p>Registration, welcome screen, reading mode entry, library view with search and history</p>
+          <span class="artifact-badge filled"><span class="dot"></span>Upload Hi-Fi Screens</span>
+        </div>
+        <div class="artifact-zone" style="min-height:320px;">
+          <div class="artifact-icon">🎨</div>
+          <h4>Hi-Fi — Core Reading & Visual Loop</h4>
+          <p>Read Mode → AI visual trigger → side-panel generation → dismiss/save → return to reading</p>
+          <span class="artifact-badge filled"><span class="dot"></span>Upload Hi-Fi Screens</span>
+        </div>
+      </div>
+      <div class="grid-3">
+        <div class="artifact-zone" style="min-height:240px;">
+          <div class="artifact-icon">🎨</div>
+          <h4>Hi-Fi — Visualise & Immersive Modes</h4>
+          <p>Visual slider control, style selection, AR/VR progressive entry, contextual prompt</p>
+          <span class="artifact-badge filled"><span class="dot"></span>Upload Hi-Fi Screens</span>
+        </div>
+        <div class="artifact-zone" style="min-height:240px;">
+          <div class="artifact-icon">🎨</div>
+          <h4>Hi-Fi — Settings & Accessibility</h4>
+          <p>Font scaling, contrast themes, AI transparency indicators, user preference controls</p>
+          <span class="artifact-badge filled"><span class="dot"></span>Upload Hi-Fi Screens</span>
+        </div>
+        <div class="artifact-zone" style="min-height:240px;">
+          <div class="artifact-icon">🎨</div>
+          <h4>Hi-Fi — Scan Text Feature</h4>
+          <p>Physical text digitisation via camera, feeding directly into the visual generation pipeline</p>
+          <span class="artifact-badge filled"><span class="dot"></span>Upload Hi-Fi Screens</span>
+        </div>
+      </div>
+      <div
+        style="margin-top:1.5rem;padding:1.25rem;background:white;border:1px solid
+        var(--border);border-radius:var(--radius);display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap;">
+        <span style="font-size:14px;color:var(--ink-mid);">View the interactive prototype in Figma →</span>
+        <a href="https://www.figma.com/proto/FUiwSOdjXdBgcrDTNjoepJ/Imagine-as-you-reasd?node-id=4-1357&t=XblD2iKXE9lO7PX1-0&scaling=scale-down&content-scaling=fixed&page-id=0%3A1"
+          target="_blank" class="hero-cta" style="margin-top:0;">Open Figma Prototype →</a>
+        <!----<a href="https://www.figma.com/design/FUiwSOdjXdBgcrDTNjoepJ/Imagine-as-you-reasd?t=XblD2iKXE9lO7PX1-0" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border:1px solid var(--border-mid);border-radius:6px;font-size:13px;color:var(--ink-mid);text-decoration:none;transition:background 0.15s;background:white;">View Editable File →</a> -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTING -->
+<section id="testing">
+  <div class="page">
+    <div class="section-header">
+      <p class="section-num">06 — Usability Testing</p>
+      <h2>Validating With Real Users at Every Stage</h2>
+      <p>Usability testing was conducted across all three fidelity levels, with a structured quantitative scoring approach applied to the Hi-Fi prototype.</p>
+    </div>
+
+    <div class="grid-3" style="margin-bottom:2.5rem;">
+      <div class="card" style="text-align:center;">
+        <div style="font-family:var(--serif);font-size:2.4rem;color:var(--accent);margin-bottom:0.25rem;">3</div>
+        <div style="font-size:14px;color:var(--ink-mid);">Rounds of usability testing (Lo-Fi, Mid-Fi, Hi-Fi)</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-family:var(--serif);font-size:2.4rem;color:var(--accent);margin-bottom:0.25rem;">4</div>
+        <div style="font-size:14px;color:var(--ink-mid);">Hi-Fi participants with structured scoring</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-family:var(--serif);font-size:2.4rem;color:var(--accent);margin-bottom:0.25rem;">0.75</div>
+        <div style="font-size:14px;color:var(--ink-mid);">Task success threshold (weighted composite score)</div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:2rem;">
+      <div class="card-label" style="margin-bottom:1rem;">Weighted Scoring Formula</div>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+        <div style="flex:1;min-width:180px;background:white;border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;text-align:center;box-shadow:var(--shadow);">
+          <div style="font-family:var(--serif);font-size:1.8rem;color:var(--accent);">50%</div>
+          <div style="font-size:13px;color:var(--ink-mid);">Time efficiency weight</div>
+        </div>
+        <div style="flex:1;min-width:180px;background:white;border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;text-align:center;box-shadow:var(--shadow);">
+          <div style="font-family:var(--serif);font-size:1.8rem;color:var(--accent);">25%</div>
+          <div style="font-size:13px;color:var(--ink-mid);">Error count weight</div>
+        </div>
+        <div style="flex:1;min-width:180px;background:white;border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;text-align:center;box-shadow:var(--shadow);">
+          <div style="font-family:var(--serif);font-size:1.8rem;color:var(--accent);">25%</div>
+          <div style="font-size:13px;color:var(--ink-mid);">Assistance incidents weight</div>
+        </div>
+        <div style="flex:1;min-width:180px;background:white;border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;text-align:center;box-shadow:var(--shadow);">
+          <div style="font-family:var(--serif);font-size:1.8rem;color:var(--teal);">&lt;0.75</div>
+          <div style="font-size:13px;color:var(--ink-mid);">= Task passed</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:white;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);margin-bottom:2rem;">
+      <table class="test-table">
+        <thead>
+          <tr>
+            <th>Participant</th>
+            <th>Task</th>
+            <th>Time</th>
+            <th>Errors</th>
+            <th>Assistance</th>
+            <th>Final Score</th>
+            <th>Result</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:500;color:var(--ink);">P1</td>
+            <td>Enable Visual Mode</td>
+            <td>32s</td>
+            <td>0</td>
+            <td>0</td>
+            <td>
+              <div class="score-bar-wrap">
+                <div class="score-bar"><div class="score-fill green" style="width:43%;"></div></div>
+                <span class="score-val" style="color:#3b6d11;">0.32</span>
+              </div>
+            </td>
+            <td><span class="pass-badge pass">✓ Pass</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:500;color:var(--ink);">P2</td>
+            <td>Enable Reading Mode</td>
+            <td>45s</td>
+            <td>1</td>
+            <td>0</td>
+            <td>
+              <div class="score-bar-wrap">
+                <div class="score-bar"><div class="score-fill amber" style="width:77%;"></div></div>
+                <span class="score-val" style="color:#854f0b;">0.575</span>
+              </div>
+            </td>
+            <td><span class="pass-badge pass">✓ Pass</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:500;color:var(--ink);">P3</td>
+            <td>Scan Text Feature</td>
+            <td>40s</td>
+            <td>1</td>
+            <td>1</td>
+            <td>
+              <div class="score-bar-wrap">
+                <div class="score-bar"><div class="score-fill amber" style="width:87%;"></div></div>
+                <span class="score-val" style="color:#854f0b;">0.65</span>
+              </div>
+            </td>
+            <td><span class="pass-badge pass">✓ Pass</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:500;color:var(--ink);">P4</td>
+            <td>Immersive Mode Testing</td>
+            <td>55s</td>
+            <td>2</td>
+            <td>1</td>
+            <td>
+              <div class="score-bar-wrap">
+                <div class="score-bar"><div class="score-fill red" style="width:100%;"></div></div>
+                <span class="score-val" style="color:#a32d2d;">0.925</span>
+              </div>
+            </td>
+            <td><span class="pass-badge fail">✗ Fail</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ARTIFACT: Testing session images -->
+    <div class="grid-2" style="margin-bottom:1.25rem;">
+      <div class="artifact-zone">
+        <div class="artifact-icon">📸</div>
+        <h4>Usability Testing Session Photos</h4>
+        <p>Participant interaction photos and screen recordings from Lo-Fi, Mid-Fi, and Hi-Fi testing rounds</p>
+        <span class="artifact-badge filled"><span class="dot"></span>Upload Testing Photos</span>
+      </div>
+      <div class="artifact-zone">
+        <div class="artifact-icon">📊</div>
+        <h4>Hypothesis Prioritisation Canvas</h4>
+        <p>Risk vs. value matrix used to determine which hypotheses to validate first during testing phases</p>
+        <span class="artifact-badge filled"><span class="dot"></span>Upload Hypothesis Canvas</span>
+      </div>
+    </div>
+
+    <div class="grid-3">
+      <div class="card" style="border-top:3px solid #639922;">
+        <div class="card-label">Emotional Friction — Relief</div>
+        <p>Participants expressed unprompted relief when visual generation was confirmed as optional. Several noted they'd feared the app would "take over" their reading experience.</p>
+      </div>
+      <div class="card" style="border-top:3px solid #ef9f27;">
+        <div class="card-label">Emotional Friction — Control</div>
+        <p>The "dismiss visual" control was used enthusiastically across all participants — not because visuals were bad, but because users needed to know they held the override.</p>
+      </div>
+      <div class="card" style="border-top:3px solid #e24b4a;">
+        <div class="card-label">Emotional Friction — Literalness</div>
+        <p>One participant noted AI-generated imagery was occasionally "too literal." This signals a future need for visual style controls — realistic vs. abstract vs. symbolic interpretation.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ITERATIONS -->
+<section id="iterations">
+  <div class="page">
+    <div class="section-header">
+      <p class="section-num">07 — Design Iterations</p>
+      <h2>Before vs. After — Evidence-Driven Changes</h2>
+      <p>Every design revision traces directly from a specific friction point observed in testing. No change was made from opinion — only from observed user behaviour.</p>
+    </div>
+
+    <div class="iteration-block">
+      <div class="iteration-header">
+        <div class="iter-num">1</div>
+        <h3>Immersive Mode — Discoverability Failure</h3>
+      </div>
+      <div class="iteration-body">
+        <div class="iter-before">
+          <div class="iter-before-label"><span class="iter-dot red"></span>Before — The Problem</div>
+          <p>Immersive Mode was accessible via the mode switcher — equally weighted alongside Read and Visualise modes, with no contextual prompt. P4's task failure (score 0.925, exceeding the 0.75 threshold) revealed users didn't encounter it naturally. They had to actively hunt for it.</p>
+        </div>
+        <div class="iter-after">
+          <div class="iter-after-label"><span class="iter-dot green"></span>After — The Fix</div>
+          <p>Immersive Mode entry was repositioned as a <strong>progressive enhancement</strong> — surfaced after a user had generated at least one AI visual, with a gentle contextual prompt: "Want to step inside this scene?" This aligned the interaction with the natural user journey: text → visuals → immersion in sequence.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="iteration-block">
+      <div class="iteration-header">
+        <div class="iter-num">2</div>
+        <h3>Visual Intensity Controls — Granularity Gap</h3>
+      </div>
+      <div class="iteration-body">
+        <div class="iter-before">
+          <div class="iter-before-label"><span class="iter-dot red"></span>Before — The Problem</div>
+          <p>The initial three-state toggle (Off / Low / Medium) felt binary in practice. Mid-Fi testing revealed participants wanted to communicate <em>how much</em> visual support they needed — not just whether it was on or off. Most users either fully enabled or fully disabled it.</p>
+        </div>
+        <div class="iter-after">
+          <div class="iter-after-label"><span class="iter-dot green"></span>After — The Fix</div>
+          <p>Replaced with a <strong>continuous slider with labelled reference points</strong> (Off → Subtle → Moderate → Rich), supplemented by a preview thumbnail showing what the current intensity setting would look like before committing. This converted an abstract control into a concrete, previsualisable decision.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="iteration-block">
+      <div class="iteration-header">
+        <div class="iter-num">3</div>
+        <h3>Visual Dismissal — The Missing Escape</h3>
+      </div>
+      <div class="iteration-body">
+        <div class="iter-before">
+          <div class="iter-before-label"><span class="iter-dot red"></span>Before — The Problem</div>
+          <p>The Lo-Fi prototype had a "generate visual" trigger but no visible "dismiss" or "regenerate" control. These were in the backlog but not yet surfaced in the UI. Participants immediately and instinctively looked for a way to remove a visual they didn't like or that felt inaccurate — a behaviour that hadn't been explicitly designed for.</p>
+        </div>
+        <div class="iter-after">
+          <div class="iter-after-label"><span class="iter-dot green"></span>After — The Fix</div>
+          <p>A persistent <strong>two-action control bar</strong> — "Regenerate" and "Dismiss" — always visible beneath every generated visual. The "Save" option appeared only after a user had kept the visual for 5 seconds, preventing accidental saves while supporting intentional library-building. Trust is built through control.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ARTIFACT: Lean UX Canvas -->
+    <div class="grid-2" style="margin-top:2rem;">
+      <div class="artifact-zone">
+        <div class="artifact-icon">🖼</div>
+        <h4>Lean UX Canvas — Iteration 1</h4>
+        <p>Early canvas showing initial assumptions, solutions, and business outcomes before hypothesis testing</p>
+        <span class="artifact-badge filled"><span class="dot"></span>Upload Canvas Image</span>
+      </div>
+      <div class="artifact-zone">
+        <div class="artifact-icon">🖼</div>
+        <h4>Lean UX Canvas — Iteration 2</h4>
+        <p>Refined canvas with validated hypotheses, updated solutions, and sharpened business outcomes</p>
+        <span class="artifact-badge filled"><span class="dot"></span>Upload Canvas Image</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OUTCOMES -->
+<section id="outcomes">
+  <div class="page">
+    <div class="section-header">
+      <p class="section-num">08 — Outcomes & Reflections</p>
+      <h2>What the Project Proved — and Where It Goes Next</h2>
+      <p>Three of four usability tasks passed. One failed — and produced the most valuable insight of the entire project.</p>
+    </div>
+
+    <div class="outcome-grid" style="margin-bottom:2.5rem;">
+      <div class="outcome-card green">
+        <h4>Hypothesis H1 — Validated ✓</h4>
+        <p>Optional, user-triggered AI visuals improve perceived engagement without significantly raising cognitive load. Supported by three successful task completions and consistent qualitative feedback across all testing rounds.</p>
+      </div>
+      <div class="outcome-card amber">
+        <h4>Hypothesis H5 — Validated ✓</h4>
+        <p>User control over visual intensity and dismissal is essential for trust. Confirmed by how immediately and unprompted participants reached for dismissal controls in every single testing session.</p>
+      </div>
+      <div class="outcome-card blue">
+        <h4>Hypothesis H9 — Validated ✓</h4>
+        <p>A text-first, mode-based architecture supports diverse reading contexts. Validated by how naturally participants switched between Read and Visualise modes without confusion or instruction.</p>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:2.5rem;align-items:start;">
+      <div>
+        <div class="card-label" style="margin-bottom:1rem;">Personal Takeaways</div>
+        <div style="display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">
+          <div style="background:white;padding:1.1rem 1.5rem;">
+            <div style="font-size:13px;font-weight:500;margin-bottom:4px;">The most important decision was the one I didn't make</div>
+            <p style="font-size:14px;color:var(--ink-mid);line-height:1.6;">Choosing not to make visual generation automatic — resisting the temptation to showcase AI capability — was the decision that made the product trustworthy. Research said give users control. Following that finding was the right call.</p>
+          </div>
+          <div style="background:white;padding:1.1rem 1.5rem;">
+            <div style="font-size:13px;font-weight:500;margin-bottom:4px;">Lean UX is only as good as your hypothesis discipline</div>
+            <p style="font-size:14px;color:var(--ink-mid);line-height:1.6;">The moments where the project was weakest were the moments where I was tempted to treat an assumption as a confirmed insight. The hypothesis-first structure of Lean UX provided the guard rail that kept design decisions honest.</p>
+          </div>
+          <div style="background:white;padding:1.1rem 1.5rem;">
+            <div style="font-size:13px;font-weight:500;margin-bottom:4px;">Low-fidelity testing is genuinely irreplaceable</div>
+            <p style="font-size:14px;color:var(--ink-mid);line-height:1.6;">The dismissal control that became a core feature of the Hi-Fi prototype was discovered during paper testing. If I had waited until digital wireframes, I would have built the wrong thing with significantly more effort.</p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card-label" style="margin-bottom:1rem;">Limitations Acknowledged</div>
+        <div style="background:white;border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;box-shadow:var(--shadow);">
+          <div style="display:flex;flex-direction:column;gap:1rem;">
+            <div style="display:flex;gap:10px;align-items:flex-start;">
+              <span style="font-size:18px;flex-shrink:0;">⚡</span>
+              <div>
+                <div style="font-size:13px;font-weight:500;margin-bottom:3px;">Small Hi-Fi sample</div>
+                <p style="font-size:13px;color:var(--ink-mid);line-height:1.5;">4 participants is sufficient for hypothesis validation but insufficient for statistical confidence. Wider demographic testing — children, non-native readers — would strengthen findings substantially.</p>
+              </div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start;">
+              <span style="font-size:18px;flex-shrink:0;">⚡</span>
+              <div>
+                <div style="font-size:13px;font-weight:500;margin-bottom:3px;">AR/VR at prototype level only</div>
+                <p style="font-size:13px;color:var(--ink-mid);line-height:1.5;">Real-world AR/VR performance, latency, and spatial accuracy introduce usability dimensions that prototyping cannot simulate. The Immersive Mode findings are directional, not conclusive.</p>
+              </div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start;">
+              <span style="font-size:18px;flex-shrink:0;">⚡</span>
+              <div>
+                <div style="font-size:13px;font-weight:500;margin-bottom:3px;">Some assumptions not formally retested</div>
+                <p style="font-size:13px;color:var(--ink-mid);line-height:1.5;">Certain early-stage assumptions were not formally retested after mid-fi iterations — a gap in the validation cycle that future work should close with modular feature testing.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-label" style="margin-bottom:1.25rem;">Next Steps for the Product</div>
+    <div class="next-steps-grid">
+      <div class="next-step">
+        <span class="next-step-phase immediate">Immediate</span>
+        <h4>Next Sprint</h4>
+        <ul>
+          <li>Redesign Immersive Mode as contextual progressive prompt</li>
+          <li>Replace toggle with continuous slider + live preview</li>
+          <li>Full WCAG 2.1 AA accessibility audit</li>
+          <li>Expand Lo-Fi cycle with wider user group</li>
+        </ul>
+      </div>
+      <div class="next-step">
+        <span class="next-step-phase short">Short-Term</span>
+        <h4>Next Phase</h4>
+        <ul>
+          <li>Expand usability testing to 8–12 participants</li>
+          <li>Functional AI integration PoC (DALL-E or Stable Diffusion)</li>
+          <li>Vocabulary visualiser for second-language readers</li>
+          <li>Test with children (10–16) and non-native English readers</li>
+        </ul>
+      </div>
+      <div class="next-step">
+        <span class="next-step-phase long">Long-Term</span>
+        <h4>Vision</h4>
+        <ul>
+          <li>Full AR — contextual visual overlays in physical space</li>
+          <li>Adaptive AI — learns preferred visual style per user</li>
+          <li>Educational partnerships for longitudinal research</li>
+          <li>Measure real comprehension outcomes, not just preference</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="closing-quote">
+      <blockquote>"Imagine As You Read" is not a reading app that uses AI. It is a reading experience that uses AI <em>only when the reader asks it to</em> — and that distinction is everything.</blockquote>
+      <cite>Ganesh Suresh Javhare — CI7801 UX Major Project, Kingston University London, 2026</cite>
+    </div>
+  </div>
+</section>
+
+<!-- Next Case Study -->
+<section id="next-case" class="reveal" style="text-align: center; padding: 60px 2rem 100px; border-top: none;">
+  <p style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 16px;">Up Next</p>
+  <h2 style="font-family: var(--serif); font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 700; color: var(--text); margin-bottom: 32px;">MahaRERA Portal</h2>
+  <a href="#" class="hero-cta">View Next Case Study →</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>Imagine As You Read — UX Case Study · Kingston University London · CI7801 · 2025–26</p>
+  <p>Student: Ganesh Suresh Javhare · <a href="https://www.figma.com/proto/FUiwSOdjXdBgcrDTNjoepJ/Imagine-as-you-reasd?node-id=4-1357&t=XblD2iKXE9lO7PX1-0&scaling=scale-down&content-scaling=fixed&page-id=0%3A1" target="_blank">View Figma Prototype →</a></p>
+</footer>
+<script>
+  /* ── Add Reveal Classes to elements ── */
+  document.querySelectorAll('section, .card, .meta-card, .artifact-zone, .iteration-block, .stat-block, .persona-card, .fidelity-strip, .test-table, .comp-card, .outcome-card, .next-step').forEach(el => {
+    el.classList.add('reveal');
+  });
+
+  /* ── Scroll Reveal Observer ── */
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+  /* ── Custom Cursor Logic ── */
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  const mouse = { x: -9999, y: -9999, active: false };
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+    mouse.active = true;
+    mouse.x = e.pageX; mouse.y = e.pageY;
+  });
+
+  document.addEventListener("mouseleave", () => { 
+    mouse.active = false; mouse.x = -9999; mouse.y = -9999; 
+  });
+
+  function animateRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  document.querySelectorAll('a, button, .card, .artifact-zone, .iteration-block, .persona-card, .hero-cta').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.width = '20px'; cursor.style.height = '20px'; cursor.style.background = 'var(--accent2)';
+      ring.style.width = '56px'; ring.style.height = '56px'; ring.style.borderColor = 'rgba(123,108,255,0.5)';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.width = '12px'; cursor.style.height = '12px'; cursor.style.background = 'var(--accent)';
+      ring.style.width = '36px'; ring.style.height = '36px'; ring.style.borderColor = 'rgba(200,240,96,0.4)';
+    });
+  });
+
+  /* ── Interactive Dots Canvas ── */
+  const canvas = document.getElementById("dots");
+  const ctx = canvas.getContext("2d");
+  let w = 0, h = 0, dpr = Math.max(1, window.devicePixelRatio || 1);
+  let points = [];
+  const spacing = 40;
+
+  function resize(){
+      w = window.innerWidth;
+      h = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight, window.innerHeight);
+      canvas.width = Math.floor(w * dpr);
+      canvas.height = Math.floor(h * dpr);
+      canvas.style.width = w + "px";
+      canvas.style.height = h + "px"; 
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      points = [];
+      let cols = Math.ceil(w / spacing) + 1;
+      let rows = Math.ceil(h / spacing) + 1;
+
+      for (let y = 0; y < rows; y++){
+          for (let x = 0; x < cols; x++){
+              points.push({ ox: x * spacing, oy: y * spacing });
+          }
+      }
+  }
+
+  function draw(){
+      ctx.clearRect(0, 0, w, h);
+      const scrollY = window.scrollY || document.documentElement.scrollTop;
+      const viewportH = window.innerHeight;
+
+      for (let i = 0; i < points.length; i++){
+          const p = points[i];
+          if (p.oy < scrollY - 150 || p.oy > scrollY + viewportH + 150) continue; 
+          
+          let distToMouse = 9999; 
+          if (mouse.active){
+              const dx = p.ox - mouse.x; const dy = p.oy - mouse.y;
+              distToMouse = Math.hypot(dx, dy); 
+
+              if (distToMouse < 100) {
+                  ctx.beginPath(); ctx.moveTo(p.ox, p.oy); ctx.lineTo(mouse.x, mouse.y);
+                  const opacity = (1 - (distToMouse / 100)) * 0.15;
+                  ctx.strokeStyle = `rgba(200, 240, 96, ${opacity})`; ctx.lineWidth = 1; ctx.stroke();
+              }
+          }
+
+          ctx.beginPath();
+          if (mouse.active && distToMouse < 150) {
+              const intensity = 1 - (distToMouse / 150);
+              ctx.arc(p.ox, p.oy, 1.2 + (intensity * 1.5), 0, Math.PI * 2);
+              ctx.fillStyle = `rgba(200, 240, 96, ${Math.max(0.04, intensity * 0.4)})`; 
+          } else {
+              ctx.arc(p.ox, p.oy, 1.2, 0, Math.PI * 2);
+              ctx.fillStyle = `rgba(255, 255, 255, 0.03)`;
+          }
+          ctx.fill();
+      }
+      requestAnimationFrame(draw);
+  }
+
+  let resizeTimeout;
+  window.addEventListener("resize", () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(resize, 200);
+  });
+
+  window.addEventListener("load", resize);
+  resize(); draw();
+</script>
+</body>
+</html>
