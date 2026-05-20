@@ -1,4 +1,4 @@
- <script>
+
     /* ── 1. Custom Cursor Logic (From CD2) ── */
     const cursor = document.getElementById('cursor');
     const ring = document.getElementById('cursor-ring');
@@ -70,4 +70,4 @@
       const observer = new IntersectionObserver(observerCallback, observerOptions);
       sections.forEach(sec => observer.observe(sec));
     });
-  </script>
+ 
