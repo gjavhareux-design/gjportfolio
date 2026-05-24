@@ -671,6 +671,148 @@
     }
     .process-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.7; }
 
+    /* ── Process (Parallelogram Card Design) ── */
+    #process { }
+    .process-header { text-align: center; margin-bottom: 72px; }
+    .process-header .section-label { justify-content: center; }
+
+    .infographic-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 3vw;
+        justify-content: center;
+        align-items: center;
+        max-width: 1400px;
+        box-sizing: border-box;
+        margin: 0 auto;
+    }
+
+    .step {
+        position: relative;
+        margin-top: 50px; 
+        width: 260px; 
+    }
+
+    .bg-number {
+        position: absolute;
+        top: 0px;
+        right: 200px;
+        font-size: 10rem;
+        font-weight: 800;
+        color: var(--theme);
+        z-index: 0;
+        line-height: 1;
+        opacity: 0;
+        user-select: none;
+        animation: fadeInRise 1s ease-out forwards;
+        animation-delay: var(--delay);
+        /* Subtle opacity adaptation for dark theme */
+        opacity: 0.15;
+    }
+
+    /* MAIN CARD - PARALLELOGRAM */
+    .card {
+        width: 200px;
+        height: 200px;
+        background-color: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        box-shadow: -18px -8px 30px rgba(0,0,0,0.4);
+        position: relative;
+        z-index: 1;
+        padding: 60px 25px 30px 25px; 
+        box-sizing: border-box;
+        transform: skewX(-8deg);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: none; /* Align with custom cursor */
+    }
+
+    /* CARD CONTENT (Un-skewed) */
+    .card-content {
+        transform: skewX(8deg);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        height: 100%;
+    }
+
+    .ribbon {
+        position: absolute;
+        top: -15px;
+        left: -15px;
+        background-color: var(--theme);
+        color: #0a0a0f; /* Dark text on bright ribbon */
+        font-weight: 800;
+        font-size: 14px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        padding: 12px 28px;
+        border-radius: 0 25px 25px 0;
+        z-index: 2;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        transform: skewX(8deg);
+        transform-origin: bottom left;
+        transition: box-shadow 0.3s ease;
+    }
+
+    .ribbon::before {
+        content: '';
+        position: absolute;
+        top: 100%; 
+        left: 0;
+        width: 0;
+        height: 0;
+        border-top: 12px solid var(--theme-dark);
+        border-left: 15px solid transparent;
+    }
+
+    .card-text {
+        text-align: center;
+        line-height: 1.6;
+        font-size: 0.85rem;
+        color: var(--muted);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+    }
+
+    .icon {
+        width: 45px;
+        height: 45px;
+        color: var(--theme);
+        margin-top: 15px;
+    }
+
+    .icon svg {
+        width: 100%;
+        height: 100%;
+        fill: currentColor;
+    }
+
+    @keyframes fadeInRise {
+        from {
+            opacity: 0;
+            transform: translate(20px, 20px);
+        }
+        to {
+            opacity: 0.15; /* Matching dark theme opacity */
+            transform: translate(0, 0);
+        }
+    }
+
+    /* Hover states */
+    .step:hover .card {
+        transform: skewX(-8deg) translateY(-8px);
+        box-shadow: -18px 0px 40px rgba(0,0,0,0.6);
+        border-color: var(--theme);
+    }
+    
+    .step:hover .ribbon {
+        box-shadow: 0 8px 15px rgba(0,0,0,0.4);
+    }
+
     /* ── Skills ── */
     #skills { background: var(--surface); }
     .skills-layout {
@@ -1313,31 +1455,76 @@
     <p class="section-sub2">A structured approach that keeps users at the centre of every decision.</p>
   </div>
 
-  <div class="process-grid">
-    <div class="process-item reveal">
-      <div class="process-num">01</div>
-      <span class="process-icon">🔍</span>
-      <div class="process-name">Discover</div>
-      <p class="process-desc">Deep-dive research: user interviews, competitive analysis, and stakeholder alignment to understand the real problem.</p>
+  <div class="infographic-container">
+    
+    <!-- Step 1: Discover -->
+    <div class="step reveal reveal-delay-1" style="--theme: var(--cyan); --theme-dark: var(--cyan-dark); --delay: 0.1s;">
+        <div class="bg-number">1</div>
+        <div class="card">
+            <div class="ribbon">Discover</div>
+            <div class="card-content">
+                <p class="card-text">Deep-dive research: user interviews, competitive analysis, and stakeholder alignment to understand the real problem.</p>
+                <div class="icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7zM9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9v1z"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="process-item reveal reveal-delay-1">
-      <div class="process-num">02</div>
-      <span class="process-icon">💡</span>
-      <div class="process-name">Define</div>
-      <p class="process-desc">Synthesising insights into clear problem statements, personas, and design principles to guide decisions.</p>
+
+    <!-- Step 2: Define -->
+    <div class="step reveal reveal-delay-2" style="--theme: var(--orange); --theme-dark: var(--orange-dark); --delay: 0.3s;">
+        <div class="bg-number">2</div>
+        <div class="card">
+            <div class="ribbon">Define</div>
+            <div class="card-content">
+                <p class="card-text">Synthesising insights into clear problem statements, personas, and design principles to guide decisions.</p>
+                <div class="icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20 7h-4V5c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zM10 5h4v2h-4V5z"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="process-item reveal reveal-delay-2">
-      <div class="process-num">03</div>
-      <span class="process-icon">✏️</span>
-      <div class="process-name">Design</div>
-      <p class="process-desc">Rapid ideation, wireframing, and high-fidelity prototyping — iterating quickly based on feedback.</p>
+
+    <!-- Step 3: Design -->
+    <div class="step reveal reveal-delay-3" style="--theme: var(--purple); --theme-dark: var(--purple-dark); --delay: 0.5s;">
+        <div class="bg-number">3</div>
+        <div class="card">
+            <div class="ribbon">Design</div>
+            <div class="card-content">
+                <p class="card-text">Rapid ideation, wireframing, and high-fidelity prototyping — iterating quickly based on feedback.</p>
+                <div class="icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm0-7c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="process-item reveal reveal-delay-3">
-      <div class="process-num">04</div>
-      <span class="process-icon">🚀</span>
-      <div class="process-name">Deliver</div>
-      <p class="process-desc">Usability testing, design handoff, and ongoing collaboration with engineering to ensure quality implementation.</p>
+
+    <!-- Step 4: Deliver -->
+    <div class="step reveal reveal-delay-4" style="--theme: var(--teal); --theme-dark: var(--teal-dark); --delay: 0.7s;">
+        <div class="bg-number">4</div>
+        <div class="card">
+            <div class="ribbon">Deliver</div>
+            <div class="card-content">
+                <p class="card-text">Usability testing, design handoff, and ongoing collaboration with engineering for quality implementation.</p>
+                <div class="icon">
+                    <svg viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M512 301.2m-10 0a10 10 0 1 0 20 0 10 10 0 1 0-20 0Z" fill="currentColor" />
+                      <path d="M400.3 744.5c2.1-0.7 4.1-1.4 6.2-2-2 0.6-4.1 1.3-6.2 2z m0 0c2.1-0.7 4.1-1.4 6.2-2-2 0.6-4.1 1.3-6.2 2z" fill="#fff" />
+                      <path d="M511.8 256.6c24.4 0 44.2 19.8 44.2 44.2S536.2 345 511.8 345s-44.2-19.8-44.2-44.2 19.9-44.2 44.2-44.2m0-20c-35.5 0-64.2 28.7-64.2 64.2s28.7 64.2 64.2 64.2 64.2-28.7 64.2-64.2-28.7-64.2-64.2-64.2z" fill="currentColor" />
+                      <path d="M730.7 529.5c0.4-8.7 0.6-17.4 0.6-26.2 0-179.6-86.1-339.1-219.3-439.5-133.1 100.4-219.2 259.9-219.2 439.5 0 8.8 0.2 17.5 0.6 26.1-56 56-90.6 133.3-90.6 218.7 0 61.7 18 119.1 49.1 167.3 30.3-49.8 74.7-90.1 127.7-115.3 39-18.6 82.7-29 128.8-29 48.3 0 93.9 11.4 134.3 31.7 52.5 26.3 96.3 67.7 125.6 118.4 33.4-49.4 52.9-108.9 52.9-173.1 0-85.4-34.6-162.6-90.5-218.6zM351.1 383.4c9.2-37.9 22.9-74.7 40.6-109.5a502.1 502.1 0 0 1 63.6-95.9c17.4-20.6 36.4-39.9 56.8-57.5 20.4 17.6 39.4 36.9 56.8 57.5 24.8 29.5 46.2 61.8 63.6 95.9 17.7 34.8 31.4 71.6 40.6 109.5 8.7 35.8 13.5 72.7 14.2 109.9C637.4 459 577 438.9 512 438.9c-65 0-125.3 20.1-175.1 54.4 0.7-37.2 5.5-74.1 14.2-109.9z m-90.6 449.2c-9.1-27-13.7-55.5-13.7-84.4 0-35.8 7-70.6 20.8-103.2 8.4-19.8 19-38.4 31.9-55.5 9.7 61.5 29.5 119.7 57.8 172.6-36.4 17.8-69 41.6-96.8 70.5z m364.2-85.3c-0.7-0.3-1.5-0.5-2.2-0.8-0.4-0.2-0.9-0.3-1.3-0.5-0.6-0.2-1.3-0.5-1.9-0.7-0.8-0.3-1.5-0.5-2.3-0.8-0.8-0.3-1.5-0.5-2.3-0.7l-0.9-0.3c-1-0.3-2.1-0.7-3.1-1-1.2-0.4-2.4-0.7-3.5-1.1l-3-0.9c-0.2-0.1-0.4-0.1-0.7-0.2-1.1-0.3-2.3-0.7-3.4-1-1.2-0.3-2.4-0.6-3.5-0.9l-3.6-0.9-3.6-0.9c-1-0.3-2.1-0.5-3.1-0.7-1.2-0.3-2.4-0.5-3.6-0.8-1.3-0.3-2.5-0.6-3.8-0.8h-0.3c-0.9-0.2-1.9-0.4-2.8-0.6-0.4-0.1-0.7-0.1-1.1-0.2-1.1-0.2-2.2-0.4-3.4-0.6-1.2-0.2-2.4-0.4-3.6-0.7l-5.4-0.9c-0.9-0.1-1.9-0.3-2.8-0.4-0.8-0.1-1.6-0.3-2.5-0.4-2.6-0.4-5.1-0.7-7.7-1-1.2-0.1-2.3-0.3-3.5-0.4h-0.4c-0.9-0.1-1.8-0.2-2.8-0.3-1.1-0.1-2.1-0.2-3.2-0.3-1.7-0.2-3.4-0.3-5.1-0.4-0.8-0.1-1.5-0.1-2.3-0.2-0.9-0.1-1.9-0.1-2.8-0.2-0.4 0-0.8 0-1.2-0.1-1.1-0.1-2.1-0.1-3.2-0.2-0.5 0-1-0.1-1.5-0.1-1.3-0.1-2.6-0.1-3.9-0.1-0.8 0-1.5-0.1-2.3-0.1-1.2 0-2.4 0-3.5-0.1h-13.9c-2.3 0-4.6 0.1-6.9 0.2-0.9 0-1.9 0.1-2.8 0.1-0.8 0-1.5 0.1-2.3 0.1-1.4 0.1-2.8 0.2-4.1 0.3-1.4 0.1-2.7 0.2-4.1 0.3-1.4 0.1-2.7 0.2-4.1 0.4-0.6 0-1.2 0.1-1.8 0.2l-7.8 0.9c-1.1 0.1-2.1 0.3-3.2 0.4-1 0.1-2.1 0.3-3.1 0.4-3.2 0.5-6.4 0.9-9.5 1.5-0.7 0.1-1.4 0.2-2.1 0.4-0.9 0.1-1.7 0.3-2.6 0.5-1.1 0.2-2.3 0.4-3.4 0.6-0.9 0.2-1.7 0.3-2.6 0.5-0.4 0.1-0.8 0.1-1.1 0.2-0.7 0.1-1.4 0.3-2.1 0.4-1.2 0.3-2.4 0.5-3.6 0.8-1.2 0.3-2.4 0.5-3.6 0.8-0.2 0-0.4 0.1-0.6 0.1-0.5 0.1-1 0.2-1.5 0.4-1.1 0.3-2.3 0.6-3.5 0.9-1.3 0.3-2.5 0.6-3.8 1-0.4 0.1-0.9 0.2-1.4 0.4-1.3 0.4-2.7 0.7-4 1.1-1.5 0.4-3 0.9-4.6 1.3-1 0.3-2.1 0.6-3.1 1-2.1 0.6-4.1 1.3-6.2 2-0.7 0.2-1.4 0.5-2.1 0.7-15-27.5-27.4-56.4-37-86.2-11.7-36.1-19.2-73.6-22.5-111.6-0.6-6.7-1-13.3-1.3-20-0.1-1.2-0.1-2.4-0.1-3.6-0.1-1.2-0.1-2.4-0.1-3.6 0-1.2-0.1-2.4-0.1-3.6 0-1.2-0.1-2.4-0.1-3.7 18.8-14 39.2-25.8 61-35 36.1-15.3 74.5-23 114.1-23 39.6 0 78 7.8 114.1 23 21.8 9.2 42.2 20.9 61 35v0.1c0 1 0 1.9-0.1 2.9 0 1.4-0.1 2.8-0.1 4.3 0 0.7 0 1.3-0.1 2-0.1 1.8-0.1 3.5-0.2 5.3-0.3 6.7-0.8 13.3-1.3 20-3.3 38.5-11 76.5-23 113-9.7 30.3-22.3 59.4-37.6 87.1z m136.8 90.9a342.27 342.27 0 0 0-96.3-73.2c29.1-53.7 49.5-112.8 59.4-175.5 12.8 17.1 23.4 35.6 31.8 55.5 13.8 32.7 20.8 67.4 20.8 103.2 0 31-5.3 61.3-15.7 90z" fill="currentColor" />
+                      <path d="M512 819.3c8.7 0 24.7 22.9 24.7 60.4s-16 60.4-24.7 60.4-24.7-22.9-24.7-60.4 16-60.4 24.7-60.4m0-20c-24.7 0-44.7 36-44.7 80.4 0 44.4 20 80.4 44.7 80.4s44.7-36 44.7-80.4c0-44.4-20-80.4-44.7-80.4z" fill="currentColor" />
+                    </svg>
+                </div>
+            </div>
+        </div>
     </div>
+
   </div>
 </section>
 
@@ -1349,46 +1536,108 @@
   <div class="skills-layout" style="margin-top: 52px;">
     <div class="skills-list reveal">
       <div class="skill-row">
-        <div class="skill-head"><span class="skill-name">UX Research & Strategy</span><span class="skill-pct">95%</span></div>
+        <div class="skill-head"><span class="skill-name">UX Research & Strategy</span><span class="skill-pct"></span></div>
         <div class="skill-track"><div class="skill-fill" data-width="95"></div></div>
       </div>
       <div class="skill-row">
-        <div class="skill-head"><span class="skill-name">Interaction Design</span><span class="skill-pct">92%</span></div>
+        <div class="skill-head"><span class="skill-name">Interaction Design</span><span class="skill-pct"></span></div>
         <div class="skill-track"><div class="skill-fill" data-width="92"></div></div>
       </div>
       <div class="skill-row">
-        <div class="skill-head"><span class="skill-name">Visual / UI Design</span><span class="skill-pct">88%</span></div>
+        <div class="skill-head"><span class="skill-name">Visual / UI Design</span><span class="skill-pct"></span></div>
         <div class="skill-track"><div class="skill-fill" data-width="88"></div></div>
       </div>
       <div class="skill-row">
-        <div class="skill-head"><span class="skill-name">Design Systems</span><span class="skill-pct">90%</span></div>
+        <div class="skill-head"><span class="skill-name">Design Systems</span><span class="skill-pct"></span></div>
         <div class="skill-track"><div class="skill-fill" data-width="90"></div></div>
       </div>
       <div class="skill-row">
-        <div class="skill-head"><span class="skill-name">Prototyping</span><span class="skill-pct">93%</span></div>
+        <div class="skill-head"><span class="skill-name">Prototyping</span><span class="skill-pct"></span></div>
         <div class="skill-track"><div class="skill-fill" data-width="93"></div></div>
       </div>
       <div class="skill-row">
-        <div class="skill-head"><span class="skill-name">Usability Testing</span><span class="skill-pct">87%</span></div>
+        <div class="skill-head"><span class="skill-name">Usability Testing</span><span class="skill-pct"></span></div>
         <div class="skill-track"><div class="skill-fill" data-width="87"></div></div>
       </div>
     </div>
 
-    <div class="tools-cloud reveal reveal-delay-1">
-      <div class="tool-item"><span class="tool-icon">🎨</span> Figma</div>
-      <div class="tool-item"><span class="tool-icon">⚡</span> Framer</div>
-      <div class="tool-item"><span class="tool-icon">🔷</span> Sketch</div>
-      <div class="tool-item"><span class="tool-icon">✏️</span> Adobe XD</div>
-      <div class="tool-item"><span class="tool-icon">🎬</span> Principle</div>
-      <div class="tool-item"><span class="tool-icon">🖼️</span> Illustrator</div>
-      <div class="tool-item"><span class="tool-icon">📋</span> Notion</div>
-      <div class="tool-item"><span class="tool-icon">📊</span> Miro</div>
-      <div class="tool-item"><span class="tool-icon">🧪</span> Maze</div>
-      <div class="tool-item"><span class="tool-icon">💬</span> Dovetail</div>
-      <div class="tool-item"><span class="tool-icon">🌐</span> Webflow</div>
-      <div class="tool-item"><span class="tool-icon">🤝</span> Zeplin</div>
+    <div class="tools-cloud reveal reveal-delay-1" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 16px; align-items: start;">
+      <div class="tool-item" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding: 18px 12px; min-height: 130px; text-align:center;">
+        <span class="tool-icon" style="width:42px; height:42px; display:flex; align-items:center; justify-content:center;">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Figma-Logo--Streamline-Logos-Block" height="24" width="24">
+            <desc>Figma Logo Streamline Icon: https://streamlinehq.com</desc>
+            <path fill="#aeee" fill-rule="evenodd" d="M5 1a4 4 0 0 0 -4 4v14a4 4 0 0 0 4 4h14a4 4 0 0 0 4 -4V5a4 4 0 0 0 -4 -4H5Zm4.09 3h2.364v4.727H9.091A2.364 2.364 0 1 1 9.09 4Zm3.092 5.09V4h2.545a2.546 2.546 0 0 1 0 5.09h-2.545Zm2.363 5.274a2.364 2.364 0 1 0 0 -4.728 2.364 2.364 0 0 0 0 4.728Zm-3.09 0V9.636H9.09a2.364 2.364 0 0 0 0 4.728h2.364Zm0 3.272v-2.363H9.09a2.364 2.364 0 1 0 2.364 2.363Z" clip-rule="evenodd" stroke-width="1"></path>
+          </svg>
+        </span>
+        <span style="font-size:0.85rem; font-weight:500; color: var(--text);">Figma</span>
+      </div>
+
+      <div class="tool-item" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding: 18px 12px; min-height: 130px; text-align:center;">
+        <span class="tool-icon" style="width:42px; height:42px; display:flex; align-items:center; justify-content:center;">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Framer-Logo--Streamline-Logos-Block" height="24" width="24">
+            <desc>Framer Logo Streamline Icon: https://streamlinehq.com</desc>
+            <path fill="#aeee" fill-rule="evenodd" d="M5 1a4 4 0 0 0 -4 4v14a4 4 0 0 0 4 4h14a4 4 0 0 0 4 -4V5a4 4 0 0 0 -4 -4H5Zm1.91 3.5L12 9.59H6.91v5.092l5.454 5.818v-5.818h4.727l-5.09 -5.091h5.09V4.5H6.909Z" clip-rule="evenodd" stroke-width="1"></path>
+          </svg>
+        </span>
+        <span style="font-size:0.85rem; font-weight:500; color: var(--text);">Framer</span>
+      </div>
+
+      <div class="tool-item" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding: 18px 12px; min-height: 130px; text-align:center;">
+        <span style="font-size:2rem; font-weight:800;color: #aeee;">
+          XD
+        </span>
+        <span style="font-size:0.85rem; font-weight:500; color: var(--text);">Adobe XD</span>
+      </div>
+
+      <div class="tool-item" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding: 18px 12px; min-height: 130px; text-align:center;">
+        <span style="font-size:2rem; font-weight:800;color: #aeee;">
+          Ai
+        </span>
+        <span style="font-size:0.85rem; font-weight:500; color: var(--text);">Illustrator</span>
+      </div>
+
+      <div class="tool-item" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding: 18px 12px; min-height: 130px; text-align:center;">
+        <span class="tool-icon" style="width:42px; height:42px; display:flex; align-items:center; justify-content:center;">
+          <svg fill="#aeee" width="15px" height="15px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+            <g id="SVGRepo_iconCarrier">
+              <title>miro</title>
+              <path d="M22.728 1.024h-4.356l3.868 6-8.182-6h-4.362l3.872 7.862-8.182-7.862h-4.362l3.806 10.148-3.806 19.804h4.362l8.18-21.234-3.87 21.234h4.36l8.184-23.096-3.87 23.096h4.358l8.248-25.368-8.248-4.584z"/>
+            </g>
+          </svg>
+        </span>
+        <span style="font-size:0.85rem; font-weight:500; color: var(--text);">Miro</span>
+      </div>
+
+      <div class="tool-item" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding: 18px 12px; min-height: 130px; text-align:center;">
+        <span class="tool-icon" style="width:42px; height:42px; display:flex; align-items:center; justify-content:center;">
+          <svg width="800px" height="800px" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><title>file_type_vscode</title><path d="M29.01,5.03,23.244,2.254a1.742,1.742,0,0,0-1.989.338L2.38,19.8A1.166,1.166,0,0,0,2.3,21.447c.025.027.05.053.077.077l1.541,1.4a1.165,1.165,0,0,0,1.489.066L28.142,5.75A1.158,1.158,0,0,1,30,6.672V6.605A1.748,1.748,0,0,0,29.01,5.03Z" style="fill:#0065a9"/><path d="M29.01,26.97l-5.766,2.777a1.745,1.745,0,0,1-1.989-.338L2.38,12.2A1.166,1.166,0,0,1,2.3,10.553c.025-.027.05-.053.077-.077l1.541-1.4A1.165,1.165,0,0,1,5.41,9.01L28.142,26.25A1.158,1.158,0,0,0,30,25.328V25.4A1.749,1.749,0,0,1,29.01,26.97Z" style="fill:#007acc"/><path d="M23.244,29.747a1.745,1.745,0,0,1-1.989-.338A1.025,1.025,0,0,0,23,28.684V3.316a1.024,1.024,0,0,0-1.749-.724,1.744,1.744,0,0,1,1.989-.339l5.765,2.772A1.748,1.748,0,0,1,30,6.6V25.4a1.748,1.748,0,0,1-.991,1.576Z" style="fill:#1f9cf0"/></svg>
+        </span>
+        <span style="font-size:0.85rem; font-weight:500; color: var(--text);">VS Code</span>
+      </div>
+
+      <div class="tool-item" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding: 18px 12px; min-height: 130px; text-align:center;">
+        <span class="tool-icon" style="width:42px; height:42px; display:flex; align-items:center; justify-content:center;">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#aeee" d="M12 2a10 10 0 0 0-3.16 19.5c.5.1.68-.22.68-.48 0-.24-.01-.87-.01-1.7-2.77.6-3.36-1.33-3.36-1.33-.45-1.15-1.1-1.45-1.1-1.45-.9-.62.07-.6.07-.6 1 .07 1.54 1.03 1.54 1.03.88 1.52 2.3 1.08 2.86.83.09-.64.35-1.08.63-1.33-2.22-.25-4.55-1.11-4.55-4.95 0-1.1.39-1.99 1.03-2.69-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.55 9.55 0 0 1 12 6.8c.85.004 1.7.11 2.5.32 1.9-1.3 2.74-1.02 2.74-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.58 1.03 2.69 0 3.85-2.34 4.7-4.57 4.95.36.31.68.92.68 1.85 0 1.34-.01 2.42-.01 2.74 0 .26.18.58.69.48A10 10 0 0 0 12 2z"/>
+          </svg>
+        </span>
+        <span style="font-size:0.85rem; font-weight:500; color: var(--text);">GitHub</span>
+      </div>
+
+      <div class="tool-item" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding: 18px 12px; min-height: 130px; text-align:center;">
+        <span class="tool-icon" style="width:42px; height:42px; display:flex; align-items:center; justify-content:center;">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none">
+            <path d="M6 8l-2 4 2 4" fill="none" stroke="#aeee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M18 8l2 4-2 4" fill="none" stroke="#aeee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M10 7h4" fill="none" stroke="#aeee" stroke-width="2" stroke-linecap="round"/>
+            <path d="M10 17h4" fill="none" stroke="#aeee" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span style="font-size:0.85rem; font-weight:500; color: var(--text);">HTML/CSS</span>
+      </div>
     </div>
-  </div>
 </section>
 
 <!-- AI & Vibe Coding Section -->
