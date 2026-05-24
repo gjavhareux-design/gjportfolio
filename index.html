@@ -66,7 +66,7 @@
     body::before {
       content: '';
       position: fixed; inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOcta[...]
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
       pointer-events: none; z-index: 1000; opacity: 0.4;
     }
 
@@ -672,6 +672,10 @@
     .process-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.7; }
 
     /* ── Process (Parallelogram Card Design) ── */
+    #process { }
+    .process-header { text-align: center; margin-bottom: 72px; }
+    .process-header .section-label { justify-content: center; }
+
     .infographic-container {
         display: flex;
         flex-wrap: wrap;
@@ -695,13 +699,15 @@
         right: 200px;
         font-size: 10rem;
         font-weight: 800;
-        color: var(--accent);
+        color: var(--theme);
         z-index: 0;
         line-height: 1;
-        opacity: 0.15;
+        opacity: 0;
         user-select: none;
         animation: fadeInRise 1s ease-out forwards;
         animation-delay: var(--delay);
+        /* Subtle opacity adaptation for dark theme */
+        opacity: 0.15;
     }
 
     /* MAIN CARD - PARALLELOGRAM */
@@ -735,7 +741,7 @@
         position: absolute;
         top: -15px;
         left: -15px;
-        background-color: var(--accent);
+        background-color: var(--theme);
         color: #0a0a0f; /* Dark text on bright ribbon */
         font-weight: 800;
         font-size: 14px;
@@ -757,7 +763,7 @@
         left: 0;
         width: 0;
         height: 0;
-        border-top: 12px solid rgba(200, 240, 96, 0.7);
+        border-top: 12px solid var(--theme-dark);
         border-left: 15px solid transparent;
     }
 
@@ -775,7 +781,7 @@
     .icon {
         width: 45px;
         height: 45px;
-        color: var(--accent);
+        color: var(--theme);
         margin-top: 15px;
     }
 
@@ -791,7 +797,7 @@
             transform: translate(20px, 20px);
         }
         to {
-            opacity: 0.15;
+            opacity: 0.15; /* Matching dark theme opacity */
             transform: translate(0, 0);
         }
     }
@@ -800,7 +806,7 @@
     .step:hover .card {
         transform: skewX(-8deg) translateY(-8px);
         box-shadow: -18px 0px 40px rgba(0,0,0,0.6);
-        border-color: var(--accent);
+        border-color: var(--theme);
     }
     
     .step:hover .ribbon {
@@ -1135,10 +1141,22 @@
 <div id="cursor"></div>
 <div id="cursor-ring"></div>
 
-<!-- Navigation -->
+<!-- Nav -->
 <nav>
   <a href="#" class="nav-logo">
-    <span>GJ</span>Portfolio
+    <svg id="Layer_1" class="brand-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 324.06 381.34">
+      <defs>
+        <style>
+          .cls-1 {
+            fill: var(--accent);
+          }
+        </style>
+      </defs>
+      <path class="cls-1" d="M8.78,313.93c14.86,3.65,22.61-2.45,29.23-15.26,9.74-19.75,15.56-41.24,24.74-61.53,13.53-31.55,35.2-61.29,70.34-70.09,5.05-1.26,10.32-2.25,15.36-2.58,32.22,0,65.12.02,97.39.18,4.76-.04,12.8.32,17.46-.6,21.2-3.24,37.91-22.35,39.61-43.62.15-1.51.24-3.64.25-5.14.21-15.42.33-36.58.54-52.07.11-9.63.6-29.11.84-38.75,0,0,.03-1.21.03-1.21.15-2.1-.68-4.05-1.95-5.7-1.05-1.65-2.62-3.44-4.78-3.47-9.69-.26-22.08-.5-31.78-.56-19.37-.22-38.75-.13-58.12-.44-3.21-.08-6.05.03-9.05.88-8.53,1.39-16.75,5.06-23.7,9.99-18.43,13.55-32.03,32.58-33.53,55.94-1.89,32.16-4.18,64.83-8.45,96.76-1.76-12.92-3.07-25.83-4.24-38.75-1.45-16.02-2.61-32.37-3.56-48.43-.06-1.52-.36-5.78-.43-7.27-.72-11.6.96-23.54,5.15-34.48,9.49-25.51,30.08-41.85,56.89-45.9,5.29-.93,10.62-1.17,15.92-.8,8.22-.02,16.19-.18,24.37-.2,23.23-.17,46.99-.13,70.23-.8,12.01-.43,21.54,5.69,24.4,17.73,1.19,4.26.88,21.4,1.2,26.1.44,21.94.67,48.33.89,70.23.07,1.49-.03,3.83-.04,5.34-.87,31.78-25.27,61.1-56.95,66.33-3.8.67-7.65,1.01-11.5,1.04-33.76.19-75.58.22-105.62.23-24.85,1.37-44.03,15.82-57.76,36.04-9.81,14.07-17.21,29.94-24.65,45.64-5.87,12.2-11.67,25.11-20.22,36.09-9.78,12.84-24.06,19.94-38.51,9.14h0Z"/>
+      <path class="cls-1" d="M198.97,12.54c-21.83.01-43.29,7.85-62.54,17.38C79.39,57.72,35.43,110.41,30.47,175.02c-7.25,86.15,56.98,165.39,142.73,176.3,20.45,2.82,41.56,1.66,61.26-4.51,40.22-12.27,67.52-42.61,56.7-86.13-7.66-28.32-36.46-42.9-63.41-31.11-15.62,6.8-26.74,22.74-27.74,39.77-1.61,13.53,8.41,28.39,21.91,31.18,11.83,2.3,24.41-5.05,28.76-16.24,6.36-16.17-3.12-37.15-25.55-44.06,0,0,0-.83,0-.83,19.72-6,40.42,10.09,43.5,29.87,2.55,13.89-2.38,28.92-12.53,38.82-16.15,16.18-42.32,17.43-59.79,2.74-23.75-19.27-24.1-51.57-8.89-76.48,18.06-30.03,58.57-42.18,90.16-26.96,32.01,15.01,45.98,51.6,41.33,85.19-7.76,61.35-75.42,90.86-131.04,88.65-80.63-1.22-155.31-58.74-178.76-135.64-23.15-70.75-1.28-153.26,55.96-201.37C98.83,14.92,137.04,2.07,181.42,1.87c5.89.13,11.71-.26,17.55-.18,0,0,0,10.84,0,10.84h0Z"/>
+      <path class="cls-1" d="M104.53,136.06c.18,12.12-11.61,21.78-23.3,18.34-17.93-5.35-17.93-31.34,0-36.69,11.69-3.44,23.48,6.22,23.3,18.34h0ZM80.34,136.06c.18.48.89.24,1.22-.25,1.27-1.65-.19-4.63-2.63-5.21-3.3-.99-6.71,1.98-6.62,5.47-.09,3.48,3.32,6.45,6.62,5.47,2.43-.58,3.9-3.56,2.63-5.21-.33-.49-1.04-.74-1.22-.25h0Z"/>
+    </svg>
+    Ganesh J.
   </a>
   <ul class="nav-links">
     <li><a href="#about">About</a></li>
@@ -1146,749 +1164,1652 @@
     <li><a href="#process">Process</a></li>
     <li><a href="#skills">Skills</a></li>
     <li><a href="#contact">Contact</a></li>
-    <li><a href="#" class="nav-cta">Download CV</a></li>
   </ul>
+  <a href="#contact" class="nav-cta">Let's Talk →</a>
 </nav>
 
-<!-- Hero Section -->
+<!-- Hero -->
 <section id="hero">
   <div class="hero-grid-bg"></div>
   <div class="hero-orb orb1"></div>
   <div class="hero-orb orb2"></div>
+
   <div class="hero-inner">
     <div class="hero-left">
       <div class="hero-eyebrow">
         <span class="hero-eyebrow-dot"></span>
-        Welcome to my portfolio
+        Available for freelance · London, UK
       </div>
+
       <h1 class="hero-headline">
-        <span class="line"><span>Designing</span></span>
-        <span class="line"><span><span class="accent-word">Experiences</span></span></span>
-        <span class="line"><span>That Matter</span></span>
+        <span class="line"><span>Bridging Screens</span></span>
+        <span class="line"><span class="stroke">& Human experiences</span></span>
+        
       </h1>
+
       <p class="hero-sub">
-        I craft beautiful, intuitive digital products that solve real problems and create meaningful connections between users and technology.
+        UX Designer specialising in product design, design systems, and human-centred interfaces that balance beauty with function.
       </p>
+
       <div class="hero-actions">
-        <a href="#" class="btn-primary">View My Work ↗</a>
-        <a href="#" class="btn-secondary">Learn More ↓</a>
+        <a href="#work" class="btn-primary">View Case Studies <span>↓</span></a>
+        <a href="#contact" class="btn-secondary">Get in touch <span>→</span></a>
       </div>
+    </div>
+    
+    <div class="hero-right reveal">
+      <div class="hero-visuals">
+        <div class="floating-cards-group" id="parallax-group">
+            
+            <div class="dc-card dc-cert-back float-anim" style="padding: 20px;">
+                <h4 style="color: white; font-size: 14px; font-weight: bold; margin-bottom: 4px;">Zensphere</h4>
+                <p style="color: rgba(255,255,255,0.6); font-size: 10px; margin-bottom: 15px;">Mobile APP</p>
+                <div style="width: 60%; height: 4px; background: rgba(233, 10, 10, 0.3); border-radius: 2px; margin-bottom: 6px;"></div>
+                <div style="width: 40%; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px;"></div>
+            </div>
+
+            <div class="dc-card dc-cert-front float-anim" style="padding: 20px;">
+                <h4 style="color: white; font-size: 14px; font-weight: bold; margin-bottom: 4px;">FocusXR</h4>
+                <p style="color: rgba(255,255,255,0.6); font-size: 10px; margin-bottom: 15px;">Vertual Reality App</p>
+                <div style="width: 60%; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; margin-bottom: 6px;"></div>
+                <div style="width: 40%; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px;"></div>
+            </div>
+
+            <div class="dc-card dc-main float-anim">
+                 <h4 style="color: white; font-size: 14px; font-weight: bold; margin-bottom: 4px;margin-left: 14px;">MahaRERA Portal<br></h4>
+                <div style="height: 30px; background: rgba(0,0,0,0.2); display: flex; gap: 8px; align-items: center; padding: 0 16px;">
+                   
+                  
+                    <span style="width:12px; height:12px; border-radius:50%; background:#ff5f56;"></span>
+                    <span style="width:12px; height:12px; border-radius:50%; background:#ffbd2e;"></span>
+                    <span style="width:12px; height:12px; border-radius:50%; background:#27c93f;"></span>
+                </div>
+                <div style="display: flex; height: 100%;">
+                    
+                    <div style="width: 140px; background: rgba(0,0,0,0.1); padding: 20px; border-right: 1px solid rgba(255,255,255,0.05);">
+                        <div style="width: 100%; height: 10px; background: rgba(255,255,255,0.1); border-radius: 5px; margin-bottom: 20px;"></div>
+                        <div style="width: 80%; height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; margin-bottom: 15px;"></div>
+                        <div style="width: 60%; height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; margin-bottom: 15px;"></div>
+                        <div style="width: 70%; height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px;"></div>
+                    </div>
+                    <div style="flex: 1; padding: 30px;">
+                        <div style="width: 180px; height: 12px; background: rgba(255,255,255,0.2); border-radius: 6px; margin-bottom: 20px;"></div>
+                        <div style="width: 250px; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; margin-bottom: 10px;"></div>
+                        <div style="width: 200px; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dc-card dc-left float-anim" style="padding: 25px;">
+               <h4 style="color: white; font-size: 14px; font-weight: bold; margin-bottom: 4px;margin-left: 14px;">Product Design<br></h4>
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px;">
+                    <div style="width: 30px; height: 30px; border-radius: 50%; background: #ff2a85; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold;">1</div>
+                    <div style="flex: 1;">
+                        <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; margin-bottom: 8px;"></div>
+                        <div style="width: 40%; height: 4px; background: #ff2a85; border-radius: 2px;"></div>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px;">
+                    
+                    <div style="width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.1); color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold;">2</div>
+                    <div style="flex: 1;">
+                        <div style="width: 80%; height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; margin-bottom: 8px;"></div>
+                        <div style="width: 30%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dc-card dc-right float-anim" style="padding: 30px;">
+                 <h4 style="color: white; font-size: 14px; font-weight: bold; margin-bottom: 4px;margin-left: 14px;">Service Design<br></h4>
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 30px;">
+                    <div style="width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.1); color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold;">1</div>
+                    <div style="flex: 1;">
+                        <div style="width: 90%; height: 8px; background: rgba(255,255,255,0.2); border-radius: 4px; margin-bottom: 8px;"></div>
+                        <div style="width: 50%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px;"></div>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    
+                    <div style="width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.1); color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold;">2</div>
+                    <div style="flex: 1;">
+                        <div style="width: 70%; height: 8px; background: rgba(255,255,255,0.2); border-radius: 4px; margin-bottom: 8px;"></div>
+                        <div style="width: 40%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dc-card dc-blue float-anim" style="padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                 <h4 style="color: rgb(250, 250, 250); font-size: 14px; font-weight: bold; margin-bottom: 4px;margin-left: 14px;">UX Design<br></h4>
+                <div style="width: 100%; height: 100px; background: rgba(255,255,255,0.2); border-radius: 10px; margin-bottom: 20px;"></div>
+                <div style="width: 80%; height: 10px; background: rgba(255,255,255,0.3); border-radius: 5px; margin-bottom: 10px;"></div>
+                <div style="width: 60%; height: 10px; background: rgba(255,255,255,0.3); border-radius: 5px; margin-bottom: 30px;"></div>
+                
+                <div style="display: flex; gap: 10px;">
+                    <div style="width: 30px; height: 30px; border-radius: 50%; background: white;"></div>
+                    <div style="width: 30px; height: 30px; border-radius: 50%; background: white;"></div>
+                </div>
+            </div>
+
+        </div>
+      </div>
+      
       <div class="hero-stats">
         <div class="stat-item">
-          <div class="stat-num"><span>8</span>+</div>
-          <div class="stat-label">Years of Experience</div>
+          <div class="stat-num">7<span>+</span></div>
+          <div class="stat-label">Years Experience</div>
         </div>
         <div class="stat-item">
-          <div class="stat-num"><span>50</span>+</div>
-          <div class="stat-label">Projects Completed</div>
+          <div class="stat-num">8<span>+</span></div>
+          <div class="stat-label">Projects Shipped</div>
         </div>
         <div class="stat-item">
-          <div class="stat-num"><span>30</span>+</div>
+          <div class="stat-num">2<span>+</span></div>
           <div class="stat-label">Happy Clients</div>
         </div>
       </div>
     </div>
-    <div class="hero-right">
-      <div class="hero-visuals">
-        <div class="floating-cards-group float-anim">
-          <div class="dc-card dc-main"></div>
-          <div class="dc-card dc-cert-back"></div>
-          <div class="dc-card dc-cert-front"></div>
-          <div class="dc-card dc-left"></div>
-          <div class="dc-card dc-right"></div>
-          <div class="dc-card dc-blue"></div>
-        </div>
-      </div>
-    </div>
   </div>
+
   <div class="scroll-indicator">
-    <span>Scroll to explore</span>
     <div class="scroll-line"></div>
+    Scroll to explore
   </div>
 </section>
 
-<!-- About Section -->
+<!-- About -->
 <section id="about">
+  <!-- 3D Globe Background Layer -->
   <div id="about-globe-container"></div>
-  <div class="about-visual">
+
+  <div class="about-visual reveal">
     <div class="about-img-frame">
       <div class="about-img-inner">
-        <svg class="about-avatar-svg" viewBox="0 0 200 280" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style="stop-color:#9b51e0;stop-opacity:1" />
-              <stop offset="100%" style="stop-color:#ff2a85;stop-opacity:1" />
-            </linearGradient>
-          </defs>
-          <ellipse cx="100" cy="60" rx="40" ry="45" fill="#c8f060"/>
-          <path d="M70 100 Q70 140 85 200 L115 200 Q130 140 130 100 Z" fill="url(#bodyGrad)"/>
-          <rect x="60" y="110" width="20" height="70" rx="10" fill="#ff6b8a"/>
-          <rect x="120" y="110" width="20" height="70" rx="10" fill="#ff6b8a"/>
-        </svg>
+        <img src="ganeshgifMD.gif" alt="About Ganesh" onerror="this.src='https://placehold.co/340x420/1a1a1a/e8e6f0?text=Animated+GIF';">
       </div>
     </div>
     <div class="about-badge">
-      <div class="badge-title">Currently</div>
-      <div class="badge-val">Available for Work</div>
+      
+      <div class="badge-title">Design Focus</div>
+      <div class="badge-val">UX & Product Design</div>
     </div>
-    <div class="about-badge2">
+    <div class="about-badge2 about-badge">
       <div class="badge-title">Based in</div>
-      <div class="badge-val">United States</div>
+      <div class="badge-val">London 🇬🇧</div>
     </div>
   </div>
+
   <div class="about-content">
-    <div class="section-label">About Me</div>
-    <h2 class="section-title">Passionate about creating delightful user experiences</h2>
-    <p class="section-sub">I'm a UX designer with 8+ years of experience creating digital products for startups and enterprises. I specialize in user research, wireframing, prototyping, and delivering high-fidelity designs.</p>
-    <div class="about-tags">
+    <div class="reveal">
+      <div class="section-label">About Me</div>
+      <h2 class="section-title">Designing with empathy, building with precision.</h2>
+    </div>
+    <div class="about-tags reveal reveal-delay-1">
       <span class="tag">User Research</span>
+      <span class="tag">Wireframing</span>
       <span class="tag">Prototyping</span>
       <span class="tag">Design Systems</span>
       <span class="tag">Interaction Design</span>
-      <span class="tag">Accessibility</span>
+      <span class="tag">Usability Testing</span>
     </div>
-    <p class="about-bio">I believe great design is invisible—it solves problems so elegantly that users don't even notice the work behind it. My approach combines strategic thinking with creative problem-solving to deliver results that exceed expectations.</p>
+    <p class="about-bio reveal reveal-delay-2">
+      I'm Ganesh Javhare, a UX Designer with 6+ years of experience turning complex problems into elegant, intuitive experiences. I believe great design lives at the intersection of deep user empathy and technical craft.
+      <br/><br/>
+      Previously at government authorities and a handful of early-stage startups, I've designed products used by over 6M+ users. I bring a research-led, systems-thinking approach to every project.
+    </p>
+    <a href="resume.pdf" target="_blank" class="btn-primary reveal reveal-delay-3" style="display:inline-flex;">Download Resume ↓</a>
   </div>
 </section>
 
-<!-- Work / Projects Section -->
+<!-- Work -->
 <section id="work">
-  <div class="work-header">
+  <div class="work-header reveal">
     <div>
-      <div class="section-label">Featured Work</div>
-      <h2 class="section-title">Selected Projects</h2>
+      <div class="section-label">Selected Work</div>
+      <h2 class="section-title">Case Studies</h2>
     </div>
+    <p class="section-sub" style="max-width:320px">A curated selection of projects spanning product, brand, and design systems.</p>
   </div>
+
   <div class="projects-grid">
-    <div class="project-card card-lg">
+    <!-- Card 1 -->
+    <div class="project-card card-lg reveal reveal-left">
       <div class="project-thumb">
         <div class="project-thumb-inner thumb-p1">
           <div class="thumb-mockup">
-            <div class="mockup-bar">
-              <span></span><span></span><span></span>
-            </div>
+            <div class="mockup-bar"><span></span><span></span><span></span></div>
             <div class="mockup-lines">
               <div></div><div></div><div></div><div></div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="project-overlay">
-        <a href="#" class="overlay-link">→</a>
+        <div class="project-overlay"><a href="maharera.html" target="_blank" class="overlay-link">↗</a></div>
       </div>
       <div class="project-info">
-        <div class="project-tags">
-          <span class="p-tag">Web Design</span>
-          <span class="p-tag alt">Branding</span>
-        </div>
-        <h3 class="project-name">TechFlow Dashboard</h3>
-        <p class="project-desc">A comprehensive analytics dashboard for SaaS platform that increased user engagement by 45%.</p>
+        <div class="project-tags"><span class="p-tag">Service Design</span><span class="p-tag alt">Web Design</span></div>
+        <div class="project-name">MahaRERA Portal- Gov Tech</div>
+        <div class="project-desc"> Designed a scalable regulatory platform. Simplifying the complex digital journey for over 6M+ users with an intuitive, standardised system and UX design.</div>
       </div>
     </div>
-    <div class="project-card card-sm">
+
+    <!-- Card 2 -->
+    <div class="project-card card-sm reveal reveal-right reveal-delay-1">
       <div class="project-thumb">
         <div class="project-thumb-inner thumb-p2">
           <div class="thumb-mockup">
-            <div class="mockup-bar">
-              <span></span><span></span><span></span>
-            </div>
-            <div class="mockup-lines">
-              <div></div><div></div><div></div><div></div>
-            </div>
+            <div class="mockup-bar"><span></span><span></span><span></span></div>
+            <div class="mockup-lines"><div></div><div></div><div></div></div>
           </div>
         </div>
-      </div>
-      <div class="project-overlay">
-        <a href="#" class="overlay-link">→</a>
+        <div class="project-overlay"><a href="iyr_P2.html" target="_blank" class="overlay-link">↗</a></div>
       </div>
       <div class="project-info">
-        <div class="project-tags">
-          <span class="p-tag alt2">Mobile</span>
-        </div>
-        <h3 class="project-name">FitTrack App</h3>
-        <p class="project-desc">Mobile fitness app with personalized workout plans and progress tracking.</p>
+        <div class="project-tags"><span class="p-tag alt2">UX Research</span><span class="p-tag">Mobile App</span></div>
+        <div class="project-name">Imagine As You Read</div>
+        <div class="project-desc">A research-led exploration of changing reading habits and experiences in the modern digital era, integrating AI for immersive storytelling.</div>
       </div>
     </div>
-    <div class="project-card card-md">
+
+    <!-- Card 3 -->
+    <div class="project-card card-md reveal reveal-left reveal-delay-1">
       <div class="project-thumb">
         <div class="project-thumb-inner thumb-p3">
           <div class="thumb-mockup">
-            <div class="mockup-bar">
-              <span></span><span></span><span></span>
-            </div>
-            <div class="mockup-lines">
-              <div></div><div></div><div></div><div></div>
-            </div>
+            <div class="mockup-bar"><span></span><span></span><span></span></div>
+            <div class="mockup-lines"><div></div><div></div><div></div><div></div></div>
           </div>
         </div>
-      </div>
-      <div class="project-overlay">
-        <a href="#" class="overlay-link">→</a>
+        <div class="project-overlay"><a href="focusxr.html" target="_blank" class="overlay-link">↗</a></div>
       </div>
       <div class="project-info">
-        <div class="project-tags">
-          <span class="p-tag">UX Research</span>
-        </div>
-        <h3 class="project-name">E-commerce Redesign</h3>
-        <p class="project-desc">Complete redesign of checkout flow resulting in 32% conversion increase.</p>
+        <div class="project-tags"><span class="p-tag">SaaS</span><span class="p-tag alt">B2B</span></div>
+        <div class="project-name">FocusXR- Immersive Learning App</div>
+        <div class="project-desc">An immersive XR learning platform designed to transform reading into interactive visual experiences, helping users understand and retain information through spatial storytelling.</div>
       </div>
     </div>
-    <div class="project-card card-md">
+
+    <!-- Card 4 -->
+    <div class="project-card card-md reveal reveal-right reveal-delay-2">
       <div class="project-thumb">
         <div class="project-thumb-inner thumb-p4">
           <div class="thumb-mockup">
-            <div class="mockup-bar">
-              <span></span><span></span><span></span>
-            </div>
-            <div class="mockup-lines">
-              <div></div><div></div><div></div><div></div>
-            </div>
+            <div class="mockup-bar"><span></span><span></span><span></span></div>
+            <div class="mockup-lines"><div></div><div></div><div></div></div>
           </div>
         </div>
-      </div>
-      <div class="project-overlay">
-        <a href="#" class="overlay-link">→</a>
+        <div class="project-overlay"><a href="Projects/Case1/maharera.html" target="_blank" class="overlay-link">↗</a></div>
       </div>
       <div class="project-info">
-        <div class="project-tags">
-          <span class="p-tag alt">Design System</span>
-        </div>
-        <h3 class="project-name">Design System</h3>
-        <p class="project-desc">Comprehensive design system with 200+ components for enterprise platform.</p>
+        <div class="project-tags"><span class="p-tag alt2">Branding</span><span class="p-tag">Web Design</span></div>
+        <div class="project-name">ZenSphere- Mindfulness App</div>
+        <div class="project-desc">A mindful wellbeing platform designed to create personalised meditation and focus experiences through calm, distraction-free digital interactions.</div>
       </div>
-    </div>
+    </div> 
   </div>
 </section>
 
-<!-- Process Section -->
+<!-- Process -->
 <section id="process">
-  <div class="process-header">
-    <div class="section-label">My Process</div>
-    <h2 class="section-title">How I Design</h2>
+  <div class="process-header reveal">
+    <div class="section-label">How I Work</div>
+    <h2 class="section-title">My Design Process</h2>
+    <p class="section-sub2">A structured approach that keeps users at the centre of every decision.</p>
   </div>
+
   <div class="infographic-container">
-    <div class="step" style="--delay: 0s">
-      <div class="bg-number">01</div>
-      <div class="card">
-        <div class="card-content">
-          <div class="ribbon">Research</div>
-          <div class="icon">📊</div>
-          <p class="card-text">Understanding user needs</p>
+    
+    <!-- Step 1: Discover -->
+    <div class="step reveal reveal-delay-1" style="--theme: var(--cyan); --theme-dark: var(--cyan-dark); --delay: 0.1s;">
+        <div class="bg-number">1</div>
+        <div class="card">
+            <div class="ribbon">Discover</div>
+            <div class="card-content">
+                <p class="card-text">Deep-dive research: user interviews, competitive analysis, and stakeholder alignment to understand the real problem.</p>
+                <div class="icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7zM9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9v1z"/>
+                    </svg>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-    <div class="step" style="--delay: 0.1s">
-      <div class="bg-number">02</div>
-      <div class="card">
-        <div class="card-content">
-          <div class="ribbon">Strategy</div>
-          <div class="icon">🎯</div>
-          <p class="card-text">Defining the approach</p>
+
+    <!-- Step 2: Define -->
+    <div class="step reveal reveal-delay-2" style="--theme: var(--orange); --theme-dark: var(--orange-dark); --delay: 0.3s;">
+        <div class="bg-number">2</div>
+        <div class="card">
+            <div class="ribbon">Define</div>
+            <div class="card-content">
+                <p class="card-text">Synthesising insights into clear problem statements, personas, and design principles to guide decisions.</p>
+                <div class="icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20 7h-4V5c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zM10 5h4v2h-4V5z"/>
+                    </svg>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-    <div class="step" style="--delay: 0.2s">
-      <div class="bg-number">03</div>
-      <div class="card">
-        <div class="card-content">
-          <div class="ribbon">Design</div>
-          <div class="icon">✏️</div>
-          <p class="card-text">Creating solutions</p>
+
+    <!-- Step 3: Design -->
+    <div class="step reveal reveal-delay-3" style="--theme: var(--purple); --theme-dark: var(--purple-dark); --delay: 0.5s;">
+        <div class="bg-number">3</div>
+        <div class="card">
+            <div class="ribbon">Design</div>
+            <div class="card-content">
+                <p class="card-text">Rapid ideation, wireframing, and high-fidelity prototyping — iterating quickly based on feedback.</p>
+                <div class="icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm0-7c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                    </svg>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-    <div class="step" style="--delay: 0.3s">
-      <div class="bg-number">04</div>
-      <div class="card">
-        <div class="card-content">
-          <div class="ribbon">Test</div>
-          <div class="icon">🧪</div>
-          <p class="card-text">Validating concepts</p>
+
+    <!-- Step 4: Deliver -->
+    <div class="step reveal reveal-delay-4" style="--theme: var(--teal); --theme-dark: var(--teal-dark); --delay: 0.7s;">
+        <div class="bg-number">4</div>
+        <div class="card">
+            <div class="ribbon">Deliver</div>
+            <div class="card-content">
+                <p class="card-text">Usability testing, design handoff, and ongoing collaboration with engineering for quality implementation.</p>
+                <div class="icon">
+                    <svg viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M512 301.2m-10 0a10 10 0 1 0 20 0 10 10 0 1 0-20 0Z" fill="currentColor" />
+                      <path d="M400.3 744.5c2.1-0.7 4.1-1.4 6.2-2-2 0.6-4.1 1.3-6.2 2z m0 0c2.1-0.7 4.1-1.4 6.2-2-2 0.6-4.1 1.3-6.2 2z" fill="#fff" />
+                      <path d="M511.8 256.6c24.4 0 44.2 19.8 44.2 44.2S536.2 345 511.8 345s-44.2-19.8-44.2-44.2 19.9-44.2 44.2-44.2m0-20c-35.5 0-64.2 28.7-64.2 64.2s28.7 64.2 64.2 64.2 64.2-28.7 64.2-64.2-28.7-64.2-64.2-64.2z" fill="currentColor" />
+                      <path d="M730.7 529.5c0.4-8.7 0.6-17.4 0.6-26.2 0-179.6-86.1-339.1-219.3-439.5-133.1 100.4-219.2 259.9-219.2 439.5 0 8.8 0.2 17.5 0.6 26.1-56 56-90.6 133.3-90.6 218.7 0 61.7 18 119.1 49.1 167.3 30.3-49.8 74.7-90.1 127.7-115.3 39-18.6 82.7-29 128.8-29 48.3 0 93.9 11.4 134.3 31.7 52.5 26.3 96.3 67.7 125.6 118.4 33.4-49.4 52.9-108.9 52.9-173.1 0-85.4-34.6-162.6-90.5-218.6zM351.1 383.4c9.2-37.9 22.9-74.7 40.6-109.5a502.1 502.1 0 0 1 63.6-95.9c17.4-20.6 36.4-39.9 56.8-57.5 20.4 17.6 39.4 36.9 56.8 57.5 24.8 29.5 46.2 61.8 63.6 95.9 17.7 34.8 31.4 71.6 40.6 109.5 8.7 35.8 13.5 72.7 14.2 109.9C637.4 459 577 438.9 512 438.9c-65 0-125.3 20.1-175.1 54.4 0.7-37.2 5.5-74.1 14.2-109.9z m-90.6 449.2c-9.1-27-13.7-55.5-13.7-84.4 0-35.8 7-70.6 20.8-103.2 8.4-19.8 19-38.4 31.9-55.5 9.7 61.5 29.5 119.7 57.8 172.6-36.4 17.8-69 41.6-96.8 70.5z m364.2-85.3c-0.7-0.3-1.5-0.5-2.2-0.8-0.4-0.2-0.9-0.3-1.3-0.5-0.6-0.2-1.3-0.5-1.9-0.7-0.8-0.3-1.5-0.5-2.3-0.8-0.8-0.3-1.5-0.5-2.3-0.7l-0.9-0.3c-1-0.3-2.1-0.7-3.1-1-1.2-0.4-2.4-0.7-3.5-1.1l-3-0.9c-0.2-0.1-0.4-0.1-0.7-0.2-1.1-0.3-2.3-0.7-3.4-1-1.2-0.3-2.4-0.6-3.5-0.9l-3.6-0.9-3.6-0.9c-1-0.3-2.1-0.5-3.1-0.7-1.2-0.3-2.4-0.5-3.6-0.8-1.3-0.3-2.5-0.6-3.8-0.8h-0.3c-0.9-0.2-1.9-0.4-2.8-0.6-0.4-0.1-0.7-0.1-1.1-0.2-1.1-0.2-2.2-0.4-3.4-0.6-1.2-0.2-2.4-0.4-3.6-0.7l-5.4-0.9c-0.9-0.1-1.9-0.3-2.8-0.4-0.8-0.1-1.6-0.3-2.5-0.4-2.6-0.4-5.1-0.7-7.7-1-1.2-0.1-2.3-0.3-3.5-0.4h-0.4c-0.9-0.1-1.8-0.2-2.8-0.3-1.1-0.1-2.1-0.2-3.2-0.3-1.7-0.2-3.4-0.3-5.1-0.4-0.8-0.1-1.5-0.1-2.3-0.2-0.9-0.1-1.9-0.1-2.8-0.2-0.4 0-0.8 0-1.2-0.1-1.1-0.1-2.1-0.1-3.2-0.2-0.5 0-1-0.1-1.5-0.1-1.3-0.1-2.6-0.1-3.9-0.1-0.8 0-1.5-0.1-2.3-0.1-1.2 0-2.4 0-3.5-0.1h-13.9c-2.3 0-4.6 0.1-6.9 0.2-0.9 0-1.9 0.1-2.8 0.1-0.8 0-1.5 0.1-2.3 0.1-1.4 0.1-2.8 0.2-4.1 0.3-1.4 0.1-2.7 0.2-4.1 0.3-1.4 0.1-2.7 0.2-4.1 0.4-0.6 0-1.2 0.1-1.8 0.2l-7.8 0.9c-1.1 0.1-2.1 0.3-3.2 0.4-1 0.1-2.1 0.3-3.1 0.4-3.2 0.5-6.4 0.9-9.5 1.5-0.7 0.1-1.4 0.2-2.1 0.4-0.9 0.1-1.7 0.3-2.6 0.5-1.1 0.2-2.3 0.4-3.4 0.6-0.9 0.2-1.7 0.3-2.6 0.5-0.4 0.1-0.8 0.1-1.1 0.2-0.7 0.1-1.4 0.3-2.1 0.4-1.2 0.3-2.4 0.5-3.6 0.8-1.2 0.3-2.4 0.5-3.6 0.8-0.2 0-0.4 0.1-0.6 0.1-0.5 0.1-1 0.2-1.5 0.4-1.1 0.3-2.3 0.6-3.5 0.9-1.3 0.3-2.5 0.6-3.8 1-0.4 0.1-0.9 0.2-1.4 0.4-1.3 0.4-2.7 0.7-4 1.1-1.5 0.4-3 0.9-4.6 1.3-1 0.3-2.1 0.6-3.1 1-2.1 0.6-4.1 1.3-6.2 2-0.7 0.2-1.4 0.5-2.1 0.7-15-27.5-27.4-56.4-37-86.2-11.7-36.1-19.2-73.6-22.5-111.6-0.6-6.7-1-13.3-1.3-20-0.1-1.2-0.1-2.4-0.1-3.6-0.1-1.2-0.1-2.4-0.1-3.6 0-1.2-0.1-2.4-0.1-3.6 0-1.2-0.1-2.4-0.1-3.7 18.8-14 39.2-25.8 61-35 36.1-15.3 74.5-23 114.1-23 39.6 0 78 7.8 114.1 23 21.8 9.2 42.2 20.9 61 35v0.1c0 1 0 1.9-0.1 2.9 0 1.4-0.1 2.8-0.1 4.3 0 0.7 0 1.3-0.1 2-0.1 1.8-0.1 3.5-0.2 5.3-0.3 6.7-0.8 13.3-1.3 20-3.3 38.5-11 76.5-23 113-9.7 30.3-22.3 59.4-37.6 87.1z m136.8 90.9a342.27 342.27 0 0 0-96.3-73.2c29.1-53.7 49.5-112.8 59.4-175.5 12.8 17.1 23.4 35.6 31.8 55.5 13.8 32.7 20.8 67.4 20.8 103.2 0 31-5.3 61.3-15.7 90z" fill="currentColor" />
+                      <path d="M512 819.3c8.7 0 24.7 22.9 24.7 60.4s-16 60.4-24.7 60.4-24.7-22.9-24.7-60.4 16-60.4 24.7-60.4m0-20c-24.7 0-44.7 36-44.7 80.4 0 44.4 20 80.4 44.7 80.4s44.7-36 44.7-80.4c0-44.4-20-80.4-44.7-80.4z" fill="currentColor" />
+                    </svg>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
+
   </div>
 </section>
 
-<!-- Skills Section -->
+<!-- Skills -->
 <section id="skills">
-  <div class="skills-layout">
-    <div>
-      <div class="section-label">Skills</div>
-      <h2 class="section-title">Expertise</h2>
-      <div class="skills-list">
-        <div class="skill-row">
-          <div class="skill-head">
-            <span class="skill-name">Figma</span>
-            <span class="skill-pct">95%</span>
-          </div>
-          <div class="skill-track"><div class="skill-fill" style="width: 0%"></div></div>
-        </div>
-        <div class="skill-row">
-          <div class="skill-head">
-            <span class="skill-name">User Research</span>
-            <span class="skill-pct">90%</span>
-          </div>
-          <div class="skill-track"><div class="skill-fill" style="width: 0%"></div></div>
-        </div>
-        <div class="skill-row">
-          <div class="skill-head">
-            <span class="skill-name">Prototyping</span>
-            <span class="skill-pct">85%</span>
-          </div>
-          <div class="skill-track"><div class="skill-fill" style="width: 0%"></div></div>
-        </div>
-        <div class="skill-row">
-          <div class="skill-head">
-            <span class="skill-name">Design Systems</span>
-            <span class="skill-pct">88%</span>
-          </div>
-          <div class="skill-track"><div class="skill-fill" style="width: 0%"></div></div>
-        </div>
+  <div class="section-label reveal">Expertise</div>
+  <h2 class="section-title reveal">Skills & Tools</h2>
+
+  <div class="skills-layout" style="margin-top: 52px;">
+    <div class="skills-list reveal">
+      <div class="skill-row">
+        <div class="skill-head"><span class="skill-name">UX Research & Strategy</span><span class="skill-pct"></span></div>
+        <div class="skill-track"><div class="skill-fill" data-width="95"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-head"><span class="skill-name">Interaction Design</span><span class="skill-pct"></span></div>
+        <div class="skill-track"><div class="skill-fill" data-width="92"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-head"><span class="skill-name">Visual / UI Design</span><span class="skill-pct"></span></div>
+        <div class="skill-track"><div class="skill-fill" data-width="88"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-head"><span class="skill-name">Design Systems</span><span class="skill-pct"></span></div>
+        <div class="skill-track"><div class="skill-fill" data-width="90"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-head"><span class="skill-name">Prototyping</span><span class="skill-pct"></span></div>
+        <div class="skill-track"><div class="skill-fill" data-width="93"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-head"><span class="skill-name">Usability Testing</span><span class="skill-pct"></span></div>
+        <div class="skill-track"><div class="skill-fill" data-width="87"></div></div>
       </div>
     </div>
-    <div>
-      <div class="section-label">Tools & Technologies</div>
-      <h2 class="section-title">My Stack</h2>
-      <div class="tools-cloud">
-        <div class="tool-item">
-          <span class="tool-icon">🎨</span>
-          <span>Figma</span>
-        </div>
-        <div class="tool-item">
-          <span class="tool-icon">💻</span>
-          <span>Adobe XD</span>
-        </div>
-        <div class="tool-item">
-          <span class="tool-icon">📱</span>
-          <span>Protopie</span>
-        </div>
-        <div class="tool-item">
-          <span class="tool-icon">🎬</span>
-          <span>After Effects</span>
-        </div>
-        <div class="tool-item">
-          <span class="tool-icon">💡</span>
-          <span>Sketch</span>
-        </div>
-        <div class="tool-item">
-          <span class="tool-icon">📊</span>
-          <span>Hotjar</span>
-        </div>
-        <div class="tool-item">
-          <span class="tool-icon">🔍</span>
-          <span>Maze</span>
-        </div>
-        <div class="tool-item">
-          <span class="tool-icon">📈</span>
-          <span>Google Analytics</span>
-        </div>
+
+    <div class="tools-cloud reveal reveal-delay-1" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 16px; align-items: start;">
+      <div class="tool-item" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding: 18px 12px; min-height: 130px; text-align:center;">
+        <span class="tool-icon" style="width:42px; height:42px; display:flex; align-items:center; justify-content:center;">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Figma-Logo--Streamline-Logos-Block" height="24" width="24">
+            <desc>Figma Logo Streamline Icon: https://streamlinehq.com</desc>
+            <path fill="#aeee" fill-rule="evenodd" d="M5 1a4 4 0 0 0 -4 4v14a4 4 0 0 0 4 4h14a4 4 0 0 0 4 -4V5a4 4 0 0 0 -4 -4H5Zm4.09 3h2.364v4.727H9.091A2.364 2.364 0 1 1 9.09 4Zm3.092 5.09V4h2.545a2.546 2.546 0 0 1 0 5.09h-2.545Zm2.363 5.274a2.364 2.364 0 1 0 0 -4.728 2.364 2.364 0 0 0 0 4.728Zm-3.09 0V9.636H9.09a2.364 2.364 0 0 0 0 4.728h2.364Zm0 3.272v-2.363H9.09a2.364 2.364 0 1 0 2.364 2.363Z" clip-rule="evenodd" stroke-width="1"></path>
+          </svg>
+        </span>
+        <span style="font-size:0.85rem; font-weight:500; color: var(--text);">Figma</span>
+      </div>
+
+      <div class="tool-item" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding: 18px 12px; min-height: 130px; text-align:center;">
+        <span class="tool-icon" style="width:42px; height:42px; display:flex; align-items:center; justify-content:center;">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Framer-Logo--Streamline-Logos-Block" height="24" width="24">
+            <desc>Framer Logo Streamline Icon: https://streamlinehq.com</desc>
+            <path fill="#aeee" fill-rule="evenodd" d="M5 1a4 4 0 0 0 -4 4v14a4 4 0 0 0 4 4h14a4 4 0 0 0 4 -4V5a4 4 0 0 0 -4 -4H5Zm1.91 3.5L12 9.59H6.91v5.092l5.454 5.818v-5.818h4.727l-5.09 -5.091h5.09V4.5H6.909Z" clip-rule="evenodd" stroke-width="1"></path>
+          </svg>
+        </span>
+        <span style="font-size:0.85rem; font-weight:500; color: var(--text);">Framer</span>
+      </div>
+
+      <div class="tool-item" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding: 18px 12px; min-height: 130px; text-align:center;">
+        <span style="font-size:2rem; font-weight:800;color: #aeee;">
+          XD
+        </span>
+        <span style="font-size:0.85rem; font-weight:500; color: var(--text);">Adobe XD</span>
+      </div>
+
+      <div class="tool-item" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding: 18px 12px; min-height: 130px; text-align:center;">
+        <span style="font-size:2rem; font-weight:800;color: #aeee;">
+          Ai
+        </span>
+        <span style="font-size:0.85rem; font-weight:500; color: var(--text);">Illustrator</span>
+      </div>
+
+      <div class="tool-item" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding: 18px 12px; min-height: 130px; text-align:center;">
+        <span class="tool-icon" style="width:42px; height:42px; display:flex; align-items:center; justify-content:center;">
+          <svg fill="#aeee" width="15px" height="15px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+            <g id="SVGRepo_iconCarrier">
+              <title>miro</title>
+              <path d="M22.728 1.024h-4.356l3.868 6-8.182-6h-4.362l3.872 7.862-8.182-7.862h-4.362l3.806 10.148-3.806 19.804h4.362l8.18-21.234-3.87 21.234h4.36l8.184-23.096-3.87 23.096h4.358l8.248-25.368-8.248-4.584z"/>
+            </g>
+          </svg>
+        </span>
+        <span style="font-size:0.85rem; font-weight:500; color: var(--text);">Miro</span>
+      </div>
+
+      <div class="tool-item" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding: 18px 12px; min-height: 130px; text-align:center;">
+        <span class="tool-icon" style="width:42px; height:42px; display:flex; align-items:center; justify-content:center;">
+          <svg width="800px" height="800px" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><title>file_type_vscode</title><path d="M29.01,5.03,23.244,2.254a1.742,1.742,0,0,0-1.989.338L2.38,19.8A1.166,1.166,0,0,0,2.3,21.447c.025.027.05.053.077.077l1.541,1.4a1.165,1.165,0,0,0,1.489.066L28.142,5.75A1.158,1.158,0,0,1,30,6.672V6.605A1.748,1.748,0,0,0,29.01,5.03Z" style="fill:#0065a9"/><path d="M29.01,26.97l-5.766,2.777a1.745,1.745,0,0,1-1.989-.338L2.38,12.2A1.166,1.166,0,0,1,2.3,10.553c.025-.027.05-.053.077-.077l1.541-1.4A1.165,1.165,0,0,1,5.41,9.01L28.142,26.25A1.158,1.158,0,0,0,30,25.328V25.4A1.749,1.749,0,0,1,29.01,26.97Z" style="fill:#007acc"/><path d="M23.244,29.747a1.745,1.745,0,0,1-1.989-.338A1.025,1.025,0,0,0,23,28.684V3.316a1.024,1.024,0,0,0-1.749-.724,1.744,1.744,0,0,1,1.989-.339l5.765,2.772A1.748,1.748,0,0,1,30,6.6V25.4a1.748,1.748,0,0,1-.991,1.576Z" style="fill:#1f9cf0"/></svg>
+        </span>
+        <span style="font-size:0.85rem; font-weight:500; color: var(--text);">VS Code</span>
+      </div>
+
+      <div class="tool-item" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding: 18px 12px; min-height: 130px; text-align:center;">
+        <span class="tool-icon" style="width:42px; height:42px; display:flex; align-items:center; justify-content:center;">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#aeee" d="M12 2a10 10 0 0 0-3.16 19.5c.5.1.68-.22.68-.48 0-.24-.01-.87-.01-1.7-2.77.6-3.36-1.33-3.36-1.33-.45-1.15-1.1-1.45-1.1-1.45-.9-.62.07-.6.07-.6 1 .07 1.54 1.03 1.54 1.03.88 1.52 2.3 1.08 2.86.83.09-.64.35-1.08.63-1.33-2.22-.25-4.55-1.11-4.55-4.95 0-1.1.39-1.99 1.03-2.69-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.55 9.55 0 0 1 12 6.8c.85.004 1.7.11 2.5.32 1.9-1.3 2.74-1.02 2.74-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.58 1.03 2.69 0 3.85-2.34 4.7-4.57 4.95.36.31.68.92.68 1.85 0 1.34-.01 2.42-.01 2.74 0 .26.18.58.69.48A10 10 0 0 0 12 2z"/>
+          </svg>
+        </span>
+        <span style="font-size:0.85rem; font-weight:500; color: var(--text);">GitHub</span>
+      </div>
+
+      <div class="tool-item" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding: 18px 12px; min-height: 130px; text-align:center;">
+        <span class="tool-icon" style="width:42px; height:42px; display:flex; align-items:center; justify-content:center;">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none">
+            <path d="M6 8l-2 4 2 4" fill="none" stroke="#aeee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M18 8l2 4-2 4" fill="none" stroke="#aeee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M10 7h4" fill="none" stroke="#aeee" stroke-width="2" stroke-linecap="round"/>
+            <path d="M10 17h4" fill="none" stroke="#aeee" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span style="font-size:0.85rem; font-weight:500; color: var(--text);">HTML/CSS</span>
       </div>
     </div>
-  </div>
 </section>
 
-<!-- AI Vibe Section -->
+<!-- AI & Vibe Coding Section -->
 <section id="ai-vibe">
-  <canvas id="ai-chip-canvas"></canvas>
-  <div class="ai-content">
-    <div class="ai-badge">
-      <span></span>
-      AI-Powered Design
-    </div>
-    <h2 class="section-title" style="margin-bottom: 20px;">Leveraging AI for Better Design</h2>
-    <p class="section-sub2" style="margin-bottom: 40px;">I integrate cutting-edge AI tools into my design workflow to accelerate research, generate insights, and create more personalized user experiences.</p>
+  <!-- New Absolute Background Canvas -->
+  <div id="ai-chip-canvas"></div>
+
+  <div class="ai-content reveal">
+    <div class="ai-badge"><span></span> AI-Augmented Workflow</div>
+    <h2 class="section-title">Designing with AI at the speed of thought.</h2>
+    <p class="section-sub" style="margin: 0 auto 48px auto;">
+      I leverage advanced AI models and "vibe coding" methodologies to rapidly prototype ideas, iterate on logic, and bridge the gap between static design and functional reality.
+    </p>
+    
     <div class="ai-features">
-      <div class="ai-feature">
-        <div class="ai-f-icon">🤖</div>
-        <div class="ai-f-text">
-          <h4>Data Analysis</h4>
-          <p>AI-powered analytics to understand user behavior patterns and make data-driven design decisions.</p>
-        </div>
-      </div>
-      <div class="ai-feature">
+      <div class="ai-feature reveal reveal-delay-1">
         <div class="ai-f-icon">🧠</div>
         <div class="ai-f-text">
-          <h4>Personalization</h4>
-          <p>Create adaptive interfaces that learn and respond to individual user preferences in real-time.</p>
+          <h4>Collaborative Ideation</h4>
+          <p>Using LLMs as sparring partners to explore edge cases, generate copy, and structure complex information architectures.</p>
         </div>
       </div>
-      <div class="ai-feature">
+      <div class="ai-feature reveal reveal-delay-2">
         <div class="ai-f-icon">⚡</div>
         <div class="ai-f-text">
-          <h4>Efficiency</h4>
-          <p>Automate repetitive design tasks and focus on high-impact creative and strategic work.</p>
+          <h4>Vibe Coding Prototypes</h4>
+          <p>Translating UX concepts into interactive, code-based prototypes using AI assistants to test real interactions instantly.</p>
+        </div>
+      </div>
+      <div class="ai-feature reveal reveal-delay-3">
+        <div class="ai-f-icon">🔍</div>
+        <div class="ai-f-text">
+          <h4>Data-Driven Empathy</h4>
+          <p>Synthesizing massive amounts of user research and qualitative feedback rapidly to extract actionable UX insights.</p>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Testimonials Section -->
+<!-- Testimonials -->
 <section id="testimonials">
-  <div class="section-label">Testimonials</div>
-  <h2 class="section-title" style="margin-bottom: 48px;">What Clients Say</h2>
+  <div class="section-label reveal">Kind Words</div>
+  <h2 class="section-title reveal" style="margin-bottom:48px;">What Clients Say</h2>
+
   <div class="testimonials-wrap">
-    <div class="testimonial-card">
+    <div class="testimonial-card reveal">
       <div class="test-quote">"</div>
-      <p class="test-text">Ganesh transformed our entire user experience. His attention to detail and strategic thinking resulted in a 40% increase in user satisfaction.</p>
+      <p class="test-text">Ganesh completely transformed how our users experience the product. His research-first approach uncovered insights we'd been missing for years. The redesign increased our NPS by 28 points.</p>
       <div class="test-person">
-        <div class="test-avatar av1">A</div>
+        <div class="test-avatar av1">JL</div>
         <div>
-          <div class="test-name">Alex Johnson</div>
-          <div class="test-role">Product Manager</div>
+          <div class="test-name">Jamie Liu</div>
+          <div class="test-role">CPO, Finvest</div>
         </div>
       </div>
     </div>
-    <div class="testimonial-card">
+    <div class="testimonial-card reveal reveal-delay-1">
       <div class="test-quote">"</div>
-      <p class="test-text">Working with Ganesh was exceptional. He delivered high-quality designs on time and was always open to feedback and iteration.</p>
+      <p class="test-text">Working with Ganesh is a masterclass in empathy-led design. He has a rare ability to balance user needs with business goals without ever losing sight of either.</p>
       <div class="test-person">
-        <div class="test-avatar av2">S</div>
+        <div class="test-avatar av2">SR</div>
         <div>
-          <div class="test-name">Sarah Chen</div>
-          <div class="test-role">CEO, Tech Startup</div>
+          <div class="test-name">Sam Reid</div>
+          <div class="test-role">Founder, Orbit</div>
         </div>
       </div>
     </div>
-    <div class="testimonial-card">
+    <div class="testimonial-card reveal reveal-delay-2">
       <div class="test-quote">"</div>
-      <p class="test-text">His design system work has been invaluable for our team. It's well-organized, scalable, and has saved us countless hours.</p>
+      <p class="test-text">The design system Ganesh built for us saved our engineering team hundreds of hours and brought visual consistency across our entire platform for the first time.</p>
       <div class="test-person">
-        <div class="test-avatar av3">M</div>
+        <div class="test-avatar av3">MP</div>
         <div>
-          <div class="test-name">Michael Park</div>
-          <div class="test-role">Design Lead</div>
+          <div class="test-name">Mia Park</div>
+          <div class="test-role">Head of Product, Grove</div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Contact Section -->
+<!-- Contact -->
 <section id="contact">
-  <div class="contact-content">
+  <div class="contact-content reveal">
     <div class="section-label">Get In Touch</div>
-    <h2 class="section-title">Let's Work Together</h2>
-    <p class="section-sub">Have a project in mind? I'd love to hear about it. Reach out and let's create something amazing.</p>
+    <h2 class="section-title">Let's build something great together.</h2>
+    <p class="section-sub">Open to freelance projects, full-time roles, and interesting collaborations.</p>
     <div class="contact-methods">
-      <a href="mailto:hello@ganesh.com" class="contact-link">
-        <div class="cl-icon">✉️</div>
+      <a href="mailto:gjavhare.ux@gmail.com" class="contact-link">
+        <div class="cl-icon">@</div>
         <div class="cl-text">
           <div class="cl-label">Email</div>
-          <div class="cl-val">hello@ganesh.com</div>
+          <div class="cl-val">gjavhare.ux@gmail.com</div>
         </div>
-        <div class="cl-arrow">→</div>
+        <span class="cl-arrow">→</span>
       </a>
-      <a href="https://linkedin.com" class="contact-link">
-        <div class="cl-icon">💼</div>
+      <a href="https://www.linkedin.com/in/gjuxdesigner" target="_blank" class="contact-link">
+        <div class="cl-icon">in</div>
         <div class="cl-text">
           <div class="cl-label">LinkedIn</div>
-          <div class="cl-val">linkedin.com/in/ganesh</div>
+          <div class="cl-val">www.linkedin.com/in/gjuxdesigner</div>
         </div>
-        <div class="cl-arrow">→</div>
+        <span class="cl-arrow">→</span>
       </a>
-      <a href="https://twitter.com" class="contact-link">
-        <div class="cl-icon">𝕏</div>
+      <a href="https://www.behance.net/ganeshjavhare" target="_blank" class="contact-link">
+        <div class="cl-icon">Bé</div>
         <div class="cl-text">
-          <div class="cl-label">Twitter</div>
-          <div class="cl-val">@ganesh_designs</div>
+          <div class="cl-label">Behance</div>
+          <div class="cl-val">https://www.behance.net/ganeshjavhare</div>
         </div>
-        <div class="cl-arrow">→</div>
+        <span class="cl-arrow">→</span>
       </a>
     </div>
   </div>
-  <div class="contact-form">
-    <form>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">First Name</label>
-          <input type="text" class="form-input" placeholder="John">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Last Name</label>
-          <input type="text" class="form-input" placeholder="Doe">
-        </div>
+
+  <div class="contact-form reveal reveal-delay-1">
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">First Name</label>
+        <input type="text" class="form-input" placeholder="John" />
       </div>
       <div class="form-group">
-        <label class="form-label">Email</label>
-        <input type="email" class="form-input" placeholder="john@example.com">
+        <label class="form-label">Last Name</label>
+        <input type="text" class="form-input" placeholder="Doe" />
       </div>
-      <div class="form-group">
-        <label class="form-label">Message</label>
-        <textarea class="form-textarea" placeholder="Tell me about your project..."></textarea>
-      </div>
-      <button type="submit" class="form-btn">Send Message</button>
-    </form>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input type="email" class="form-input" placeholder="john@company.com" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Project Type</label>
+      <input type="text" class="form-input" placeholder="Product Design / UX Audit / Design System…" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Message</label>
+      <textarea class="form-textarea" placeholder="Tell me about your project…"></textarea>
+    </div>
+    <button class="form-btn" onclick="handleSubmit(this)">Send Message →</button>
   </div>
 </section>
 
 <!-- Footer -->
 <footer>
-  <div class="footer-logo"><span>GJ</span>Portfolio</div>
-  <div class="footer-text">© 2024 Ganesh Javhare. All rights reserved.</div>
+  <div class="footer-logo">Ganesh Javhare<span>.</span></div>
+  <div class="footer-text">© 2026 Ganesh Javhare · Crafted with care in London</div>
   <div class="footer-socials">
-    <a href="https://linkedin.com" class="social-btn">in</a>
-    <a href="https://twitter.com" class="social-btn">𝕏</a>
-    <a href="https://github.com" class="social-btn">gh</a>
+    
+    <a href="https://www.linkedin.com/in/gjuxdesigner" target="_blank" class="social-btn" title="LinkedIn">in</a>
+    <a href="https://github.com/gjavhareux-design" target="_blank" class="social-btn" title="Github">Git</a>
+    <a href="https://www.behance.net/ganeshjavhare" target="_blank" class="social-btn" title="Behance">Bé</a>
   </div>
 </footer>
 
 <script>
-  /* ════════════════════════════════════════════════════════════ CURSOR LOGIC ════════════════════════════════════════════════════════════ */
-  const cursor = document.getElementById("cursor");
-  const cursorRing = document.getElementById("cursor-ring");
-
-  document.addEventListener("mousemove", (e) => {
-    cursor.style.left = e.clientX + "px";
-    cursor.style.top = e.clientY + "px";
-    cursorRing.style.left = e.clientX + "px";
-    cursorRing.style.top = e.clientY + "px";
+  
+  // =====================================================================
+  // --- LENIS SMOOTH SCROLL INITIALIZATION ---
+  // =====================================================================
+  const lenis = new Lenis({
+    duration: 1.2,
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    direction: 'vertical',
+    gestureDirection: 'vertical',
+    smooth: true,
+    mouseMultiplier: 1,
+    smoothTouch: false,
+    touchMultiplier: 2,
+    infinite: false,
   });
 
-  document.addEventListener("mousedown", () => {
-    cursor.style.width = "8px";
-    cursor.style.height = "8px";
-    cursorRing.style.width = "28px";
-    cursorRing.style.height = "28px";
-  });
-
-  document.addEventListener("mouseup", () => {
-    cursor.style.width = "12px";
-    cursor.style.height = "12px";
-    cursorRing.style.width = "36px";
-    cursorRing.style.height = "36px";
-  });
-
-  /* Interactive cursor effects */
-  document.querySelectorAll("a, button, input, textarea").forEach((el) => {
-    el.addEventListener("mouseenter", () => {
-      cursor.style.width = "6px";
-      cursor.style.height = "6px";
-      cursor.style.background = "var(--accent2)";
-      cursorRing.style.width = "48px";
-      cursorRing.style.height = "48px";
-      cursorRing.style.borderColor = "rgba(123, 108, 255, 0.6)";
-    });
-    el.addEventListener("mouseleave", () => {
-      cursor.style.width = "12px";
-      cursor.style.height = "12px";
-      cursor.style.background = "var(--accent)";
-      cursorRing.style.width = "36px";
-      cursorRing.style.height = "36px";
-      cursorRing.style.borderColor = "rgba(200, 240, 96, 0.4)";
-    });
-  });
-
-  /* ════════════════════════════════════════════════════════════ SMOOTH SCROLL with LENIS ════════════════════════════════════════════════════════════ */
-  const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
-
-  function raf(time) {
+  // RAF loop specifically for Lenis to animate smooth scrolling
+  function rafLenis(time) {
     lenis.raf(time);
-    requestAnimationFrame(raf);
+    requestAnimationFrame(rafLenis);
   }
-  requestAnimationFrame(raf);
+  requestAnimationFrame(rafLenis);
 
-  /* ════════════════════════════════════════════════════════════ REVEAL ANIMATIONS ════════════════════════════════════════════════════════════ */
-  const revealElements = document.querySelectorAll(".reveal");
+  // Smooth scroll for Navigation Links using Lenis
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = this.getAttribute('href');
+      // Let lenis handle the smooth journey to the anchor ID
+      lenis.scrollTo(target, {
+        offset: 0,
+        duration: 1.5,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      });
+    });
+  });
 
-  const observerOptions = {
-    threshold: 0.1,
-    rootMargin: "0px 0px -100px 0px",
+  /* ── Cursor ── */
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  // Shared mouse coordinates for dot background
+  const mouse = { x: -9999, y: -9999, active: false };
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+
+    // Dot layer logic
+    mouse.active = true;
+    mouse.x = e.pageX; 
+    mouse.y = e.pageY;
+  });
+
+  document.addEventListener("mouseleave", () => { 
+    mouse.active = false; mouse.x = -9999; mouse.y = -9999; 
+  });
+
+  function animateRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  document.querySelectorAll('a, button, .project-card, .tool-item, .contact-link').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.width = '20px';
+      cursor.style.height = '20px';
+      cursor.style.background = 'var(--accent2)';
+      ring.style.width = '56px';
+      ring.style.height = '56px';
+      ring.style.borderColor = 'rgba(123,108,255,0.5)';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.width = '12px';
+      cursor.style.height = '12px';
+      cursor.style.background = 'var(--accent)';
+      ring.style.width = '36px';
+      ring.style.height = '36px';
+      ring.style.borderColor = 'rgba(200,240,96,0.4)';
+    });
+  });
+
+  /* ── Scroll Reveal ── */
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+  /* ── Skill Bar Animation ── */
+  const skillObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.querySelectorAll('.skill-fill').forEach(fill => {
+          const w = fill.getAttribute('data-width');
+          setTimeout(() => { fill.style.width = w + '%'; }, 200);
+        });
+        skillObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+
+  const skillSection = document.getElementById('skills');
+  if (skillSection) skillObserver.observe(skillSection);
+
+  /* ── Animated Counter ── */
+  function animateCounter(el, target, suffix = '') {
+    let count = 0;
+    const step = Math.ceil(target / 60);
+    const timer = setInterval(() => {
+      count = Math.min(count + step, target);
+      el.innerHTML = count + '<span>' + suffix + '</span>';
+      if (count >= target) clearInterval(timer);
+    }, 25);
+  }
+
+  const statsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        document.querySelectorAll('.stat-num').forEach(stat => {
+          const text = stat.textContent;
+          const num = parseInt(text);
+          const suffix = text.includes('+') ? '+' : '';
+          animateCounter(stat, num, suffix);
+        });
+        statsObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  const heroStats = document.querySelector('.hero-stats');
+  if (heroStats) statsObserver.observe(heroStats);
+
+  // =====================================================================
+  // --- AI CHIP & CIRCUITS 3D ANIMATION (AI SECTION) ---
+  // =====================================================================
+  const aiChipContainer = document.getElementById('ai-chip-canvas');
+  if (aiChipContainer && typeof THREE !== 'undefined') {
+      const scene = new THREE.Scene();
+      // Adjust camera to look slightly down onto the chip
+      const camera = new THREE.PerspectiveCamera(45, aiChipContainer.clientWidth / aiChipContainer.clientHeight, 0.1, 1000);
+      camera.position.set(0, 90, 130);
+      camera.lookAt(0, 0, 0);
+
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setSize(aiChipContainer.clientWidth, aiChipContainer.clientHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      aiChipContainer.appendChild(renderer.domElement);
+
+      const chipGroup = new THREE.Group();
+      scene.add(chipGroup);
+
+      // --- 1. The Main AI Chip Box ---
+      const chipGeo = new THREE.BoxGeometry(36, 4, 32);
+      const chipMat = new THREE.MeshPhongMaterial({ 
+          color: 0x111118, 
+          emissive: 0x050510,
+          specular: 0x00d2ff, 
+          shininess: 90 
+      });
+      const chip = new THREE.Mesh(chipGeo, chipMat);
+      chipGroup.add(chip);
+
+      // --- 2. Tech Wireframe Overlay for Chip ---
+      const edges = new THREE.EdgesGeometry(chipGeo);
+      const lineMat = new THREE.LineBasicMaterial({ color: 0x00d2ff, transparent: true, opacity: 0.5 });
+      const chipWireframe = new THREE.LineSegments(edges, lineMat);
+      chipGroup.add(chipWireframe);
+
+      // --- 3. "AI" Text on top of the Chip ---
+      const canvasText = document.createElement('canvas');
+      canvasText.width = 256; 
+      canvasText.height = 256;
+      const ctxText = canvasText.getContext('2d');
+      
+      ctxText.fillStyle = '#00d2ff'; // Cyan accent to match reference
+      ctxText.font = 'bold 80px "Syne", sans-serif';
+      ctxText.textAlign = 'center';
+      ctxText.textBaseline = 'middle';
+      ctxText.shadowColor = '#00d2ff';
+      ctxText.shadowBlur = 25;
+      ctxText.fillText('AI', 128, 128);
+      ctxText.fillText('AI', 128, 128);
+
+      const textTex = new THREE.CanvasTexture(canvasText);
+      const textGeo = new THREE.PlaneGeometry(24, 24);
+      const textMat = new THREE.MeshBasicMaterial({ 
+          map: textTex, 
+          transparent: true, 
+          blending: THREE.AdditiveBlending,
+          depthWrite: false
+      });
+      const textMesh = new THREE.Mesh(textGeo, textMat);
+      textMesh.rotation.x = -Math.PI / 2;
+      textMesh.position.y = 2.1;
+      chipGroup.add(textMesh);
+
+      // --- 4. Motherboard Routing Logic & Glowing Signal Lines ---
+      const circuitsGroup = new THREE.Group();
+      scene.add(circuitsGroup);
+      const signals = [];
+      const pathsData = [];
+      
+      const pathMaterial = new THREE.LineBasicMaterial({ color: 0x00d2ff, transparent: true,width:5, opacity: 0.15 });
+
+      function createMotherboardTraces(side) {
+          // Generates parallel, non-crossing traces fanning out in 45-degree angles
+          // side: 0=Top, 1=Right, 2=Bottom, 3=Left
+          const pins = 15; // 15 lines per side = 60 total (increased quantity)
+          const spacing = 2.0; 
+          const startOffset = -(pins * spacing) / 2 + (spacing / 2);
+
+          for(let i=0; i<pins; i++) {
+              const pts = [];
+              const pinPos = startOffset + (i * spacing);
+              
+              let px, pz, dx, dz, turnDir;
+
+              // Setup initial direction based on the side of the chip
+              if (side === 0) { px = pinPos; pz = -16; dx = 0; dz = -1; turnDir = Math.sign(pinPos) || 1; }
+              else if (side === 1) { px = 16; pz = pinPos; dx = 1; dz = 0; turnDir = Math.sign(pinPos) || 1; }
+              else if (side === 2) { px = pinPos; pz = 16; dx = 0; dz = 1; turnDir = Math.sign(pinPos) || 1; }
+              else { px = -16; pz = pinPos; dx = -1; dz = 0; turnDir = Math.sign(pinPos) || 1; }
+
+              // Segment 1: Starting node on edge
+              pts.push(new THREE.Vector3(px, -1, pz));
+
+              // Segment 2: Move slightly out from chip
+              px += dx * 2; pz += dz * 2;
+              pts.push(new THREE.Vector3(px, -1, pz));
+
+              // Segment 3: The 45-degree Fan Out.
+              // By scaling the outward distance proportionally to the distance from center, lines NEVER cross!
+              const fanDist = Math.abs(pinPos) * 1.5 + 10; 
+              
+              let cx = 0, cz = 0;
+              if (side === 0) { cx = turnDir; cz = -1; }
+              else if (side === 1) { cx = 1; cz = turnDir; }
+              else if (side === 2) { cx = turnDir; cz = 1; }
+              else if (side === 3) { cx = -1; cz = turnDir; }
+
+              px += cx * fanDist;
+              pz += cz * fanDist;
+              pts.push(new THREE.Vector3(px, -1, pz));
+
+              // Segment 4: Move straight out indefinitely
+              px += dx * 100;
+              pz += dz * 100;
+              pts.push(new THREE.Vector3(px, -1, pz));
+
+              pathsData.push(pts);
+
+              // Draw the static blue trace line
+              const geo = new THREE.BufferGeometry().setFromPoints(pts);
+              circuitsGroup.add(new THREE.Line(geo, pathMaterial));
+          }
+      }
+
+      // Generate all 4 sides
+      for(let s=0; s<4; s++) createMotherboardTraces(s);
+
+      // Create glowing gradient signals
+      pathsData.forEach(pts => {
+          let totalLength = 0;
+          const lengths = [0];
+          for(let j=1; j<pts.length; j++) {
+              totalLength += pts[j-1].distanceTo(pts[j]);
+              lengths.push(totalLength);
+            }
+
+          const segments = 15; // Number of points in the gradient trail
+          const sigPts = new Float32Array((segments + 1) * 3);
+          const sigColors = new Float32Array((segments + 1) * 3);
+          
+          const accentColor = new THREE.Color(0xc8f060); // Lime green accent
+
+          // Define vertex colors to simulate a gradient fading tail
+          for(let i=0; i<=segments; i++) {
+              let ratio = 1 - (i / segments); // Head is 1.0 (bright), Tail is 0.0 (dark)
+              sigColors[i*3] = accentColor.r * ratio;
+              sigColors[i*3+1] = accentColor.g * ratio;
+              sigColors[i*3+2] = accentColor.b * ratio;
+          }
+
+          const sigGeo = new THREE.BufferGeometry();
+          sigGeo.setAttribute('position', new THREE.BufferAttribute(sigPts, 3));
+          sigGeo.setAttribute('color', new THREE.BufferAttribute(sigColors, 3));
+
+          const sigMat = new THREE.LineBasicMaterial({
+              vertexColors: true,
+              blending: THREE.AdditiveBlending,
+              transparent: true,
+              opacity: 0.95,
+              depthWrite: false,
+              linewidth: 2 // Has limited effect in webgl, but helps slightly on some platforms
+          });
+
+          const sigLine = new THREE.Line(sigGeo, sigMat);
+          circuitsGroup.add(sigLine);
+
+          signals.push({
+              pts: pts,
+              lengths: lengths,
+              totalLength: totalLength,
+              dist: Math.random() * totalLength, // Random starting position
+              speed: 0.2 + Math.random() * 0.1, // Speed of signal
+              line: sigLine,
+              segments: segments,
+              signalLength: 4 + Math.random() * 8 // Length of the trail
+          });
+      });
+
+      // Helper to precisely track distances across corner bends
+      function getPointAtDist(pts, lengths, d) {
+          if (d <= 0) return pts[0].clone();
+          if (d >= lengths[lengths.length-1]) return pts[pts.length-1].clone();
+
+          for(let i=0; i<lengths.length-1; i++) {
+              if (d >= lengths[i] && d < lengths[i+1]) {
+                  let segmentL = lengths[i+1] - lengths[i];
+                  let t = (d - lengths[i]) / segmentL;
+                  return new THREE.Vector3().lerpVectors(pts[i], pts[i+1], t);
+              }
+          }
+          return pts[pts.length-1].clone();
+      }
+
+      // --- 5. Flying Particles / Data Dust ---
+      const pCount = 700;
+      const particleGeo = new THREE.BufferGeometry();
+      const pPos = new Float32Array(pCount * 3);
+      for(let i=0; i<pCount*3; i++) {
+          pPos[i] = (Math.random() - 0.5) * 250; 
+      }
+      particleGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+      const particleMat = new THREE.PointsMaterial({ 
+          color: 0x00d2ff, 
+          size: 0.8, 
+          transparent: true, 
+          opacity: 0.3,
+          blending: THREE.AdditiveBlending
+      });
+      const particles = new THREE.Points(particleGeo, particleMat);
+      scene.add(particles);
+
+      // --- 6. Lighting ---
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+      scene.add(ambientLight);
+      
+      const centerLight = new THREE.PointLight(0x00d2ff, 1.5, 150);
+      centerLight.position.set(0, 15, 0);
+      scene.add(centerLight);
+
+      // --- 7. Animation Loop ---
+      let time = 0;
+
+      function animateAI() {
+          requestAnimationFrame(animateAI);
+          time += 0.01;
+
+          // Subtle floating rotation to the whole scene
+          scene.rotation.y = Math.sin(time * 0.5) * 0.1;
+          scene.rotation.x = Math.cos(time * 0.3) * 0.05;
+
+          // Pulse the central "AI" text
+          const pulse = 1 + Math.sin(time * 4) * 0.2;
+          textMesh.scale.set(pulse, pulse, pulse);
+
+          // Animate the Motherboard Signals
+          signals.forEach(sig => {
+              sig.dist += sig.speed;
+              if (sig.dist - sig.signalLength > sig.totalLength) {
+                  sig.dist = 0; // Reset trace to chip when fully offscreen
+              }
+
+              const positions = sig.line.geometry.attributes.position.array;
+
+              // Draw the gradient line segment point by point
+              for(let i=0; i<=sig.segments; i++) {
+                  let nodeDist = sig.dist - (i / sig.segments) * sig.signalLength;
+                  nodeDist = Math.max(0, Math.min(sig.totalLength, nodeDist));
+
+                  const pos = getPointAtDist(sig.pts, sig.lengths, nodeDist);
+                  positions[i*3] = pos.x;
+                  positions[i*3+1] = pos.y;
+                  positions[i*3+2] = pos.z;
+              }
+              sig.line.geometry.attributes.position.needsUpdate = true;
+          });
+
+          // Drift particles slowly upwards
+          const pPositions = particles.geometry.attributes.position.array;
+          for(let i=1; i<pCount*3; i+=3) { 
+              pPositions[i] += 0.08;
+              if (pPositions[i] > 120) pPositions[i] = -120;
+          }
+          particles.geometry.attributes.position.needsUpdate = true;
+
+          renderer.render(scene, camera);
+      }
+      animateAI();
+
+      window.addEventListener('resize', () => {
+          if(!aiChipContainer) return;
+          camera.aspect = aiChipContainer.clientWidth / aiChipContainer.clientHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(aiChipContainer.clientWidth, aiChipContainer.clientHeight);
+      });
+  }
+
+  // =====================================================================
+  // --- ABOUT SECTION 3D GLOBE (THREE.JS) ---
+  // =====================================================================
+  const globeContainer = document.getElementById('about-globe-container');
+  if (globeContainer && typeof THREE !== 'undefined') {
+      const scene = new THREE.Scene();
+      // Camera positioning
+      const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+      camera.position.z = 650;
+
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setSize(700, 700);
+      globeContainer.appendChild(renderer.domElement);
+
+      // 1. Create Base Globe (Solid dark to hide back lines, replacing wireframe)
+      const radius = 240;
+      const segments = 64; // Higher segment count for a perfect sphere
+      const geometry = new THREE.SphereGeometry(radius, segments, segments);
+      const material = new THREE.MeshBasicMaterial({
+          color: 0x0a0a0f, // Match site background to seamlessly blend
+          transparent: true,
+          opacity: 0.95
+      });
+      const globe = new THREE.Mesh(geometry, material);
+      scene.add(globe);
+
+      // 1.2 Add Longitude/Latitude Grid (Custom circles to avoid triangulation lines)
+      const gridMat = new THREE.LineBasicMaterial({ color: 0x7a7890, transparent: true, opacity: 0.15 });
+      
+      // Latitude rings (horizontal)
+      for (let gridLat = -80; gridLat <= 80; gridLat += 20) {
+          const lRadius = (radius + 0.2) * Math.cos(gridLat * Math.PI / 180);
+          const lY = (radius + 0.2) * Math.sin(gridLat * Math.PI / 180);
+          const curve = new THREE.EllipseCurve(0, 0, lRadius, lRadius, 0, 2 * Math.PI, false, 0);
+          const points = curve.getPoints(64);
+          const geo = new THREE.BufferGeometry().setFromPoints(points);
+          const circle = new THREE.Line(geo, gridMat);
+          circle.rotation.x = Math.PI / 2;
+          circle.position.y = lY;
+          globe.add(circle);
+      }
+
+      // Longitude rings (vertical)
+      for (let gridLon = 0; gridLon < 180; gridLon += 20) {
+          const curve = new THREE.EllipseCurve(0, 0, radius + 0.2, radius + 0.2, 0, 2 * Math.PI, false, 0);
+          const points = curve.getPoints(64);
+          const geo = new THREE.BufferGeometry().setFromPoints(points);
+          const circle = new THREE.Line(geo, gridMat);
+          circle.rotation.y = gridLon * Math.PI / 180;
+          globe.add(circle);
+      }
+
+      // 1.5 Fetch Map Data for Borders (Using highly reliable source)
+      fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json')
+        .then(res => res.json())
+        .then(data => {
+            const lineMat = new THREE.LineBasicMaterial({ color: 0x7a7890, transparent: true, opacity: 0.5 });
+            
+            function createLine(coords) {
+                let points = [];
+                for (let i = 0; i < coords.length; i++) {
+                    const lon = coords[i][0];
+                    const lat = coords[i][1];
+
+                    // Prevent lines from stretching across the globe (Antimeridian crossing fix)
+                    if (i > 0) {
+                        const prevLon = coords[i-1][0];
+                        if (Math.abs(lon - prevLon) > 180) {
+                            if (points.length > 1) {
+                                const geo = new THREE.BufferGeometry().setFromPoints(points);
+                                globe.add(new THREE.Line(geo, lineMat));
+                            }
+                            points = []; // Reset for the next segment
+                        }
+                    }
+
+                    const phi = (90 - lat) * (Math.PI / 180);
+                    const theta = (lon + 90) * (Math.PI / 180);
+                    // Negate X so East maps to positive X (Right side of the globe)
+                    const x = -(radius * Math.sin(phi) * Math.cos(theta));
+                    const y = radius * Math.cos(phi);
+                    const z = radius * Math.sin(phi) * Math.sin(theta);
+                    points.push(new THREE.Vector3(x, y, z));
+                }
+                
+                if (points.length > 1) {
+                    const geo = new THREE.BufferGeometry().setFromPoints(points);
+                    globe.add(new THREE.Line(geo, lineMat));
+                }
+            }
+
+            // Parse GeoJSON correctly whether it's a Polygon or MultiPolygon
+            data.features.forEach(feature => {
+                if (!feature.geometry) return;
+                if (feature.geometry.type === 'Polygon') {
+                    feature.geometry.coordinates.forEach(ring => createLine(ring));
+                } else if (feature.geometry.type === 'MultiPolygon') {
+                    feature.geometry.coordinates.forEach(poly => {
+                        poly.forEach(ring => createLine(ring));
+                    });
+                }
+            });
+        })
+        .catch(err => {
+            console.log("Map data failed to load, falling back to wireframe.", err);
+            material.wireframe = true;
+            material.opacity = 0.15;
+        });
+
+      // 2. Calculate exact coordinates for London
+      const lat = 51.5072;
+      const lon = -0.1276;
+      const phi = (90 - lat) * (Math.PI / 180);
+      const theta = (lon + 90) * (Math.PI / 180);
+
+      // Push marker out slightly so it sits directly on the map surface
+      // Negate X to match the corrected map orientation
+      const x = -((radius + 1) * Math.sin(phi) * Math.cos(theta));
+      const y = (radius + 1) * Math.cos(phi);
+      const z = (radius + 1) * Math.sin(phi) * Math.sin(theta);
+
+      // 3. Create Precise Marker Group
+      const markerGroup = new THREE.Group();
+      markerGroup.position.set(x, y, z);
+      markerGroup.lookAt(markerGroup.position.clone().multiplyScalar(2)); // Point straight outward
+      globe.add(markerGroup); 
+
+      // Center Pin Core (White Dot)
+      const dotGeo = new THREE.CircleGeometry(2.5, 32);
+      const dotMat = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
+      const dot = new THREE.Mesh(dotGeo, dotMat);
+      markerGroup.add(dot);
+
+      // Static Inner Accent Ring
+      const innerRingGeo = new THREE.RingGeometry(3.5, 6, 32);
+      const innerRingMat = new THREE.MeshBasicMaterial({ color: 0xc8f060, transparent: true, opacity: 0.9, side: THREE.DoubleSide });
+      const innerRing = new THREE.Mesh(innerRingGeo, innerRingMat);
+      markerGroup.add(innerRing);
+
+      // Expanding/Pulsing Outer Ring
+      const ringGeo = new THREE.RingGeometry(7, 10, 32);
+      const ringMat = new THREE.MeshBasicMaterial({ color: 0xc8f060, transparent: true, opacity: 0.6, side: THREE.DoubleSide });
+      const ring = new THREE.Mesh(ringGeo, ringMat);
+      markerGroup.add(ring);
+      
+      // 3D Pin Pole (Visual line anchoring to the globe core)
+      const poleGeo = new THREE.CylinderGeometry(0.3, 0.3, 10, 8);
+      const poleMat = new THREE.MeshBasicMaterial({ color: 0xc8f060, transparent: true, opacity: 0.5 });
+      const pole = new THREE.Mesh(poleGeo, poleMat);
+      pole.rotation.x = Math.PI / 2;
+      pole.position.z = -5;
+      markerGroup.add(pole);
+
+      // 4. Create "LONDON" Label with Coordinates (3D Plane)
+      const canvasText = document.createElement('canvas');
+      canvasText.width = 712; 
+      canvasText.height = 256;
+      const context = canvasText.getContext('2d');
+      
+      // London Text
+      context.font = 'bold 56px "DM Sans", sans-serif';
+      context.fillStyle = '#ffffff';
+      context.fillText('LONDON', 20, 100);
+      
+      // Coordinates Text
+      context.font = '600 40px "DM Sans", sans-serif';
+      context.fillStyle = '#c8f060';
+      context.fillText('51.5072° N, 0.1276° W', 20, 160);
+      
+      const texture = new THREE.CanvasTexture(canvasText);
+      const labelGeo = new THREE.PlaneGeometry(120, 60);
+      const labelMat = new THREE.MeshBasicMaterial({ map: texture, transparent: true, side: THREE.DoubleSide });
+      const labelMesh = new THREE.Mesh(labelGeo, labelMat);
+      // Lift slightly (z=2) off the surface to prevent clipping into the globe
+      labelMesh.position.set(50, 30, 2); 
+      markerGroup.add(labelMesh);
+
+      // 4.5 Create Secondary Marker for Mumbai
+      const mLat = 19.0760;
+      const mLon = 72.8777;
+      const mPhi = (90 - mLat) * (Math.PI / 180);
+      const mTheta = (mLon + 90) * (Math.PI / 180);
+      // Negate X to map properly to our corrected map orientation
+      const mx = -((radius + 1) * Math.sin(mPhi) * Math.cos(mTheta));
+      const my = (radius + 1) * Math.cos(mPhi);
+      const mz = (radius + 1) * Math.sin(mPhi) * Math.sin(mTheta);
+
+      const mumbaiGroup = new THREE.Group();
+      mumbaiGroup.position.set(mx, my, mz);
+      mumbaiGroup.lookAt(mumbaiGroup.position.clone().multiplyScalar(2));
+      globe.add(mumbaiGroup);
+
+      // Dimmer core dot
+      const mDotGeo = new THREE.CircleGeometry(1.5, 32);
+      const mDotMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.4, side: THREE.DoubleSide });
+      const mDot = new THREE.Mesh(mDotGeo, mDotMat);
+      mumbaiGroup.add(mDot);
+
+      // Dimmer static ring
+      const mRingGeo = new THREE.RingGeometry(3, 4.5, 32);
+      const mRingMat = new THREE.MeshBasicMaterial({ color: 0x7a7890, transparent: true, opacity: 0.3, side: THREE.DoubleSide });
+      const mRing = new THREE.Mesh(mRingGeo, mRingMat);
+      mumbaiGroup.add(mRing);
+
+      // Dimmer Mumbai Label
+      const mCanvas = document.createElement('canvas');
+      mCanvas.width = 256; 
+      mCanvas.height = 128;
+      const mCtx = mCanvas.getContext('2d');
+      mCtx.font = 'bold 56px "DM Sans", sans-serif';
+      mCtx.fillStyle = 'rgba(122, 120, 144, 0.6)'; // Dimmed text color
+      mCtx.fillText('MUMBAI', 20, 80);
+      
+      const mTexture = new THREE.CanvasTexture(mCanvas);
+      const mLabelGeo = new THREE.PlaneGeometry(70, 35);
+      const mLabelMat = new THREE.MeshBasicMaterial({ map: mTexture, transparent: true, side: THREE.DoubleSide });
+      const mLabelMesh = new THREE.Mesh(mLabelGeo, mLabelMat);
+      mLabelMesh.position.set(30, 15, 1); 
+      mumbaiGroup.add(mLabelMesh);
+
+      // 5. Initial Rotation (Tilt so London is perfectly framed in the top 1/3rd visible area)
+      globe.rotation.y = -0.3; // Slight twist so it isn't dead center
+      globe.rotation.x = 0.5;  // Tilt north pole nicely into view
+
+      // 6. Animation Loop
+      let time = 0;
+      function animateGlobe() {
+          requestAnimationFrame(animateGlobe);
+          
+          // Slow, smooth earth rotation
+          globe.rotation.y += 0.0012;
+
+          // Pulse the outer London marker ring
+          time += 0.04;
+          const scale = 1 + Math.sin(time) * 0.5;
+          ring.scale.set(scale, scale, scale);
+          ringMat.opacity = Math.max(0, 0.6 - (scale - 1) * 0.8);
+
+          renderer.render(scene, camera);
+      }
+      animateGlobe();
+  }
+
+  /* ── Nav scroll effect ── */
+  window.addEventListener('scroll', () => {
+    const nav = document.querySelector('nav');
+    if (window.scrollY > 60) {
+      nav.style.backdropFilter = 'blur(20px)';
+      nav.style.background = 'rgba(10,10,15,0.9)';
+      nav.style.borderBottom = '1px solid var(--border)';
+    } else {
+      nav.style.backdropFilter = 'blur(0px)';
+      nav.style.background = 'linear-gradient(to bottom, rgba(10,10,15,0.95), transparent)';
+      nav.style.borderBottom = 'none';
+    }
+  });
+
+  /* ── Form Submit ── */
+  function handleSubmit(btn) {
+    const original = btn.textContent;
+    btn.textContent = 'Sending…';
+    btn.style.opacity = '0.7';
+    setTimeout(() => {
+      btn.textContent = '✓ Message Sent!';
+      btn.style.background = '#40c0c0';
+      btn.style.opacity = '1';
+      setTimeout(() => {
+        btn.textContent = original;
+        btn.style.background = 'var(--accent)';
+      }, 3000);
+    }, 1200);
+  }
+
+  // =====================================================================
+  // --- HERO 3D PARALLAX EFFECT (DESIGNCODE STYLE) ---
+  // =====================================================================
+  const heroVisuals = document.querySelector('.hero-visuals');
+  const parallaxGroup = document.getElementById('parallax-group');
+  
+  if (heroVisuals && parallaxGroup) {
+      heroVisuals.addEventListener('mousemove', (e) => {
+          const rect = heroVisuals.getBoundingClientRect();
+          const x = (e.clientX - rect.left) / rect.width - 0.5;
+          const y = (e.clientY - rect.top) / rect.height - 0.5;
+          
+          // When mouse enters, flatten the base tilt heavily, but keep slight tracking
+          parallaxGroup.style.transform = `rotateX(${y * -15}deg) rotateY(${x * 15}deg) rotateZ(0deg)`;
+      });
+      
+      heroVisuals.addEventListener('mouseleave', () => {
+          // Return to the deep isometric tilt when mouse leaves
+          parallaxGroup.style.transform = `rotateX(15deg) rotateY(-20deg) rotateZ(5deg)`;
+      });
+  }
+
+  // =====================================================================
+  // --- ULTIMATE BACKGROUND GRID (Lines, Text, Zones, and Circuits) ---
+  // =====================================================================
+  const canvas = document.getElementById("dots");
+  const ctx = canvas.getContext("2d");
+  let w = 0, h = 0, dpr = Math.max(1, window.devicePixelRatio || 1);
+  let cols = 0, rows = 0;
+
+  let points = [];
+  let activeWords = [];
+  let circuits = [];
+  
+  let occupiedCells = new Set(); 
+  let exclusionZones = [];        
+
+  // Customized for the dark theme (subtle, not loud)
+  const config = {
+      spacing: 32, 
+      radius: 1.2,
+      dotColorIdle: "255, 255, 255",        // White but rendered with very low opacity
+      dotColorHover: "200, 240, 96",        // --accent
+      snapLineColor: "200, 240, 96",        // --accent
+      circuitColor: "123, 108, 255",        // --accent2 (Purple)
+      textColor: "122, 120, 144",           // --muted
+      
+      lineDist: 90, 
+      lineOpacity: 0.25,                    // Reduced so it isn't distracting
+      lineWidth: 1.0,          
+      
+      fontSize: 9, 
+      fadeSpeed: 0.01, 
+      holdTime: 300, 
+      maxWords: 12,                         // Reduced to avoid clutter
+      words: ["UI DESIGN", "UX RESEARCH", "PROTOTYPING", "DESIGN SYSTEMS", "EMPATHY", "INTERACTION", "WIREFRAMING"],
+      
+      maxCircuits: 8,                       // Reduced to avoid visual noise
+      circuitSpeed: 0.05, 
+      circuitHold: 150   
   };
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("visible");
-      }
-    });
-  }, observerOptions);
-
-  revealElements.forEach((el) => observer.observe(el));
-
-  /* ════════════════════════════════════════════════════════════ SKILL BARS ANIMATION ════════════════════════════════════════════════════════════ */
-  const skillFills = document.querySelectorAll(".skill-fill");
-  const skillsSection = document.getElementById("skills");
-
-  if (skillsSection) {
-    const skillsObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          document.querySelectorAll(".skill-head").forEach((skillHead, index) => {
-            const pct = skillHead.querySelector(".skill-pct").textContent;
-            const fill = skillFills[index];
-            if (fill) {
-              setTimeout(() => {
-                fill.style.width = pct;
-              }, 100);
-            }
+  function calculateExclusionZones() {
+      exclusionZones = [];
+      // Grab all structural/opaque elements so dots avoid drawing right through them
+      const bgSections = document.querySelectorAll('.project-card, .about-visual, .hero-visuals, .process-item, .testimonial-card, .contact-form, footer');
+      
+      bgSections.forEach(el => {
+          const rect = el.getBoundingClientRect();
+          // Add generous padding around excluded elements
+          exclusionZones.push({
+              top: rect.top + window.scrollY - 20,
+              bottom: rect.bottom + window.scrollY + 20,
+              left: rect.left - 20,
+              right: rect.right + 20
           });
-          skillsObserver.unobserve(skillsSection);
-        }
       });
-    }, observerOptions);
-
-    skillsObserver.observe(skillsSection);
   }
 
-  /* ════════════════════════════════════════════════════════════ DOTS CANVAS ════════════════════════════════════════════════════════════ */
-  const dotsCanvas = document.getElementById("dots");
-  if (dotsCanvas) {
-    const ctx = dotsCanvas.getContext("2d");
-    dotsCanvas.width = window.innerWidth;
-    dotsCanvas.height = window.innerHeight;
-
-    const dots = [];
-    const numDots = Math.min(50, Math.floor(window.innerWidth / 40));
-
-    for (let i = 0; i < numDots; i++) {
-      dots.push({
-        x: Math.random() * dotsCanvas.width,
-        y: Math.random() * dotsCanvas.height,
-        radius: Math.random() * 1.5,
-        opacity: Math.random() * 0.5 + 0.2,
-        vx: (Math.random() - 0.5) * 0.5,
-        vy: (Math.random() - 0.5) * 0.5,
-      });
-    }
-
-    function drawDots() {
-      ctx.clearRect(0, 0, dotsCanvas.width, dotsCanvas.height);
-      dots.forEach((dot) => {
-        dot.x += dot.vx;
-        dot.y += dot.vy;
-
-        if (dot.x < 0) dot.x = dotsCanvas.width;
-        if (dot.x > dotsCanvas.width) dot.x = 0;
-        if (dot.y < 0) dot.y = dotsCanvas.height;
-        if (dot.y > dotsCanvas.height) dot.y = 0;
-
-        ctx.fillStyle = `rgba(200, 240, 96, ${dot.opacity})`;
-        ctx.beginPath();
-        ctx.arc(dot.x, dot.y, dot.radius, 0, Math.PI * 2);
-        ctx.fill();
-      });
-      requestAnimationFrame(drawDots);
-    }
-
-    drawDots();
-
-    window.addEventListener("resize", () => {
-      dotsCanvas.width = window.innerWidth;
-      dotsCanvas.height = window.innerHeight;
-    });
+  function isZoneClear(px, py) {
+      for (let z of exclusionZones) {
+          if (px >= z.left && px <= z.right && py >= z.top && py <= z.bottom) {
+              return false; 
+          }
+      }
+      return true; 
   }
 
-  /* ════════════════════════════════════════════════════════════ THREE.JS GLOBE ════════════════════════════════════════════════════════════ */
-  const globeContainer = document.getElementById("about-globe-container");
-  if (globeContainer && window.THREE) {
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(
-      75,
-      globeContainer.clientWidth / globeContainer.clientHeight,
-      0.1,
-      1000
-    );
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(globeContainer.clientWidth, globeContainer.clientHeight);
-    renderer.setClearColor(0x000000, 0);
-    globeContainer.appendChild(renderer.domElement);
+  function resize(){
+      w = window.innerWidth;
+      h = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight, window.innerHeight);
 
-    const geometry = new THREE.IcosahedronGeometry(3, 64);
-    const material = new THREE.MeshPhongMaterial({
-      color: 0xc8f060,
-      emissive: 0x7b6cff,
-      shininess: 10,
-    });
-    const globe = new THREE.Mesh(geometry, material);
-    scene.add(globe);
+      canvas.width = Math.floor(w * dpr);
+      canvas.height = Math.floor(h * dpr);
+      canvas.style.width = w + "px";
+      canvas.style.height = h + "px"; 
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    const light = new THREE.DirectionalLight(0xffffff, 0.8);
-    light.position.set(5, 5, 5);
-    scene.add(light);
+      points = []; activeWords = []; circuits = [];
+      occupiedCells.clear(); 
+      calculateExclusionZones(); 
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
-    scene.add(ambientLight);
+      cols = Math.ceil(w / config.spacing) + 1;
+      rows = Math.ceil(h / config.spacing) + 1;
 
-    camera.position.z = 5;
-
-    function animate() {
-      requestAnimationFrame(animate);
-      globe.rotation.x += 0.0003;
-      globe.rotation.y += 0.0005;
-      renderer.render(scene, camera);
-    }
-    animate();
-
-    window.addEventListener("resize", () => {
-      const width = globeContainer.clientWidth;
-      const height = globeContainer.clientHeight;
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
-      renderer.setSize(width, height);
-    });
+      for (let y = 0; y < rows; y++){
+          for (let x = 0; x < cols; x++){
+              points.push({ ox: x * config.spacing, oy: y * config.spacing, col: x, row: y });
+          }
+      }
   }
 
-  /* ════════════════════════════════════════════════════════════ AI CHIP CANVAS ════════════════════════════════════════════════════════════ */
-  const aiChipCanvas = document.getElementById("ai-chip-canvas");
-  if (aiChipCanvas) {
-    const ctx = aiChipCanvas.getContext("2d");
-    aiChipCanvas.width = window.innerWidth;
-    aiChipCanvas.height = window.innerHeight;
+  function updateWords() {
+      if (activeWords.length < config.maxWords && Math.random() < 0.05) { // slower spawn rate
+          let rawText = config.words[Math.floor(Math.random() * config.words.length)];
+          let textLines = rawText.split(" "); 
+          let maxL = Math.max(...textLines.map(t => t.length));
 
-    class Particle {
-      constructor() {
-        this.x = Math.random() * aiChipCanvas.width;
-        this.y = Math.random() * aiChipCanvas.height;
-        this.size = Math.random() * 3 + 1;
-        this.speedX = (Math.random() - 0.5) * 2;
-        this.speedY = (Math.random() - 0.5) * 2;
-        this.opacity = Math.random() * 0.5 + 0.3;
+          let minCol = 1;
+          let maxAllowedCol = (cols - 2) - maxL + 1; 
+
+          if (maxAllowedCol < minCol) return; 
+
+          let col = minCol + Math.floor(Math.random() * (maxAllowedCol - minCol + 1));
+          let row = Math.floor(2 + Math.random() * (rows - textLines.length - 4));
+
+          let isBlocked = false;
+          for (let l = 0; l < textLines.length; l++) {
+              for (let c = 0; c < textLines[l].length; c++) {
+                  let px = (col + c) * config.spacing;
+                  let py = (row + l) * config.spacing;
+                  
+                  if (!isZoneClear(px, py) || occupiedCells.has(`${col + c},${row + l}`)) {
+                      isBlocked = true; break;
+                  }
+              }
+              if (isBlocked) break;
+          }
+
+          if (!isBlocked) {
+              textLines.forEach((line, l) => {
+                  for (let c = 0; c < line.length; c++) occupiedCells.add(`${col + c},${row + l}`);
+              });
+              activeWords.push({ lines: textLines, col, row, opacity: 0, state: 'in', timer: 0 });
+          }
       }
 
-      update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
+      for (let i = activeWords.length - 1; i >= 0; i--) {
+          let w = activeWords[i];
+          if (w.state === 'in') {
+              w.opacity += config.fadeSpeed;
+              if (w.opacity >= 0.35) { w.opacity = 0.35; w.state = 'hold'; w.timer = config.holdTime + Math.random() * 200; }
+          } else if (w.state === 'hold') {
+              w.timer--;
+              if (w.timer <= 0) w.state = 'out';
+          } else if (w.state === 'out') {
+              w.opacity -= config.fadeSpeed;
+              if (w.opacity <= 0) {
+                  w.lines.forEach((line, l) => {
+                      for (let c = 0; c < line.length; c++) occupiedCells.delete(`${w.col + c},${w.row + l}`);
+                  });
+                  activeWords.splice(i, 1); 
+              }
+          }
+      }
+  }
 
-        if (this.x > aiChipCanvas.width) this.x = 0;
-        if (this.x < 0) this.x = aiChipCanvas.width;
-        if (this.y > aiChipCanvas.height) this.y = 0;
-        if (this.y < 0) this.y = aiChipCanvas.height;
+  function updateAndDrawCircuits() {
+      if (circuits.length < config.maxCircuits && Math.random() < 0.05) { // slower spawn
+          let startCol = Math.floor(Math.random() * cols);
+          let startRow = Math.floor(Math.random() * rows);
+          
+          let px = startCol * config.spacing;
+          let py = startRow * config.spacing;
+
+          if (isZoneClear(px, py) && !occupiedCells.has(`${startCol},${startRow}`)) {
+              let path = [{col: startCol, row: startRow}];
+              occupiedCells.add(`${startCol},${startRow}`);
+              
+              let currCol = startCol; let currRow = startRow;
+              let targetLen = 4 + Math.floor(Math.random() * 5); 
+              
+              for (let i = 0; i < targetLen - 1; i++) {
+                  let dirs = [ {c: 1, r: 0}, {c: -1, r: 0}, {c: 0, r: 1}, {c: 0, r: -1} ];
+                  dirs.sort(() => Math.random() - 0.5); 
+                  
+                  let moved = false;
+                  for (let d of dirs) {
+                      let nc = currCol + d.c; let nr = currRow + d.r;
+                      let npx = nc * config.spacing; let npy = nr * config.spacing;
+
+                      if (nc >= 0 && nc < cols && nr >= 0 && nr < rows && 
+                          isZoneClear(npx, npy) && !occupiedCells.has(`${nc},${nr}`)) {
+                          
+                          path.push({col: nc, row: nr});
+                          occupiedCells.add(`${nc},${nr}`);
+                          currCol = nc; currRow = nr;
+                          moved = true; break;
+                      }
+                  }
+                  if (!moved) break; 
+              }
+              
+              if (path.length > 1) {
+                  circuits.push({ path: path, drawProgress: 0, eraseProgress: 0, state: 'drawing', timer: config.circuitHold });
+              } else {
+                  occupiedCells.delete(`${startCol},${startRow}`); 
+              }
+          }
       }
 
-      draw() {
-        ctx.fillStyle = `rgba(200, 240, 96, ${this.opacity})`;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
+      for (let i = circuits.length - 1; i >= 0; i--) {
+          let c = circuits[i];
+          
+          if (c.state === 'drawing') {
+              c.drawProgress += config.circuitSpeed;
+              if (c.drawProgress >= c.path.length - 1) { c.drawProgress = c.path.length - 1; c.state = 'holding'; }
+          } else if (c.state === 'holding') {
+              c.timer--;
+              if (c.timer <= 0) c.state = 'erasing';
+          } else if (c.state === 'erasing') {
+              c.eraseProgress += config.circuitSpeed;
+              if (c.eraseProgress >= c.path.length - 1) {
+                  c.path.forEach(n => occupiedCells.delete(`${n.col},${n.row}`));
+                  circuits.splice(i, 1); continue;
+              }
+          }
+
+          ctx.beginPath();
+          for (let j = 0; j < c.path.length - 1; j++) {
+              let sRatio = Math.max(0, c.eraseProgress - j);
+              let eRatio = Math.min(1, c.drawProgress - j);
+              
+              if (sRatio < 1 && eRatio > 0 && eRatio > sRatio) {
+                  let n1 = c.path[j]; let n2 = c.path[j+1];
+                  let x1 = n1.col * config.spacing; let y1 = n1.row * config.spacing;
+                  let x2 = n2.col * config.spacing; let y2 = n2.row * config.spacing;
+                  
+                  let sx = x1 + (x2 - x1) * sRatio; let sy = y1 + (y2 - y1) * sRatio;
+                  let ex = x1 + (x2 - x1) * eRatio; let ey = y1 + (y2 - y1) * eRatio;
+                  
+                  ctx.moveTo(sx, sy); ctx.lineTo(ex, ey);
+              }
+          }
+          ctx.strokeStyle = `rgba(${config.circuitColor}, 0.3)`; 
+          ctx.lineWidth = 1.0;
+          ctx.stroke();
       }
-    }
+  }
 
-    const particles = [];
-    for (let i = 0; i < 60; i++) {
-      particles.push(new Particle());
-    }
+  function draw(){
+      ctx.clearRect(0, 0, w, h);
+      
+      updateWords(); 
+      
+      const scrollY = window.scrollY || document.documentElement.scrollTop;
+      const viewportH = window.innerHeight;
 
-    function animateParticles() {
-      ctx.clearRect(0, 0, aiChipCanvas.width, aiChipCanvas.height);
-
-      particles.forEach((p) => {
-        p.update();
-        p.draw();
+      let charMap = {};
+      activeWords.forEach(word => {
+          word.lines.forEach((line, lIdx) => {
+              for(let c=0; c<line.length; c++) charMap[`${word.col+c},${word.row+lIdx}`] = { char: line[c], opacity: word.opacity };
+          });
       });
 
-      requestAnimationFrame(animateParticles);
-    }
+      for (let i = 0; i < points.length; i++){
+          const p = points[i];
+          
+          if (p.oy < scrollY - 150 || p.oy > scrollY + viewportH + 150) continue; 
 
-    animateParticles();
+          const col = p.col; const row = p.row;
+          let distToMouse = 9999; 
 
-    window.addEventListener("resize", () => {
-      aiChipCanvas.width = window.innerWidth;
-      aiChipCanvas.height = window.innerHeight;
-    });
+          if (mouse.active){
+              const dx = p.ox - mouse.x; const dy = p.oy - mouse.y;
+              distToMouse = Math.hypot(dx, dy); 
+
+              if (distToMouse < config.lineDist) {
+                  ctx.beginPath(); ctx.moveTo(p.ox, p.oy); ctx.lineTo(mouse.x, mouse.y);
+                  const opacity = (1 - (distToMouse / config.lineDist)) * config.lineOpacity;
+                  ctx.strokeStyle = `rgba(${config.snapLineColor}, ${opacity})`; ctx.lineWidth = config.lineWidth; ctx.stroke();
+              }
+          }
+
+          const cellData = charMap[`${col},${row}`];
+
+          if (cellData) {
+              ctx.font = `600 ${config.fontSize}px 'Syne', sans-serif`;
+              ctx.textAlign = "center"; ctx.textBaseline = "middle";
+              ctx.fillStyle = `rgba(${config.textColor}, ${cellData.opacity})`; 
+              ctx.fillText(cellData.char, p.ox, p.oy);
+          } else {
+              ctx.beginPath();
+              if (mouse.active && distToMouse < 150) {
+                  const intensity = 1 - (distToMouse / 150);
+                  ctx.arc(p.ox, p.oy, config.radius + (intensity * 1.5), 0, Math.PI * 2);
+                  ctx.fillStyle = `rgba(${config.dotColorHover}, ${Math.max(0.04, intensity * 0.4)})`; 
+              } else {
+                  ctx.arc(p.ox, p.oy, config.radius, 0, Math.PI * 2);
+                  ctx.fillStyle = `rgba(${config.dotColorIdle}, 0.03)`; // Extremely subtle default dot
+              }
+              ctx.fill();
+          }
+      }
+
+      updateAndDrawCircuits();
+      requestAnimationFrame(draw);
   }
+
+  // Handle resizing accurately
+  let resizeTimeout;
+  window.addEventListener("resize", () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(resize, 200);
+  });
+
+  window.addEventListener("load", resize);
+  
+  // Initial kickoff
+  resize(); 
+  draw();
+
 </script>
-
 </body>
 </html>
