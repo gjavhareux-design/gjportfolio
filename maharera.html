@@ -83,6 +83,62 @@
       transform: translate(-50%, -50%);
       transition: transform 0.08s linear, border-color 0.2s, width 0.2s, height 0.2s;
     }
+/* --- WORK IN PROGRESS BANNER --- */
+    .wip-banner {
+      background: linear-gradient(90deg, rgba(20, 20, 32, 0.95), rgba(10, 10, 15, 0.95));
+      border-bottom: 2px solid var(--accent);
+      padding: 24px 64px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      z-index: 1200;
+      box-shadow: 0 4px 30px rgba(200, 240, 96, 0.12);
+    }
+
+    .wip-content {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      max-width: 1200px;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .wip-cat-gif {
+      height: 500px;
+      width: auto;
+      object-fit: contain;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .wip-text-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .wip-tag {
+      background: rgba(200, 240, 96, 0.1);
+      border: 1px solid rgba(200, 240, 96, 0.3);
+      color: var(--accent);
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 24px 22px;
+      border-radius: 100px;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+    }
+
+    .wip-desc {
+      font-size: 0.88rem;
+      color: var(--text);
+      font-weight: 500;
+      letter-spacing: 0.01em;
+    }
 
     /* --- NAV --- */
     nav {
@@ -1912,7 +1968,19 @@
 
   <div id="cursor"></div>
   <div id="cursor-ring"></div>
-
+<!-- WORK IN PROGRESS BANNER -->
+  <div class="wip-banner">
+    <div class="wip-content">
+      <img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExbms5eTVpNzU5ZmdnaWZxdjVrcWRrbXhxbml4amcyd3JvdXh5MXVsbSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Yy80bDBFeEZSOG96bVpX/giphy.gif" 
+           alt="Lazy Cat on Desk" 
+           class="wip-cat-gif" 
+           onerror="this.src='https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=150&q=80'">
+      <div class="wip-text-wrap">
+        <span class="wip-tag">Work in Progress</span>
+        <span class="wip-desc">Case study updates underway for 2026 milestones. Currently being curated!</span>
+      </div>
+    </div>
+  </div>
   <!-- NAV -->
   <nav>
     <a href="#" class="nav-logo">
