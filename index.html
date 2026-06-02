@@ -1763,31 +1763,32 @@
     </div>
   </div>
 
-  <div class="contact-form reveal reveal-delay-1">
+ <form action="https://formspree.io/f/xojbgavr" method="POST" class="contact-form reveal reveal-delay-1">
     <div class="form-row">
       <div class="form-group">
         <label class="form-label">First Name</label>
-        <input type="text" class="form-input" placeholder="John" />
+        <input type="text" name="firstName" class="form-input" placeholder="John" required />
       </div>
       <div class="form-group">
         <label class="form-label">Last Name</label>
-        <input type="text" class="form-input" placeholder="Doe" />
+        <input type="text" name="lastName" class="form-input" placeholder="Doe" required />
       </div>
     </div>
     <div class="form-group">
       <label class="form-label">Email</label>
-      <input type="email" class="form-input" placeholder="john@company.com" />
+      <input type="email" name="email" class="form-input" placeholder="john@company.com" required />
     </div>
     <div class="form-group">
       <label class="form-label">Project Type</label>
-      <input type="text" class="form-input" placeholder="Product Design / UX Audit / Design System…" />
+      <input type="text" name="projectType" class="form-input" placeholder="Product Design / UX Audit / Design System…" />
     </div>
     <div class="form-group">
       <label class="form-label">Message</label>
-      <textarea class="form-textarea" placeholder="Tell me about your project…"></textarea>
+      <textarea name="message" class="form-textarea" placeholder="Tell me about your project…" required></textarea>
     </div>
-    <button class="form-btn" onclick="handleSubmit(this)">Send Message →</button>
-  </div>
+    <button type="submit" class="form-btn">Send Message →</button>
+  </form>
+</section>
 </section>
 
 <!-- Footer -->
@@ -2481,7 +2482,7 @@
     }
   });
 
-  /* ── Form Submit ── */
+  /* ── Form Submit 
   function handleSubmit(btn) {
     const original = btn.textContent;
     btn.textContent = 'Sending…';
@@ -2495,7 +2496,7 @@
         btn.style.background = 'var(--accent)';
       }, 3000);
     }, 1200);
-  }
+  } ── */
 
   // =====================================================================
   // --- HERO 3D PARALLAX EFFECT (DESIGNCODE STYLE) ---
