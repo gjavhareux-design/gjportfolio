@@ -1,177 +1,209 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Case Study — Ganesh Javhare</title>
-  
-  <!-- Fonts from your Design System -->
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
-  
-    <!-- Your custom CSS -->
-    <link rel="stylesheet" href="maharera.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work in Progress</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center; 
+            justify-content: Top;
+            margin-top: 50px;
+            min-height: 80vh;
+            background-color: #020205; /* Deep space dark background */
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            color: #ffffff;
+            text-align: center;
+            overflow: hidden; /* Prevents scrollbars from the galaxy animation */
+        }
+
+        /* Positions the galaxy animation fixed behind everything */
+        #threejs-container {
+            position: fixed;/
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; 
+        }
+
+        /* Styled as a glass card to stand out against the stars 
+        .wip-container {
+            max-width: 600px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }*/
+
+        img {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            margin-bottom: 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            color: #ffffff;
+            letter-spacing: -0.02em;
+        }
+
+        p {
+            font-size: 1.1rem;
+            margin-bottom: 35px;
+            color: #c4c7c9;
+            line-height: 1.6;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 28px;
+            background-color: #d3bbff; /* Matches your portfolio's nebula purple */
+            color: #040012;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 6px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .btn:hover {
+            background-color: #ebdcff;
+            transform: translateY(-2px);
+        }
+    </style>
 </head>
 <body>
 
-  <!-- Custom Cursor Elements -->
-  <div id="cursor"></div>
-  <div id="cursor-ring"></div>
+    <div id="threejs-container"></div>
+    <script src="https://ajax.googleapis.com/ajax/libs/threejs/r125/three.min.js"></script>
+    <script>
+        (function() {
+            const container = document.getElementById('threejs-container');
+            const width = window.innerWidth;
+            const height = window.innerHeight;
 
-  <!-- Top Navigation -->
-  <nav>
-    <a href="index.html" class="nav-logo">Ganesh Javhare<span>.</span></a>
-    <a href="index.html" class="back-link">← Back to Portfolio</a>
-  </nav>
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+            camera.position.z = 5;
 
-  <!-- ==========================================================================
-       HERO SECTION 
-       ========================================================================== -->
-  <header id="cs-hero">
-    <div class="hero-grid-bg"></div>
-    <div class="hero-orb orb1"></div>
-    <div class="hero-orb orb2"></div>
-    
-    <div class="cs-hero-content">
-      <!-- 📝 EDIT: PROJECT CATEGORY OR TAG -->
-      <div class="cs-eyebrow">UX / UI Redesign</div>
-      
-      <!-- 📝 EDIT: PROJECT TITLE (Focus on the outcome!) -->
-      <h1 class="cs-title">Redesigning the MahaRERA Portal to Increase Citizen Trust</h1>
-      
-      <!-- 📝 EDIT: PROJECT SUBTITLE -->
-      <p class="cs-subtitle">Simplifying complex regulatory journeys and improving task completion by 40% through human-centred design.</p>
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(width, height);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
+
+            const parameters = {
+                count: 50000,
+                size: 0.015,
+                radius: 5,
+                branches: 3,
+                spin: 1,
+                randomness: 0.2,
+                randomnessPower: 3,
+                insideColor: '#4C1D95', 
+                outsideColor: '#1E3A8A'  
+            };
+
+            let geometry = null;
+            let material = null;
+            let points = null;
+
+            const generateGalaxy = () => {
+                geometry = new THREE.BufferGeometry();
+                const positions = new Float32Array(parameters.count * 3);
+                const colors = new Float32Array(parameters.count * 3);
+
+                const colorInside = new THREE.Color(parameters.insideColor);
+                const colorOutside = new THREE.Color(parameters.outsideColor);
+
+                for(let i = 0; i < parameters.count; i++) {
+                    const i3 = i * 3;
+                    const radius = Math.random() * parameters.radius;
+                    const spinAngle = radius * parameters.spin;
+                    const branchAngle = (i % parameters.branches) / parameters.branches * Math.PI * 2;
+
+                    const randomX = Math.pow(Math.random(), parameters.randomnessPower) * (Math.random() < 0.5 ? 1 : -1) * parameters.randomness * radius;
+                    const randomY = Math.pow(Math.random(), parameters.randomnessPower) * (Math.random() < 0.5 ? 1 : -1) * parameters.randomness * radius;
+                    const randomZ = Math.pow(Math.random(), parameters.randomnessPower) * (Math.random() < 0.5 ? 1 : -1) * parameters.randomness * radius;
+
+                    positions[i3 + 0] = Math.cos(branchAngle + spinAngle) * radius + randomX;
+                    positions[i3 + 1] = randomY;
+                    positions[i3 + 2] = Math.sin(branchAngle + spinAngle) * radius + randomZ;
+
+                    const mixedColor = colorInside.clone();
+                    mixedColor.lerp(colorOutside, radius / parameters.radius);
+
+                    colors[i3 + 0] = mixedColor.r;
+                    colors[i3 + 1] = mixedColor.g;
+                    colors[i3 + 2] = mixedColor.b;
+                }
+
+                geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+                material = new THREE.PointsMaterial({
+                    size: parameters.size,
+                    sizeAttenuation: true,
+                    depthWrite: false,
+                    blending: THREE.AdditiveBlending,
+                    vertexColors: true
+                });
+
+                points = new THREE.Points(geometry, material);
+                scene.add(points);
+            };
+
+            generateGalaxy();
+
+            const mouse = { x: 0, y: 0 };
+            window.addEventListener('mousemove', (event) => {
+                mouse.x = (event.clientX / window.innerWidth) - 0.5;
+                mouse.y = (event.clientY / window.innerHeight) - 0.5;
+            });
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+
+            const clock = new THREE.Clock();
+
+            const animate = () => {
+                const elapsedTime = clock.getElapsedTime();
+                points.rotation.y = elapsedTime * 0.1;
+                camera.position.x += (mouse.x * 2 - camera.position.x) * 0.05;
+                camera.position.y += (-mouse.y * 2 - camera.position.y) * 0.05;
+                camera.lookAt(scene.position);
+                renderer.render(scene, camera);
+                requestAnimationFrame(animate);
+            };
+
+            animate();
+        })();
+    </script>
+
+    <div class="wip-container">
+        
+        <img src="wip.gif" alt="Work in Progress Desk">
+
+        <h1>Work in Progress</h1>
+        <p>I am currently updating this section. Please check back later to see the finished project!</p>
+
+        <a href="portfolio.html" class="btn">Go back to Portfolio</a>
     </div>
-  </header>
 
-  <!-- ==========================================================================
-       MAIN CASE STUDY CONTENT
-       ========================================================================== -->
-  <div class="cs-container">
-    
-    <!-- LEFT COLUMN: STICKY INDEX -->
-    <!-- Note: If you change the IDs of the <section> tags on the right, you MUST change the hrefs here to match! -->
-    <aside class="cs-sidebar">
-      <div class="cs-sidebar-title">Contents</div>
-      <ul class="cs-nav-list">
-        <li><a href="#overview">1. Overview</a></li>
-        <li><a href="#problem">2. The Problem</a></li>
-        <li><a href="#process">3. Design Process</a></li>
-        <li><a href="#solution">4. Final Solution</a></li>
-        <li><a href="#learnings">5. Outcomes & Learnings</a></li>
-      </ul>
-    </aside>
-
-    <!-- RIGHT COLUMN: SCROLLING CONTENT -->
-    <main class="cs-content">
-
-      <!-- SECTION 1: OVERVIEW -->
-      <section id="overview" class="cs-section">
-        <h2>Overview</h2>
-        
-        <!-- 📝 EDIT: PROJECT DETAILS IN THIS HIGHLIGHT BOX -->
-        <div class="cs-callout">
-          <div class="callout-item">
-            <div class="label">My Role</div>
-            <div class="value">Lead UX/UI Designer</div>
-          </div>
-          <div class="callout-item">
-            <div class="label">Timeline</div>
-            <div class="value">12 Weeks</div>
-          </div>
-          <div class="callout-item">
-            <div class="label">Team</div>
-            <div class="value">1 PM, 2 Devs, 1 Researcher</div>
-          </div>
-          <div class="callout-item">
-            <div class="label">Tools</div>
-            <div class="value">Figma, Miro, Dovetail</div>
-          </div>
-        </div>
-
-        <p>MahaRERA is the state regulatory body for real estate. Their digital portal is accessed by millions of citizens looking to verify property developers before making the biggest financial decision of their lives.</p>
-        <p>This case study outlines how I led the end-to-end redesign of the portal, transitioning it from a confusing, bureaucratic database into an accessible, user-friendly platform that builds trust.</p>
-      </section>
-
-      <!-- SECTION 2: THE PROBLEM -->
-      <section id="problem" class="cs-section">
-        <h2>The Problem</h2>
-        <p>The original platform was built with a system-centric approach rather than a user-centric one. Information was buried under layers of legal jargon, making it nearly impossible for an average citizen to find what they needed.</p>
-        
-        <h3>Key Pain Points:</h3>
-        <ul>
-          <li><strong>High bounce rate:</strong> 65% of users abandoned the search process midway.</li>
-          <li><strong>Information Overload:</strong> Project pages contained over 100 unformatted data points.</li>
-          <li><strong>Lack of Mobile Support:</strong> The site was completely broken on mobile devices, alienating 70% of the target demographic.</li>
-        </ul>
-
-        <!-- 📝 EDIT: Replace this div with an actual <img> tag when ready -->
-        <div class="img-placeholder">
-          [ Insert Image: Screenshot of the old, messy interface ]
-          <!-- Example code to use when you have an image: -->
-          <!-- <img src="images/old-design.jpg" alt="Old design of MahaRERA"> -->
-        </div>
-      </section>
-
-      <!-- SECTION 3: THE PROCESS (Stanford Design Thinking Structure) -->
-      <section id="process" class="cs-section">
-        <h2>The Design Process</h2>
-        <p>To solve this, I adopted the Stanford Design Thinking methodology. Because we were dealing with diverse citizen demographics, deep empathy and foundational research were non-negotiable.</p>
-
-        <h3>1. Empathize (User Research)</h3>
-        <p>I conducted contextual inquiries with 15 prospective homebuyers. The goal was to understand their emotional state when using the portal. We discovered that users were highly anxious; they weren't just looking for data, they were looking for <em>reassurance</em> that their money was safe.</p>
-
-        <h3>2. Define (Synthesis)</h3>
-        <p>Based on our research, I synthesized the core problem into a single "How Might We" statement that guided the rest of the project:</p>
-        <div class="cs-callout" style="padding: 20px; border-left: 4px solid var(--accent); border-radius: 4px;">
-          <h4 style="color: var(--text); font-family: 'Syne', sans-serif; font-size: 1.2rem;">How might we translate complex legal real estate data into a visual, digestible format so that citizens feel confident and secure in their investments?</h4>
-        </div>
-
-        <h3>3. Ideate & Prototype</h3>
-        <p>I led a cross-functional workshop to sketch out new information architectures. We quickly moved into Figma to build low-fidelity wireframes, focusing entirely on simplifying the search flow and creating a "Project Health Card" concept.</p>
-
-        <h3>4. Test</h3>
-        <p>We ran usability tests with 8 participants using the mid-fidelity prototypes. A major learning here was that our initial "progress bar" concept for building status was too vague. Users wanted exact dates. I iterated on the design to include a detailed, yet clean, timeline view instead.</p>
-      </section>
-
-      <!-- SECTION 4: FINAL SOLUTION -->
-      <section id="solution" class="cs-section">
-        <h2>Final Solution & UI Design</h2>
-        <p>The final design system utilized clean typography, high contrast for accessibility, and a component-based architecture for scalability.</p>
-
-        <h3>The "Project Health Card"</h3>
-        <p>Instead of a wall of text, a user now sees a digestible summary card highlighting the most critical information: Registration status, completion percentage, and legal complaints.</p>
-
-        <!-- 📝 EDIT: Replace this div with an actual <img> tag when ready -->
-        <div class="img-placeholder" style="height: 500px;">
-          [ Insert Image/GIF: High-Fidelity UI of the final product ]
-        </div>
-
-        <h3>Mobile-First Navigation</h3>
-        <p>The entire search and filter experience was rebuilt specifically for mobile devices, introducing bottom-sheet filters and thumb-friendly touch targets.</p>
-      </section>
-
-      <!-- SECTION 5: LEARNINGS -->
-      <section id="learnings" class="cs-section">
-        <h2>Outcomes & Learnings</h2>
-        <p>The redesigned portal launched in Q3. The response from both stakeholders and citizens was overwhelmingly positive.</p>
-
-        <h3>Business Impact:</h3>
-        <ul>
-          <li><strong>Task Success Rate:</strong> Improved from 35% to 78%.</li>
-          <li><strong>Mobile Engagement:</strong> Mobile sessions increased by 150%.</li>
-          <li><strong>Support Calls:</strong> Dropped by 30% in the first month post-launch.</li>
-        </ul>
-
-        <h3>Reflection</h3>
-        <p>The biggest challenge in this project was stakeholder management. Balancing the legal requirements of the government body with the UX needs of the citizen required constant negotiation. I learned that showing is better than telling—presenting tested prototypes to stakeholders was the key to getting buy-in for radical simplification.</p>
-      </section>
-
-    </main>
-  </div>
-
-  <!-- ==========================================================================
-       SCRIPTS
-       ========================================================================== -->
-  <script scr="mharera.js"></script>
 </body>
 </html>
