@@ -571,19 +571,38 @@
     .card-full { grid-column: span 12; }
 
     .project-thumb {
-      width: 100%; aspect-ratio: 16/9;
-      transition: transform 0.5s ease;
-      position: relative; overflow: hidden;
-    }
+  width: 100%; 
+  aspect-ratio: 16/9;
+  transition: transform 0.5s ease;
+  border-radius: 20px 20px 0 0;
+  position: relative; 
+  overflow: hidden;
+}
+
+.project-thumb img, 
+.project-thumb Img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
     .project-thumb-inner {
       width: 100%; height: 100%;
       display: flex; align-items: center; justify-content: center;
       font-size: 4rem;
       position: relative;
     }
+    
     .thumb-p1 { background: linear-gradient(135deg, #1a0533 0%, #2d1066 50%, #0f2060 100%); }
     .thumb-p2 { background: linear-gradient(135deg, #001a12 0%, #003d2b 50%, #001a0f 100%); }
     .thumb-p3 { background: linear-gradient(135deg, #1a0f00 0%, #3d2800 50%, #1f1000 100%); }
+    .thumb-p3 img, 
+.thumb-p3 Img {
+  width: 100%;
+  height: 180%;
+  object-fit: contain; 
+  display: block;
+}
     .thumb-p4 { background: linear-gradient(135deg, #0a001a 0%, #1a0033 50%, #0a0010 100%); }
 
     .thumb-mockup {
@@ -1211,21 +1230,21 @@
         <div class="floating-cards-group" id="parallax-group">
             
             <div class="dc-card dc-cert-back float-anim" style="padding: 20px;">
-                <h4 style="color: white; font-size: 14px; font-weight: bold; margin-bottom: 4px;">Zensphere</h4>
+                <h4 style="color: white; font-size: 12px; font-weight: bold; Margin-top:2px;margin-bottom: 6px;">Project 3 : Zensphere</h4>
                 <p style="color: rgba(255,255,255,0.6); font-size: 10px; margin-bottom: 15px;">Mobile APP</p>
                 <div style="width: 60%; height: 4px; background: rgba(233, 10, 10, 0.3); border-radius: 2px; margin-bottom: 6px;"></div>
                 <div style="width: 40%; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px;"></div>
             </div>
 
             <div class="dc-card dc-cert-front float-anim" style="padding: 20px;">
-                <h4 style="color: white; font-size: 14px; font-weight: bold; margin-bottom: 4px;">FocusXR</h4>
+                <h4 style="color: white; font-size: 12px; font-weight: bold;Margin-top:2px; margin-bottom: 6px;">Project 2 : IYR</h4>
                 <p style="color: rgba(255,255,255,0.6); font-size: 10px; margin-bottom: 15px;">Vertual Reality App</p>
                 <div style="width: 60%; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; margin-bottom: 6px;"></div>
                 <div style="width: 40%; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px;"></div>
             </div>
 
             <div class="dc-card dc-main float-anim">
-                 <h4 style="color: white; font-size: 14px; font-weight: bold; margin-bottom: 4px;margin-left: 14px;">MahaRERA Portal<br></h4>
+                 <h4 style="color: white; font-size: 12px; font-weight: bold;Margin-top:2px; margin-bottom: 6px;margin-left: 14px;">Project 1 : MahaRERA Portal<br></h4>
                 <div style="height: 30px; background: rgba(0,0,0,0.2); display: flex; gap: 8px; align-items: center; padding: 0 16px;">
                    
                   
@@ -1308,12 +1327,12 @@
           <div class="stat-label">Years Experience</div>
         </div>
         <div class="stat-item">
-          <div class="stat-num">8<span>+</span></div>
+          <div class="stat-num">2<span>+</span></div>
           <div class="stat-label">Projects Shipped</div>
         </div>
         <div class="stat-item">
-          <div class="stat-num">2<span>+</span></div>
-          <div class="stat-label">Happy Clients</div>
+          <div class="stat-num">6<span>+</span></div>
+          <div class="stat-label">Millions Users</div>
         </div>
       </div>
     </div>
@@ -1383,6 +1402,7 @@
     <!-- Card 1 -->
     <div class="project-card card-lg reveal reveal-left">
       <div class="project-thumb">
+        <Img src="mockup.jpg" alt="MahaRERA_Case_Study"></Img>
         <div class="project-thumb-inner thumb-p1">
           <div class="thumb-mockup">
             <div class="mockup-bar"><span></span><span></span><span></span></div>
@@ -1403,8 +1423,11 @@
     <!-- Card 2 -->
     <div class="project-card card-sm reveal reveal-right reveal-delay-1">
       <div class="project-thumb">
+        <Img src="MockupIYR.png" alt="MahaRERA_Case_Study"></Img>
         <div class="project-thumb-inner thumb-p2">
+           
           <div class="thumb-mockup">
+            
             <div class="mockup-bar"><span></span><span></span><span></span></div>
             <div class="mockup-lines"><div></div><div></div><div></div></div>
           </div>
@@ -1421,8 +1444,11 @@
     <!-- Card 3 -->
     <div class="project-card card-md reveal reveal-left reveal-delay-1">
       <div class="project-thumb">
+        
         <div class="project-thumb-inner thumb-p3">
+          <Img src="focus.gif" alt="MahaRERA_Case_Study"></Img>
           <div class="thumb-mockup">
+            
             <div class="mockup-bar"><span></span><span></span><span></span></div>
             <div class="mockup-lines"><div></div><div></div><div></div><div></div></div>
           </div>
@@ -1711,6 +1737,18 @@
         <div class="test-avatar av2">AC</div>
         <div>
           <div class="test-name">Akash Chauhan</div>
+          <div class="test-role">Founder, RERAVision</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="testimonial-card reveal reveal-delay-1">
+      <div class="test-quote">"</div>
+      <p class="test-text">Collaborating with Ganesh during our university days was a fantastic experience. His expertise in graphic design and event planning single-handedly elevated the quality of every project we touched. He possesses a sharp eye for aesthetics and a natural instinct for creating memorable, user-centered designs.</p>
+      <div class="test-person">
+        <div class="test-avatar av2">SS</div>
+        <div>
+          <div class="test-name">Sukhabir Sing</div>
           <div class="test-role">Founder, RERAVision</div>
         </div>
       </div>
