@@ -49,6 +49,7 @@
     }
 
     /* ── Custom Cursor ── */
+    /* ── Custom Cursor ── */
     #cursor {
       position: fixed; top: 0; left: 0;
       width: 12px; height: 12px;
@@ -69,6 +70,27 @@
       transform: translate(-50%, -50%);
       transition: transform 0.08s linear, width 0.25s ease, height 0.25s ease, border-color 0.2s;
     }
+    #cursor-text-ring {
+      position: fixed; top: 0; left: 0;
+      width: 120px; height: 120px;
+      pointer-events: none;
+      z-index: 9997;
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+      opacity: 0;
+    }
+    #cursor-text-ring svg {
+      width: 100%; height: 100%;
+      animation: spinText 12s linear infinite;
+    }
+    #cursor-text-ring text {
+      font-family: 'Syne', sans-serif;
+      font-size: 13.5px;
+      font-weight: 700;
+      fill: var(--accent);
+      letter-spacing: 2px;
+    }
+    @keyframes spinText { 100% { transform: rotate(360deg); } }
     body:hover #cursor { opacity: 1; }
 
     /* ── Noise Overlay ── */
@@ -107,7 +129,7 @@
     }
     .nav-logo { 
       font-family: 'Syne', sans-serif;
-      font-weight: 800; font-size: 1.1rem;
+      font-weight: 750; font-size: 1.2rem;
       letter-spacing: -0.02em;
       color: var(--text); 
       text-decoration: none;
@@ -540,14 +562,47 @@
       font-size: 0.8rem; color: var(--muted);
       transition: all 0.2s;
     }
-    .tag:hover { border-color: var(--accent); color: var(--accent); }
+    /*.tag:hover { border-color: var(--accent); color: var(--accent); }*/
     .about-bio {
       font-size: 0.95rem; line-height: 1.8; color: var(--muted);
       margin-bottom: 32px;
     }
 
-    /* ── Work / Projects ── */
+   /* ── Work / Projects ── */
     #work { background: var(--surface); }
+
+    /* Expanded Card State & Overlay */
+    #card-backdrop {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(10, 10, 15, 0.85); backdrop-filter: blur(12px);
+      z-index: 9990; opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+    }
+    #card-backdrop.active { opacity: 1; pointer-events: all; cursor: pointer; }
+
+    .expand-btn {
+      position: absolute; top: 20px; right: 20px;
+      width: 44px; height: 44px;
+      background: rgba(10, 10, 15, 0.6); backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text); font-size: 1.4rem;
+      z-index: 20; opacity: 0; transform: scale(0.9); transition: all 0.3s ease;
+    }
+    .project-card:hover .expand-btn { opacity: 1; transform: scale(1); }
+    .expand-btn:hover { background: var(--accent); color: #0a0a0f; }
+
+    .project-card.is-expanded {
+      position: fixed !important; top: 50% !important; left: 50% !important;
+      transform: translate(-50%, -50%) !important;
+      width: 80vw !important; height: 80vh !important;
+      z-index: 9999 !important; margin: 0 !important;
+      display: flex; flex-direction: column;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+      cursor: auto;
+    }
+    .project-card.is-expanded .project-thumb { height: 80%; flex-shrink: 0; }
+    .project-card.is-expanded .project-thumb img, .project-card.is-expanded .project-thumb Img { object-position: top center; }
+    .project-card.is-expanded .project-info { flex-grow: 1; overflow-y: auto; background: var(--card-bg); }
     .work-header {
       display: flex; justify-content: space-between; align-items: flex-end;
       margin-bottom: 64px;
@@ -636,10 +691,16 @@
       opacity: 0; transition: opacity 0.3s;
     }
     .overlay-link {
-      width: 54px; height: 54px;
-      background: var(--accent); border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      color: #0a0a0f; font-size: 1.3rem; text-decoration: none;
+      padding: 14px 28px;
+      background: var(--accent); 
+      border-radius: 100px;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      color: #0a0a0f; 
+      font-family: 'Syne', sans-serif;
+      font-size: 0.95rem; 
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     }
 
     .project-info { padding: 24px; }
@@ -649,11 +710,12 @@
     .p-tag {
       font-size: 0.7rem; font-weight: 500;
       padding: 3px 10px; border-radius: 100px;
-      background: rgba(200,240,96,0.1); color: var(--accent);
+      background: rgba(57, 57, 89, 0.1); color: rgba(177, 177, 177, 0.573);
       letter-spacing: 0.06em; text-transform: uppercase;
     }
     .p-tag.alt { background: rgba(123,108,255,0.1); color: var(--accent2); }
     .p-tag.alt2 { background: rgba(255,107,138,0.1); color: var(--accent3); }
+    .p-tag.in-progress { background: rgba(255,183,77,0.15); color: var(--orange); border: 1px solid rgba(255,183,77,0.3); }
     .project-name {
       font-family: 'Syne', sans-serif;
       font-size: 1.25rem; font-weight: 700;
@@ -1003,7 +1065,13 @@
       font-size: 0.9rem; color: var(--muted); line-height: 1.75;
       margin-bottom: 24px; font-style: italic;
     }
-    .test-person { display: flex; align-items: center; gap: 12px; }
+    .test-person { 
+      display: flex; align-items: center; gap: 12px; 
+      text-decoration: none; color: inherit; cursor: pointer;
+    }
+    .test-person:hover .test-name { color: var(--accent); }
+    .test-person:hover .link-arrow { transform: translate(2px, -2px); color: var(--accent); }
+    
     .test-avatar {
       width: 42px; height: 42px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
@@ -1013,7 +1081,16 @@
     .av1 { background: linear-gradient(135deg, var(--accent2), var(--accent3)); }
     .av2 { background: linear-gradient(135deg, var(--accent), #40c0c0); }
     .av3 { background: linear-gradient(135deg, var(--accent3), #ff9900); }
-    .test-name { font-size: 0.88rem; font-weight: 600; }
+    
+    .test-name { 
+      font-size: 0.88rem; font-weight: 600; 
+      display: flex; align-items: center; gap: 6px; 
+      transition: color 0.2s; 
+    }
+    .link-arrow { 
+      font-size: 0.75rem; color: var(--muted); 
+      transition: transform 0.2s, color 0.2s; 
+    }
     .test-role { font-size: 0.75rem; color: var(--muted); }
 
     /* ── Contact ── */
@@ -1079,6 +1156,9 @@
       padding: 40px 60px;
       border-top: 1px solid var(--border);
       display: flex; justify-content: space-between; align-items: center;
+      background: var(--bg); /* Gives it a solid dark background */
+      position: relative; /* Allows z-index to work */
+      z-index: 20; /* Pushes it safely above all the 3D canvases */
     }
     .footer-logo {
       font-family: 'Syne', sans-serif; font-weight: 800;
@@ -1156,6 +1236,173 @@
         bottom: -260px; 
       }
     }
+    /* =========================================
+       NEW: LIST VIEW & DYNAMIC CURSOR STYLES
+       ========================================= */
+    #cursor-text-ring {
+      display: flex; align-items: center; justify-content: center;
+    }
+    #cursor-center-text {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px; font-weight: 700; color: var(--accent);
+      text-align: center; line-height: 1.2; text-transform: uppercase; letter-spacing: 1px;
+    }
+    #cursor-text-ring svg { position: absolute; inset: 0; }
+    #cursor-text-ring text {
+      font-family: 'DM Sans', sans-serif; /* Changed to simple UI font */
+      font-size: 11px; font-weight: 600; fill: var(--accent); letter-spacing: 1.5px;
+    }
+
+    /* Toggle Buttons */
+    .view-toggle { display: flex; gap: 8px; align-items: center; }
+    .view-toggle button {
+      background: transparent; border: 1px solid var(--border); color: var(--muted); 
+      width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+      cursor: none; transition: all 0.2s;
+    }
+    .view-toggle button.active, .view-toggle button:hover {
+      background: var(--card-bg); color: var(--accent); border-color: var(--accent);
+    }
+
+    /* List View Elements (Hidden in Grid) */
+    .project-year { display: none; font-size: 0.9rem; color: var(--muted); font-weight: 500; font-family: 'DM Sans', sans-serif; }
+    .explore-btn-list { display: none; }
+
+    /* Center text stack */
+    #cursor-center-text {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 700; color: var(--accent);
+      line-height: 1.1; text-transform: uppercase; letter-spacing: 1px;
+    }
+
+    /* Center text stack */
+    #cursor-center-text {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 700; color: var(--accent);
+      line-height: 1.1; text-transform: uppercase; letter-spacing: 1px;
+    }
+
+   /* --- THE LIST VIEW OVERRIDE --- */
+    .project-number { display: none; }
+    .read-time-list { display: none; }
+    
+    /* Fix for Title & Tags in normal grid view */
+    .title-tags-wrap { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+    .projects-grid:not(.list-view) .project-name { font-size: 1.25rem; font-weight: 700; margin: 0; }
+    .projects-grid:not(.list-view) .project-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    
+    .projects-grid.list-view { display: flex; flex-direction: column; gap: 16px; }
+    
+    /* The Precise 7-Column Pill Grid */
+    .projects-grid.list-view .project-card {
+      display: grid !important; /* THIS FIXES THE STACKING BUG! */
+      /* Circle | Title+Tags | Year | Desc | ReadTime | ExploreBtn | ExpandBtn */
+      grid-template-columns: 70px 1.5fr 0.5fr 3fr 80px auto 40px;
+      align-items: center; gap: 24px; 
+      padding: 12px 24px 12px 12px;
+      background: #333333; /* Dark pill background */
+      border: none;
+      border-radius: 100px; /* Pill shape */
+      box-shadow: none !important; transform: none !important;
+      transition: background 0.2s;
+    }
+    .projects-grid.list-view .project-card:hover { background: #404040; }
+
+    /* Floating Image for List View */
+    .projects-grid.list-view .project-thumb {
+      position: fixed; width: 340px; height: 200px; z-index: 9999; 
+      pointer-events: none; opacity: 0; border-radius: 12px;
+      transform: translate(-50%, -50%) scale(0.9);
+      box-shadow: 0 30px 60px rgba(0,0,0,0.6); transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+    .projects-grid.list-view .project-card:hover .project-thumb {
+      opacity: 1; transform: translate(-50%, -50%) scale(1);
+    }
+    .projects-grid.list-view .project-overlay { display: none; }
+
+    /* The Circle Placeholder */
+    .projects-grid.list-view .project-number { 
+      display: block; width: 70px; height: 70px; 
+      background: #d9d9d9; border-radius: 50%; flex-shrink: 0;
+    }
+
+    /* List Layout Structure */
+    .projects-grid.list-view .project-info { display: contents; }
+    
+    .projects-grid.list-view .title-tags-wrap { margin: 0; justify-content: center; min-width: 0; }
+    .projects-grid.list-view .project-name { font-size: 1.2rem; margin: 0; font-weight: 500; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    
+    .projects-grid.list-view .project-tags { display: flex; gap: 8px; margin: 0; flex-wrap: wrap; }
+    .projects-grid.list-view .p-tag { 
+      background: transparent; border: 1px solid rgba(255,255,255,0.4); 
+      color: #fff; border-radius: 100px; padding: 4px 12px; font-size: 0.7rem; font-weight: 400; text-transform: none; white-space: nowrap;
+    }
+    
+    .projects-grid.list-view .project-year { display: block; font-size: 1.1rem; font-weight: 700; color: #fff; text-align: center; }
+    
+    .projects-grid.list-view .project-desc {
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; 
+      margin: 0; font-size: 0.8rem; line-height: 1.5; color: #e8e6f0;
+      min-width: 0; /* Prevents long text from breaking the grid layout */
+    }
+
+    .projects-grid.list-view .read-time-list {
+      display: block; font-size: 0.9rem; font-weight: 600; color: #fff; line-height: 1.3; text-align: center; min-width: 0;
+    }
+
+    .projects-grid.list-view .explore-btn-list {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 12px 24px; background: var(--accent); border-radius: 100px; 
+      font-size: 0.9rem; font-weight: 700; color: #0a0a0f; text-decoration: none; border: none; white-space: nowrap;
+    }
+    .projects-grid.list-view .explore-btn-list:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(200,240,96,0.3); background: var(--accent); color: #0a0a0f; }
+
+    /* Expand Button */
+    .projects-grid.list-view .project-card:not(.is-expanded) .expand-btn { 
+      position: static; opacity: 1; transform: scale(1); background: transparent; border: none; color: #fff; font-size: 1.2rem;
+    }
+
+    /* FIX: Make Expanded View Normal even when in List View */
+    .projects-grid.list-view .project-card.is-expanded {
+      display: flex !important; flex-direction: column !important; padding: 0 !important; 
+      background: var(--card-bg) !important; border-radius: 20px !important;
+      position: fixed !important; top: 50% !important; left: 50% !important;
+      transform: translate(-50%, -50%) !important;
+      width: 80vw !important; height: 80vh !important;
+      z-index: 9999 !important; cursor: auto !important;
+    }
+    
+    /* Bring the floating image back into the card */
+    .projects-grid.list-view .project-card.is-expanded .project-thumb {
+      position: relative !important; width: 100% !important; height: 80% !important;
+      opacity: 1 !important; transform: none !important; pointer-events: auto !important;
+      border-radius: 20px 20px 0 0 !important; left: auto !important; top: auto !important;
+      box-shadow: none !important;
+    }
+    
+    .projects-grid.list-view .project-card.is-expanded .project-info { 
+      display: block !important; padding: 24px !important; 
+    }
+    
+    /* Remove the 2-line limit on the description when expanded */
+    .projects-grid.list-view .project-card.is-expanded .project-desc {
+      -webkit-line-clamp: unset !important;
+    }
+    
+    .projects-grid.list-view .project-card.is-expanded .project-number,
+    .projects-grid.list-view .project-card.is-expanded .read-time-list,
+    .projects-grid.list-view .project-card.is-expanded .explore-btn-list,
+    .projects-grid.list-view .project-card.is-expanded .project-year {
+      display: none !important;
+    }
+    .projects-grid.list-view .project-card.is-expanded .title-tags-wrap { margin-bottom: 12px; }
+
+    /* Hide toggle on mobile */
+    @media (max-width: 1024px) { 
+      .view-toggle { display: none !important; } 
+      .projects-grid.list-view .project-card { display: flex !important; flex-direction: column !important; border-radius: 20px; padding: 24px; background: var(--card-bg); }
+      .projects-grid.list-view .project-number { display: none; }
+    }
   </style>
 </head>
 <body>
@@ -1164,10 +1411,18 @@
 <div class="dot-layer">
   <canvas id="dots"></canvas>
 </div>
+<div id="card-backdrop"></div>
 
 <!-- Cursor -->
 <div id="cursor"></div>
 <div id="cursor-ring"></div>
+<div id="cursor-text-ring">
+  <div id="cursor-center-text"></div>
+  <svg viewBox="0 0 100 100">
+    <path id="circlePath" d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0" fill="transparent"/>
+    <text><textPath id="cursor-text-path" href="#circlePath" startOffset="0%">EXPLORE CASE STUDY • EXPLORE CASE STUDY • </textPath></text>
+  </svg>
+</div>
 
 <!-- Nav -->
 <nav>
@@ -1184,7 +1439,11 @@
       <path class="cls-1" d="M198.97,12.54c-21.83.01-43.29,7.85-62.54,17.38C79.39,57.72,35.43,110.41,30.47,175.02c-7.25,86.15,56.98,165.39,142.73,176.3,20.45,2.82,41.56,1.66,61.26-4.51,40.22-12.27,67.52-42.61,56.7-86.13-7.66-28.32-36.46-42.9-63.41-31.11-15.62,6.8-26.74,22.74-27.74,39.77-1.61,13.53,8.41,28.39,21.91,31.18,11.83,2.3,24.41-5.05,28.76-16.24,6.36-16.17-3.12-37.15-25.55-44.06,0,0,0-.83,0-.83,19.72-6,40.42,10.09,43.5,29.87,2.55,13.89-2.38,28.92-12.53,38.82-16.15,16.18-42.32,17.43-59.79,2.74-23.75-19.27-24.1-51.57-8.89-76.48,18.06-30.03,58.57-42.18,90.16-26.96,32.01,15.01,45.98,51.6,41.33,85.19-7.76,61.35-75.42,90.86-131.04,88.65-80.63-1.22-155.31-58.74-178.76-135.64-23.15-70.75-1.28-153.26,55.96-201.37C98.83,14.92,137.04,2.07,181.42,1.87c5.89.13,11.71-.26,17.55-.18,0,0,0,10.84,0,10.84h0Z"/>
       <path class="cls-1" d="M104.53,136.06c.18,12.12-11.61,21.78-23.3,18.34-17.93-5.35-17.93-31.34,0-36.69,11.69-3.44,23.48,6.22,23.3,18.34h0ZM80.34,136.06c.18.48.89.24,1.22-.25,1.27-1.65-.19-4.63-2.63-5.21-3.3-.99-6.71,1.98-6.62,5.47-.09,3.48,3.32,6.45,6.62,5.47,2.43-.58,3.9-3.56,2.63-5.21-.33-.49-1.04-.74-1.22-.25h0Z"/>
     </svg>
-    Ganesh J.
+    <div>
+      Ganesh Javhare
+      <div style="font-size: 0.65rem; font-weight: 500; font-family: 'DM Sans', sans-serif; color: var(--muted); letter-spacing: 0.4em; text-transform: uppercase; margin-top: 2px;">UX Designer</div>
+    </div>
+
   </a>
   <ul class="nav-links">
     <li><a href="#about">About</a></li>
@@ -1328,7 +1587,7 @@
         </div>
         <div class="stat-item">
           <div class="stat-num">2<span>+</span></div>
-          <div class="stat-label">Projects Shipped</div>
+          <div class="stat-label">Projects Delivered</div>
         </div>
         <div class="stat-item">
           <div class="stat-num">6<span>+</span></div>
@@ -1394,91 +1653,113 @@
     <div>
       <div class="section-label">Selected Work</div>
       <h2 class="section-title">Case Studies</h2>
+      <p class="section-sub" style="max-width:320px; margin-top: 10px;">A curated selection of projects spanning product, brand, and design systems.</p>
     </div>
-    <p class="section-sub" style="max-width:320px">A curated selection of projects spanning product, brand, and design systems.</p>
+    <div class="view-toggle">
+      <button id="btn-grid" class="active" title="Grid View">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+      </button>
+      <button id="btn-list" title="List View">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+      </button>
+    </div>
   </div>
 
   <div class="projects-grid">
-    <!-- Card 1 -->
-    <div class="project-card card-lg reveal reveal-left">
-      <div class="project-thumb">
+    <a href="Projects/Case1/maharera.html" target="_blank" class="project-card card-lg reveal reveal-left" style="display: block; text-decoration: none; color: inherit;" data-read-time="15">
+      <div class="project-number"></div> <div class="project-thumb">
         <Img src="mockup.jpg" alt="MahaRERA_Case_Study"></Img>
         <div class="project-thumb-inner thumb-p1">
           <div class="thumb-mockup">
             <div class="mockup-bar"><span></span><span></span><span></span></div>
-            <div class="mockup-lines">
-              <div></div><div></div><div></div><div></div>
-            </div>
+            <div class="mockup-lines"><div></div><div></div><div></div><div></div></div>
           </div>
         </div>
-        <div class="project-overlay"><a href="maharera.html" target="_blank" class="overlay-link">↗</a></div>
+        <div class="project-overlay"></div>
       </div>
       <div class="project-info">
-        <div class="project-tags"><span class="p-tag">Service Design</span><span class="p-tag alt">Web Design</span></div>
-        <div class="project-name">MahaRERA Portal- Gov Tech</div>
-        <div class="project-desc"> Designed a scalable regulatory platform. Simplifying the complex digital journey for over 6M+ users with an intuitive, standardised system and UX design.</div>
+        <div class="title-tags-wrap">
+          <div class="project-name">MahaRERA Portal</div>
+          <div class="project-tags"><span class="p-tag">Gov. Tech</span><span class="p-tag">Website Design</span></div>
+        </div>
+        <div class="project-year">2024</div>
+        <div class="project-desc">Led the end-to-end UX redesign of the Maharashtra Real Estate Regulatory Authority's digital ecosystem. Transforming a complex, fragmented government template into a unified, accessible, and citizen-first transparency platform.</div>
+        <div class="read-time-list">15 min<br>Read</div>
       </div>
-    </div>
+      <span class="explore-btn-list">Explore Project ↗</span>
+      <div class="expand-btn" title="Expand View">⤢</div>
+    </a>
 
-    <!-- Card 2 -->
-    <div class="project-card card-sm reveal reveal-right reveal-delay-1">
-      <div class="project-thumb">
+    <a href="iyr_P2.html" target="_blank" class="project-card card-sm reveal reveal-right reveal-delay-1" style="display: block; text-decoration: none; color: inherit;" data-read-time="8">
+      <div class="project-number"></div> <div class="project-thumb">
         <Img src="MockupIYR.png" alt="MahaRERA_Case_Study"></Img>
         <div class="project-thumb-inner thumb-p2">
-           
           <div class="thumb-mockup">
-            
             <div class="mockup-bar"><span></span><span></span><span></span></div>
             <div class="mockup-lines"><div></div><div></div><div></div></div>
           </div>
         </div>
-        <div class="project-overlay"><a href="iyr_P2.html" target="_blank" class="overlay-link">↗</a></div>
+        <div class="project-overlay"></div>
       </div>
       <div class="project-info">
-        <div class="project-tags"><span class="p-tag alt2">UX Research</span><span class="p-tag">Mobile App</span></div>
-        <div class="project-name">Imagine As You Read</div>
+        <div class="title-tags-wrap">
+          <div class="project-name">Imagine As You Read</div>
+          <div class="project-tags"><span class="p-tag">UX Research</span><span class="p-tag">Mobile App</span></div>
+        </div>
+        <div class="project-year">2024</div>
         <div class="project-desc">A research-led exploration of changing reading habits and experiences in the modern digital era, integrating AI for immersive storytelling.</div>
+        <div class="read-time-list">8 min<br>Read</div>
       </div>
-    </div>
+      <span class="explore-btn-list">Explore Project ↗</span>
+      <div class="expand-btn" title="Expand View">⤢</div>
+    </a>
 
-    <!-- Card 3 -->
-    <div class="project-card card-md reveal reveal-left reveal-delay-1">
-      <div class="project-thumb">
-        
+    <a href="focusxr.html" target="_blank" class="project-card card-md reveal reveal-left reveal-delay-1" style="display: block; text-decoration: none; color: inherit;" data-read-time="12">
+      <div class="project-number"></div> <div class="project-thumb">
         <div class="project-thumb-inner thumb-p3">
           <Img src="focus.gif" alt="MahaRERA_Case_Study"></Img>
           <div class="thumb-mockup">
-            
             <div class="mockup-bar"><span></span><span></span><span></span></div>
             <div class="mockup-lines"><div></div><div></div><div></div><div></div></div>
           </div>
         </div>
-        <div class="project-overlay"><a href="focusxr.html" target="_blank" class="overlay-link">↗</a></div>
+        <div class="project-overlay"></div>
       </div>
       <div class="project-info">
-        <div class="project-tags"><span class="p-tag">SaaS</span><span class="p-tag alt">B2B</span></div>
-        <div class="project-name">FocusXR- Immersive Learning App</div>
+        <div class="title-tags-wrap">
+          <div class="project-name">FocusXR</div>
+          <div class="project-tags"><span class="p-tag">Ed. Tech</span><span class="p-tag">AR & VR</span></div>
+        </div>
+        <div class="project-year">2023</div>
         <div class="project-desc">An immersive XR learning platform designed to transform reading into interactive visual experiences, helping users understand and retain information through spatial storytelling.</div>
+        <div class="read-time-list">12 min<br>Read</div>
       </div>
-    </div>
+      <span class="explore-btn-list">Explore Project ↗</span>
+      <div class="expand-btn" title="Expand View">⤢</div>
+    </a>
 
-    <!-- Card 4 -->
-    <div class="project-card card-md reveal reveal-right reveal-delay-2">
-      <div class="project-thumb">
+    <a href="Projects/Case1/maharera.html" target="_blank" class="project-card card-md reveal reveal-right reveal-delay-2" style="display: block; text-decoration: none; color: inherit;" data-read-time="5">
+      <div class="project-number"></div> <div class="project-thumb">
         <div class="project-thumb-inner thumb-p4">
           <div class="thumb-mockup">
             <div class="mockup-bar"><span></span><span></span><span></span></div>
             <div class="mockup-lines"><div></div><div></div><div></div></div>
           </div>
         </div>
-        <div class="project-overlay"><a href="Projects/Case1/maharera.html" target="_blank" class="overlay-link">↗</a></div>
+        <div class="project-overlay"></div>
       </div>
       <div class="project-info">
-        <div class="project-tags"><span class="p-tag alt2">Branding</span><span class="p-tag">Web Design</span></div>
-        <div class="project-name">ZenSphere- Mindfulness App</div>
+        <div class="title-tags-wrap">
+          <div class="project-name">ZenSphere</div>
+          <div class="project-tags"><span class="p-tag">Mobile App</span><span class="p-tag">Wellness</span></div>
+        </div>
+        <div class="project-year">2023</div>
         <div class="project-desc">A mindful wellbeing platform designed to create personalised meditation and focus experiences through calm, distraction-free digital interactions.</div>
+        <div class="read-time-list">10 min<br>Read</div>
       </div>
-    </div> 
+      <span class="explore-btn-list">Explore Project ↗</span>
+      <div class="expand-btn" title="Expand View">⤢</div>
+    </a> 
   </div>
 </section>
 
@@ -1530,7 +1811,7 @@
         <div class="card">
             <div class="ribbon">Design</div>
             <div class="card-content">
-                <p class="card-text">Rapid ideation, wireframing, and high-fidelity prototyping — iterating quickly based on feedback.</p>
+                <p class="card-text">Rapid ideation, wireframing, and high-fidelity prototyping — Usability  Testing and iterating quickly based on feedback.</p>
                 <div class="icon">
                     <svg viewBox="0 0 24 24">
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm0-7c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
@@ -1546,7 +1827,7 @@
         <div class="card">
             <div class="ribbon">Deliver</div>
             <div class="card-content">
-                <p class="card-text">Usability testing, design handoff, and ongoing collaboration with engineering for quality implementation.</p>
+                <p class="card-text">Design handoff, and ongoing collaboration with engineering for quality implementation.</p>
                 <div class="icon">
                     <svg viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg">
                       <path d="M512 301.2m-10 0a10 10 0 1 0 20 0 10 10 0 1 0-20 0Z" fill="currentColor" />
@@ -1717,52 +1998,67 @@
   <h2 class="section-title reveal" style="margin-bottom:48px;">What colleagues Say</h2>
 
   <div class="testimonials-wrap">
+    
     <div class="testimonial-card reveal">
       <div class="test-quote">"</div>
       <p class="test-text">Ganesh completely transformed how our users experience the product. His research-first approach uncovered insights we'd been missing for years. The redesign increased our NPS by 28 points.</p>
-      <div class="test-person">
+      <a href="https://www.linkedin.com/in/gjuxdesigner/overlay/Certifications/560312584/treasury/?profileId=ACoAABcRq6wBhHBK8GPHH-6qrfjkNpp67T5ep6g" target="_blank" class="test-person">
         <div class="test-avatar av1">VP</div>
         <div>
-          <div class="test-name">Vasant Prabhu</div>
-          <div class="test-role">Secretary, MahaRERA</div>
+          <div class="test-name">Vasant Prabhu <span class="link-arrow">↗</span></div>
+          <div class="test-role">Former Secretary, MahaRERA</div>
         </div>
-      </div>
+      </a>
     </div>
+    
     <div class="testimonial-card reveal reveal-delay-1">
       <div class="test-quote">"</div>
-      <p class="test-text">Working with Ganesh is a masterclass in empathy-led design. He has a rare ability to balance user needs with business goals without ever losing sight of either.</p>
-      <div class="test-person">
+      <p class="test-text">While Working closely with Ganesh at MahaRERA, he showed an exceptional ability to turn complex regulatory workflows into clear, user-friendly digital journeys. The redesigned platform is a direct testament to his precision and dedication to digital transformation.</p>
+      <a href="https://www.linkedin.com/in/dnyaneshvar-hadadare-2042883b/" target="_blank" class="test-person">
+        <div class="test-avatar av2">DH</div>
+        <div>
+          <div class="test-name">Dyaneshwar Hadadare <span class="link-arrow">↗</span></div>
+          <div class="test-role">Former Technical Dep. Head, MahaRERA</div>
+        </div>
+      </a>
+    </div>
+    
+    <div class="testimonial-card reveal reveal-delay-1">
+      <div class="test-quote">"</div>
+      <p class="test-text">Ganesh and I worked together during the MahaRERA digital redesign, and it was an amazing journey. He is a brilliant UX designer who is always looking for the best ways to improve the user experience and grow in his field. He is a natural design lead who keeps the team united and truly believes in the power of collaboration. Ganesh is incredibly passionate about his craft and never hesitates to step up and help his peers whenever they need it.</p>
+      <a href="https://www.linkedin.com/in/akc-rising/" target="_blank" class="test-person">
         <div class="test-avatar av2">AC</div>
         <div>
-          <div class="test-name">Akash Chauhan</div>
-          <div class="test-role">Founder, RERAVision</div>
+          <div class="test-name">Akkashh Chauhaan<span class="link-arrow">↗</span></div>
+          <div class="test-role">Former Sr. Technical Advisor, MahaRERA</div>
         </div>
-      </div>
+      </a>
     </div>
 
     <div class="testimonial-card reveal reveal-delay-1">
       <div class="test-quote">"</div>
       <p class="test-text">Collaborating with Ganesh during our university days was a fantastic experience. His expertise in graphic design and event planning single-handedly elevated the quality of every project we touched. He possesses a sharp eye for aesthetics and a natural instinct for creating memorable, user-centered designs.</p>
-      <div class="test-person">
+      <a href="https://www.linkedin.com/in/sukhbir-singh-36a4a1137/" target="_blank" class="test-person">
         <div class="test-avatar av2">SS</div>
         <div>
-          <div class="test-name">Sukhabir Sing</div>
-          <div class="test-role">Founder, RERAVision</div>
+          <div class="test-name">Sukhabir Sing <span class="link-arrow">↗</span></div>
+          <div class="test-role">Design Manager, PeepalDesign</div>
         </div>
-      </div>
+      </a>
     </div>
    
     <div class="testimonial-card reveal reveal-delay-2">
       <div class="test-quote">"</div>
       <p class="test-text">The design system Ganesh built for us saved our engineering team hundreds of hours and brought visual consistency across our entire platform for the first time.</p>
-      <div class="test-person">
+      
         <div class="test-avatar av3">JJ</div>
         <div>
-          <div class="test-name">Jitendra Joshi</div>
+          <div class="test-name">Jitendra Joshi <span class="link-arrow"></span></div>
           <div class="test-role">IT Manager, MahaRERA</div>
         </div>
-              </div>
+      </a>
     </div>
+
   </div>
 </section>
 
@@ -1826,7 +2122,8 @@
     <button type="submit" class="form-btn" id="form-submit-btn">Send Message →</button>
   </form>
 </section>
-</section>
+
+
 
 <!-- Footer -->
 <footer>
@@ -1901,16 +2198,23 @@
     mouse.active = false; mouse.x = -9999; mouse.y = -9999; 
   });
 
+ const cursorTextRing = document.getElementById('cursor-text-ring');
+  
   function animateRing() {
     rx += (mx - rx) * 0.12;
     ry += (my - ry) * 0.12;
     ring.style.left = rx + 'px';
     ring.style.top = ry + 'px';
+    if(cursorTextRing) {
+      cursorTextRing.style.left = rx + 'px';
+      cursorTextRing.style.top = ry + 'px';
+    }
     requestAnimationFrame(animateRing);
   }
   animateRing();
 
-  document.querySelectorAll('a, button, .project-card, .tool-item, .contact-link').forEach(el => {
+  // Normal hover state for regular links & buttons
+  document.querySelectorAll('a:not(.project-card), button, .tool-item, .contact-link').forEach(el => {
     el.addEventListener('mouseenter', () => {
       cursor.style.width = '20px';
       cursor.style.height = '20px';
@@ -1928,6 +2232,126 @@
       ring.style.borderColor = 'rgba(200,240,96,0.4)';
     });
   });
+// --- LIST VIEW TOGGLE LOGIC ---
+  const btnGrid = document.getElementById('btn-grid');
+  const btnList = document.getElementById('btn-list');
+  const gridContainer = document.querySelector('.projects-grid');
+
+  if(btnGrid && btnList) {
+    btnGrid.addEventListener('click', () => {
+      gridContainer.classList.remove('list-view');
+      btnGrid.classList.add('active');
+      btnList.classList.remove('active');
+      // Clear JS inline styles so CSS Grid takes over again
+      document.querySelectorAll('.project-thumb').forEach(t => { t.style.left = ''; t.style.top = ''; });
+    });
+    btnList.addEventListener('click', () => {
+      gridContainer.classList.add('list-view');
+      btnList.classList.add('active');
+      btnGrid.classList.remove('active');
+    });
+  }
+
+  // Floating Image Follow Tracker for List View
+  document.addEventListener('mousemove', (e) => {
+    if (gridContainer && gridContainer.classList.contains('list-view')) {
+      document.querySelectorAll('.project-card:hover .project-thumb').forEach(thumb => {
+        thumb.style.left = e.clientX + 'px';
+        thumb.style.top = e.clientY + 'px';
+      });
+    }
+  });
+
+  // --- DYNAMIC CIRCULAR TEXT HOVER LOGIC ---
+  document.querySelectorAll('.project-card').forEach(el => {
+    
+    // Main Card Hover (Turns ON circular text)
+    el.addEventListener('mouseenter', () => {
+      cursor.style.width = '6px';
+      cursor.style.height = '6px';
+      cursor.style.background = 'var(--accent)';
+      ring.style.width = '0px';
+      ring.style.height = '0px';
+      ring.style.borderColor = 'transparent';
+      cursorTextRing.style.transform = 'translate(-50%, -50%) scale(1)';
+      cursorTextRing.style.opacity = '1';
+
+      const projectName = el.querySelector('.project-name').innerText;
+      const isProgress = el.querySelector('.p-tag.in-progress');
+      const textPath = document.getElementById('cursor-text-path');
+      const centerText = document.getElementById('cursor-center-text');
+      
+      // Inject Stacked Time and Read text
+      const readTime = el.getAttribute('data-read-time') || '10';
+      centerText.innerHTML = `<span>${readTime} MIN</span><span>READ</span>`;
+
+      // Dynamic text based on In Progress state
+      if (isProgress) {
+        let newText = `EXPLORE ${projectName.toUpperCase()} CASE STUDY • `;
+        if (newText.length < 50) newText += newText; // Ensure it wraps fully
+        textPath.textContent = newText;
+      } else {
+        textPath.textContent = `EXPLORE CASE STUDY • EXPLORE CASE STUDY • `;
+      }
+    });
+
+    // Main Card Leave (Turns OFF circular text)
+    el.addEventListener('mouseleave', () => {
+      cursor.style.width = '12px';
+      cursor.style.height = '12px';
+      cursor.style.background = 'var(--accent)';
+      ring.style.width = '36px';
+      ring.style.height = '36px';
+      ring.style.borderColor = 'rgba(200,240,96,0.4)';
+      cursorTextRing.style.transform = 'translate(-50%, -50%) scale(0)';
+      cursorTextRing.style.opacity = '0';
+    });
+
+    // OVERRIDE: Revert to normal cursor if hovering over buttons inside the card
+    el.querySelectorAll('.expand-btn, .explore-btn-list').forEach(btn => {
+      btn.addEventListener('mouseenter', (e) => {
+        // Hide circular text
+        cursorTextRing.style.transform = 'translate(-50%, -50%) scale(0)';
+        cursorTextRing.style.opacity = '0';
+        
+        // Hide the floating mockup image
+        const thumb = el.querySelector('.project-thumb');
+        if(thumb) {
+            thumb.style.opacity = '0';
+            thumb.style.transform = 'translate(-50%, -50%) scale(0.8)'; // Shrinks it away smoothly
+        }
+
+        // Show normal button hover
+        cursor.style.width = '20px';
+        cursor.style.height = '20px';
+        cursor.style.background = 'var(--accent2)';
+        ring.style.width = '56px';
+        ring.style.height = '56px';
+        ring.style.borderColor = 'rgba(123,108,255,0.5)';
+      });
+      
+      btn.addEventListener('mouseleave', (e) => {
+        // Bring back circular text
+        cursorTextRing.style.transform = 'translate(-50%, -50%) scale(1)';
+        cursorTextRing.style.opacity = '1';
+        
+        // Bring back the floating mockup image (Removes inline style so CSS takes over again)
+        const thumb = el.querySelector('.project-thumb');
+        if(thumb) {
+            thumb.style.opacity = ''; 
+            thumb.style.transform = ''; 
+        }
+
+        // Hide normal hover
+        cursor.style.width = '6px';
+        cursor.style.height = '6px';
+        cursor.style.background = 'var(--accent)';
+        ring.style.width = '0px';
+        ring.style.height = '0px';
+        ring.style.borderColor = 'transparent';
+      });
+    });
+  }); // <--- This was the missing piece!
 
   /* ── Scroll Reveal ── */
   const revealObserver = new IntersectionObserver((entries) => {
@@ -2911,7 +3335,57 @@
       }
     });
   }
+// =====================================================================
+  // --- CARD EXPANSION LOGIC ---
+  // =====================================================================
+  const backdrop = document.getElementById('card-backdrop');
+  let expandedCard = null;
 
+  document.querySelectorAll('.expand-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault(); // Prevents the link from opening
+      e.stopPropagation(); // Stops the click from registering on the card behind it
+
+      const card = btn.closest('.project-card');
+      
+      if (card.classList.contains('is-expanded')) {
+        closeCard();
+      } else {
+        // Open
+        card.classList.add('is-expanded');
+        backdrop.classList.add('active');
+        btn.innerHTML = '✕'; // Change icon to an X
+        expandedCard = card;
+        if(typeof lenis !== 'undefined') lenis.stop(); // Freeze the background scroll
+      }
+    });
+  });
+
+  // Prevent accidental navigation if reading text in the expanded state
+  document.querySelectorAll('.project-info').forEach(info => {
+    info.addEventListener('click', (e) => {
+      const card = info.closest('.project-card');
+      if (card && card.classList.contains('is-expanded')) {
+        e.preventDefault(); 
+        e.stopPropagation();
+      }
+    });
+  });
+
+  function closeCard() {
+    if (expandedCard) {
+      expandedCard.classList.remove('is-expanded');
+      expandedCard.querySelector('.expand-btn').innerHTML = '⤢';
+      expandedCard = null;
+    }
+    backdrop.classList.remove('active');
+    if(typeof lenis !== 'undefined') lenis.start(); // Resume scrolling
+  }
+
+  // Clicking the blurred background also closes the card
+  if (backdrop) {
+    backdrop.addEventListener('click', closeCard);
+  }
 </script>
 </body>
 </html>
