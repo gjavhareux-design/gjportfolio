@@ -876,13 +876,26 @@
       padding: 12px 24px 12px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 100px; box-shadow: none !important; transform: none !important; transition: background 0.2s, border-color 0.2s;
     }
     .projects-grid.list-view .project-card:hover { background: var(--card-bg); border-color: var(--accent); }
+    
+    /* UPDATED: Thumb position for List View so it drops below and to the right of the cursor */
     .projects-grid.list-view .project-thumb {
       position: fixed; width: 340px; height: 200px; z-index: 9999; pointer-events: none; opacity: 0; border-radius: 12px;
-      transform: translate(-50%, -50%) scale(0.9); box-shadow: 0 30px 60px rgba(0,0,0,0.3); transition: opacity 0.2s ease, transform 0.2s ease;
+      transform: translate(15px, 15px) scale(0.9); box-shadow: 0 30px 60px rgba(0,0,0,0.3); transition: opacity 0.2s ease, transform 0.2s ease;
     }
-    .projects-grid.list-view .project-card:hover .project-thumb { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    .projects-grid.list-view .project-card:hover .project-thumb { 
+      opacity: 1; transform: translate(15px, 15px) scale(1); 
+    }
+    
     .projects-grid.list-view .project-overlay { display: none; }
-    .projects-grid.list-view .project-number { display: block; width: 70px; height: 70px; background: var(--border); border-radius: 50%; flex-shrink: 0; }
+    
+    /* UPDATED: Circle for Logo */
+    .projects-grid.list-view .project-number { 
+      display: flex; align-items: center; justify-content: center; width: 70px; height: 70px; background: var(--border); border-radius: 50%; flex-shrink: 0; overflow: hidden; 
+    }
+    .projects-grid.list-view .project-number img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    
     .projects-grid.list-view .project-info { display: contents; }
     .projects-grid.list-view .title-tags-wrap { margin: 0; justify-content: center; min-width: 0; }
     .projects-grid.list-view .project-name { font-size: 1.2rem; margin: 0; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -1064,7 +1077,7 @@
             </div>
 
             <div class="dc-card dc-blue float-anim" style="padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                 <h4 style="font-size: 14px; font-weight: bold; margin-bottom: 4px; margin-left: 14px;">UX Design<br></h4>
+                 <h4 style="font-size: 14px; font-weight: bold; margin-bottom: 4px; margin-left: 14px;color: #261f45;">UX Design<br></h4>
                 <div style="width: 100%; height: 100px; background: rgba(255,255,255,0.2); border-radius: 10px; margin-bottom: 20px;"></div>
                 <div style="width: 80%; height: 10px; background: rgba(255,255,255,0.3); border-radius: 5px; margin-bottom: 10px;"></div>
                 <div style="width: 60%; height: 10px; background: rgba(255,255,255,0.3); border-radius: 5px; margin-bottom: 30px;"></div>
@@ -1163,7 +1176,11 @@
 
   <div class="projects-grid">
     <a href="Projects/Case1/maharera.html" target="_blank" class="project-card card-lg reveal reveal-left" style="display: block; text-decoration: none; color: inherit;" data-read-time="15">
-      <div class="project-number"></div> <div class="project-thumb">
+      <div class="project-number">
+        <!-- REPLACE THE SRC BELOW WITH YOUR LOGO IMAGE LINK -->
+        <img src="mreralogo.jpg" alt="MahaRERA Logo">
+      </div> 
+      <div class="project-thumb">
         <Img src="mockup.jpg" alt="MahaRERA_Case_Study"></Img>
         <div class="project-thumb-inner thumb-p1">
           <div class="thumb-mockup">
@@ -1187,7 +1204,11 @@
     </a>
 
     <a href="iyr_P2.html" target="_blank" class="project-card card-sm reveal reveal-right reveal-delay-1" style="display: block; text-decoration: none; color: inherit;" data-read-time="8">
-      <div class="project-number"></div> <div class="project-thumb">
+      <div class="project-number">
+        <!-- REPLACE THE SRC BELOW WITH YOUR LOGO IMAGE LINK -->
+        <img src="iyrlogo.jpg" alt="IYR Logo">
+      </div> 
+      <div class="project-thumb">
         <Img src="MockupIYR.png" alt="MahaRERA_Case_Study"></Img>
         <div class="project-thumb-inner thumb-p2">
           <div class="thumb-mockup">
@@ -1202,7 +1223,7 @@
           <div class="project-name">Imagine As You Read</div>
           <div class="project-tags"><span class="p-tag">UX Research</span><span class="p-tag">Mobile App</span></div>
         </div>
-        <div class="project-year">2024</div>
+        <div class="project-year">2026</div>
         <div class="project-desc">A research-led exploration of changing reading habits and experiences in the modern digital era, integrating AI for immersive storytelling.</div>
         <div class="read-time-list">8 min<br>Read</div>
       </div>
@@ -1211,7 +1232,11 @@
     </a>
 
     <a href="focusxr.html" target="_blank" class="project-card card-md reveal reveal-left reveal-delay-1" style="display: block; text-decoration: none; color: inherit;" data-read-time="12">
-      <div class="project-number"></div> <div class="project-thumb">
+      <div class="project-number">
+        <!-- REPLACE THE SRC BELOW WITH YOUR LOGO IMAGE LINK -->
+        <img src="foucslogo.jpg" alt="FocusXR Logo">
+      </div> 
+      <div class="project-thumb">
         <div class="project-thumb-inner thumb-p3">
           <Img src="focus.gif" alt="MahaRERA_Case_Study"></Img>
           <div class="thumb-mockup">
@@ -1235,7 +1260,11 @@
     </a>
 
     <a href="Projects/Case1/maharera.html" target="_blank" class="project-card card-md reveal reveal-right reveal-delay-2" style="display: block; text-decoration: none; color: inherit;" data-read-time="5">
-      <div class="project-number"></div> <div class="project-thumb">
+      <div class="project-number">
+        <!-- REPLACE THE SRC BELOW WITH YOUR LOGO IMAGE LINK -->
+        <img src="zplogo.jpg" alt="ZenSphere Logo">
+      </div> 
+      <div class="project-thumb">
         <div class="project-thumb-inner thumb-p4">
           <div class="thumb-mockup">
             <div class="mockup-bar"><span></span><span></span><span></span></div>
@@ -1271,7 +1300,7 @@
     
     <!-- Step 1: Discover -->
     <div class="step reveal reveal-delay-1" style="--theme: var(--cyan); --theme-dark: var(--cyan-dark); --delay: 0.1s;">
-        <div class="bg-number">1</div>
+        <div class="bg-number">1.</div>
         <div class="card">
             <div class="ribbon">Discover</div>
             <div class="card-content">
@@ -1415,69 +1444,76 @@
         <span class="tool-icon" style="width:42px; height:42px; display:flex; align-items:center; justify-content:center;">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Figma-Logo--Streamline-Logos-Block" height="24" width="24">
             <desc>Figma Logo Streamline Icon: https://streamlinehq.com</desc>
-            <path fill="currentColor" fill-rule="evenodd" d="M5 1a4 4 0 0 0 -4 4v14a4 4 0 0 0 4 4h14a4 4 0 0 0 4 -4V5a4 4 0 0 0 -4 -4H5Zm4.09 3h2.364v4.727H9.091A2.364 2.364 0 1 1 9.09 4Zm3.092 5.09V4h2.545a2.546 2.546 0 0 1 0 5.09h-2.545Zm2.363 5.274a2.364 2.364 0 1 0 0 -4.728 2.364 2.364 0 0 0 0 4.728Zm-3.09 0V9.636H9.09a2.364 2.364 0 0 0 0 4.728h2.364Zm0 3.272v-2.363H9.09a2.364 2.364 0 1 0 2.364 2.363Z" clip-rule="evenodd" stroke-width="1"></path>
+            <path fill="#aeee" fill-rule="evenodd" d="M5 1a4 4 0 0 0 -4 4v14a4 4 0 0 0 4 4h14a4 4 0 0 0 4 -4V5a4 4 0 0 0 -4 -4H5Zm4.09 3h2.364v4.727H9.091A2.364 2.364 0 1 1 9.09 4Zm3.092 5.09V4h2.545a2.546 2.546 0 0 1 0 5.09h-2.545Zm2.363 5.274a2.364 2.364 0 1 0 0 -4.728 2.364 2.364 0 0 0 0 4.728Zm-3.09 0V9.636H9.09a2.364 2.364 0 0 0 0 4.728h2.364Zm0 3.272v-2.363H9.09a2.364 2.364 0 1 0 2.364 2.363Z" clip-rule="evenodd" stroke-width="1"></path>
           </svg>
         </span>
-        <span style="font-size:0.85rem; font-weight:600; color: var(--text);">Figma</span>
+        <span style="font-size:0.85rem; font-weight:500; color: var(--text);">Figma</span>
       </div>
 
       <div class="tool-item" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding: 18px 12px; min-height: 130px; text-align:center;">
         <span class="tool-icon" style="width:42px; height:42px; display:flex; align-items:center; justify-content:center;">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Framer-Logo--Streamline-Logos-Block" height="24" width="24">
             <desc>Framer Logo Streamline Icon: https://streamlinehq.com</desc>
-            <path fill="currentColor" fill-rule="evenodd" d="M5 1a4 4 0 0 0 -4 4v14a4 4 0 0 0 4 4h14a4 4 0 0 0 4 -4V5a4 4 0 0 0 -4 -4H5Zm1.91 3.5L12 9.59H6.91v5.092l5.454 5.818v-5.818h4.727l-5.09 -5.091h5.09V4.5H6.909Z" clip-rule="evenodd" stroke-width="1"></path>
+            <path fill="#aeee" fill-rule="evenodd" d="M5 1a4 4 0 0 0 -4 4v14a4 4 0 0 0 4 4h14a4 4 0 0 0 4 -4V5a4 4 0 0 0 -4 -4H5Zm1.91 3.5L12 9.59H6.91v5.092l5.454 5.818v-5.818h4.727l-5.09 -5.091h5.09V4.5H6.909Z" clip-rule="evenodd" stroke-width="1"></path>
           </svg>
         </span>
-        <span style="font-size:0.85rem; font-weight:600; color: var(--text);">Framer</span>
+        <span style="font-size:0.85rem; font-weight:500; color: var(--text);">Framer</span>
       </div>
 
       <div class="tool-item" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding: 18px 12px; min-height: 130px; text-align:center;">
-        <span style="font-size:2rem; font-weight:800;color: inherit;">XD</span>
-        <span style="font-size:0.85rem; font-weight:600; color: var(--text);">Adobe XD</span>
+        <span style="font-size:2rem; font-weight:800;color: #aeee;">
+          XD
+        </span>
+        <span style="font-size:0.85rem; font-weight:500; color: var(--text);">Adobe XD</span>
       </div>
 
       <div class="tool-item" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding: 18px 12px; min-height: 130px; text-align:center;">
-        <span style="font-size:2rem; font-weight:800;color: inherit;">Ai</span>
-        <span style="font-size:0.85rem; font-weight:600; color: var(--text);">Illustrator</span>
+        <span style="font-size:2rem; font-weight:800;color: #aeee;">
+          Ai
+        </span>
+        <span style="font-size:0.85rem; font-weight:500; color: var(--text);">Illustrator</span>
       </div>
 
       <div class="tool-item" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding: 18px 12px; min-height: 130px; text-align:center;">
         <span class="tool-icon" style="width:42px; height:42px; display:flex; align-items:center; justify-content:center;">
-          <svg fill="currentColor" width="15px" height="15px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
+          <svg fill="#aeee" width="15px" height="15px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
             <g id="SVGRepo_iconCarrier">
+              <title>miro</title>
               <path d="M22.728 1.024h-4.356l3.868 6-8.182-6h-4.362l3.872 7.862-8.182-7.862h-4.362l3.806 10.148-3.806 19.804h4.362l8.18-21.234-3.87 21.234h4.36l8.184-23.096-3.87 23.096h4.358l8.248-25.368-8.248-4.584z"/>
             </g>
           </svg>
         </span>
-        <span style="font-size:0.85rem; font-weight:600; color: var(--text);">Miro</span>
+        <span style="font-size:0.85rem; font-weight:500; color: var(--text);">Miro</span>
       </div>
 
       <div class="tool-item" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding: 18px 12px; min-height: 130px; text-align:center;">
         <span class="tool-icon" style="width:42px; height:42px; display:flex; align-items:center; justify-content:center;">
           <svg width="800px" height="800px" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><title>file_type_vscode</title><path d="M29.01,5.03,23.244,2.254a1.742,1.742,0,0,0-1.989.338L2.38,19.8A1.166,1.166,0,0,0,2.3,21.447c.025.027.05.053.077.077l1.541,1.4a1.165,1.165,0,0,0,1.489.066L28.142,5.75A1.158,1.158,0,0,1,30,6.672V6.605A1.748,1.748,0,0,0,29.01,5.03Z" style="fill:#0065a9"/><path d="M29.01,26.97l-5.766,2.777a1.745,1.745,0,0,1-1.989-.338L2.38,12.2A1.166,1.166,0,0,1,2.3,10.553c.025-.027.05-.053.077-.077l1.541-1.4A1.165,1.165,0,0,1,5.41,9.01L28.142,26.25A1.158,1.158,0,0,0,30,25.328V25.4A1.749,1.749,0,0,1,29.01,26.97Z" style="fill:#007acc"/><path d="M23.244,29.747a1.745,1.745,0,0,1-1.989-.338A1.025,1.025,0,0,0,23,28.684V3.316a1.024,1.024,0,0,0-1.749-.724,1.744,1.744,0,0,1,1.989-.339l5.765,2.772A1.748,1.748,0,0,1,30,6.6V25.4a1.748,1.748,0,0,1-.991,1.576Z" style="fill:#1f9cf0"/></svg>
         </span>
-        <span style="font-size:0.85rem; font-weight:600; color: var(--text);">VS Code</span>
+        <span style="font-size:0.85rem; font-weight:500; color: var(--text);">VS Code</span>
       </div>
 
       <div class="tool-item" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding: 18px 12px; min-height: 130px; text-align:center;">
         <span class="tool-icon" style="width:42px; height:42px; display:flex; align-items:center; justify-content:center;">
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path fill="currentColor" d="M12 2a10 10 0 0 0-3.16 19.5c.5.1.68-.22.68-.48 0-.24-.01-.87-.01-1.7-2.77.6-3.36-1.33-3.36-1.33-.45-1.15-1.1-1.45-1.1-1.45-.9-.62.07-.6.07-.6 1 .07 1.54 1.03 1.54 1.03.88 1.52 2.3 1.08 2.86.83.09-.64.35-1.08.63-1.33-2.22-.25-4.55-1.11-4.55-4.95 0-1.1.39-1.99 1.03-2.69-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.55 9.55 0 0 1 12 6.8c.85.004 1.7.11 2.5.32 1.9-1.3 2.74-1.02 2.74-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.58 1.03 2.69 0 3.85-2.34 4.7-4.57 4.95.36.31.68.92.68 1.85 0 1.34-.01 2.42-.01 2.74 0 .26.18.58.69.48A10 10 0 0 0 12 2z"/>
+            <path fill="#aeee" d="M12 2a10 10 0 0 0-3.16 19.5c.5.1.68-.22.68-.48 0-.24-.01-.87-.01-1.7-2.77.6-3.36-1.33-3.36-1.33-.45-1.15-1.1-1.45-1.1-1.45-.9-.62.07-.6.07-.6 1 .07 1.54 1.03 1.54 1.03.88 1.52 2.3 1.08 2.86.83.09-.64.35-1.08.63-1.33-2.22-.25-4.55-1.11-4.55-4.95 0-1.1.39-1.99 1.03-2.69-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.55 9.55 0 0 1 12 6.8c.85.004 1.7.11 2.5.32 1.9-1.3 2.74-1.02 2.74-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.58 1.03 2.69 0 3.85-2.34 4.7-4.57 4.95.36.31.68.92.68 1.85 0 1.34-.01 2.42-.01 2.74 0 .26.18.58.69.48A10 10 0 0 0 12 2z"/>
           </svg>
         </span>
-        <span style="font-size:0.85rem; font-weight:600; color: var(--text);">GitHub</span>
+        <span style="font-size:0.85rem; font-weight:500; color: var(--text);">GitHub</span>
       </div>
 
       <div class="tool-item" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding: 18px 12px; min-height: 130px; text-align:center;">
         <span class="tool-icon" style="width:42px; height:42px; display:flex; align-items:center; justify-content:center;">
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none">
-            <path d="M6 8l-2 4 2 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M18 8l2 4-2 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M10 7h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M10 17h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M6 8l-2 4 2 4" fill="none" stroke="#aeee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M18 8l2 4-2 4" fill="none" stroke="#aeee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M10 7h4" fill="none" stroke="#aeee" stroke-width="2" stroke-linecap="round"/>
+            <path d="M10 17h4" fill="none" stroke="#aeee" stroke-width="2" stroke-linecap="round"/>
           </svg>
         </span>
-        <span style="font-size:0.85rem; font-weight:600; color: var(--text);">HTML/CSS</span>
+        <span style="font-size:0.85rem; font-weight:500; color: var(--text);">HTML/CSS</span>
       </div>
     </div>
 </section>
@@ -1934,7 +1970,7 @@
       chipGroup.add(chip);
 
       const edges = new THREE.EdgesGeometry(chipGeo);
-      const lineMat = new THREE.LineBasicMaterial({ color: isLight ? 0x999999 : 0x00d2ff, transparent: true, opacity: 0.3 });
+      const lineMat = new THREE.LineBasicMaterial({ color: isLight ? 0x999999 : 0x00d2ff, transparent: true, opacity: 0.5 });
       const chipWireframe = new THREE.LineSegments(edges, lineMat);
       chipGroup.add(chipWireframe);
 
@@ -1946,7 +1982,7 @@
       
       function drawAIText(theme) {
           ctxText.clearRect(0,0,256,256);
-          const accentHex = theme === 'light' ? '#888888' : '#00d2ff';
+          const accentHex = theme === 'light' ? '#ff5f00' : '#00d2ff';
           ctxText.fillStyle = accentHex;
           ctxText.font = 'bold 80px "Syne", sans-serif';
           ctxText.textAlign = 'center';
@@ -1972,7 +2008,7 @@
       scene.add(circuitsGroup);
       const signals = [];
       const pathsData = [];
-      const pathMaterial = new THREE.LineBasicMaterial({ color: isLight ? 0xbbbbbb : 0x00d2ff, transparent: true, width: 5, opacity: 0.4 });
+      const pathMaterial = new THREE.LineBasicMaterial({ color: isLight ? 0xbbbbbb : 0x00d2ff, transparent: true, width: 5, opacity: 0.15 });
 
       function createMotherboardTraces(side) {
           const pins = 15; const spacing = 2.0; 
@@ -2013,7 +2049,7 @@
 
       // Glowing signals
       function updateSignalColors(theme) {
-          const accentColor = new THREE.Color(theme === 'light' ? 0xff2800 : 0xc8f060);
+          const accentColor = new THREE.Color(theme === 'light' ? 0xff5f00 : 0xc8f060);
           signals.forEach(sig => {
               const sigColors = sig.line.geometry.attributes.color.array;
               for(let i=0; i<=sig.segments; i++) {
@@ -2041,7 +2077,7 @@
           sigGeo.setAttribute('color', new THREE.BufferAttribute(sigColors, 3));
 
           const sigMat = new THREE.LineBasicMaterial({
-              vertexColors: true, blending: THREE.AdditiveBlending, transparent: true, opacity: 1, depthWrite: false, linewidth: 2
+              vertexColors: true, blending: THREE.AdditiveBlending, transparent: true, opacity: 0.95, depthWrite: false, linewidth: 2
           });
           const sigLine = new THREE.Line(sigGeo, sigMat);
           circuitsGroup.add(sigLine);
@@ -2073,7 +2109,7 @@
       for(let i=0; i<pCount*3; i++) pPos[i] = (Math.random() - 0.5) * 250; 
       particleGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
       const particleMat = new THREE.PointsMaterial({ 
-          color: isLight ? 0xff2800 : 0xffc800, size: 0.8, transparent: true, opacity: 0.7, blending: THREE.AdditiveBlending
+          color: isLight ? 0xff5f00 : 0x00d2ff, size: 0.8, transparent: true, opacity: 0.3, blending: THREE.AdditiveBlending
       });
       const particles = new THREE.Points(particleGeo, particleMat);
       scene.add(particles);
