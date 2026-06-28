@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -17,6 +17,7 @@
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
+      /* Default Dark Mode Theme */
       --bg: #0a0a0f;
       --surface: rgba(19, 18, 18, 0.881);
       --border: rgba(255,255,255,0.07);
@@ -26,7 +27,28 @@
       --accent2: #7b6cff;
       --accent3: #ff6b8a;
       --card-bg: #14141e;
-       /* New Process Colors */
+      --btn-text: #0a0a0f;
+      
+      /* Navigation Background Variable */
+      --nav-bg: rgba(10, 10, 15, 0.9);
+      
+      /* Hero DesignCode Card Variables (Original Dark Mode) */
+      --dc-bg: rgba(35, 25, 65, 0.85);
+      --dc-shadow: rgba(0, 0, 0, 0.4);
+      --dc-border: rgba(255, 255, 255, 0.1);
+      --dc-text: #ffffff;
+      --dc-muted: rgba(255, 255, 255, 0.6);
+      --dc-line-1: rgba(255, 255, 255, 0.3);
+      --dc-line-2: rgba(255, 255, 255, 0.2);
+      --dc-line-3: rgba(255, 255, 255, 0.1);
+      --dc-line-4: rgba(255, 255, 255, 0.05);
+      --dc-box-bg: rgba(0, 0, 0, 0.2);
+      --dc-box-bg2: rgba(0, 0, 0, 0.1);
+      --dc-blue-bg: #d2fc67e4;
+      --dc-blue-shadow: rgba(0, 255, 110, 0.4);
+      --dc-blue-text: #0a0a0f;
+
+       /* Process Colors */
       --cyan: #4dd0e1;
       --cyan-dark: #009eb3;
       --orange: #ffb74d;
@@ -37,7 +59,48 @@
       --teal-dark: #2a8a81;
     }
 
-    /* Note: Removed native scroll-behavior: smooth as Lenis will handle this smoothly now */
+    /* Light Mode Theme Overrides */
+    [data-theme="light"] {
+      --bg: #F9F7F5; /* Soft off-white */
+      --surface: rgba(240, 235, 230, 0.88);
+      --border: rgba(0, 0, 0, 0.1);
+      --text: #1a1a24;
+      --muted: #666677;
+      --accent: #ff5f00; /* Fluorescent Orange */
+      --accent2: #ff2a85;
+      --accent3: #ffbd2e;
+      --card-bg: #FFFFFF;
+      --btn-text: #ffffff;
+      
+      --nav-bg: rgba(249, 247, 245, 0.9);
+      
+      /* Hero DesignCode Card Variables (Light Mode) */
+      --dc-bg: var(--card-bg);
+      --dc-shadow: rgba(0, 0, 0, 0.1);
+      --dc-border: var(--border);
+      --dc-text: var(--text);
+      --dc-muted: var(--muted);
+      --dc-line-1: rgba(0, 0, 0, 0.15);
+      --dc-line-2: rgba(0, 0, 0, 0.1);
+      --dc-line-3: rgba(0, 0, 0, 0.05);
+      --dc-line-4: rgba(0, 0, 0, 0.02);
+      --dc-box-bg: rgba(0, 0, 0, 0.05);
+      --dc-box-bg2: rgba(0, 0, 0, 0.02);
+      --dc-blue-bg: var(--accent);
+      --dc-blue-shadow: rgba(255, 95, 0, 0.3);
+      --dc-blue-text: #ffffff;
+      
+      /* Darker process colors for readability in light mode */
+      --cyan: #009eb3;
+      --cyan-dark: #007a8a;
+      --orange: #db8c16;
+      --orange-dark: #b87512;
+      --purple: #91449e;
+      --purple-dark: #72357a;
+      --teal: #2a8a81;
+      --teal-dark: #1f6b64;
+    }
+
     html { overscroll-behavior: none; }
 
     body {
@@ -46,9 +109,9 @@
       color: var(--text);
       overflow-x: hidden;
       cursor: none;
+      transition: background-color 0.5s ease, color 0.5s ease;
     }
 
-    /* ── Custom Cursor ── */
     /* ── Custom Cursor ── */
     #cursor {
       position: fixed; top: 0; left: 0;
@@ -63,7 +126,8 @@
     #cursor-ring {
       position: fixed; top: 0; left: 0;
       width: 36px; height: 36px;
-      border: 1.5px solid rgba(200,240,96,0.4);
+      border: 1.5px solid var(--accent);
+      opacity: 0.4;
       border-radius: 50%;
       pointer-events: none;
       z-index: 9998;
@@ -118,16 +182,27 @@
         display: block;
     }
 
-    /* ── Nav ── */
+    /* ── Nav (Centered using Grid) ── */
     nav {
       position: fixed; top: 0; width: 100%;
       padding: 24px 60px;
-      display: flex; justify-content: space-between; align-items: center;
+      display: grid; 
+      grid-template-columns: 1fr auto 1fr; /* Allows absolute centering */
+      align-items: center;
       z-index: 100;
-      background: linear-gradient(to bottom, rgba(10,10,15,0.95), transparent);
-      backdrop-filter: blur(0px);
+      background: transparent;
+      border-bottom: 1px solid transparent;
+      transition: background 0.3s ease, backdrop-filter 0.3s ease, border-color 0.3s ease, padding 0.3s ease;
     }
+    nav.scrolled {
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      background: var(--nav-bg);
+      border-bottom: 1px solid var(--border);
+    }
+    
     .nav-logo { 
+      justify-self: start;
       font-family: 'Syne', sans-serif;
       font-weight: 750; font-size: 1.2rem;
       letter-spacing: -0.02em;
@@ -139,12 +214,15 @@
       z-index: 1001; 
     }
     .brand-icon { height: 42px; width: auto; object-fit: contain; }
-    .nav-links { display: flex; gap: 15px; list-style: none; align-items: center; }
-
-    .nav-logo span { color: var(--accent); }
-    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .brand-icon .cls-1 { fill: var(--accent); transition: fill 0.5s ease; }
+    
+    .nav-links { 
+      justify-self: center;
+      display: flex; gap: 36px; list-style: none; align-items: center; 
+      margin: 0; padding: 0;
+    }
     .nav-links a {
-      font-size: 0.85rem; font-weight: 400;
+      font-size: 0.85rem; font-weight: 600;
       color: var(--muted); text-decoration: none;
       letter-spacing: 0.04em; text-transform: uppercase;
       transition: color 0.2s;
@@ -157,14 +235,27 @@
     }
     .nav-links a:hover { color: var(--text); }
     .nav-links a:hover::after { width: 100%; }
+    
+    .nav-right-group { justify-self: end; display: flex; align-items: center; gap: 24px; }
+    
     .nav-cta {
-      background: var(--accent); color: #0a0a0f;
+      background: var(--accent); color: var(--btn-text);
       padding: 9px 22px; border-radius: 100px;
-      font-size: 0.82rem; font-weight: 600;
+      font-size: 0.82rem; font-weight: 700;
       text-decoration: none; letter-spacing: 0.02em;
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: transform 0.2s, box-shadow 0.2s, background 0.3s, color 0.3s;
     }
-    .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(200,240,96,0.3); }
+    .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255, 95, 0, 0.3); }
+
+    /* Theme Toggle Button */
+    .theme-toggle-btn {
+      background: none; border: none; color: var(--text);
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: none; transition: background 0.3s, transform 0.3s;
+    }
+    .theme-toggle-btn:hover { background: var(--border); transform: rotate(15deg); }
+    .theme-toggle-btn svg { width: 20px; height: 20px; fill: currentColor; }
 
     /* ── Hero ── */
     #hero {
@@ -181,36 +272,35 @@
       position: relative;
       z-index: 2;
     }
-    .hero-left {
-      flex: 1;
-      max-width: 650px;
-    }
+    .hero-left { flex: 1; max-width: 650px; }
     .hero-grid-bg {
       position: absolute; inset: 0;
       background-image:
-        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
       background-size: 80px 80px;
       mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);
+      -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);
+      transition: background-image 0.5s ease;
     }
-    .hero-orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(80px);
-      pointer-events: none;
-    }
+    .hero-orb { position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none; }
+    
     .orb1 {
       width: 200px; height: 600px;
       background: radial-gradient(circle, rgba(123,108,255,0.18), transparent 70%);
       top: -100px; right: -100px;
       animation: orbFloat 8s ease-in-out infinite;
     }
+    [data-theme="light"] .orb1 { background: radial-gradient(circle, rgba(255,94,0,0.15), transparent 70%); }
+    
     .orb2 {
       width: 400px; height: 400px;
       background: radial-gradient(circle, rgba(200,240,96,0.1), transparent 70%);
       bottom: 0; left: 100px;
       animation: orbFloat 10s ease-in-out infinite reverse;
     }
+    [data-theme="light"] .orb2 { background: radial-gradient(circle, rgba(255,189,46,0.15), transparent 70%); }
+
     @keyframes orbFloat {
       0%, 100% { transform: translateY(0) scale(1); }
       50% { transform: translateY(-30px) scale(1.05); }
@@ -236,9 +326,7 @@
       letter-spacing: -0.01em;
       margin-bottom: 32px;
     }
-    .hero-headline .line {
-      display: block; overflow: hidden;
-    }
+    .hero-headline .line { display: block; overflow: hidden; }
     .hero-headline .line span {
       display: block;
       opacity: 0; transform: translateY(100%);
@@ -247,14 +335,9 @@
     .hero-headline .line:nth-child(1) span { animation-delay: 0.4s; }
     .hero-headline .line:nth-child(2) span { animation-delay: 0.55s; }
     .hero-headline .line:nth-child(3) span { animation-delay: 0.7s; }
-    @keyframes lineReveal {
-      to { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes lineReveal { to { opacity: 1; transform: translateY(0); } }
 
-    .hero-headline .stroke {
-      -webkit-text-stroke: 2px var(--text);
-      color: transparent;
-    }
+    .hero-headline .stroke { -webkit-text-stroke: 1px var(--text); color: transparent; }
     .hero-headline .accent-word { color: var(--accent); }
 
     .hero-sub {
@@ -264,20 +347,19 @@
       opacity: 0; animation: fadeUp 0.7s 1s forwards;
     }
 
-    .hero-actions {
-      display: flex; gap: 16px; align-items: center;
-      opacity: 0; animation: fadeUp 0.7s 1.15s forwards;
-    }
+    .hero-actions { display: flex; gap: 16px; align-items: center; opacity: 0; animation: fadeUp 0.7s 1.15s forwards; }
+    
     .btn-primary {
-      background: var(--accent); color: #0a0a0f;
+      background: var(--accent); color: var(--btn-text);
       padding: 14px 32px; border-radius: 100px;
       font-size: 0.9rem; font-weight: 600; text-decoration: none;
       display: inline-flex; align-items: center; gap: 8px;
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: transform 0.2s, box-shadow 0.2s, background 0.3s;
     }
-    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(200,240,96,0.35); }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(255,95,0,0.3); }
+    
     .btn-secondary {
-      color: var(--text); font-size: 0.9rem; font-weight: 400;
+      color: var(--text); font-size: 0.9rem; font-weight: 500;
       text-decoration: none;
       display: inline-flex; align-items: center; gap: 8px;
       border-bottom: 1px solid var(--border);
@@ -300,14 +382,14 @@
       color: var(--text); line-height: 1;
     }
     .stat-num span { color: var(--accent); }
-    .stat-label { font-size: 0.75rem; color: var(--muted); margin-top: 4px; letter-spacing: 0.06em; }
+    .stat-label { font-size: 0.75rem; color: var(--muted); margin-top: 4px; letter-spacing: 0.06em; font-weight: 600; }
 
     .scroll-indicator {
       position: absolute; bottom: 32px; left: 60px;
       display: flex; align-items: center; gap: 12px;
       font-size: 0.75rem; color: var(--muted); letter-spacing: 0.08em;
       text-transform: uppercase;
-      opacity: 0; animation: fadeUp 0.7s 1.5s forwards;
+      opacity: 0; animation: fadeUp 0.7s 1.5s forwards; font-weight: 600;
     }
     .scroll-line {
       width: 40px; height: 1px; background: var(--muted);
@@ -329,97 +411,49 @@
     .hero-right {
       position: relative; z-index: 2;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      height: 100%;
-      flex: 1;
-      min-width: 0;
+      height: 100%; flex: 1; min-width: 0;
     }
-
     .hero-visuals {
-      perspective: 1200px; /* Deep perspective for 3D effect */
-      width: 100%;
-      max-width: 400px;
-      height: 400px;
-      position: relative;
-      margin: 0 auto;
-      z-index: 5;
+      perspective: 1200px;
+      width: 100%; max-width: 400px; height: 400px;
+      position: relative; margin: 0 auto; z-index: 5;
     }
-
     .floating-cards-group {
-      position: relative;
-      width: 100%;
-      height: 80%;
+      position: relative; width: 100%; height: 80%;
       transform-style: preserve-3d;
-      /* Base 3D Isometric Tilt */
       transform: rotateX(15deg) rotateY(-20deg) rotateZ(5deg);
       transition: transform 0.4s ease-out;
     }
-
-    /* Base Card Styling matching DesignCode */
     .dc-card {
       position: absolute;
-      background: rgba(35, 25, 65, 0.85); /* Deep purple glass */
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: var(--dc-bg);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--dc-border);
       border-radius: 14px;
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-      transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+      box-shadow: 0 30px 60px var(--dc-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.3s, box-shadow 0.3s, border-color 0.3s;
       overflow: hidden;
     }
-
-    /* 1. Main Background Window */
-    .dc-main {
-      width: 450px; height: 240px;
-      top: 15%; left: 10%;
-      z-index: 10;
-      transform: translateZ(-80px);
+    .dc-card h4 {
+      color: var(--dc-text);
+      transition: color 0.3s;
     }
+    .dc-main { width: 450px; height: 240px; top: 15%; left: 10%; z-index: 10; transform: translateZ(-80px); }
+    .dc-cert-back { width: 200px; height: 110px; top: 0%; left: 20%; z-index: 5; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); transform: translateZ(-150px); }
+    .dc-cert-front { width: 200px; height: 110px; top: 5%; left: -5%; z-index: 8; background: linear-gradient(135deg, #9b51e0 0%, #ff2a85 100%); transform: translateZ(-100px); }
+    .dc-left { width: 200px; height: 100px; bottom: 10%; left: -10%; z-index: 20; transform: translateZ(60px); }
+    .dc-right { width: 180px; height: 180px; bottom: 5%; right: -5%; z-index: 15; transform: translateZ(40px); }
+    .dc-blue { width: 110px; height: 230px; bottom: 2%; left: 38%; z-index: 30; background: var(--dc-blue-bg); box-shadow: 0 30px 60px var(--dc-blue-shadow); transform: translateZ(120px); }
+    .dc-blue h4 { color: var(--dc-blue-text); }
+    
+    /* Preserve solid white text on the colourful gradient cards specifically */
+    .dc-cert-back h4, .dc-cert-front h4 { color: white !important; }
 
-    /* 2. Top Left Certificate (Back) */
-    .dc-cert-back {
-      width: 200px; height: 110px;
-      top: 0%; left: 20%;
-      z-index: 5;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      transform: translateZ(-150px);
-    }
+    /* Light Mode Overrides for purely colorful cards */
+    [data-theme="light"] .dc-cert-back { background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%); }
+    [data-theme="light"] .dc-cert-front { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); }
+    [data-theme="light"] .dc-cert-back h4, [data-theme="light"] .dc-cert-front h4 { color: #1a1a24 !important; }
 
-    /* 3. Top Left Certificate (Front) */
-    .dc-cert-front {
-      width: 200px; height: 110px;
-      top: 5%; left: -5%;
-      z-index: 8;
-      background: linear-gradient(135deg, #9b51e0 0%, #ff2a85 100%);
-      transform: translateZ(-100px);
-    }
-
-    /* 4. Bottom Left List Card */
-    .dc-left {
-      width: 200px; height: 100px;
-      bottom: 10%; left: -10%;
-      z-index: 20;
-      transform: translateZ(60px);
-    }
-
-    /* 5. Bottom Right List Card */
-    .dc-right {
-      width: 180px; height: 180px;
-      bottom: 5%; right: -5%;
-      z-index: 15;
-      transform: translateZ(40px);
-    }
-
-    /* 6. Center accent Mobile Card */
-    .dc-blue {
-      width: 110px; height: 230px;
-      bottom: 2%; left: 38%;
-      z-index: 30;
-      background: #d2fc67e4; /* DesignCode signature blue */
-      box-shadow: 0 30px 60px rgba(0, 255, 110, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.4);
-      transform: translateZ(120px);
-    }
-
-    /* HOVER STATES: The "Spread" Effect */
     .hero-visuals:hover .dc-main { transform: translateZ(-50px) translateY(-10px); }
     .hero-visuals:hover .dc-cert-back { transform: translateZ(-120px) translateX(20px) translateY(-30px); }
     .hero-visuals:hover .dc-cert-front { transform: translateZ(-60px) translateX(-30px) translateY(-20px); }
@@ -427,7 +461,6 @@
     .hero-visuals:hover .dc-right { transform: translateZ(70px) translateX(40px) translateY(20px); }
     .hero-visuals:hover .dc-blue { transform: translateZ(160px) translateY(30px); }
 
-    /* Continuous Floating Animation */
     .float-anim { animation: floatLayer 6s ease-in-out infinite alternate; }
     .dc-main { animation-delay: -1s; animation-duration: 5s;}
     .dc-cert-back { animation-delay: -3s; animation-duration: 5s;}
@@ -436,160 +469,95 @@
     .dc-right { animation-delay: -4s; animation-duration: 7.5s;}
     .dc-blue { animation-delay: -1.5s; animation-duration: 5.5s;}
 
-    @keyframes floatLayer {
-      0% { margin-top: 0px; }
-      100% { margin-top: -15px; }
-    }
+    @keyframes floatLayer { 0% { margin-top: 0px; } 100% { margin-top: -15px; } }
 
     /* ── Section Base ── */
     section { padding: 100px 60px; position: relative; }
     .section-label {
-      font-size: 0.72rem; font-weight: 500;
+      font-size: 0.72rem; font-weight: 700;
       color: var(--accent); letter-spacing: 0.14em; text-transform: uppercase;
-      margin-bottom: 16px;
-      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
     }
-    .section-label::before {
-      content: ''; width: 24px; height: 1px; background: var(--accent);
-    }
+    .section-label::before { content: ''; width: 24px; height: 2px; background: var(--accent); }
     .section-title {
       font-family: 'Syne', sans-serif;
       font-size: clamp(2rem, 4vw, 3.2rem);
       font-weight: 700; line-height: 1.15;
-      letter-spacing: -0.02em;
-      margin-bottom: 20px;
+      letter-spacing: -0.02em; margin-bottom: 20px;
     }
-    .section-sub {
-      font-size: 1rem; color: var(--muted);
-      max-width: 480px; line-height: 1.7;
-    }
-    .section-sub2 {
-      font-size: 1rem; color: var(--muted);
-      max-width: 1480px; line-height: 1.7;
-    }
+    .section-sub { font-size: 1rem; color: var(--muted); font-weight: 500; max-width: 480px; line-height: 1.7; }
+    .section-sub2 { font-size: 1rem; color: var(--muted); font-weight: 500; max-width: 1480px; line-height: 1.7; }
 
     /* ── About ── */
     #about {
       display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
-      overflow: hidden; /* This crops the globe exactly at the section boundary */
+      overflow: hidden; 
     }
-    .about-visual, .about-content {
-      position: relative;
-      z-index: 2; /* Ensures content sits above the globe */
-    }
-    
-    /* 3D Globe Container */
+    .about-visual, .about-content { position: relative; z-index: 2; }
     #about-globe-container {
-      position: absolute;
-      bottom: -460px; /* Show only ~1/3rd of the top (700px height - 460px hidden = 240px visible) */
-      left: 35%;/* Center horizontally */
-      transform: translateX(-50%);/* Adjust horizontal centering based on visual balance */
-      width: 700px;
-      height: 700px;
-      z-index: 0;
-      pointer-events: none;
-      opacity: 0.8;
+      position: absolute; bottom: -460px; left: 35%; transform: translateX(-50%);
+      width: 700px; height: 700px; z-index: 0; pointer-events: none; opacity: 0.8;
     }
-    #about-globe-container canvas {
-      width: 100% !important;
-      height: 100% !important;
-      display: block;
-    }
-
-    .about-visual {
-      position: relative; height: 420px;
-    }
+    #about-globe-container canvas { width: 100% !important; height: 100% !important; display: block; }
+    .about-visual { position: relative; height: 420px; }
     .about-img-frame {
       position: absolute; top: 0; left: 120px;
-      width: 340px; height: 420px;
-      object-fit: fit-content;
-      border-radius: 20px;
-      background: linear-gradient(135deg, var(--accent2), var(--accent3));
+      width: 340px; height: 420px; object-fit: fit-content;
+      border-radius: 20px; background: linear-gradient(135deg, var(--accent2), var(--accent3));
       overflow: hidden;
     }
     .about-img-inner {
-      width: 100%; height: 100%;
-      object-fit: fit-content;
-      background: linear-gradient(160deg, #1c1c2e 0%, #2a1a2e 50%, #1a1a1a 100%);
-      display: flex; align-items: center; justify-content: fit-content;
+      width: 100%; height: 100%; object-fit: fit-content;
+      background: var(--card-bg); display: flex; align-items: center; justify-content: fit-content;
     }
-    .about-img-inner img {
-      width: 100%;
-      height: 118%;
-      object-fit: contain; /* This forces the image to fit perfectly without cropping */
-      object-position: center; /* Keeps it perfectly centered */
-    }
-    .about-avatar-svg { width: 220px; opacity: 0.9; }
+    .about-img-inner img { width: 100%; height: 118%; object-fit: contain; object-position: center; }
     .about-badge {
       position: absolute; right: 60px; top: -60px;
-      background:rgba(29, 29, 29, 0.577); border: 1px solid var(--border); 
-      border-radius: 16px; padding: 20px 25px;
-      width: 200px;
+      background: var(--surface); border: 1px solid var(--border); 
+      border-radius: 16px; padding: 20px 25px; width: 200px;
+      backdrop-filter: blur(10px);
     }
-    .badge-title { font-size: 0.78rem; color: var(--muted); margin-bottom: 2px; }
-    .badge-val {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.2rem; font-weight: 500;
-    }
+    .badge-title { font-size: 0.78rem; font-weight: 600; color: var(--muted); margin-bottom: 2px; }
+    .badge-val { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 700; color: var(--text); }
     
     .about-badge2 {
-      position: absolute; 
-      left: 60px; 
-      top: 350px;  
-      bottom: auto; 
-      right: auto;
-      height: max-content; /* Strictly prevents the massive stretch glitch */
-      max-height: 100px;
-      background: var(--accent); color: #0a0a0f;
+      position: absolute; left: 60px; top: 350px; bottom: auto; right: auto;
+      height: max-content; max-height: 100px;
+      background: var(--accent); border: none;
       border-radius: 16px; padding: 24px 20px !important;
-      z-index: 10;
-      width: 220px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+      z-index: 10; width: 220px; box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      display: flex; flex-direction: column; justify-content: center;
     }
     .about-badge2 .badge-title { color: rgba(10,10,15,0.6); }
-    .about-badge2 .badge-val { font-size: 1.1rem; }
+    .about-badge2 .badge-val { font-size: 1.1rem; color: #0a0a0f; }
 
-    .about-tags {
-      display: flex; flex-wrap: wrap; gap: 8px;
-      margin: 28px 0;
-    }
+    .about-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 28px 0; }
     .tag {
-      padding: 6px 16px; border-radius: 100px;
-      border: 1px solid var(--border);
-      font-size: 0.8rem; color: var(--muted);
-      transition: all 0.2s;
+      padding: 6px 16px; border-radius: 100px; border: 1px solid var(--border);
+      font-size: 0.8rem; font-weight: 600; color: var(--muted); transition: all 0.2s;
     }
-    /*.tag:hover { border-color: var(--accent); color: var(--accent); }*/
-    .about-bio {
-      font-size: 0.95rem; line-height: 1.8; color: var(--muted);
-      margin-bottom: 32px;
-    }
+    .about-bio { font-size: 0.95rem; font-weight: 500; line-height: 1.8; color: var(--muted); margin-bottom: 32px; }
 
    /* ── Work / Projects ── */
-    #work { background: var(--surface); }
+    #work { background: var(--surface); transition: background 0.5s; }
 
-    /* Expanded Card State & Overlay */
     #card-backdrop {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background: rgba(10, 10, 15, 0.85); backdrop-filter: blur(12px);
       z-index: 9990; opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
     }
+    [data-theme="light"] #card-backdrop { background: rgba(255, 255, 255, 0.85); }
     #card-backdrop.active { opacity: 1; pointer-events: all; cursor: pointer; }
 
     .expand-btn {
-      position: absolute; top: 20px; right: 20px;
-      width: 44px; height: 44px;
-      background: rgba(10, 10, 15, 0.6); backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 50%;
+      position: absolute; top: 20px; right: 20px; width: 44px; height: 44px;
+      background: var(--surface); backdrop-filter: blur(8px);
+      border: 1px solid var(--border); border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      color: var(--text); font-size: 1.4rem;
-      z-index: 20; opacity: 0; transform: scale(0.9); transition: all 0.3s ease;
+      color: var(--text); font-size: 1.4rem; z-index: 20; opacity: 0; transform: scale(0.9); transition: all 0.3s ease;
     }
     .project-card:hover .expand-btn { opacity: 1; transform: scale(1); }
-    .expand-btn:hover { background: var(--accent); color: #0a0a0f; }
+    .expand-btn:hover { background: var(--accent); color: var(--btn-text); border-color: var(--accent); }
 
     .project-card.is-expanded {
       position: fixed !important; top: 50% !important; left: 50% !important;
@@ -597,169 +565,68 @@
       width: 80vw !important; height: 80vh !important;
       z-index: 9999 !important; margin: 0 !important;
       display: flex; flex-direction: column;
-      box-shadow: 0 40px 100px rgba(0,0,0,0.8);
-      cursor: auto;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.3); cursor: auto;
     }
     .project-card.is-expanded .project-thumb { height: 80%; flex-shrink: 0; }
-    .project-card.is-expanded .project-thumb img, .project-card.is-expanded .project-thumb Img { object-position: top center; }
+    .project-card.is-expanded .project-thumb img { object-position: top center; }
     .project-card.is-expanded .project-info { flex-grow: 1; overflow-y: auto; background: var(--card-bg); }
-    .work-header {
-      display: flex; justify-content: space-between; align-items: flex-end;
-      margin-bottom: 64px;
-    }
-    .projects-grid {
-      display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px;
-    }
+    .work-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 64px; }
+    .projects-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; }
     .project-card {
-      border-radius: 20px; overflow: hidden;
-      background: var(--card-bg); border: 1px solid var(--border);
-      position: relative; cursor: none;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border-radius: 20px; overflow: hidden; background: var(--card-bg); border: 1px solid var(--border);
+      position: relative; cursor: none; transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s, border-color 0.3s;
     }
-    .project-card:hover { transform: translateY(-6px); box-shadow: 0 24px 60px rgba(0,0,0,0.5); }
+    .project-card:hover { transform: translateY(-6px); box-shadow: 0 24px 60px rgba(0,0,0,0.15); }
     .project-card:hover .project-overlay { opacity: 1; }
     .project-card:hover .project-thumb { transform: scale(1.04); }
 
-    .card-lg { grid-column: span 7; }
-    .card-sm { grid-column: span 5; }
-    .card-md { grid-column: span 6; }
-    .card-full { grid-column: span 12; }
+    .card-lg { grid-column: span 7; } .card-sm { grid-column: span 5; } .card-md { grid-column: span 6; } .card-full { grid-column: span 12; }
 
     .project-thumb {
-  width: 100%; 
-  aspect-ratio: 16/9;
-  transition: transform 0.5s ease;
-  border-radius: 20px 20px 0 0;
-  position: relative; 
-  overflow: hidden;
-}
-
-.project-thumb img, 
-.project-thumb Img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-    .project-thumb-inner {
-      width: 100%; height: 100%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 4rem;
-      position: relative;
+      width: 100%; aspect-ratio: 16/9; transition: transform 0.5s ease;
+      border-radius: 20px 20px 0 0; position: relative; overflow: hidden;
     }
+    .project-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .project-thumb-inner { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; }
     
     .thumb-p1 { background: linear-gradient(135deg, #1a0533 0%, #2d1066 50%, #0f2060 100%); }
     .thumb-p2 { background: linear-gradient(135deg, #001a12 0%, #003d2b 50%, #001a0f 100%); }
     .thumb-p3 { background: linear-gradient(135deg, #1a0f00 0%, #3d2800 50%, #1f1000 100%); }
-    .thumb-p3 img, 
-.thumb-p3 Img {
-  width: 100%;
-  height: 180%;
-  object-fit: contain; 
-  display: block;
-}
+    .thumb-p3 img { width: 100%; height: 180%; object-fit: contain; display: block; }
     .thumb-p4 { background: linear-gradient(135deg, #0a001a 0%, #1a0033 50%, #0a0010 100%); }
 
     .thumb-mockup {
-      position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
-      width: 85%; background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
+      position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 85%;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
       border-radius: 12px 12px 0 0; padding: 12px;
     }
-    .mockup-bar {
-      display: flex; gap: 4px; margin-bottom: 8px;
-    }
-    .mockup-bar span {
-      width: 8px; height: 8px; border-radius: 50%;
-    }
-    .mockup-bar span:nth-child(1){background:#ff6b6b}
-    .mockup-bar span:nth-child(2){background:#ffd166}
-    .mockup-bar span:nth-child(3){background:#06d6a0}
-    .mockup-lines div {
-      height: 5px; border-radius: 3px;
-      background: rgba(255,255,255,0.1); margin-bottom: 4px;
-    }
-    .mockup-lines div:nth-child(1){width:60%}
-    .mockup-lines div:nth-child(2){width:85%}
-    .mockup-lines div:nth-child(3){width:40%}
-    .mockup-lines div:nth-child(4){width:70%}
+    .mockup-bar { display: flex; gap: 4px; margin-bottom: 8px; }
+    .mockup-bar span { width: 8px; height: 8px; border-radius: 50%; }
+    .mockup-bar span:nth-child(1){background:#ff6b6b} .mockup-bar span:nth-child(2){background:#ffd166} .mockup-bar span:nth-child(3){background:#06d6a0}
+    .mockup-lines div { height: 5px; border-radius: 3px; background: rgba(255,255,255,0.1); margin-bottom: 4px; }
+    .mockup-lines div:nth-child(1){width:60%} .mockup-lines div:nth-child(2){width:85%} .mockup-lines div:nth-child(3){width:40%} .mockup-lines div:nth-child(4){width:70%}
 
     .project-overlay {
-      position: absolute; inset: 0;
-      background: rgba(10,10,15,0.7);
+      position: absolute; inset: 0; background: rgba(10,10,15,0.7);
       display: flex; align-items: center; justify-content: center;
       opacity: 0; transition: opacity 0.3s;
     }
     .overlay-link {
-      padding: 14px 28px;
-      background: var(--accent); 
-      border-radius: 100px;
+      padding: 14px 28px; background: var(--accent); border-radius: 100px;
       display: flex; align-items: center; justify-content: center; gap: 8px;
-      color: #0a0a0f; 
-      font-family: 'Syne', sans-serif;
-      font-size: 0.95rem; 
-      font-weight: 700;
-      text-decoration: none;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      color: var(--btn-text); font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700;
+      text-decoration: none; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     }
 
     .project-info { padding: 24px; }
-    .project-tags {
-      display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px;
-    }
+    .project-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
     .p-tag {
-      font-size: 0.7rem; font-weight: 500;
-      padding: 3px 10px; border-radius: 100px;
-      background: rgba(57, 57, 89, 0.1); color: rgba(177, 177, 177, 0.573);
+      font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 100px;
+      background: var(--surface); border: 1px solid var(--border); color: var(--muted);
       letter-spacing: 0.06em; text-transform: uppercase;
     }
-    .p-tag.alt { background: rgba(123,108,255,0.1); color: var(--accent2); }
-    .p-tag.alt2 { background: rgba(255,107,138,0.1); color: var(--accent3); }
-    .p-tag.in-progress { background: rgba(255,183,77,0.15); color: var(--orange); border: 1px solid rgba(255,183,77,0.3); }
-    .project-name {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.25rem; font-weight: 700;
-      margin-bottom: 8px;
-    }
-    .project-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
-
-    /* ── Process ── */
-    #process { }
-    .process-header { text-align: center; margin-bottom: 72px; }
-    .process-header .section-label { justify-content: center; }
-    .process-grid {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px;
-      background: var(--border);
-      border: 1px solid var(--border);
-      border-radius: 20px; overflow: hidden;
-    }
-    .process-item {
-      background: var(--bg); padding: 40px 32px;
-      position: relative; overflow: hidden;
-      transition: background 0.3s;
-    }
-    .process-item.reveal {
-      transition: opacity 0.7s ease, transform 0.7s ease, background 0.3s ease;
-    }
-    .process-item:hover { background: var(--card-bg); }
-    .process-item:hover .process-num { color: var(--accent); }
-    .process-num {
-      font-family: 'Syne', sans-serif;
-      font-size: 4rem; font-weight: 800;
-      color: var(--border); line-height: 1;
-      margin-bottom: 20px;
-      transition: color 0.3s;
-    }
-    .process-icon {
-      font-size: 1.8rem; margin-bottom: 16px;
-      display: block;
-    }
-    .process-name {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.1rem; font-weight: 700;
-      margin-bottom: 10px;
-    }
-    .process-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.7; }
+    .project-name { font-family: 'Syne', sans-serif; font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+    .project-desc { font-size: 0.85rem; font-weight: 500; color: var(--muted); line-height: 1.6; }
 
     /* ── Process (Parallelogram Card Design) ── */
     #process { }
@@ -767,642 +634,279 @@
     .process-header .section-label { justify-content: center; }
 
     .infographic-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 3vw;
-        justify-content: center;
-        align-items: center;
-        max-width: 1400px;
-        box-sizing: border-box;
-        margin: 0 auto;
+        display: flex; flex-wrap: wrap; gap: 3vw; justify-content: center; align-items: center;
+        max-width: 1400px; box-sizing: border-box; margin: 0 auto;
     }
-
-    .step {
-        position: relative;
-        margin-top: 50px; 
-        width: 260px; 
-    }
-
+    .step { position: relative; margin-top: 50px; width: 260px; }
     .bg-number {
-        position: absolute;
-        top: 0px;
-        right: 230px;
-        font-size: 10rem;
-        font-weight: 800;
-        color: var(--theme);
-        z-index: 0;
-        line-height: 1;
-        opacity: 0;
-        user-select: none;
-        animation: fadeInRise 1s ease-out forwards;
-        animation-delay: var(--delay);
-        /* Subtle opacity adaptation for dark theme */
+        position: absolute; top: 0px; right: 230px;
+        font-size: 10rem; font-weight: 800; color: var(--theme);
+        z-index: 0; line-height: 1; opacity: 0; user-select: none;
+        animation: fadeInRise 1s ease-out forwards; animation-delay: var(--delay);
         opacity: 0.15;
     }
+    [data-theme="light"] .bg-number { opacity: 0.3; }
 
-    /* MAIN CARD - PARALLELOGRAM */
     .card {
-        width: 210px;
-        height: 200px;
-        background-color: var(--card-bg);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        box-shadow: -18px -8px 30px rgba(0,0,0,0.4);
-        position: relative;
-        z-index: 1;
-        padding: 60px 25px 30px 25px; 
-        box-sizing: border-box;
-        transform: skewX(-8deg);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        cursor: none; /* Align with custom cursor */
+        width: 210px; height: 200px; background-color: var(--card-bg);
+        border: 1px solid var(--border); border-radius: 8px;
+        box-shadow: -18px -8px 30px rgba(0,0,0,0.1);
+        position: relative; z-index: 1; padding: 60px 25px 30px 25px; 
+        box-sizing: border-box; transform: skewX(-8deg);
+        transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s, border-color 0.3s;
+        cursor: none;
     }
+    [data-theme="dark"] .card { box-shadow: -18px -8px 30px rgba(0,0,0,0.4); }
 
-    /* CARD CONTENT (Un-skewed) */
-    .card-content {
-        transform: skewX(8deg);
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        align-items: center;
-        height: 100%;
-    }
-
+    .card-content { transform: skewX(8deg); display: flex; flex-direction: column; justify-content: space-between; align-items: center; height: 100%; }
     .ribbon {
-        position: absolute;
-        top: -15px;
-        left: -15px;
-        background-color: var(--theme);
-        color: #0a0a0f; /* Dark text on bright ribbon */
-        font-weight: 800;
-        font-size: 14px;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        padding: 12px 28px;
-        border-radius: 0 25px 25px 0;
-        z-index: 2;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        transform: skewX(8deg);
-        transform-origin: bottom left;
-        transition: box-shadow 0.3s ease;
+        position: absolute; top: -15px; left: -15px;
+        background-color: var(--theme); color: #ffffff;
+        font-weight: 800; font-size: 14px; letter-spacing: 1px; text-transform: uppercase;
+        padding: 12px 28px; border-radius: 0 25px 25px 0; z-index: 2;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2); transform: skewX(8deg); transform-origin: bottom left; transition: box-shadow 0.3s ease;
     }
-
     .ribbon::before {
-        content: '';
-        position: absolute;
-        top: 100%; 
-        left: 0;
-        width: 0;
-        height: 0;
-        border-top: 12px solid var(--theme-dark);
-        border-left: 15px solid transparent;
+        content: ''; position: absolute; top: 100%; left: 0; width: 0; height: 0;
+        border-top: 12px solid var(--theme-dark); border-left: 15px solid transparent;
     }
-
-    .card-text {
-        text-align: center;
-        line-height: 1.6;
-        font-size: 0.85rem;
-        color: var(--muted);
-        margin: 0;
-        display: flex;
-        align-items: center;
-        flex-grow: 1;
-    }
-
-    .icon {
-        width: 45px;
-        height: 45px;
-        color: var(--theme);
-        margin-top: 15px;
-    }
-
-    .icon svg {
-        width: 100%;
-        height: 100%;
-        fill: currentColor;
-    }
+    .card-text { text-align: center; line-height: 1.6; font-size: 0.85rem; font-weight: 500; color: var(--muted); margin: 0; display: flex; align-items: center; flex-grow: 1; }
+    .icon { width: 45px; height: 45px; color: var(--theme); margin-top: 15px; }
+    .icon svg { width: 100%; height: 100%; fill: currentColor; }
 
     @keyframes fadeInRise {
-        from {
-            opacity: 0;
-            transform: translate(20px, 20px);
-        }
-        to {
-            opacity: 0.15; /* Matching dark theme opacity */
-            transform: translate(0, 0);
-        }
+        from { opacity: 0; transform: translate(20px, 20px); }
+        to { transform: translate(0, 0); }
     }
 
-    /* Hover states */
-    .step:hover .card {
-        transform: skewX(-8deg) translateY(-8px);
-        box-shadow: -18px 0px 40px rgba(0,0,0,0.6);
-        border-color: var(--theme);
-    }
-    
-    .step:hover .ribbon {
-        box-shadow: 0 8px 15px rgba(0,0,0,0.4);
-    }
+    .step:hover .card { transform: skewX(-8deg) translateY(-8px); box-shadow: -18px 0px 40px rgba(0,0,0,0.2); border-color: var(--theme); }
+    [data-theme="dark"] .step:hover .card { box-shadow: -18px 0px 40px rgba(0,0,0,0.6); }
+    .step:hover .ribbon { box-shadow: 0 8px 15px rgba(0,0,0,0.4); }
 
     /* ── Skills ── */
-    #skills { background: var(--surface); }
-    .skills-layout {
-      display: grid; grid-template-columns: 1fr 1.4fr; gap: 80px; align-items: start;
-    }
+    #skills { background: var(--surface); transition: background 0.5s; }
+    .skills-layout { display: grid; grid-template-columns: 1fr 1.4fr; gap: 80px; align-items: start; }
     .skills-list { display: flex; flex-direction: column; gap: 20px; }
-    .skill-row {}
-    .skill-head {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 8px;
-    }
-    .skill-name { font-size: 0.9rem; font-weight: 500; }
-    .skill-pct { font-size: 0.8rem; color: var(--muted); }
-    .skill-track {
-      height: 4px; background: var(--border); border-radius: 4px; overflow: hidden;
-    }
+    .skill-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .skill-name { font-size: 0.95rem; font-weight: 600; color: var(--text); }
+    .skill-pct { font-size: 0.8rem; font-weight: 600; color: var(--muted); }
+    .skill-track { height: 6px; background: var(--border); border-radius: 4px; overflow: hidden; }
     .skill-fill {
       height: 100%; border-radius: 4px;
       background: linear-gradient(90deg, var(--accent2), var(--accent));
       width: 0; transition: width 1.2s cubic-bezier(0.16,1,0.3,1);
     }
 
-    .tools-cloud {
-      display: flex; flex-wrap: wrap; gap: 12px;
-    }
+    .tools-cloud { display: flex; flex-wrap: wrap; gap: 12px; }
     .tool-item {
-      display: flex; align-items: center; gap: 10px;
-      padding: 12px 18px;
+      display: flex; align-items: center; gap: 10px; padding: 12px 18px;
       background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: 12px; font-size: 0.85rem; font-weight: 500;
-      transition: all 0.2s;
+      border-radius: 12px; font-size: 0.85rem; font-weight: 600;
+      transition: all 0.2s; color: var(--text);
     }
-    .tool-item:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+    .tool-item:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
     .tool-icon { font-size: 1.2rem; }
 
     /* ── AI Vibe Coding Section ── */
     #ai-vibe {
-      background: var(--bg);
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding-top: 140px;
-      padding-bottom: 140px;
-      border-top: 1px solid var(--border);
+      background: var(--bg); position: relative; overflow: hidden;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding-top: 140px; padding-bottom: 140px; border-top: 1px solid var(--border);
+      transition: background 0.5s;
     }
-    /* Absolute background canvas covering the entire section */
-    #ai-chip-canvas {
-      position: absolute;
-      top: -50px;
-      left: -450px; /* Align with section padding */
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      opacity: 0.8;
-      pointer-events: none;
-    }
-    /* Content sits above the background canvas */
-    .ai-content {
-      position: relative;
-      z-index: 2;
-      max-width: 900px;
-      width: 100%;
-    }
+    #ai-chip-canvas { position: absolute; top: -50px; left: -450px; width: 100%; height: 100%; z-index: 0; opacity: 0.8; pointer-events: none; }
+    .ai-content { position: relative; z-index: 2; max-width: 900px; width: 100%; }
     
     .ai-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 15px;
-      padding: 8px 16px;
-      background: rgba(123,108,255,0.15);
-      border: 3px solid rgba(123,108,255,0.4);
-      border-radius: 100px;
-      color: var(--accent);
-      font-size: 0.8rem;
-      font-weight: 600;
-      margin: 0 auto 24px auto;
-      letter-spacing: 0.05em;
+      display: inline-flex; align-items: center; gap: 15px; padding: 8px 16px;
+      background: var(--surface); border: 2px solid var(--border); border-radius: 100px;
+      color: var(--accent); font-size: 0.85rem; font-weight: 700; margin: 0 auto 24px auto; letter-spacing: 0.05em;
     }
     .ai-badge span {
-      display: block;
-      width: 6px;
-      height: 6px;
-      background: #00d2ff;
-      border-radius: 50%;
-      box-shadow: 0 0 10px #00d2ff;
-      animation: pulse-ai 2s infinite;
+      display: block; width: 8px; height: 8px; background: var(--accent); border-radius: 50%;
+      box-shadow: 0 0 10px var(--accent); animation: pulse-ai 2s infinite;
     }
-    @keyframes pulse-ai {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(0.8); }
-    }
-    .ai-features {
-      margin-top: 50px;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 54px;
-      text-align: left;
-    }
+    @keyframes pulse-ai { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } }
+    
+    .ai-features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 54px; text-align: left; margin-top: 50px; }
     .ai-feature {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 16px;
-      /* Glassmorphism to make cards readable over glowing background */
-      background: rgba(20, 20, 30, 0.2);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      display: flex; flex-direction: column; align-items: flex-start; gap: 16px;
+      background: var(--card-bg); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      border: 1px solid var(--border); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      transition: background 0.3s, border-color 0.3s;
     }
+    [data-theme="dark"] .ai-feature { background: rgba(20, 20, 30, 0.2); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
     
     .ai-f-icon {
-      width: 46px;
-      height: 46px;
-      border-radius: 12px;
-      background: rgba(123,108,255,0.15);
-      border: 1px solid rgba(123,108,255,0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-      color: #00d2ff;
-      flex-shrink: 0;
+      width: 46px; height: 46px; border-radius: 12px;
+      background: var(--surface); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: var(--accent); flex-shrink: 0;
     }
-    .ai-f-text h4 {
-      font-size: 1.05rem;
-      font-weight: 600;
-      margin-bottom: 8px;
-      color: var(--text);
-    }
-    .ai-f-text p {
-      font-size: 0.9rem;
-      color: var(--muted);
-      line-height: 1.6;
-    }
+    .ai-f-text h4 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+    .ai-f-text p { font-size: 0.9rem; font-weight: 500; color: var(--muted); line-height: 1.6; }
 
     /* ── Testimonials ── */
     #testimonials {}
-    .testimonials-wrap {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
-    }
+    .testimonials-wrap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
     .testimonial-card {
-      background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: 20px; padding: 32px;
-      transition: transform 0.3s, border-color 0.3s;
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 32px;
+      transition: transform 0.3s, border-color 0.3s, background 0.3s;
     }
-    .testimonial-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.12); }
-    .test-quote {
-      font-size: 2rem; color: var(--accent);
-      font-family: 'Syne', sans-serif; line-height: 1;
-      margin-bottom: 16px;
-    }
-    .test-text {
-      font-size: 0.9rem; color: var(--muted); line-height: 1.75;
-      margin-bottom: 24px; font-style: italic;
-    }
-    .test-person { 
-      display: flex; align-items: center; gap: 12px; 
-      text-decoration: none; color: inherit; cursor: pointer;
-    }
+    .testimonial-card:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+    .test-quote { font-size: 2rem; color: var(--accent); font-family: 'Syne', sans-serif; line-height: 1; margin-bottom: 16px; }
+    .test-text { font-size: 0.95rem; font-weight: 500; color: var(--muted); line-height: 1.75; margin-bottom: 24px; font-style: italic; }
+    .test-person { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; cursor: pointer; }
     .test-person:hover .test-name { color: var(--accent); }
     .test-person:hover .link-arrow { transform: translate(2px, -2px); color: var(--accent); }
     
     .test-avatar {
-      width: 42px; height: 42px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.1rem; font-weight: 700;
-      font-family: 'Syne', sans-serif;
+      width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; font-weight: 700; font-family: 'Syne', sans-serif; color: #ffffff;
     }
     .av1 { background: linear-gradient(135deg, var(--accent2), var(--accent3)); }
     .av2 { background: linear-gradient(135deg, var(--accent), #40c0c0); }
     .av3 { background: linear-gradient(135deg, var(--accent3), #ff9900); }
     
-    .test-name { 
-      font-size: 0.88rem; font-weight: 600; 
-      display: flex; align-items: center; gap: 6px; 
-      transition: color 0.2s; 
-    }
-    .link-arrow { 
-      font-size: 0.75rem; color: var(--muted); 
-      transition: transform 0.2s, color 0.2s; 
-    }
-    .test-role { font-size: 0.75rem; color: var(--muted); }
+    .test-name { font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 6px; transition: color 0.2s; color: var(--text); }
+    .link-arrow { font-size: 0.75rem; color: var(--muted); transition: transform 0.2s, color 0.2s; }
+    .test-role { font-size: 0.8rem; font-weight: 600; color: var(--muted); }
 
     /* ── Contact ── */
-    #contact {
-      background: var(--surface);
-      display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
-    }
+    #contact { background: var(--surface); display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; transition: background 0.5s; }
     .contact-content .section-title { font-size: clamp(2rem, 4vw, 3.5rem); }
     .contact-methods { margin-top: 40px; display: flex; flex-direction: column; gap: 16px; }
     .contact-link {
-      display: flex; align-items: center; gap: 16px;
-      text-decoration: none; color: var(--text);
-      padding: 16px 20px;
-      background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: 14px;
-      transition: all 0.25s;
+      display: flex; align-items: center; gap: 16px; text-decoration: none; color: var(--text);
+      padding: 16px 20px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px; transition: all 0.25s;
     }
-    .contact-link:hover { border-color: var(--accent); transform: translateX(4px); }
-    .contact-link:hover .cl-icon { background: var(--accent); color: #0a0a0f; }
+    .contact-link:hover { border-color: var(--accent); transform: translateX(4px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .contact-link:hover .cl-icon { background: var(--accent); color: var(--btn-text); }
     .cl-icon {
-      width: 40px; height: 40px; border-radius: 10px;
-      background: var(--bg); display: flex; align-items: center; justify-content: center;
+      width: 40px; height: 40px; border-radius: 10px; background: var(--bg); display: flex; align-items: center; justify-content: center;
       font-size: 1.1rem; transition: all 0.2s;
     }
     .cl-text { flex: 1; }
-    .cl-label { font-size: 0.72rem; color: var(--muted); margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.06em; }
-    .cl-val { font-size: 0.9rem; font-weight: 500; }
+    .cl-label { font-size: 0.72rem; font-weight: 700; color: var(--muted); margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .cl-val { font-size: 0.95rem; font-weight: 600; }
     .cl-arrow { color: var(--muted); font-size: 1.1rem; }
 
-    .contact-form {}
     .form-group { margin-bottom: 20px; }
-    .form-label {
-      display: block; font-size: 0.75rem; font-weight: 500;
-      color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em;
-      margin-bottom: 8px;
-    }
+    .form-label { display: block; font-size: 0.75rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
     .form-input, .form-textarea {
-      width: 100%; padding: 14px 18px;
-      background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: 12px; color: var(--text);
-      font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      outline: none; resize: none;
+      width: 100%; padding: 14px 18px; background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 12px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.3s; outline: none; resize: none;
     }
-    .form-input:focus, .form-textarea:focus {
-      border-color: var(--accent2);
-      box-shadow: 0 0 0 3px rgba(123,108,255,0.12);
-    }
+    .form-input:focus, .form-textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255, 95, 0, 0.12); }
     .form-textarea { height: 120px; }
     .form-btn {
-      width: 100%; padding: 15px;
-      background: var(--accent); color: #0a0a0f;
-      border: none; border-radius: 12px;
-      font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700;
-      cursor: none; letter-spacing: 0.02em;
-      transition: transform 0.2s, box-shadow 0.2s;
+      width: 100%; padding: 15px; background: var(--accent); color: var(--btn-text);
+      border: none; border-radius: 12px; font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700;
+      cursor: none; letter-spacing: 0.02em; transition: transform 0.2s, box-shadow 0.2s, background 0.3s, color 0.3s;
     }
-    .form-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(200,240,96,0.3); }
+    .form-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255, 95, 0, 0.3); }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
     /* ── Footer ── */
     footer {
-      padding: 40px 60px;
-      border-top: 1px solid var(--border);
-      display: flex; justify-content: space-between; align-items: center;
-      background: var(--bg); /* Gives it a solid dark background */
-      position: relative; /* Allows z-index to work */
-      z-index: 20; /* Pushes it safely above all the 3D canvases */
+      padding: 40px 60px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;
+      background: var(--bg); position: relative; z-index: 20; transition: background 0.5s;
     }
-    .footer-logo {
-      font-family: 'Syne', sans-serif; font-weight: 800;
-      font-size: 1rem; color: var(--text);
-    }
+    .footer-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--text); }
     .footer-logo span { color: var(--accent); }
-    .footer-text { font-size: 0.8rem; color: var(--muted); }
+    .footer-text { font-size: 0.85rem; font-weight: 500; color: var(--muted); }
     .footer-socials { display: flex; gap: 12px; }
     .social-btn {
-      width: 36px; height: 36px;
-      background: var(--card-bg); border: 1px solid var(--border);
+      width: 36px; height: 36px; background: var(--card-bg); border: 1px solid var(--border);
       border-radius: 8px; display: flex; align-items: center; justify-content: center;
-      color: var(--muted); text-decoration: none; font-size: 0.9rem;
-      transition: all 0.2s;
+      color: var(--muted); text-decoration: none; font-size: 0.95rem; font-weight: 600; transition: all 0.2s;
     }
     .social-btn:hover { border-color: var(--accent); color: var(--accent); }
 
     /* ── Reveal animations ── */
-    .reveal {
-      opacity: 0; transform: translateY(30px);
-      transition: opacity 0.7s ease, transform 0.7s ease;
-    }
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
     .reveal.reveal-left { transform: translateX(-60px); }
     .reveal.reveal-right { transform: translateX(60px); }
     .reveal.visible { opacity: 1; transform: translate(0, 0); }
-    .reveal-delay-1 { transition-delay: 0.1s; }
-    .reveal-delay-2 { transition-delay: 0.2s; }
-    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-1 { transition-delay: 0.1s; } .reveal-delay-2 { transition-delay: 0.2s; } .reveal-delay-3 { transition-delay: 0.3s; }
 
     /* ── Scrollbar ── */
-    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    ::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 3px; }
 
     /* ── Responsive ── */
     @media (max-width: 1024px) {
-      nav { padding: 20px 32px; }
-      section { padding: 80px 32px; }
-      #hero { padding: 120px 32px 80px; }
-      .hero-stats { right: 32px; }
-      #about { grid-template-columns: 1fr; gap: 48px; }
-      .about-visual { height: 360px; }
-      .about-img-frame { width: 260px; height: 320px; }
-      .about-badge2 { left: 120px; top: 180px; width: 200px; }
-      #contact { grid-template-columns: 1fr; gap: 48px; }
-      .process-grid { grid-template-columns: repeat(2, 1fr); }
-      .testimonials-wrap { grid-template-columns: 1fr 1fr; }
+      nav { padding: 20px 32px; } section { padding: 80px 32px; } #hero { padding: 120px 32px 80px; }
+      .hero-stats { right: 32px; } #about { grid-template-columns: 1fr; gap: 48px; }
+      .about-visual { height: 360px; } .about-img-frame { width: 260px; height: 320px; }
+      .about-badge2 { left: 120px; top: 180px; width: 200px; } #contact { grid-template-columns: 1fr; gap: 48px; }
+      .process-grid { grid-template-columns: repeat(2, 1fr); } .testimonials-wrap { grid-template-columns: 1fr 1fr; }
       footer { flex-direction: column; gap: 16px; text-align: center; }
-      
-      #about-globe-container {
-        width: 500px;
-        height: 500px;
-        bottom: -330px; 
-      }
+      #about-globe-container { width: 500px; height: 500px; bottom: -330px; }
     }
     @media (max-width: 768px) {
-      nav { padding: 18px 20px; }
-      .nav-links { display: none; }
-      section { padding: 64px 20px; }
-      #hero { padding: 100px 20px 80px; }
-      .hero-stats { position: relative; flex-direction: row; margin-top: 30px; gap: 24px; flex-wrap: wrap; justify-content: center;}
-      .stat-item { text-align: left; }
-      .projects-grid { grid-template-columns: 1fr; }
-      .card-lg, .card-sm, .card-md, .card-full { grid-column: span 1; }
-      .process-grid { grid-template-columns: 1fr 1fr; }
-      .skills-layout { grid-template-columns: 1fr; gap: 40px; }
-      .ai-features { grid-template-columns: 1fr; }
-      .testimonials-wrap { grid-template-columns: 1fr; }
-      .form-row { grid-template-columns: 1fr; }
-      footer { padding: 30px 20px; }
-      
-      #about-globe-container {
-        width: 400px;
-        height: 400px;
-        bottom: -260px; 
-      }
-    }
-    /* =========================================
-       NEW: LIST VIEW & DYNAMIC CURSOR STYLES
-       ========================================= */
-    #cursor-text-ring {
-      display: flex; align-items: center; justify-content: center;
-    }
-    #cursor-center-text {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 11px; font-weight: 700; color: var(--accent);
-      text-align: center; line-height: 1.2; text-transform: uppercase; letter-spacing: 1px;
-    }
-    #cursor-text-ring svg { position: absolute; inset: 0; }
-    #cursor-text-ring text {
-      font-family: 'DM Sans', sans-serif; /* Changed to simple UI font */
-      font-size: 11px; font-weight: 600; fill: var(--accent); letter-spacing: 1.5px;
+      nav { padding: 18px 20px; grid-template-columns: 1fr auto; } .nav-links { display: none; } section { padding: 64px 20px; }
+      #hero { padding: 100px 20px 80px; } .hero-stats { position: relative; flex-direction: row; margin-top: 30px; gap: 24px; flex-wrap: wrap; justify-content: center;}
+      .projects-grid { grid-template-columns: 1fr; } .card-lg, .card-sm, .card-md, .card-full { grid-column: span 1; }
+      .process-grid { grid-template-columns: 1fr 1fr; } .skills-layout { grid-template-columns: 1fr; gap: 40px; }
+      .ai-features { grid-template-columns: 1fr; } .testimonials-wrap { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; } footer { padding: 30px 20px; }
+      #about-globe-container { width: 400px; height: 400px; bottom: -260px; }
     }
 
-    /* Toggle Buttons */
+    /* List View Elements */
     .view-toggle { display: flex; gap: 8px; align-items: center; }
     .view-toggle button {
       background: transparent; border: 1px solid var(--border); color: var(--muted); 
       width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
       cursor: none; transition: all 0.2s;
     }
-    .view-toggle button.active, .view-toggle button:hover {
-      background: var(--card-bg); color: var(--accent); border-color: var(--accent);
-    }
-
-    /* List View Elements (Hidden in Grid) */
-    .project-year { display: none; font-size: 0.9rem; color: var(--muted); font-weight: 500; font-family: 'DM Sans', sans-serif; }
+    .view-toggle button.active, .view-toggle button:hover { background: var(--card-bg); color: var(--accent); border-color: var(--accent); }
+    .project-year { display: none; font-size: 0.9rem; color: var(--muted); font-weight: 700; font-family: 'DM Sans', sans-serif; }
     .explore-btn-list { display: none; }
-
-    /* Center text stack */
-    #cursor-center-text {
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 700; color: var(--accent);
-      line-height: 1.1; text-transform: uppercase; letter-spacing: 1px;
-    }
-
-    /* Center text stack */
-    #cursor-center-text {
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 700; color: var(--accent);
-      line-height: 1.1; text-transform: uppercase; letter-spacing: 1px;
-    }
-
-   /* --- THE LIST VIEW OVERRIDE --- */
-    .project-number { display: none; }
-    .read-time-list { display: none; }
-    
-    /* Fix for Title & Tags in normal grid view */
+    #cursor-center-text { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 700; color: var(--accent); line-height: 1.1; text-transform: uppercase; letter-spacing: 1px; }
+    .project-number { display: none; } .read-time-list { display: none; }
     .title-tags-wrap { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
     .projects-grid:not(.list-view) .project-name { font-size: 1.25rem; font-weight: 700; margin: 0; }
     .projects-grid:not(.list-view) .project-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-    
     .projects-grid.list-view { display: flex; flex-direction: column; gap: 16px; }
-    
-    /* The Precise 7-Column Pill Grid */
     .projects-grid.list-view .project-card {
-      display: grid !important; /* THIS FIXES THE STACKING BUG! */
-      /* Circle | Title+Tags | Year | Desc | ReadTime | ExploreBtn | ExpandBtn */
-      grid-template-columns: 70px 1.5fr 0.5fr 3fr 80px auto 40px;
-      align-items: center; gap: 24px; 
-      padding: 12px 24px 12px 12px;
-      background: #333333; /* Dark pill background */
-      border: none;
-      border-radius: 100px; /* Pill shape */
-      box-shadow: none !important; transform: none !important;
-      transition: background 0.2s;
+      display: grid !important; grid-template-columns: 70px 1.5fr 0.5fr 3fr 80px auto 40px; align-items: center; gap: 24px; 
+      padding: 12px 24px 12px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 100px; box-shadow: none !important; transform: none !important; transition: background 0.2s, border-color 0.2s;
     }
-    .projects-grid.list-view .project-card:hover { background: #404040; }
-
-    /* Floating Image for List View */
+    .projects-grid.list-view .project-card:hover { background: var(--card-bg); border-color: var(--accent); }
     .projects-grid.list-view .project-thumb {
-      position: fixed; width: 340px; height: 200px; z-index: 9999; 
-      pointer-events: none; opacity: 0; border-radius: 12px;
-      transform: translate(-50%, -50%) scale(0.9);
-      box-shadow: 0 30px 60px rgba(0,0,0,0.6); transition: opacity 0.2s ease, transform 0.2s ease;
+      position: fixed; width: 340px; height: 200px; z-index: 9999; pointer-events: none; opacity: 0; border-radius: 12px;
+      transform: translate(-50%, -50%) scale(0.9); box-shadow: 0 30px 60px rgba(0,0,0,0.3); transition: opacity 0.2s ease, transform 0.2s ease;
     }
-    .projects-grid.list-view .project-card:hover .project-thumb {
-      opacity: 1; transform: translate(-50%, -50%) scale(1);
-    }
+    .projects-grid.list-view .project-card:hover .project-thumb { opacity: 1; transform: translate(-50%, -50%) scale(1); }
     .projects-grid.list-view .project-overlay { display: none; }
-
-    /* The Circle Placeholder */
-    .projects-grid.list-view .project-number { 
-      display: block; width: 70px; height: 70px; 
-      background: #d9d9d9; border-radius: 50%; flex-shrink: 0;
-    }
-
-    /* List Layout Structure */
+    .projects-grid.list-view .project-number { display: block; width: 70px; height: 70px; background: var(--border); border-radius: 50%; flex-shrink: 0; }
     .projects-grid.list-view .project-info { display: contents; }
-    
     .projects-grid.list-view .title-tags-wrap { margin: 0; justify-content: center; min-width: 0; }
-    .projects-grid.list-view .project-name { font-size: 1.2rem; margin: 0; font-weight: 500; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    
+    .projects-grid.list-view .project-name { font-size: 1.2rem; margin: 0; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .projects-grid.list-view .project-tags { display: flex; gap: 8px; margin: 0; flex-wrap: wrap; }
-    .projects-grid.list-view .p-tag { 
-      background: transparent; border: 1px solid rgba(255,255,255,0.4); 
-      color: #fff; border-radius: 100px; padding: 4px 12px; font-size: 0.7rem; font-weight: 400; text-transform: none; white-space: nowrap;
-    }
-    
-    .projects-grid.list-view .project-year { display: block; font-size: 1.1rem; font-weight: 700; color: #fff; text-align: center; }
-    
-    .projects-grid.list-view .project-desc {
-      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; 
-      margin: 0; font-size: 0.8rem; line-height: 1.5; color: #e8e6f0;
-      min-width: 0; /* Prevents long text from breaking the grid layout */
-    }
-
-    .projects-grid.list-view .read-time-list {
-      display: block; font-size: 0.9rem; font-weight: 600; color: #fff; line-height: 1.3; text-align: center; min-width: 0;
-    }
-
+    .projects-grid.list-view .p-tag { background: transparent; border: 1px solid var(--border); color: var(--muted); border-radius: 100px; padding: 4px 12px; font-size: 0.7rem; font-weight: 600; text-transform: none; white-space: nowrap; }
+    .projects-grid.list-view .project-year { display: block; font-size: 1.1rem; font-weight: 700; color: var(--text); text-align: center; }
+    .projects-grid.list-view .project-desc { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin: 0; font-size: 0.85rem; font-weight: 500; line-height: 1.5; color: var(--muted); min-width: 0; }
+    .projects-grid.list-view .read-time-list { display: block; font-size: 0.9rem; font-weight: 700; color: var(--text); line-height: 1.3; text-align: center; min-width: 0; }
     .projects-grid.list-view .explore-btn-list {
-      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-      padding: 12px 24px; background: var(--accent); border-radius: 100px; 
-      font-size: 0.9rem; font-weight: 700; color: #0a0a0f; text-decoration: none; border: none; white-space: nowrap;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 12px 24px; background: var(--accent); border-radius: 100px; 
+      font-size: 0.9rem; font-weight: 700; color: var(--btn-text); text-decoration: none; border: none; white-space: nowrap;
     }
-    .projects-grid.list-view .explore-btn-list:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(200,240,96,0.3); background: var(--accent); color: #0a0a0f; }
-
-    /* Expand Button */
-    .projects-grid.list-view .project-card:not(.is-expanded) .expand-btn { 
-      position: static; opacity: 1; transform: scale(1); background: transparent; border: none; color: #fff; font-size: 1.2rem;
-    }
-
-    /* FIX: Make Expanded View Normal even when in List View */
+    .projects-grid.list-view .explore-btn-list:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255, 95, 0, 0.3); background: var(--accent); }
+    .projects-grid.list-view .project-card:not(.is-expanded) .expand-btn { position: static; opacity: 1; transform: scale(1); background: transparent; border: none; color: var(--text); font-size: 1.2rem; }
     .projects-grid.list-view .project-card.is-expanded {
-      display: flex !important; flex-direction: column !important; padding: 0 !important; 
-      background: var(--card-bg) !important; border-radius: 20px !important;
-      position: fixed !important; top: 50% !important; left: 50% !important;
-      transform: translate(-50%, -50%) !important;
-      width: 80vw !important; height: 80vh !important;
-      z-index: 9999 !important; cursor: auto !important;
+      display: flex !important; flex-direction: column !important; padding: 0 !important; background: var(--card-bg) !important; border-radius: 20px !important;
+      position: fixed !important; top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important; width: 80vw !important; height: 80vh !important; z-index: 9999 !important; cursor: auto !important;
     }
-    
-    /* Bring the floating image back into the card */
-    .projects-grid.list-view .project-card.is-expanded .project-thumb {
-      position: relative !important; width: 100% !important; height: 80% !important;
-      opacity: 1 !important; transform: none !important; pointer-events: auto !important;
-      border-radius: 20px 20px 0 0 !important; left: auto !important; top: auto !important;
-      box-shadow: none !important;
-    }
-    
-    .projects-grid.list-view .project-card.is-expanded .project-info { 
-      display: block !important; padding: 24px !important; 
-    }
-    
-    /* Remove the 2-line limit on the description when expanded */
-    .projects-grid.list-view .project-card.is-expanded .project-desc {
-      -webkit-line-clamp: unset !important;
-    }
-    
-    .projects-grid.list-view .project-card.is-expanded .project-number,
-    .projects-grid.list-view .project-card.is-expanded .read-time-list,
-    .projects-grid.list-view .project-card.is-expanded .explore-btn-list,
-    .projects-grid.list-view .project-card.is-expanded .project-year {
-      display: none !important;
-    }
+    .projects-grid.list-view .project-card.is-expanded .project-thumb { position: relative !important; width: 100% !important; height: 80% !important; opacity: 1 !important; transform: none !important; pointer-events: auto !important; border-radius: 20px 20px 0 0 !important; left: auto !important; top: auto !important; box-shadow: none !important; }
+    .projects-grid.list-view .project-card.is-expanded .project-info { display: block !important; padding: 24px !important; }
+    .projects-grid.list-view .project-card.is-expanded .project-desc { -webkit-line-clamp: unset !important; }
+    .projects-grid.list-view .project-card.is-expanded .project-number, .projects-grid.list-view .project-card.is-expanded .read-time-list, .projects-grid.list-view .project-card.is-expanded .explore-btn-list, .projects-grid.list-view .project-card.is-expanded .project-year { display: none !important; }
     .projects-grid.list-view .project-card.is-expanded .title-tags-wrap { margin-bottom: 12px; }
-
-    /* Hide toggle on mobile */
-    @media (max-width: 1024px) { 
-      .view-toggle { display: none !important; } 
-      .projects-grid.list-view .project-card { display: flex !important; flex-direction: column !important; border-radius: 20px; padding: 24px; background: var(--card-bg); }
-      .projects-grid.list-view .project-number { display: none; }
-    }
+    @media (max-width: 1024px) { .view-toggle { display: none !important; } .projects-grid.list-view .project-card { display: flex !important; flex-direction: column !important; border-radius: 20px; padding: 24px; background: var(--card-bg); } .projects-grid.list-view .project-number { display: none; } }
   </style>
 </head>
 <body>
@@ -1428,31 +932,31 @@
 <nav>
   <a href="#" class="nav-logo">
     <svg id="Layer_1" class="brand-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 324.06 381.34">
-      <defs>
-        <style>
-          .cls-1 {
-            fill: var(--accent);
-          }
-        </style>
-      </defs>
       <path class="cls-1" d="M8.78,313.93c14.86,3.65,22.61-2.45,29.23-15.26,9.74-19.75,15.56-41.24,24.74-61.53,13.53-31.55,35.2-61.29,70.34-70.09,5.05-1.26,10.32-2.25,15.36-2.58,32.22,0,65.12.02,97.39.18,4.76-.04,12.8.32,17.46-.6,21.2-3.24,37.91-22.35,39.61-43.62.15-1.51.24-3.64.25-5.14.21-15.42.33-36.58.54-52.07.11-9.63.6-29.11.84-38.75,0,0,.03-1.21.03-1.21.15-2.1-.68-4.05-1.95-5.7-1.05-1.65-2.62-3.44-4.78-3.47-9.69-.26-22.08-.5-31.78-.56-19.37-.22-38.75-.13-58.12-.44-3.21-.08-6.05.03-9.05.88-8.53,1.39-16.75,5.06-23.7,9.99-18.43,13.55-32.03,32.58-33.53,55.94-1.89,32.16-4.18,64.83-8.45,96.76-1.76-12.92-3.07-25.83-4.24-38.75-1.45-16.02-2.61-32.37-3.56-48.43-.06-1.52-.36-5.78-.43-7.27-.72-11.6.96-23.54,5.15-34.48,9.49-25.51,30.08-41.85,56.89-45.9,5.29-.93,10.62-1.17,15.92-.8,8.22-.02,16.19-.18,24.37-.2,23.23-.17,46.99-.13,70.23-.8,12.01-.43,21.54,5.69,24.4,17.73,1.19,4.26.88,21.4,1.2,26.1.44,21.94.67,48.33.89,70.23.07,1.49-.03,3.83-.04,5.34-.87,31.78-25.27,61.1-56.95,66.33-3.8.67-7.65,1.01-11.5,1.04-33.76.19-75.58.22-105.62.23-24.85,1.37-44.03,15.82-57.76,36.04-9.81,14.07-17.21,29.94-24.65,45.64-5.87,12.2-11.67,25.11-20.22,36.09-9.78,12.84-24.06,19.94-38.51,9.14h0Z"/>
       <path class="cls-1" d="M198.97,12.54c-21.83.01-43.29,7.85-62.54,17.38C79.39,57.72,35.43,110.41,30.47,175.02c-7.25,86.15,56.98,165.39,142.73,176.3,20.45,2.82,41.56,1.66,61.26-4.51,40.22-12.27,67.52-42.61,56.7-86.13-7.66-28.32-36.46-42.9-63.41-31.11-15.62,6.8-26.74,22.74-27.74,39.77-1.61,13.53,8.41,28.39,21.91,31.18,11.83,2.3,24.41-5.05,28.76-16.24,6.36-16.17-3.12-37.15-25.55-44.06,0,0,0-.83,0-.83,19.72-6,40.42,10.09,43.5,29.87,2.55,13.89-2.38,28.92-12.53,38.82-16.15,16.18-42.32,17.43-59.79,2.74-23.75-19.27-24.1-51.57-8.89-76.48,18.06-30.03,58.57-42.18,90.16-26.96,32.01,15.01,45.98,51.6,41.33,85.19-7.76,61.35-75.42,90.86-131.04,88.65-80.63-1.22-155.31-58.74-178.76-135.64-23.15-70.75-1.28-153.26,55.96-201.37C98.83,14.92,137.04,2.07,181.42,1.87c5.89.13,11.71-.26,17.55-.18,0,0,0,10.84,0,10.84h0Z"/>
       <path class="cls-1" d="M104.53,136.06c.18,12.12-11.61,21.78-23.3,18.34-17.93-5.35-17.93-31.34,0-36.69,11.69-3.44,23.48,6.22,23.3,18.34h0ZM80.34,136.06c.18.48.89.24,1.22-.25,1.27-1.65-.19-4.63-2.63-5.21-3.3-.99-6.71,1.98-6.62,5.47-.09,3.48,3.32,6.45,6.62,5.47,2.43-.58,3.9-3.56,2.63-5.21-.33-.49-1.04-.74-1.22-.25h0Z"/>
     </svg>
     <div>
       Ganesh Javhare
-      <div style="font-size: 0.65rem; font-weight: 500; font-family: 'DM Sans', sans-serif; color: var(--muted); letter-spacing: 0.4em; text-transform: uppercase; margin-top: 2px;">UX Designer</div>
+      <div style="font-size: 0.65rem; font-weight: 700; font-family: 'DM Sans', sans-serif; color: var(--muted); letter-spacing: 0.4em; text-transform: uppercase; margin-top: 2px;">UX Designer</div>
     </div>
-
   </a>
+  
   <ul class="nav-links">
     <li><a href="#about">About</a></li>
     <li><a href="#work">Work</a></li>
-    <li><a href="#process">Process</a></li>
-    <li><a href="#skills">Skills</a></li>
-    <li><a href="#contact">Contact</a></li>
+    <li><a href="#work">Gallery</a></li>
   </ul>
-  <a href="#contact" class="nav-cta">Let's Talk →</a>
+  
+  <div class="nav-right-group">
+    <!-- Theme Toggle Button -->
+    <button id="theme-toggle" class="theme-toggle-btn" title="Toggle Light/Dark Mode">
+      <!-- Icon will be set by JS -->
+      <svg id="theme-icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </button>
+    
+    <a href="#contact" class="nav-cta">Let's Talk →</a>
+  </div>
 </nav>
 
 <!-- Hero -->
@@ -1469,13 +973,12 @@
       </div>
 
       <h1 class="hero-headline">
-        <span class="line"><span>Bridging Screens</span></span>
-        <span class="line"><span class="stroke">& Human experiences</span></span>
-        
+        <span class="line"><span>GANESH JAVHARE</span></span>
+        <span class="line" style="font-size: 0.7em; font-weight: 500; margin-top: 12px;"><span class="stroke">Bridging Screens & Human experiences</span></span>
       </h1>
 
       <p class="hero-sub">
-        UX Designer specialising in product design, design systems, and human-centred interfaces that balance beauty with function.
+        I am a UX Designer specialised in product design, service design, and human-centred interfaces that balance beauty with function.
       </p>
 
       <div class="hero-actions">
@@ -1489,88 +992,82 @@
         <div class="floating-cards-group" id="parallax-group">
             
             <div class="dc-card dc-cert-back float-anim" style="padding: 20px;">
-                <h4 style="color: white; font-size: 12px; font-weight: bold; Margin-top:2px;margin-bottom: 6px;">Project 3 : Zensphere</h4>
-                <p style="color: rgba(255,255,255,0.6); font-size: 10px; margin-bottom: 15px;">Mobile APP</p>
-                <div style="width: 60%; height: 4px; background: rgba(233, 10, 10, 0.3); border-radius: 2px; margin-bottom: 6px;"></div>
+                <h4 style="font-size: 12px; font-weight: bold; margin-top:2px; margin-bottom: 6px;">Project 3 : Zensphere</h4>
+                <p style="color: rgba(255,255,255,0.8); font-size: 10px; margin-bottom: 15px;">Mobile APP</p>
+                <div style="width: 60%; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; margin-bottom: 6px;"></div>
                 <div style="width: 40%; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px;"></div>
             </div>
 
             <div class="dc-card dc-cert-front float-anim" style="padding: 20px;">
-                <h4 style="color: white; font-size: 12px; font-weight: bold;Margin-top:2px; margin-bottom: 6px;">Project 2 : IYR</h4>
-                <p style="color: rgba(255,255,255,0.6); font-size: 10px; margin-bottom: 15px;">Vertual Reality App</p>
+                <h4 style="font-size: 12px; font-weight: bold; margin-top:2px; margin-bottom: 6px;">Project 2 : IYR</h4>
+                <p style="color: rgba(255,255,255,0.8); font-size: 10px; margin-bottom: 15px;">Virtual Reality App</p>
                 <div style="width: 60%; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; margin-bottom: 6px;"></div>
                 <div style="width: 40%; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px;"></div>
             </div>
 
             <div class="dc-card dc-main float-anim">
-                 <h4 style="color: white; font-size: 12px; font-weight: bold;Margin-top:2px; margin-bottom: 6px;margin-left: 14px;">Project 1 : MahaRERA Portal<br></h4>
-                <div style="height: 30px; background: rgba(0,0,0,0.2); display: flex; gap: 8px; align-items: center; padding: 0 16px;">
-                   
-                  
+                 <h4 style="font-size: 12px; font-weight: bold; margin-top:2px; margin-bottom: 6px; margin-left: 14px;">Project 1 : MahaRERA Portal<br></h4>
+                <div style="height: 30px; background: var(--dc-box-bg); display: flex; gap: 8px; align-items: center; padding: 0 16px;">
                     <span style="width:12px; height:12px; border-radius:50%; background:#ff5f56;"></span>
                     <span style="width:12px; height:12px; border-radius:50%; background:#ffbd2e;"></span>
                     <span style="width:12px; height:12px; border-radius:50%; background:#27c93f;"></span>
                 </div>
                 <div style="display: flex; height: 100%;">
-                    
-                    <div style="width: 140px; background: rgba(0,0,0,0.1); padding: 20px; border-right: 1px solid rgba(255,255,255,0.05);">
-                        <div style="width: 100%; height: 10px; background: rgba(255,255,255,0.1); border-radius: 5px; margin-bottom: 20px;"></div>
-                        <div style="width: 80%; height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; margin-bottom: 15px;"></div>
-                        <div style="width: 60%; height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; margin-bottom: 15px;"></div>
-                        <div style="width: 70%; height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px;"></div>
+                    <div style="width: 140px; background: var(--dc-box-bg2); padding: 20px; border-right: 1px solid var(--dc-line-4);">
+                        <div style="width: 100%; height: 10px; background: var(--dc-line-3); border-radius: 5px; margin-bottom: 20px;"></div>
+                        <div style="width: 80%; height: 8px; background: var(--dc-line-4); border-radius: 4px; margin-bottom: 15px;"></div>
+                        <div style="width: 60%; height: 8px; background: var(--dc-line-4); border-radius: 4px; margin-bottom: 15px;"></div>
+                        <div style="width: 70%; height: 8px; background: var(--dc-line-4); border-radius: 4px;"></div>
                     </div>
                     <div style="flex: 1; padding: 30px;">
-                        <div style="width: 180px; height: 12px; background: rgba(255,255,255,0.2); border-radius: 6px; margin-bottom: 20px;"></div>
-                        <div style="width: 250px; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; margin-bottom: 10px;"></div>
-                        <div style="width: 200px; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px;"></div>
+                        <div style="width: 180px; height: 12px; background: var(--dc-line-2); border-radius: 6px; margin-bottom: 20px;"></div>
+                        <div style="width: 250px; height: 8px; background: var(--dc-line-3); border-radius: 4px; margin-bottom: 10px;"></div>
+                        <div style="width: 200px; height: 8px; background: var(--dc-line-3); border-radius: 4px;"></div>
                     </div>
                 </div>
             </div>
 
             <div class="dc-card dc-left float-anim" style="padding: 25px;">
-               <h4 style="color: white; font-size: 14px; font-weight: bold; margin-bottom: 4px;margin-left: 14px;">Product Design<br></h4>
+               <h4 style="font-size: 14px; font-weight: bold; margin-bottom: 4px; margin-left: 14px;">Product Design<br></h4>
                 <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px;">
                     <div style="width: 30px; height: 30px; border-radius: 50%; background: #ff2a85; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold;">1</div>
                     <div style="flex: 1;">
-                        <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; margin-bottom: 8px;"></div>
+                        <div style="width: 100%; height: 6px; background: var(--dc-line-1); border-radius: 3px; margin-bottom: 8px;"></div>
                         <div style="width: 40%; height: 4px; background: #ff2a85; border-radius: 2px;"></div>
                     </div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px;">
-                    
-                    <div style="width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.1); color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold;">2</div>
+                    <div style="width: 30px; height: 30px; border-radius: 50%; background: var(--dc-line-3); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: var(--dc-text);">2</div>
                     <div style="flex: 1;">
-                        <div style="width: 80%; height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; margin-bottom: 8px;"></div>
-                        <div style="width: 30%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px;"></div>
+                        <div style="width: 80%; height: 6px; background: var(--dc-line-1); border-radius: 3px; margin-bottom: 8px;"></div>
+                        <div style="width: 30%; height: 4px; background: var(--dc-line-2); border-radius: 2px;"></div>
                     </div>
                 </div>
             </div>
 
             <div class="dc-card dc-right float-anim" style="padding: 30px;">
-                 <h4 style="color: white; font-size: 14px; font-weight: bold; margin-bottom: 4px;margin-left: 14px;">Service Design<br></h4>
+                 <h4 style="font-size: 14px; font-weight: bold; margin-bottom: 4px; margin-left: 14px;">Service Design<br></h4>
                 <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 30px;">
-                    <div style="width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.1); color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold;">1</div>
+                    <div style="width: 30px; height: 30px; border-radius: 50%; background: var(--dc-line-3); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: var(--dc-text);">1</div>
                     <div style="flex: 1;">
-                        <div style="width: 90%; height: 8px; background: rgba(255,255,255,0.2); border-radius: 4px; margin-bottom: 8px;"></div>
-                        <div style="width: 50%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px;"></div>
+                        <div style="width: 90%; height: 8px; background: var(--dc-line-1); border-radius: 4px; margin-bottom: 8px;"></div>
+                        <div style="width: 50%; height: 4px; background: var(--dc-line-2); border-radius: 2px;"></div>
                     </div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 15px;">
-                    
-                    <div style="width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.1); color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold;">2</div>
+                    <div style="width: 30px; height: 30px; border-radius: 50%; background: var(--dc-line-3); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: var(--dc-text);">2</div>
                     <div style="flex: 1;">
-                        <div style="width: 70%; height: 8px; background: rgba(255,255,255,0.2); border-radius: 4px; margin-bottom: 8px;"></div>
-                        <div style="width: 40%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px;"></div>
+                        <div style="width: 70%; height: 8px; background: var(--dc-line-1); border-radius: 4px; margin-bottom: 8px;"></div>
+                        <div style="width: 40%; height: 4px; background: var(--dc-line-2); border-radius: 2px;"></div>
                     </div>
                 </div>
             </div>
 
             <div class="dc-card dc-blue float-anim" style="padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                 <h4 style="color: rgb(250, 250, 250); font-size: 14px; font-weight: bold; margin-bottom: 4px;margin-left: 14px;">UX Design<br></h4>
+                 <h4 style="font-size: 14px; font-weight: bold; margin-bottom: 4px; margin-left: 14px;">UX Design<br></h4>
                 <div style="width: 100%; height: 100px; background: rgba(255,255,255,0.2); border-radius: 10px; margin-bottom: 20px;"></div>
                 <div style="width: 80%; height: 10px; background: rgba(255,255,255,0.3); border-radius: 5px; margin-bottom: 10px;"></div>
                 <div style="width: 60%; height: 10px; background: rgba(255,255,255,0.3); border-radius: 5px; margin-bottom: 30px;"></div>
-                
                 <div style="display: flex; gap: 10px;">
                     <div style="width: 30px; height: 30px; border-radius: 50%; background: white;"></div>
                     <div style="width: 30px; height: 30px; border-radius: 50%; background: white;"></div>
@@ -1615,7 +1112,6 @@
       </div>
     </div>
     <div class="about-badge">
-      
       <div class="badge-title">Design Focus</div>
       <div class="badge-val">UX & Product Design</div>
     </div>
@@ -1775,7 +1271,7 @@
     
     <!-- Step 1: Discover -->
     <div class="step reveal reveal-delay-1" style="--theme: var(--cyan); --theme-dark: var(--cyan-dark); --delay: 0.1s;">
-        <div class="bg-number">1.</div>
+        <div class="bg-number">1</div>
         <div class="card">
             <div class="ribbon">Discover</div>
             <div class="card-content">
@@ -1919,76 +1415,69 @@
         <span class="tool-icon" style="width:42px; height:42px; display:flex; align-items:center; justify-content:center;">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Figma-Logo--Streamline-Logos-Block" height="24" width="24">
             <desc>Figma Logo Streamline Icon: https://streamlinehq.com</desc>
-            <path fill="#aeee" fill-rule="evenodd" d="M5 1a4 4 0 0 0 -4 4v14a4 4 0 0 0 4 4h14a4 4 0 0 0 4 -4V5a4 4 0 0 0 -4 -4H5Zm4.09 3h2.364v4.727H9.091A2.364 2.364 0 1 1 9.09 4Zm3.092 5.09V4h2.545a2.546 2.546 0 0 1 0 5.09h-2.545Zm2.363 5.274a2.364 2.364 0 1 0 0 -4.728 2.364 2.364 0 0 0 0 4.728Zm-3.09 0V9.636H9.09a2.364 2.364 0 0 0 0 4.728h2.364Zm0 3.272v-2.363H9.09a2.364 2.364 0 1 0 2.364 2.363Z" clip-rule="evenodd" stroke-width="1"></path>
+            <path fill="currentColor" fill-rule="evenodd" d="M5 1a4 4 0 0 0 -4 4v14a4 4 0 0 0 4 4h14a4 4 0 0 0 4 -4V5a4 4 0 0 0 -4 -4H5Zm4.09 3h2.364v4.727H9.091A2.364 2.364 0 1 1 9.09 4Zm3.092 5.09V4h2.545a2.546 2.546 0 0 1 0 5.09h-2.545Zm2.363 5.274a2.364 2.364 0 1 0 0 -4.728 2.364 2.364 0 0 0 0 4.728Zm-3.09 0V9.636H9.09a2.364 2.364 0 0 0 0 4.728h2.364Zm0 3.272v-2.363H9.09a2.364 2.364 0 1 0 2.364 2.363Z" clip-rule="evenodd" stroke-width="1"></path>
           </svg>
         </span>
-        <span style="font-size:0.85rem; font-weight:500; color: var(--text);">Figma</span>
+        <span style="font-size:0.85rem; font-weight:600; color: var(--text);">Figma</span>
       </div>
 
       <div class="tool-item" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding: 18px 12px; min-height: 130px; text-align:center;">
         <span class="tool-icon" style="width:42px; height:42px; display:flex; align-items:center; justify-content:center;">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Framer-Logo--Streamline-Logos-Block" height="24" width="24">
             <desc>Framer Logo Streamline Icon: https://streamlinehq.com</desc>
-            <path fill="#aeee" fill-rule="evenodd" d="M5 1a4 4 0 0 0 -4 4v14a4 4 0 0 0 4 4h14a4 4 0 0 0 4 -4V5a4 4 0 0 0 -4 -4H5Zm1.91 3.5L12 9.59H6.91v5.092l5.454 5.818v-5.818h4.727l-5.09 -5.091h5.09V4.5H6.909Z" clip-rule="evenodd" stroke-width="1"></path>
+            <path fill="currentColor" fill-rule="evenodd" d="M5 1a4 4 0 0 0 -4 4v14a4 4 0 0 0 4 4h14a4 4 0 0 0 4 -4V5a4 4 0 0 0 -4 -4H5Zm1.91 3.5L12 9.59H6.91v5.092l5.454 5.818v-5.818h4.727l-5.09 -5.091h5.09V4.5H6.909Z" clip-rule="evenodd" stroke-width="1"></path>
           </svg>
         </span>
-        <span style="font-size:0.85rem; font-weight:500; color: var(--text);">Framer</span>
+        <span style="font-size:0.85rem; font-weight:600; color: var(--text);">Framer</span>
       </div>
 
       <div class="tool-item" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding: 18px 12px; min-height: 130px; text-align:center;">
-        <span style="font-size:2rem; font-weight:800;color: #aeee;">
-          XD
-        </span>
-        <span style="font-size:0.85rem; font-weight:500; color: var(--text);">Adobe XD</span>
+        <span style="font-size:2rem; font-weight:800;color: inherit;">XD</span>
+        <span style="font-size:0.85rem; font-weight:600; color: var(--text);">Adobe XD</span>
       </div>
 
       <div class="tool-item" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding: 18px 12px; min-height: 130px; text-align:center;">
-        <span style="font-size:2rem; font-weight:800;color: #aeee;">
-          Ai
-        </span>
-        <span style="font-size:0.85rem; font-weight:500; color: var(--text);">Illustrator</span>
+        <span style="font-size:2rem; font-weight:800;color: inherit;">Ai</span>
+        <span style="font-size:0.85rem; font-weight:600; color: var(--text);">Illustrator</span>
       </div>
 
       <div class="tool-item" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding: 18px 12px; min-height: 130px; text-align:center;">
         <span class="tool-icon" style="width:42px; height:42px; display:flex; align-items:center; justify-content:center;">
-          <svg fill="#aeee" width="15px" height="15px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
-            <g id="SVGRepo_bgCarrier" stroke-width="0"/>
-            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+          <svg fill="currentColor" width="15px" height="15px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
             <g id="SVGRepo_iconCarrier">
-              <title>miro</title>
               <path d="M22.728 1.024h-4.356l3.868 6-8.182-6h-4.362l3.872 7.862-8.182-7.862h-4.362l3.806 10.148-3.806 19.804h4.362l8.18-21.234-3.87 21.234h4.36l8.184-23.096-3.87 23.096h4.358l8.248-25.368-8.248-4.584z"/>
             </g>
           </svg>
         </span>
-        <span style="font-size:0.85rem; font-weight:500; color: var(--text);">Miro</span>
+        <span style="font-size:0.85rem; font-weight:600; color: var(--text);">Miro</span>
       </div>
 
       <div class="tool-item" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding: 18px 12px; min-height: 130px; text-align:center;">
         <span class="tool-icon" style="width:42px; height:42px; display:flex; align-items:center; justify-content:center;">
           <svg width="800px" height="800px" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><title>file_type_vscode</title><path d="M29.01,5.03,23.244,2.254a1.742,1.742,0,0,0-1.989.338L2.38,19.8A1.166,1.166,0,0,0,2.3,21.447c.025.027.05.053.077.077l1.541,1.4a1.165,1.165,0,0,0,1.489.066L28.142,5.75A1.158,1.158,0,0,1,30,6.672V6.605A1.748,1.748,0,0,0,29.01,5.03Z" style="fill:#0065a9"/><path d="M29.01,26.97l-5.766,2.777a1.745,1.745,0,0,1-1.989-.338L2.38,12.2A1.166,1.166,0,0,1,2.3,10.553c.025-.027.05-.053.077-.077l1.541-1.4A1.165,1.165,0,0,1,5.41,9.01L28.142,26.25A1.158,1.158,0,0,0,30,25.328V25.4A1.749,1.749,0,0,1,29.01,26.97Z" style="fill:#007acc"/><path d="M23.244,29.747a1.745,1.745,0,0,1-1.989-.338A1.025,1.025,0,0,0,23,28.684V3.316a1.024,1.024,0,0,0-1.749-.724,1.744,1.744,0,0,1,1.989-.339l5.765,2.772A1.748,1.748,0,0,1,30,6.6V25.4a1.748,1.748,0,0,1-.991,1.576Z" style="fill:#1f9cf0"/></svg>
         </span>
-        <span style="font-size:0.85rem; font-weight:500; color: var(--text);">VS Code</span>
+        <span style="font-size:0.85rem; font-weight:600; color: var(--text);">VS Code</span>
       </div>
 
       <div class="tool-item" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding: 18px 12px; min-height: 130px; text-align:center;">
         <span class="tool-icon" style="width:42px; height:42px; display:flex; align-items:center; justify-content:center;">
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path fill="#aeee" d="M12 2a10 10 0 0 0-3.16 19.5c.5.1.68-.22.68-.48 0-.24-.01-.87-.01-1.7-2.77.6-3.36-1.33-3.36-1.33-.45-1.15-1.1-1.45-1.1-1.45-.9-.62.07-.6.07-.6 1 .07 1.54 1.03 1.54 1.03.88 1.52 2.3 1.08 2.86.83.09-.64.35-1.08.63-1.33-2.22-.25-4.55-1.11-4.55-4.95 0-1.1.39-1.99 1.03-2.69-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.55 9.55 0 0 1 12 6.8c.85.004 1.7.11 2.5.32 1.9-1.3 2.74-1.02 2.74-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.58 1.03 2.69 0 3.85-2.34 4.7-4.57 4.95.36.31.68.92.68 1.85 0 1.34-.01 2.42-.01 2.74 0 .26.18.58.69.48A10 10 0 0 0 12 2z"/>
+            <path fill="currentColor" d="M12 2a10 10 0 0 0-3.16 19.5c.5.1.68-.22.68-.48 0-.24-.01-.87-.01-1.7-2.77.6-3.36-1.33-3.36-1.33-.45-1.15-1.1-1.45-1.1-1.45-.9-.62.07-.6.07-.6 1 .07 1.54 1.03 1.54 1.03.88 1.52 2.3 1.08 2.86.83.09-.64.35-1.08.63-1.33-2.22-.25-4.55-1.11-4.55-4.95 0-1.1.39-1.99 1.03-2.69-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.55 9.55 0 0 1 12 6.8c.85.004 1.7.11 2.5.32 1.9-1.3 2.74-1.02 2.74-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.58 1.03 2.69 0 3.85-2.34 4.7-4.57 4.95.36.31.68.92.68 1.85 0 1.34-.01 2.42-.01 2.74 0 .26.18.58.69.48A10 10 0 0 0 12 2z"/>
           </svg>
         </span>
-        <span style="font-size:0.85rem; font-weight:500; color: var(--text);">GitHub</span>
+        <span style="font-size:0.85rem; font-weight:600; color: var(--text);">GitHub</span>
       </div>
 
       <div class="tool-item" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding: 18px 12px; min-height: 130px; text-align:center;">
         <span class="tool-icon" style="width:42px; height:42px; display:flex; align-items:center; justify-content:center;">
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none">
-            <path d="M6 8l-2 4 2 4" fill="none" stroke="#aeee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M18 8l2 4-2 4" fill="none" stroke="#aeee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M10 7h4" fill="none" stroke="#aeee" stroke-width="2" stroke-linecap="round"/>
-            <path d="M10 17h4" fill="none" stroke="#aeee" stroke-width="2" stroke-linecap="round"/>
+            <path d="M6 8l-2 4 2 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M18 8l2 4-2 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M10 7h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M10 17h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
           </svg>
         </span>
-        <span style="font-size:0.85rem; font-weight:500; color: var(--text);">HTML/CSS</span>
+        <span style="font-size:0.85rem; font-weight:600; color: var(--text);">HTML/CSS</span>
       </div>
     </div>
 </section>
@@ -2051,6 +1540,7 @@
       <div class="test-quote">"</div>
       <p class="test-text">The design system Ganesh built for us saved our engineering team hundreds of hours and brought visual consistency across our entire platform for the first time.</p>
       
+      <a href="#" class="test-person">
         <div class="test-avatar av3">JJ</div>
         <div>
           <div class="test-name">Jitendra Joshi <span class="link-arrow"></span></div>
@@ -2130,7 +1620,6 @@
   <div class="footer-logo">Ganesh Javhare<span>.</span></div>
   <div class="footer-text">© 2026 Ganesh Javhare · Crafted with care in London</div>
   <div class="footer-socials">
-    
     <a href="https://www.linkedin.com/in/gjuxdesigner" target="_blank" class="social-btn" title="LinkedIn">in</a>
     <a href="https://github.com/gjavhareux-design" target="_blank" class="social-btn" title="Github">Git</a>
     <a href="https://www.behance.net/ganeshjavhare" target="_blank" class="social-btn" title="Behance">Bé</a>
@@ -2139,6 +1628,37 @@
 
 <script>
   
+  // =====================================================================
+  // --- THEME TOGGLE LOGIC ---
+  // =====================================================================
+  const themeToggleBtn = document.getElementById('theme-toggle');
+  const themeIcon = document.getElementById('theme-icon');
+  
+  const moonIconPath = "M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z";
+  const sunIconPath = "M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10z";
+  
+  // Determine starting theme
+  let currentTheme = localStorage.getItem('theme') || 'dark';
+  applyTheme(currentTheme);
+
+  themeToggleBtn.addEventListener('click', () => {
+    currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    applyTheme(currentTheme);
+    localStorage.setItem('theme', currentTheme);
+  });
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    // Switch the SVG icon paths
+    themeIcon.innerHTML = theme === 'dark' 
+      ? `<path d="${moonIconPath}"></path>` 
+      : `<path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="${sunIconPath}"></path>`;
+      
+    // Dispatch a custom event to notify all 3D/Canvas elements to re-render
+    const themeEvent = new CustomEvent('theme-changed', { detail: theme });
+    document.documentElement.dispatchEvent(themeEvent);
+  }
+
   // =====================================================================
   // --- LENIS SMOOTH SCROLL INITIALIZATION ---
   // =====================================================================
@@ -2154,19 +1674,16 @@
     infinite: false,
   });
 
-  // RAF loop specifically for Lenis to animate smooth scrolling
   function rafLenis(time) {
     lenis.raf(time);
     requestAnimationFrame(rafLenis);
   }
   requestAnimationFrame(rafLenis);
 
-  // Smooth scroll for Navigation Links using Lenis
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
       e.preventDefault();
       const target = this.getAttribute('href');
-      // Let lenis handle the smooth journey to the anchor ID
       lenis.scrollTo(target, {
         offset: 0,
         duration: 1.5,
@@ -2180,15 +1697,12 @@
   const ring = document.getElementById('cursor-ring');
   let mx = 0, my = 0, rx = 0, ry = 0;
 
-  // Shared mouse coordinates for dot background
   const mouse = { x: -9999, y: -9999, active: false };
 
   document.addEventListener('mousemove', e => {
     mx = e.clientX; my = e.clientY;
     cursor.style.left = mx + 'px';
     cursor.style.top = my + 'px';
-
-    // Dot layer logic
     mouse.active = true;
     mouse.x = e.pageX; 
     mouse.y = e.pageY;
@@ -2213,7 +1727,6 @@
   }
   animateRing();
 
-  // Normal hover state for regular links & buttons
   document.querySelectorAll('a:not(.project-card), button, .tool-item, .contact-link').forEach(el => {
     el.addEventListener('mouseenter', () => {
       cursor.style.width = '20px';
@@ -2232,7 +1745,8 @@
       ring.style.borderColor = 'rgba(200,240,96,0.4)';
     });
   });
-// --- LIST VIEW TOGGLE LOGIC ---
+
+  // --- LIST VIEW TOGGLE LOGIC ---
   const btnGrid = document.getElementById('btn-grid');
   const btnList = document.getElementById('btn-list');
   const gridContainer = document.querySelector('.projects-grid');
@@ -2242,7 +1756,6 @@
       gridContainer.classList.remove('list-view');
       btnGrid.classList.add('active');
       btnList.classList.remove('active');
-      // Clear JS inline styles so CSS Grid takes over again
       document.querySelectorAll('.project-thumb').forEach(t => { t.style.left = ''; t.style.top = ''; });
     });
     btnList.addEventListener('click', () => {
@@ -2252,7 +1765,6 @@
     });
   }
 
-  // Floating Image Follow Tracker for List View
   document.addEventListener('mousemove', (e) => {
     if (gridContainer && gridContainer.classList.contains('list-view')) {
       document.querySelectorAll('.project-card:hover .project-thumb').forEach(thumb => {
@@ -2264,8 +1776,6 @@
 
   // --- DYNAMIC CIRCULAR TEXT HOVER LOGIC ---
   document.querySelectorAll('.project-card').forEach(el => {
-    
-    // Main Card Hover (Turns ON circular text)
     el.addEventListener('mouseenter', () => {
       cursor.style.width = '6px';
       cursor.style.height = '6px';
@@ -2281,47 +1791,38 @@
       const textPath = document.getElementById('cursor-text-path');
       const centerText = document.getElementById('cursor-center-text');
       
-      // Inject Stacked Time and Read text
       const readTime = el.getAttribute('data-read-time') || '10';
       centerText.innerHTML = `<span>${readTime} MIN</span><span>READ</span>`;
 
-      // Dynamic text based on In Progress state
       if (isProgress) {
         let newText = `EXPLORE ${projectName.toUpperCase()} CASE STUDY • `;
-        if (newText.length < 50) newText += newText; // Ensure it wraps fully
+        if (newText.length < 50) newText += newText; 
         textPath.textContent = newText;
       } else {
         textPath.textContent = `EXPLORE CASE STUDY • EXPLORE CASE STUDY • `;
       }
     });
 
-    // Main Card Leave (Turns OFF circular text)
     el.addEventListener('mouseleave', () => {
       cursor.style.width = '12px';
       cursor.style.height = '12px';
       cursor.style.background = 'var(--accent)';
       ring.style.width = '36px';
       ring.style.height = '36px';
-      ring.style.borderColor = 'rgba(200,240,96,0.4)';
+      ring.style.borderColor = 'var(--accent)';
       cursorTextRing.style.transform = 'translate(-50%, -50%) scale(0)';
       cursorTextRing.style.opacity = '0';
     });
 
-    // OVERRIDE: Revert to normal cursor if hovering over buttons inside the card
     el.querySelectorAll('.expand-btn, .explore-btn-list').forEach(btn => {
       btn.addEventListener('mouseenter', (e) => {
-        // Hide circular text
         cursorTextRing.style.transform = 'translate(-50%, -50%) scale(0)';
         cursorTextRing.style.opacity = '0';
-        
-        // Hide the floating mockup image
         const thumb = el.querySelector('.project-thumb');
         if(thumb) {
             thumb.style.opacity = '0';
-            thumb.style.transform = 'translate(-50%, -50%) scale(0.8)'; // Shrinks it away smoothly
+            thumb.style.transform = 'translate(-50%, -50%) scale(0.8)';
         }
-
-        // Show normal button hover
         cursor.style.width = '20px';
         cursor.style.height = '20px';
         cursor.style.background = 'var(--accent2)';
@@ -2331,18 +1832,13 @@
       });
       
       btn.addEventListener('mouseleave', (e) => {
-        // Bring back circular text
         cursorTextRing.style.transform = 'translate(-50%, -50%) scale(1)';
         cursorTextRing.style.opacity = '1';
-        
-        // Bring back the floating mockup image (Removes inline style so CSS takes over again)
         const thumb = el.querySelector('.project-thumb');
         if(thumb) {
             thumb.style.opacity = ''; 
             thumb.style.transform = ''; 
         }
-
-        // Hide normal hover
         cursor.style.width = '6px';
         cursor.style.height = '6px';
         cursor.style.background = 'var(--accent)';
@@ -2351,7 +1847,7 @@
         ring.style.borderColor = 'transparent';
       });
     });
-  }); // <--- This was the missing piece!
+  }); 
 
   /* ── Scroll Reveal ── */
   const revealObserver = new IntersectionObserver((entries) => {
@@ -2362,7 +1858,6 @@
       }
     });
   }, { threshold: 0.12 });
-
   document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
   /* ── Skill Bar Animation ── */
@@ -2377,7 +1872,6 @@
       }
     });
   }, { threshold: 0.3 });
-
   const skillSection = document.getElementById('skills');
   if (skillSection) skillObserver.observe(skillSection);
 
@@ -2391,7 +1885,6 @@
       if (count >= target) clearInterval(timer);
     }, 25);
   }
-
   const statsObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -2405,9 +1898,9 @@
       }
     });
   }, { threshold: 0.5 });
-
   const heroStats = document.querySelector('.hero-stats');
   if (heroStats) statsObserver.observe(heroStats);
+
 
   // =====================================================================
   // --- AI CHIP & CIRCUITS 3D ANIMATION (AI SECTION) ---
@@ -2415,7 +1908,6 @@
   const aiChipContainer = document.getElementById('ai-chip-canvas');
   if (aiChipContainer && typeof THREE !== 'undefined') {
       const scene = new THREE.Scene();
-      // Adjust camera to look slightly down onto the chip
       const camera = new THREE.PerspectiveCamera(45, aiChipContainer.clientWidth / aiChipContainer.clientHeight, 0.1, 1000);
       camera.position.set(0, 90, 130);
       camera.lookAt(0, 0, 0);
@@ -2428,171 +1920,142 @@
       const chipGroup = new THREE.Group();
       scene.add(chipGroup);
 
-      // --- 1. The Main AI Chip Box ---
+      // Materials (Declared here so they can update on theme change)
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      
       const chipGeo = new THREE.BoxGeometry(36, 4, 32);
       const chipMat = new THREE.MeshPhongMaterial({ 
-          color: 0x111118, 
-          emissive: 0x050510,
-          specular: 0x00d2ff, 
+          color: isLight ? 0x888899 : 0x111118, 
+          emissive: isLight ? 0x111111 : 0x050510,
+          specular: isLight ? 0xff5f00 : 0x00d2ff, 
           shininess: 90 
       });
       const chip = new THREE.Mesh(chipGeo, chipMat);
       chipGroup.add(chip);
 
-      // --- 2. Tech Wireframe Overlay for Chip ---
       const edges = new THREE.EdgesGeometry(chipGeo);
-      const lineMat = new THREE.LineBasicMaterial({ color: 0x00d2ff, transparent: true, opacity: 0.5 });
+      const lineMat = new THREE.LineBasicMaterial({ color: isLight ? 0x999999 : 0x00d2ff, transparent: true, opacity: 0.3 });
       const chipWireframe = new THREE.LineSegments(edges, lineMat);
       chipGroup.add(chipWireframe);
 
-      // --- 3. "AI" Text on top of the Chip ---
+      // AI Text Canvas
       const canvasText = document.createElement('canvas');
-      canvasText.width = 256; 
-      canvasText.height = 256;
+      canvasText.width = 256; canvasText.height = 256;
       const ctxText = canvasText.getContext('2d');
-      
-      ctxText.fillStyle = '#00d2ff'; // Cyan accent to match reference
-      ctxText.font = 'bold 80px "Syne", sans-serif';
-      ctxText.textAlign = 'center';
-      ctxText.textBaseline = 'middle';
-      ctxText.shadowColor = '#00d2ff';
-      ctxText.shadowBlur = 25;
-      ctxText.fillText('AI', 128, 128);
-      ctxText.fillText('AI', 128, 128);
-
       const textTex = new THREE.CanvasTexture(canvasText);
+      
+      function drawAIText(theme) {
+          ctxText.clearRect(0,0,256,256);
+          const accentHex = theme === 'light' ? '#888888' : '#00d2ff';
+          ctxText.fillStyle = accentHex;
+          ctxText.font = 'bold 80px "Syne", sans-serif';
+          ctxText.textAlign = 'center';
+          ctxText.textBaseline = 'middle';
+          ctxText.shadowColor = accentHex;
+          ctxText.shadowBlur = 25;
+          ctxText.fillText('AI', 128, 128);
+          ctxText.fillText('AI', 128, 128);
+          textTex.needsUpdate = true;
+      }
+      drawAIText(currentTheme);
+
       const textGeo = new THREE.PlaneGeometry(24, 24);
       const textMat = new THREE.MeshBasicMaterial({ 
-          map: textTex, 
-          transparent: true, 
-          blending: THREE.AdditiveBlending,
-          depthWrite: false
+          map: textTex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false
       });
       const textMesh = new THREE.Mesh(textGeo, textMat);
       textMesh.rotation.x = -Math.PI / 2;
       textMesh.position.y = 2.1;
       chipGroup.add(textMesh);
 
-      // --- 4. Motherboard Routing Logic & Glowing Signal Lines ---
       const circuitsGroup = new THREE.Group();
       scene.add(circuitsGroup);
       const signals = [];
       const pathsData = [];
-      
-      const pathMaterial = new THREE.LineBasicMaterial({ color: 0x00d2ff, transparent: true,width:5, opacity: 0.15 });
+      const pathMaterial = new THREE.LineBasicMaterial({ color: isLight ? 0xbbbbbb : 0x00d2ff, transparent: true, width: 5, opacity: 0.4 });
 
       function createMotherboardTraces(side) {
-          // Generates parallel, non-crossing traces fanning out in 45-degree angles
-          // side: 0=Top, 1=Right, 2=Bottom, 3=Left
-          const pins = 15; // 15 lines per side = 60 total (increased quantity)
-          const spacing = 2.0; 
+          const pins = 15; const spacing = 2.0; 
           const startOffset = -(pins * spacing) / 2 + (spacing / 2);
 
           for(let i=0; i<pins; i++) {
               const pts = [];
               const pinPos = startOffset + (i * spacing);
-              
               let px, pz, dx, dz, turnDir;
 
-              // Setup initial direction based on the side of the chip
               if (side === 0) { px = pinPos; pz = -16; dx = 0; dz = -1; turnDir = Math.sign(pinPos) || 1; }
               else if (side === 1) { px = 16; pz = pinPos; dx = 1; dz = 0; turnDir = Math.sign(pinPos) || 1; }
               else if (side === 2) { px = pinPos; pz = 16; dx = 0; dz = 1; turnDir = Math.sign(pinPos) || 1; }
               else { px = -16; pz = pinPos; dx = -1; dz = 0; turnDir = Math.sign(pinPos) || 1; }
 
-              // Segment 1: Starting node on edge
               pts.push(new THREE.Vector3(px, -1, pz));
-
-              // Segment 2: Move slightly out from chip
               px += dx * 2; pz += dz * 2;
               pts.push(new THREE.Vector3(px, -1, pz));
 
-              // Segment 3: The 45-degree Fan Out.
-              // By scaling the outward distance proportionally to the distance from center, lines NEVER cross!
               const fanDist = Math.abs(pinPos) * 1.5 + 10; 
-              
               let cx = 0, cz = 0;
               if (side === 0) { cx = turnDir; cz = -1; }
               else if (side === 1) { cx = 1; cz = turnDir; }
               else if (side === 2) { cx = turnDir; cz = 1; }
               else if (side === 3) { cx = -1; cz = turnDir; }
 
-              px += cx * fanDist;
-              pz += cz * fanDist;
+              px += cx * fanDist; pz += cz * fanDist;
               pts.push(new THREE.Vector3(px, -1, pz));
-
-              // Segment 4: Move straight out indefinitely
-              px += dx * 100;
-              pz += dz * 100;
+              px += dx * 100; pz += dz * 100;
               pts.push(new THREE.Vector3(px, -1, pz));
-
               pathsData.push(pts);
 
-              // Draw the static blue trace line
               const geo = new THREE.BufferGeometry().setFromPoints(pts);
               circuitsGroup.add(new THREE.Line(geo, pathMaterial));
           }
       }
-
-      // Generate all 4 sides
       for(let s=0; s<4; s++) createMotherboardTraces(s);
 
-      // Create glowing gradient signals
+      // Glowing signals
+      function updateSignalColors(theme) {
+          const accentColor = new THREE.Color(theme === 'light' ? 0xff2800 : 0xc8f060);
+          signals.forEach(sig => {
+              const sigColors = sig.line.geometry.attributes.color.array;
+              for(let i=0; i<=sig.segments; i++) {
+                  let ratio = 1 - (i / sig.segments);
+                  sigColors[i*3] = accentColor.r * ratio;
+                  sigColors[i*3+1] = accentColor.g * ratio;
+                  sigColors[i*3+2] = accentColor.b * ratio;
+              }
+              sig.line.geometry.attributes.color.needsUpdate = true;
+          });
+      }
+
       pathsData.forEach(pts => {
-          let totalLength = 0;
-          const lengths = [0];
+          let totalLength = 0; const lengths = [0];
           for(let j=1; j<pts.length; j++) {
               totalLength += pts[j-1].distanceTo(pts[j]);
               lengths.push(totalLength);
-            }
-
-          const segments = 15; // Number of points in the gradient trail
+          }
+          const segments = 15;
           const sigPts = new Float32Array((segments + 1) * 3);
           const sigColors = new Float32Array((segments + 1) * 3);
           
-          const accentColor = new THREE.Color(0xc8f060); // Lime green accent
-
-          // Define vertex colors to simulate a gradient fading tail
-          for(let i=0; i<=segments; i++) {
-              let ratio = 1 - (i / segments); // Head is 1.0 (bright), Tail is 0.0 (dark)
-              sigColors[i*3] = accentColor.r * ratio;
-              sigColors[i*3+1] = accentColor.g * ratio;
-              sigColors[i*3+2] = accentColor.b * ratio;
-          }
-
           const sigGeo = new THREE.BufferGeometry();
           sigGeo.setAttribute('position', new THREE.BufferAttribute(sigPts, 3));
           sigGeo.setAttribute('color', new THREE.BufferAttribute(sigColors, 3));
 
           const sigMat = new THREE.LineBasicMaterial({
-              vertexColors: true,
-              blending: THREE.AdditiveBlending,
-              transparent: true,
-              opacity: 0.95,
-              depthWrite: false,
-              linewidth: 2 // Has limited effect in webgl, but helps slightly on some platforms
+              vertexColors: true, blending: THREE.AdditiveBlending, transparent: true, opacity: 1, depthWrite: false, linewidth: 2
           });
-
           const sigLine = new THREE.Line(sigGeo, sigMat);
           circuitsGroup.add(sigLine);
 
           signals.push({
-              pts: pts,
-              lengths: lengths,
-              totalLength: totalLength,
-              dist: Math.random() * totalLength, // Random starting position
-              speed: 0.2 + Math.random() * 0.1, // Speed of signal
-              line: sigLine,
-              segments: segments,
-              signalLength: 4 + Math.random() * 8 // Length of the trail
+              pts: pts, lengths: lengths, totalLength: totalLength, dist: Math.random() * totalLength, 
+              speed: 0.2 + Math.random() * 0.1, line: sigLine, segments: segments, signalLength: 4 + Math.random() * 8 
           });
       });
+      updateSignalColors(currentTheme); // Set initial colors
 
-      // Helper to precisely track distances across corner bends
       function getPointAtDist(pts, lengths, d) {
           if (d <= 0) return pts[0].clone();
           if (d >= lengths[lengths.length-1]) return pts[pts.length-1].clone();
-
           for(let i=0; i<lengths.length-1; i++) {
               if (d >= lengths[i] && d < lengths[i+1]) {
                   let segmentL = lengths[i+1] - lengths[i];
@@ -2603,77 +2066,71 @@
           return pts[pts.length-1].clone();
       }
 
-      // --- 5. Flying Particles / Data Dust ---
+      // Particles
       const pCount = 700;
       const particleGeo = new THREE.BufferGeometry();
       const pPos = new Float32Array(pCount * 3);
-      for(let i=0; i<pCount*3; i++) {
-          pPos[i] = (Math.random() - 0.5) * 250; 
-      }
+      for(let i=0; i<pCount*3; i++) pPos[i] = (Math.random() - 0.5) * 250; 
       particleGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
       const particleMat = new THREE.PointsMaterial({ 
-          color: 0x00d2ff, 
-          size: 0.8, 
-          transparent: true, 
-          opacity: 0.3,
-          blending: THREE.AdditiveBlending
+          color: isLight ? 0xff2800 : 0xffc800, size: 0.8, transparent: true, opacity: 0.7, blending: THREE.AdditiveBlending
       });
       const particles = new THREE.Points(particleGeo, particleMat);
       scene.add(particles);
 
-      // --- 6. Lighting ---
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
       scene.add(ambientLight);
       
-      const centerLight = new THREE.PointLight(0x00d2ff, 1.5, 150);
+      const centerLight = new THREE.PointLight(isLight ? 0xff5f00 : 0x00d2ff, 1.5, 150);
       centerLight.position.set(0, 15, 0);
       scene.add(centerLight);
 
-      // --- 7. Animation Loop ---
-      let time = 0;
+      // Update Theme on Event
+      document.documentElement.addEventListener('theme-changed', (e) => {
+          const theme = e.detail;
+          const isL = theme === 'light';
+          
+          chipMat.color.setHex(isL ? 0x888899 : 0x111118);
+          chipMat.emissive.setHex(isL ? 0x111111 : 0x050510);
+          chipMat.specular.setHex(isL ? 0xff5f00 : 0x00d2ff);
+          
+          lineMat.color.setHex(isL ? 0x999999 : 0x00d2ff);
+          pathMaterial.color.setHex(isL ? 0xbbbbbb : 0x00d2ff);
+          particleMat.color.setHex(isL ? 0xff5f00 : 0x00d2ff);
+          centerLight.color.setHex(isL ? 0xff5f00 : 0x00d2ff);
+          
+          drawAIText(theme);
+          updateSignalColors(theme);
+      });
 
+      let time = 0;
       function animateAI() {
           requestAnimationFrame(animateAI);
           time += 0.01;
-
-          // Subtle floating rotation to the whole scene
           scene.rotation.y = Math.sin(time * 0.5) * 0.1;
           scene.rotation.x = Math.cos(time * 0.3) * 0.05;
-
-          // Pulse the central "AI" text
           const pulse = 1 + Math.sin(time * 4) * 0.2;
           textMesh.scale.set(pulse, pulse, pulse);
 
-          // Animate the Motherboard Signals
           signals.forEach(sig => {
               sig.dist += sig.speed;
-              if (sig.dist - sig.signalLength > sig.totalLength) {
-                  sig.dist = 0; // Reset trace to chip when fully offscreen
-              }
-
+              if (sig.dist - sig.signalLength > sig.totalLength) sig.dist = 0; 
               const positions = sig.line.geometry.attributes.position.array;
-
-              // Draw the gradient line segment point by point
               for(let i=0; i<=sig.segments; i++) {
                   let nodeDist = sig.dist - (i / sig.segments) * sig.signalLength;
                   nodeDist = Math.max(0, Math.min(sig.totalLength, nodeDist));
-
                   const pos = getPointAtDist(sig.pts, sig.lengths, nodeDist);
-                  positions[i*3] = pos.x;
-                  positions[i*3+1] = pos.y;
-                  positions[i*3+2] = pos.z;
+                  positions[i*3] = pos.x; positions[i*3+1] = pos.y; positions[i*3+2] = pos.z;
               }
               sig.line.geometry.attributes.position.needsUpdate = true;
           });
 
-          // Drift particles slowly upwards
           const pPositions = particles.geometry.attributes.position.array;
           for(let i=1; i<pCount*3; i+=3) { 
               pPositions[i] += 0.08;
               if (pPositions[i] > 120) pPositions[i] = -120;
           }
           particles.geometry.attributes.position.needsUpdate = true;
-
           renderer.render(scene, camera);
       }
       animateAI();
@@ -2692,7 +2149,6 @@
   const globeContainer = document.getElementById('about-globe-container');
   if (globeContainer && typeof THREE !== 'undefined') {
       const scene = new THREE.Scene();
-      // Camera positioning
       const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
       camera.position.z = 650;
 
@@ -2700,22 +2156,19 @@
       renderer.setSize(700, 700);
       globeContainer.appendChild(renderer.domElement);
 
-      // 1. Create Base Globe (Solid dark to hide back lines, replacing wireframe)
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+
       const radius = 240;
-      const segments = 64; // Higher segment count for a perfect sphere
+      const segments = 64; 
       const geometry = new THREE.SphereGeometry(radius, segments, segments);
-      const material = new THREE.MeshBasicMaterial({
-          color: 0x0a0a0f, // Match site background to seamlessly blend
-          transparent: true,
-          opacity: 0.95
+      const globeMat = new THREE.MeshBasicMaterial({
+          color: isLight ? 0xfcf9f6 : 0x0a0a0f, 
+          transparent: true, opacity: 0.95
       });
-      const globe = new THREE.Mesh(geometry, material);
+      const globe = new THREE.Mesh(geometry, globeMat);
       scene.add(globe);
 
-      // 1.2 Add Longitude/Latitude Grid (Custom circles to avoid triangulation lines)
-      const gridMat = new THREE.LineBasicMaterial({ color: 0x7a7890, transparent: true, opacity: 0.15 });
-      
-      // Latitude rings (horizontal)
+      const gridMat = new THREE.LineBasicMaterial({ color: isLight ? 0xc8c6d0 : 0x7a7890, transparent: true, opacity: 0.15 });
       for (let gridLat = -80; gridLat <= 80; gridLat += 20) {
           const lRadius = (radius + 0.2) * Math.cos(gridLat * Math.PI / 180);
           const lY = (radius + 0.2) * Math.sin(gridLat * Math.PI / 180);
@@ -2727,8 +2180,6 @@
           circle.position.y = lY;
           globe.add(circle);
       }
-
-      // Longitude rings (vertical)
       for (let gridLon = 0; gridLon < 180; gridLon += 20) {
           const curve = new THREE.EllipseCurve(0, 0, radius + 0.2, radius + 0.2, 0, 2 * Math.PI, false, 0);
           const points = curve.getPoints(64);
@@ -2738,192 +2189,127 @@
           globe.add(circle);
       }
 
-      // 1.5 Fetch Map Data for Borders (Using highly reliable source)
+      let mapLineMat = new THREE.LineBasicMaterial({ color: isLight ? 0xb0aebd : 0x7a7890, transparent: true, opacity: 0.5 });
       fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json')
         .then(res => res.json())
         .then(data => {
-            const lineMat = new THREE.LineBasicMaterial({ color: 0x7a7890, transparent: true, opacity: 0.5 });
-            
             function createLine(coords) {
                 let points = [];
                 for (let i = 0; i < coords.length; i++) {
-                    const lon = coords[i][0];
-                    const lat = coords[i][1];
-
-                    // Prevent lines from stretching across the globe (Antimeridian crossing fix)
+                    const lon = coords[i][0]; const lat = coords[i][1];
                     if (i > 0) {
                         const prevLon = coords[i-1][0];
                         if (Math.abs(lon - prevLon) > 180) {
                             if (points.length > 1) {
                                 const geo = new THREE.BufferGeometry().setFromPoints(points);
-                                globe.add(new THREE.Line(geo, lineMat));
+                                globe.add(new THREE.Line(geo, mapLineMat));
                             }
-                            points = []; // Reset for the next segment
+                            points = []; 
                         }
                     }
-
                     const phi = (90 - lat) * (Math.PI / 180);
                     const theta = (lon + 90) * (Math.PI / 180);
-                    // Negate X so East maps to positive X (Right side of the globe)
                     const x = -(radius * Math.sin(phi) * Math.cos(theta));
                     const y = radius * Math.cos(phi);
                     const z = radius * Math.sin(phi) * Math.sin(theta);
                     points.push(new THREE.Vector3(x, y, z));
                 }
-                
                 if (points.length > 1) {
                     const geo = new THREE.BufferGeometry().setFromPoints(points);
-                    globe.add(new THREE.Line(geo, lineMat));
+                    globe.add(new THREE.Line(geo, mapLineMat));
                 }
             }
-
-            // Parse GeoJSON correctly whether it's a Polygon or MultiPolygon
             data.features.forEach(feature => {
                 if (!feature.geometry) return;
-                if (feature.geometry.type === 'Polygon') {
-                    feature.geometry.coordinates.forEach(ring => createLine(ring));
-                } else if (feature.geometry.type === 'MultiPolygon') {
-                    feature.geometry.coordinates.forEach(poly => {
-                        poly.forEach(ring => createLine(ring));
-                    });
-                }
+                if (feature.geometry.type === 'Polygon') { feature.geometry.coordinates.forEach(ring => createLine(ring)); }
+                else if (feature.geometry.type === 'MultiPolygon') { feature.geometry.coordinates.forEach(poly => { poly.forEach(ring => createLine(ring)); }); }
             });
         })
-        .catch(err => {
-            console.log("Map data failed to load, falling back to wireframe.", err);
-            material.wireframe = true;
-            material.opacity = 0.15;
-        });
+        .catch(err => { globeMat.wireframe = true; globeMat.opacity = 0.15; });
 
-      // 2. Calculate exact coordinates for London
-      const lat = 51.5072;
-      const lon = -0.1276;
+      const lat = 51.5072; const lon = -0.1276;
       const phi = (90 - lat) * (Math.PI / 180);
       const theta = (lon + 90) * (Math.PI / 180);
-
-      // Push marker out slightly so it sits directly on the map surface
-      // Negate X to match the corrected map orientation
       const x = -((radius + 1) * Math.sin(phi) * Math.cos(theta));
       const y = (radius + 1) * Math.cos(phi);
       const z = (radius + 1) * Math.sin(phi) * Math.sin(theta);
 
-      // 3. Create Precise Marker Group
       const markerGroup = new THREE.Group();
       markerGroup.position.set(x, y, z);
-      markerGroup.lookAt(markerGroup.position.clone().multiplyScalar(2)); // Point straight outward
+      markerGroup.lookAt(markerGroup.position.clone().multiplyScalar(2));
       globe.add(markerGroup); 
 
-      // Center Pin Core (White Dot)
       const dotGeo = new THREE.CircleGeometry(2.5, 32);
-      const dotMat = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
+      const dotMat = new THREE.MeshBasicMaterial({ color: isLight ? 0x121212 : 0xffffff, side: THREE.DoubleSide });
       const dot = new THREE.Mesh(dotGeo, dotMat);
       markerGroup.add(dot);
 
-      // Static Inner Accent Ring
       const innerRingGeo = new THREE.RingGeometry(3.5, 6, 32);
-      const innerRingMat = new THREE.MeshBasicMaterial({ color: 0xc8f060, transparent: true, opacity: 0.9, side: THREE.DoubleSide });
+      const innerRingMat = new THREE.MeshBasicMaterial({ color: isLight ? 0xff5f00 : 0xc8f060, transparent: true, opacity: 0.9, side: THREE.DoubleSide });
       const innerRing = new THREE.Mesh(innerRingGeo, innerRingMat);
       markerGroup.add(innerRing);
 
-      // Expanding/Pulsing Outer Ring
       const ringGeo = new THREE.RingGeometry(7, 10, 32);
-      const ringMat = new THREE.MeshBasicMaterial({ color: 0xc8f060, transparent: true, opacity: 0.6, side: THREE.DoubleSide });
+      const ringMat = new THREE.MeshBasicMaterial({ color: isLight ? 0xff5f00 : 0xc8f060, transparent: true, opacity: 0.6, side: THREE.DoubleSide });
       const ring = new THREE.Mesh(ringGeo, ringMat);
       markerGroup.add(ring);
       
-      // 3D Pin Pole (Visual line anchoring to the globe core)
       const poleGeo = new THREE.CylinderGeometry(0.3, 0.3, 10, 8);
-      const poleMat = new THREE.MeshBasicMaterial({ color: 0xc8f060, transparent: true, opacity: 0.5 });
+      const poleMat = new THREE.MeshBasicMaterial({ color: isLight ? 0xff5f00 : 0xc8f060, transparent: true, opacity: 0.5 });
       const pole = new THREE.Mesh(poleGeo, poleMat);
-      pole.rotation.x = Math.PI / 2;
-      pole.position.z = -5;
+      pole.rotation.x = Math.PI / 2; pole.position.z = -5;
       markerGroup.add(pole);
 
-      // 4. Create "LONDON" Label with Coordinates (3D Plane)
       const canvasText = document.createElement('canvas');
-      canvasText.width = 712; 
-      canvasText.height = 256;
+      canvasText.width = 712; canvasText.height = 256;
       const context = canvasText.getContext('2d');
-      
-      // London Text
-      context.font = 'bold 56px "DM Sans", sans-serif';
-      context.fillStyle = '#ffffff';
-      context.fillText('LONDON', 20, 100);
-      
-      // Coordinates Text
-      context.font = '600 40px "DM Sans", sans-serif';
-      context.fillStyle = '#c8f060';
-      context.fillText('51.5072° N, 0.1276° W', 20, 160);
-      
       const texture = new THREE.CanvasTexture(canvasText);
+      
+      function drawLondonLabel(theme) {
+          context.clearRect(0,0,712,256);
+          context.font = 'bold 56px "DM Sans", sans-serif';
+          context.fillStyle = theme === 'light' ? '#121212' : '#ffffff';
+          context.fillText('LONDON', 20, 100);
+          context.font = '600 40px "DM Sans", sans-serif';
+          context.fillStyle = theme === 'light' ? '#ff5f00' : '#c8f060';
+          context.fillText('51.5072° N, 0.1276° W', 20, 160);
+          texture.needsUpdate = true;
+      }
+      drawLondonLabel(currentTheme);
+
       const labelGeo = new THREE.PlaneGeometry(120, 60);
       const labelMat = new THREE.MeshBasicMaterial({ map: texture, transparent: true, side: THREE.DoubleSide });
       const labelMesh = new THREE.Mesh(labelGeo, labelMat);
-      // Lift slightly (z=2) off the surface to prevent clipping into the globe
       labelMesh.position.set(50, 30, 2); 
       markerGroup.add(labelMesh);
 
-      // 4.5 Create Secondary Marker for Mumbai
-      const mLat = 19.0760;
-      const mLon = 72.8777;
-      const mPhi = (90 - mLat) * (Math.PI / 180);
-      const mTheta = (mLon + 90) * (Math.PI / 180);
-      // Negate X to map properly to our corrected map orientation
-      const mx = -((radius + 1) * Math.sin(mPhi) * Math.cos(mTheta));
-      const my = (radius + 1) * Math.cos(mPhi);
-      const mz = (radius + 1) * Math.sin(mPhi) * Math.sin(mTheta);
+      // Update Theme on Event
+      document.documentElement.addEventListener('theme-changed', (e) => {
+          const theme = e.detail;
+          const isL = theme === 'light';
+          
+          globeMat.color.setHex(isL ? 0xfcf9f6 : 0x0a0a0f);
+          gridMat.color.setHex(isL ? 0xc8c6d0 : 0x7a7890);
+          mapLineMat.color.setHex(isL ? 0xb0aebd : 0x7a7890);
+          
+          dotMat.color.setHex(isL ? 0x121212 : 0xffffff);
+          innerRingMat.color.setHex(isL ? 0xff5f00 : 0xc8f060);
+          ringMat.color.setHex(isL ? 0xff5f00 : 0xc8f060);
+          poleMat.color.setHex(isL ? 0xff5f00 : 0xc8f060);
+          
+          drawLondonLabel(theme);
+      });
 
-      const mumbaiGroup = new THREE.Group();
-      mumbaiGroup.position.set(mx, my, mz);
-      mumbaiGroup.lookAt(mumbaiGroup.position.clone().multiplyScalar(2));
-      globe.add(mumbaiGroup);
+      globe.rotation.y = -0.3; globe.rotation.x = 0.5; 
 
-      // Dimmer core dot
-      const mDotGeo = new THREE.CircleGeometry(1.5, 32);
-      const mDotMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.4, side: THREE.DoubleSide });
-      const mDot = new THREE.Mesh(mDotGeo, mDotMat);
-      mumbaiGroup.add(mDot);
-
-      // Dimmer static ring
-      const mRingGeo = new THREE.RingGeometry(3, 4.5, 32);
-      const mRingMat = new THREE.MeshBasicMaterial({ color: 0x7a7890, transparent: true, opacity: 0.3, side: THREE.DoubleSide });
-      const mRing = new THREE.Mesh(mRingGeo, mRingMat);
-      mumbaiGroup.add(mRing);
-
-      // Dimmer Mumbai Label
-      const mCanvas = document.createElement('canvas');
-      mCanvas.width = 256; 
-      mCanvas.height = 128;
-      const mCtx = mCanvas.getContext('2d');
-      mCtx.font = 'bold 56px "DM Sans", sans-serif';
-      mCtx.fillStyle = 'rgba(122, 120, 144, 0.6)'; // Dimmed text color
-      mCtx.fillText('MUMBAI', 20, 80);
-      
-      const mTexture = new THREE.CanvasTexture(mCanvas);
-      const mLabelGeo = new THREE.PlaneGeometry(70, 35);
-      const mLabelMat = new THREE.MeshBasicMaterial({ map: mTexture, transparent: true, side: THREE.DoubleSide });
-      const mLabelMesh = new THREE.Mesh(mLabelGeo, mLabelMat);
-      mLabelMesh.position.set(30, 15, 1); 
-      mumbaiGroup.add(mLabelMesh);
-
-      // 5. Initial Rotation (Tilt so London is perfectly framed in the top 1/3rd visible area)
-      globe.rotation.y = -0.3; // Slight twist so it isn't dead center
-      globe.rotation.x = 0.5;  // Tilt north pole nicely into view
-
-      // 6. Animation Loop
       let time = 0;
       function animateGlobe() {
           requestAnimationFrame(animateGlobe);
-          
-          // Slow, smooth earth rotation
           globe.rotation.y += 0.0012;
-
-          // Pulse the outer London marker ring
           time += 0.04;
           const scale = 1 + Math.sin(time) * 0.5;
           ring.scale.set(scale, scale, scale);
           ringMat.opacity = Math.max(0, 0.6 - (scale - 1) * 0.8);
-
           renderer.render(scene, camera);
       }
       animateGlobe();
@@ -2933,31 +2319,16 @@
   window.addEventListener('scroll', () => {
     const nav = document.querySelector('nav');
     if (window.scrollY > 60) {
-      nav.style.backdropFilter = 'blur(20px)';
-      nav.style.background = 'rgba(10,10,15,0.9)';
-      nav.style.borderBottom = '1px solid var(--border)';
+      nav.classList.add('scrolled');
     } else {
-      nav.style.backdropFilter = 'blur(0px)';
-      nav.style.background = 'linear-gradient(to bottom, rgba(10,10,15,0.95), transparent)';
-      nav.style.borderBottom = 'none';
+      nav.classList.remove('scrolled');
     }
   });
-
-  /* ── Form Submit 
-  function handleSubmit(btn) {
-    const original = btn.textContent;
-    btn.textContent = 'Sending…';
-    btn.style.opacity = '0.7';
-    setTimeout(() => {
-      btn.textContent = '✓ Message Sent!';
-      btn.style.background = '#40c0c0';
-      btn.style.opacity = '1';
-      setTimeout(() => {
-        btn.textContent = original;
-        btn.style.background = 'var(--accent)';
-      }, 3000);
-    }, 1200);
-  } ── */
+  
+  // Make sure it applies correctly if you refresh halfway down the page
+  if (window.scrollY > 60) {
+    document.querySelector('nav').classList.add('scrolled');
+  }
 
   // =====================================================================
   // --- HERO 3D PARALLAX EFFECT (DESIGNCODE STYLE) ---
@@ -2970,13 +2341,9 @@
           const rect = heroVisuals.getBoundingClientRect();
           const x = (e.clientX - rect.left) / rect.width - 0.5;
           const y = (e.clientY - rect.top) / rect.height - 0.5;
-          
-          // When mouse enters, flatten the base tilt heavily, but keep slight tracking
           parallaxGroup.style.transform = `rotateX(${y * -15}deg) rotateY(${x * 15}deg) rotateZ(0deg)`;
       });
-      
       heroVisuals.addEventListener('mouseleave', () => {
-          // Return to the deep isometric tilt when mouse leaves
           parallaxGroup.style.transform = `rotateX(15deg) rotateY(-20deg) rotateZ(5deg)`;
       });
   }
@@ -2989,46 +2356,48 @@
   let w = 0, h = 0, dpr = Math.max(1, window.devicePixelRatio || 1);
   let cols = 0, rows = 0;
 
-  let points = [];
-  let activeWords = [];
-  let circuits = [];
-  
-  let occupiedCells = new Set(); 
-  let exclusionZones = [];        
+  let points = []; let activeWords = []; let circuits = [];
+  let occupiedCells = new Set(); let exclusionZones = [];        
 
-  // Customized for the dark theme (subtle, not loud)
   const config = {
-      spacing: 32, 
-      radius: 1.2,
-      dotColorIdle: "255, 255, 255",        // White but rendered with very low opacity
-      dotColorHover: "200, 240, 96",        // --accent
-      snapLineColor: "200, 240, 96",        // --accent
-      circuitColor: "123, 108, 255",        // --accent2 (Purple)
-      textColor: "122, 120, 144",           // --muted
-      
-      lineDist: 90, 
-      lineOpacity: 0.25,                    // Reduced so it isn't distracting
-      lineWidth: 1.0,          
-      
-      fontSize: 9, 
-      fadeSpeed: 0.01, 
-      holdTime: 300, 
-      maxWords: 12,                         // Reduced to avoid clutter
+      spacing: 32, radius: 1.2,
+      dotColorIdle: "255, 255, 255",        
+      dotColorHover: "200, 240, 96",        
+      snapLineColor: "200, 240, 96",        
+      circuitColor: "123, 108, 255",        
+      textColor: "122, 120, 144",           
+      lineDist: 90, lineOpacity: 0.25, lineWidth: 1.0,          
+      fontSize: 9, fadeSpeed: 0.01, holdTime: 300, maxWords: 12,                         
       words: ["UI DESIGN", "UX RESEARCH", "PROTOTYPING", "DESIGN SYSTEMS", "EMPATHY", "INTERACTION", "WIREFRAMING"],
-      
-      maxCircuits: 8,                       // Reduced to avoid visual noise
-      circuitSpeed: 0.05, 
-      circuitHold: 150   
+      maxCircuits: 8, circuitSpeed: 0.05, circuitHold: 150   
   };
+
+  function applyCanvasTheme(theme) {
+      if (theme === 'light') {
+          config.dotColorIdle = "0, 0, 0"; 
+          config.dotColorHover = "255, 95, 0"; // Orange hover
+          config.snapLineColor = "255, 95, 0"; 
+          config.circuitColor = "255, 42, 133"; // Pinkish circuit lines
+          config.textColor = "100, 100, 110"; 
+      } else {
+          config.dotColorIdle = "255, 255, 255";        
+          config.dotColorHover = "200, 240, 96";        
+          config.snapLineColor = "200, 240, 96";        
+          config.circuitColor = "123, 108, 255";        
+          config.textColor = "122, 120, 144";  
+      }
+  }
+  applyCanvasTheme(currentTheme);
+
+  document.documentElement.addEventListener('theme-changed', (e) => {
+      applyCanvasTheme(e.detail);
+  });
 
   function calculateExclusionZones() {
       exclusionZones = [];
-      // Grab all structural/opaque elements so dots avoid drawing right through them
       const bgSections = document.querySelectorAll('.project-card, .about-visual, .hero-visuals, .process-item, .testimonial-card, .contact-form, footer');
-      
       bgSections.forEach(el => {
           const rect = el.getBoundingClientRect();
-          // Add generous padding around excluded elements
           exclusionZones.push({
               top: rect.top + window.scrollY - 20,
               bottom: rect.bottom + window.scrollY + 20,
@@ -3040,9 +2409,7 @@
 
   function isZoneClear(px, py) {
       for (let z of exclusionZones) {
-          if (px >= z.left && px <= z.right && py >= z.top && py <= z.bottom) {
-              return false; 
-          }
+          if (px >= z.left && px <= z.right && py >= z.top && py <= z.bottom) { return false; }
       }
       return true; 
   }
@@ -3051,18 +2418,13 @@
       w = window.innerWidth;
       h = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight, window.innerHeight);
 
-      canvas.width = Math.floor(w * dpr);
-      canvas.height = Math.floor(h * dpr);
-      canvas.style.width = w + "px";
-      canvas.style.height = h + "px"; 
+      canvas.width = Math.floor(w * dpr); canvas.height = Math.floor(h * dpr);
+      canvas.style.width = w + "px"; canvas.style.height = h + "px"; 
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      points = []; activeWords = []; circuits = [];
-      occupiedCells.clear(); 
-      calculateExclusionZones(); 
+      points = []; activeWords = []; circuits = []; occupiedCells.clear(); calculateExclusionZones(); 
 
-      cols = Math.ceil(w / config.spacing) + 1;
-      rows = Math.ceil(h / config.spacing) + 1;
+      cols = Math.ceil(w / config.spacing) + 1; rows = Math.ceil(h / config.spacing) + 1;
 
       for (let y = 0; y < rows; y++){
           for (let x = 0; x < cols; x++){
@@ -3072,28 +2434,22 @@
   }
 
   function updateWords() {
-      if (activeWords.length < config.maxWords && Math.random() < 0.05) { // slower spawn rate
+      if (activeWords.length < config.maxWords && Math.random() < 0.05) {
           let rawText = config.words[Math.floor(Math.random() * config.words.length)];
           let textLines = rawText.split(" "); 
           let maxL = Math.max(...textLines.map(t => t.length));
-
-          let minCol = 1;
-          let maxAllowedCol = (cols - 2) - maxL + 1; 
+          let minCol = 1; let maxAllowedCol = (cols - 2) - maxL + 1; 
 
           if (maxAllowedCol < minCol) return; 
 
           let col = minCol + Math.floor(Math.random() * (maxAllowedCol - minCol + 1));
           let row = Math.floor(2 + Math.random() * (rows - textLines.length - 4));
-
           let isBlocked = false;
+          
           for (let l = 0; l < textLines.length; l++) {
               for (let c = 0; c < textLines[l].length; c++) {
-                  let px = (col + c) * config.spacing;
-                  let py = (row + l) * config.spacing;
-                  
-                  if (!isZoneClear(px, py) || occupiedCells.has(`${col + c},${row + l}`)) {
-                      isBlocked = true; break;
-                  }
+                  let px = (col + c) * config.spacing; let py = (row + l) * config.spacing;
+                  if (!isZoneClear(px, py) || occupiedCells.has(`${col + c},${row + l}`)) { isBlocked = true; break; }
               }
               if (isBlocked) break;
           }
@@ -3112,14 +2468,11 @@
               w.opacity += config.fadeSpeed;
               if (w.opacity >= 0.35) { w.opacity = 0.35; w.state = 'hold'; w.timer = config.holdTime + Math.random() * 200; }
           } else if (w.state === 'hold') {
-              w.timer--;
-              if (w.timer <= 0) w.state = 'out';
+              w.timer--; if (w.timer <= 0) w.state = 'out';
           } else if (w.state === 'out') {
               w.opacity -= config.fadeSpeed;
               if (w.opacity <= 0) {
-                  w.lines.forEach((line, l) => {
-                      for (let c = 0; c < line.length; c++) occupiedCells.delete(`${w.col + c},${w.row + l}`);
-                  });
+                  w.lines.forEach((line, l) => { for (let c = 0; c < line.length; c++) occupiedCells.delete(`${w.col + c},${w.row + l}`); });
                   activeWords.splice(i, 1); 
               }
           }
@@ -3127,12 +2480,9 @@
   }
 
   function updateAndDrawCircuits() {
-      if (circuits.length < config.maxCircuits && Math.random() < 0.05) { // slower spawn
-          let startCol = Math.floor(Math.random() * cols);
-          let startRow = Math.floor(Math.random() * rows);
-          
-          let px = startCol * config.spacing;
-          let py = startRow * config.spacing;
+      if (circuits.length < config.maxCircuits && Math.random() < 0.05) {
+          let startCol = Math.floor(Math.random() * cols); let startRow = Math.floor(Math.random() * rows);
+          let px = startCol * config.spacing; let py = startRow * config.spacing;
 
           if (isZoneClear(px, py) && !occupiedCells.has(`${startCol},${startRow}`)) {
               let path = [{col: startCol, row: startRow}];
@@ -3149,36 +2499,25 @@
                   for (let d of dirs) {
                       let nc = currCol + d.c; let nr = currRow + d.r;
                       let npx = nc * config.spacing; let npy = nr * config.spacing;
-
-                      if (nc >= 0 && nc < cols && nr >= 0 && nr < rows && 
-                          isZoneClear(npx, npy) && !occupiedCells.has(`${nc},${nr}`)) {
-                          
-                          path.push({col: nc, row: nr});
-                          occupiedCells.add(`${nc},${nr}`);
-                          currCol = nc; currRow = nr;
-                          moved = true; break;
+                      if (nc >= 0 && nc < cols && nr >= 0 && nr < rows && isZoneClear(npx, npy) && !occupiedCells.has(`${nc},${nr}`)) {
+                          path.push({col: nc, row: nr}); occupiedCells.add(`${nc},${nr}`);
+                          currCol = nc; currRow = nr; moved = true; break;
                       }
                   }
                   if (!moved) break; 
               }
-              
-              if (path.length > 1) {
-                  circuits.push({ path: path, drawProgress: 0, eraseProgress: 0, state: 'drawing', timer: config.circuitHold });
-              } else {
-                  occupiedCells.delete(`${startCol},${startRow}`); 
-              }
+              if (path.length > 1) { circuits.push({ path: path, drawProgress: 0, eraseProgress: 0, state: 'drawing', timer: config.circuitHold }); } 
+              else { occupiedCells.delete(`${startCol},${startRow}`); }
           }
       }
 
       for (let i = circuits.length - 1; i >= 0; i--) {
           let c = circuits[i];
-          
           if (c.state === 'drawing') {
               c.drawProgress += config.circuitSpeed;
               if (c.drawProgress >= c.path.length - 1) { c.drawProgress = c.path.length - 1; c.state = 'holding'; }
           } else if (c.state === 'holding') {
-              c.timer--;
-              if (c.timer <= 0) c.state = 'erasing';
+              c.timer--; if (c.timer <= 0) c.state = 'erasing';
           } else if (c.state === 'erasing') {
               c.eraseProgress += config.circuitSpeed;
               if (c.eraseProgress >= c.path.length - 1) {
@@ -3189,9 +2528,7 @@
 
           ctx.beginPath();
           for (let j = 0; j < c.path.length - 1; j++) {
-              let sRatio = Math.max(0, c.eraseProgress - j);
-              let eRatio = Math.min(1, c.drawProgress - j);
-              
+              let sRatio = Math.max(0, c.eraseProgress - j); let eRatio = Math.min(1, c.drawProgress - j);
               if (sRatio < 1 && eRatio > 0 && eRatio > sRatio) {
                   let n1 = c.path[j]; let n2 = c.path[j+1];
                   let x1 = n1.col * config.spacing; let y1 = n1.row * config.spacing;
@@ -3199,24 +2536,20 @@
                   
                   let sx = x1 + (x2 - x1) * sRatio; let sy = y1 + (y2 - y1) * sRatio;
                   let ex = x1 + (x2 - x1) * eRatio; let ey = y1 + (y2 - y1) * eRatio;
-                  
                   ctx.moveTo(sx, sy); ctx.lineTo(ex, ey);
               }
           }
           ctx.strokeStyle = `rgba(${config.circuitColor}, 0.3)`; 
-          ctx.lineWidth = 1.0;
-          ctx.stroke();
+          ctx.lineWidth = 1.0; ctx.stroke();
       }
   }
 
   function draw(){
       ctx.clearRect(0, 0, w, h);
-      
       updateWords(); 
       
       const scrollY = window.scrollY || document.documentElement.scrollTop;
       const viewportH = window.innerHeight;
-
       let charMap = {};
       activeWords.forEach(word => {
           word.lines.forEach((line, lIdx) => {
@@ -3226,7 +2559,6 @@
 
       for (let i = 0; i < points.length; i++){
           const p = points[i];
-          
           if (p.oy < scrollY - 150 || p.oy > scrollY + viewportH + 150) continue; 
 
           const col = p.col; const row = p.row;
@@ -3235,7 +2567,6 @@
           if (mouse.active){
               const dx = p.ox - mouse.x; const dy = p.oy - mouse.y;
               distToMouse = Math.hypot(dx, dy); 
-
               if (distToMouse < config.lineDist) {
                   ctx.beginPath(); ctx.moveTo(p.ox, p.oy); ctx.lineTo(mouse.x, mouse.y);
                   const opacity = (1 - (distToMouse / config.lineDist)) * config.lineOpacity;
@@ -3244,7 +2575,6 @@
           }
 
           const cellData = charMap[`${col},${row}`];
-
           if (cellData) {
               ctx.font = `600 ${config.fontSize}px 'Syne', sans-serif`;
               ctx.textAlign = "center"; ctx.textBaseline = "middle";
@@ -3258,84 +2588,51 @@
                   ctx.fillStyle = `rgba(${config.dotColorHover}, ${Math.max(0.04, intensity * 0.4)})`; 
               } else {
                   ctx.arc(p.ox, p.oy, config.radius, 0, Math.PI * 2);
-                  ctx.fillStyle = `rgba(${config.dotColorIdle}, 0.03)`; // Extremely subtle default dot
+                  ctx.fillStyle = `rgba(${config.dotColorIdle}, 0.03)`;
               }
               ctx.fill();
           }
       }
-
       updateAndDrawCircuits();
       requestAnimationFrame(draw);
   }
 
-  // Handle resizing accurately
   let resizeTimeout;
   window.addEventListener("resize", () => {
       clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(resize, 200);
   });
-
   window.addEventListener("load", resize);
-  
-  // Initial kickoff
-  resize(); 
-  draw();
+  resize(); draw();
 
-  /* ── Formspree AJAX Submit & Button Animation ── */
+  /* ── Formspree AJAX Submit ── */
   const contactForm = document.getElementById("portfolio-form");
   const submitBtn = document.getElementById("form-submit-btn");
 
   if (contactForm) {
     contactForm.addEventListener("submit", async function(event) {
-      event.preventDefault(); // This stops the new tab from opening!
-      
+      event.preventDefault(); 
       const originalText = submitBtn.textContent;
-      submitBtn.textContent = 'Sending…';
-      submitBtn.style.opacity = '0.7';
+      submitBtn.textContent = 'Sending…'; submitBtn.style.opacity = '0.7';
 
       try {
-        const response = await fetch(contactForm.action, {
-          method: contactForm.method,
-          body: new FormData(contactForm),
-          headers: { 'Accept': 'application/json' }
-        });
-
+        const response = await fetch(contactForm.action, { method: contactForm.method, body: new FormData(contactForm), headers: { 'Accept': 'application/json' } });
         if (response.ok) {
-          submitBtn.textContent = '✓ Message Sent!';
-          submitBtn.style.background = '#40c0c0'; // Teal success color
-          submitBtn.style.opacity = '1';
-          contactForm.reset(); // Clears the form fields
-
-          // Revert button back to normal after 3 seconds
-          setTimeout(() => {
-            submitBtn.textContent = originalText;
-            submitBtn.style.background = 'var(--accent)';
-          }, 3000);
+          submitBtn.textContent = '✓ Message Sent!'; submitBtn.style.background = '#40c0c0'; submitBtn.style.color = '#fff'; submitBtn.style.opacity = '1';
+          contactForm.reset(); 
+          setTimeout(() => { submitBtn.textContent = originalText; submitBtn.style.background = 'var(--accent)'; submitBtn.style.color = 'var(--btn-text)'; }, 3000);
         } else {
-          // If Formspree catches an error
-          submitBtn.textContent = 'Oops! Error.';
-          submitBtn.style.background = '#ff6b6b'; // Red error color
-          submitBtn.style.opacity = '1';
-          
-          setTimeout(() => {
-            submitBtn.textContent = originalText;
-            submitBtn.style.background = 'var(--accent)';
-          }, 3000);
+          submitBtn.textContent = 'Oops! Error.'; submitBtn.style.background = '#ff6b6b'; submitBtn.style.color = '#fff'; submitBtn.style.opacity = '1';
+          setTimeout(() => { submitBtn.textContent = originalText; submitBtn.style.background = 'var(--accent)'; submitBtn.style.color = 'var(--btn-text)'; }, 3000);
         }
       } catch (error) {
-        // If there is a network issue
-        submitBtn.textContent = 'Oops! Error.';
-        submitBtn.style.background = '#ff6b6b';
-        submitBtn.style.opacity = '1';
-        
-        setTimeout(() => {
-          submitBtn.textContent = originalText;
-          submitBtn.style.background = 'var(--accent)';
-        }, 3000);
+        submitBtn.textContent = 'Oops! Error.'; submitBtn.style.background = '#ff6b6b'; submitBtn.style.color = '#fff'; submitBtn.style.opacity = '1';
+        setTimeout(() => { submitBtn.textContent = originalText; submitBtn.style.background = 'var(--accent)'; submitBtn.style.color = 'var(--btn-text)'; }, 3000);
       }
     });
   }
-// =====================================================================
+
+  // =====================================================================
   // --- CARD EXPANSION LOGIC ---
   // =====================================================================
   const backdrop = document.getElementById('card-backdrop');
@@ -3343,32 +2640,21 @@
 
   document.querySelectorAll('.expand-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
-      e.preventDefault(); // Prevents the link from opening
-      e.stopPropagation(); // Stops the click from registering on the card behind it
-
+      e.preventDefault(); e.stopPropagation(); 
       const card = btn.closest('.project-card');
-      
-      if (card.classList.contains('is-expanded')) {
-        closeCard();
-      } else {
-        // Open
-        card.classList.add('is-expanded');
-        backdrop.classList.add('active');
-        btn.innerHTML = '✕'; // Change icon to an X
-        expandedCard = card;
-        if(typeof lenis !== 'undefined') lenis.stop(); // Freeze the background scroll
+      if (card.classList.contains('is-expanded')) { closeCard(); } 
+      else {
+        card.classList.add('is-expanded'); backdrop.classList.add('active');
+        btn.innerHTML = '✕'; expandedCard = card;
+        if(typeof lenis !== 'undefined') lenis.stop();
       }
     });
   });
 
-  // Prevent accidental navigation if reading text in the expanded state
   document.querySelectorAll('.project-info').forEach(info => {
     info.addEventListener('click', (e) => {
       const card = info.closest('.project-card');
-      if (card && card.classList.contains('is-expanded')) {
-        e.preventDefault(); 
-        e.stopPropagation();
-      }
+      if (card && card.classList.contains('is-expanded')) { e.preventDefault(); e.stopPropagation(); }
     });
   });
 
@@ -3379,13 +2665,10 @@
       expandedCard = null;
     }
     backdrop.classList.remove('active');
-    if(typeof lenis !== 'undefined') lenis.start(); // Resume scrolling
+    if(typeof lenis !== 'undefined') lenis.start(); 
   }
 
-  // Clicking the blurred background also closes the card
-  if (backdrop) {
-    backdrop.addEventListener('click', closeCard);
-  }
+  if (backdrop) { backdrop.addEventListener('click', closeCard); }
 </script>
 </body>
 </html>
