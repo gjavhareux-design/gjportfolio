@@ -1,1012 +1,693 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MahaRERA Portal Redesign — Case Study by Ganesh Javhare</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-/* ========== DESIGN TOKENS ========== */
-:root {
-  --bg-deep:       #060A12;
-  --bg-primary:    #0A0F1C;
-  --bg-secondary:  #0E1424;
-  --bg-card:       #131A2C;
-  --bg-elevated:   #1A2238;
-  --bg-hover:      #202840;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lean UX Case Study Template</title>
+  <style>
+    :root {
+      --bg: #f7f8fb;
+      --surface: #ffffff;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --brand: #2563eb;
+      --brand-2: #7c3aed;
+      --accent: #06b6d4;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --radius: 24px;
+      --shadow: 0 24px 70px rgba(15, 23, 42, 0.12);
+      --shadow-soft: 0 12px 30px rgba(15, 23, 42, 0.08);
+    }
 
-  --accent-org:        #FF6B35;
-  --accent-org-dim:    rgba(255,107,53,.10);
-  --accent-org-border: rgba(255,107,53,.28);
-  --accent-blue:       #4FACFE;
-  --accent-blue-dim:   rgba(79,172,254,.10);
-  --accent-gold:       #F5A623;
-  --accent-gold-dim:   rgba(245,166,35,.10);
-  --accent-teal:       #2ECCC9;
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.65;
+    }
 
-  --text-primary:   #E2E8F5;
-  --text-secondary: #8A97B4;
-  --text-muted:     #637396; /* Lightened slightly for better WCAG contrast */
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
 
-  --border-subtle:    rgba(255,255,255,.05);
-  --border-default:   rgba(255,255,255,.08);
-  --border-highlight: rgba(255,255,255,.13);
+    .hero {
+      position: relative;
+      overflow: hidden;
+      color: white;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(34, 211, 238, 0.45), transparent 28%),
+        radial-gradient(circle at 80% 0%, rgba(168, 85, 247, 0.42), transparent 32%),
+        radial-gradient(circle at 60% 90%, rgba(16, 185, 129, 0.35), transparent 30%),
+        linear-gradient(135deg, #020617 0%, #111827 52%, #172554 100%);
+    }
 
-  --sidebar-w: 256px;
-  --topbar-h: 72px;
-  --ease: cubic-bezier(.4,0,.2,1);
-}
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: linear-gradient(to bottom, black, transparent 88%);
+      pointer-events: none;
+    }
 
-/* ========== RESET ========== */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;font-size:16px}
-body{background:var(--bg-deep);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.7;overflow-x:hidden}
-img{max-width:100%;height:auto;display:block}
-a{color:var(--accent-org);text-decoration:none}
-button{font-family:inherit;cursor:pointer;border:none;background:none}
+    .container {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+    }
 
-/* Focus outline for WCAG Keyboard Navigation */
-a:focus-visible, button:focus-visible {
-  outline: 2px solid var(--accent-org);
-  outline-offset: 2px;
-}
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      min-height: 88vh;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 48px;
+      align-items: center;
+      padding: 72px 0;
+    }
 
-/* ========== PROGRESS BAR ========== */
-#pbar{
-  position:fixed;top:0;left:0;width:0;height:2px;
-  background:linear-gradient(90deg,var(--accent-org),var(--accent-blue));
-  z-index:10001;transition:width 60ms linear;
-}
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 14px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.1);
+      border-radius: 999px;
+      backdrop-filter: blur(16px);
+      font-weight: 700;
+      font-size: 14px;
+    }
 
-/* ========== TOP GLOBAL NAV ========== */
-.top-nav {
-  position: fixed; top: 0; left: 0; right: 0; height: var(--topbar-h);
-  background: rgba(6, 10, 18, 0.85); backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border-subtle);
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 clamp(20px, 5vw, 60px); z-index: 1000;
-}
+    .hero h1 {
+      margin: 22px 0 20px;
+      max-width: 850px;
+      font-size: clamp(44px, 7vw, 86px);
+      line-height: 0.95;
+      letter-spacing: -0.07em;
+    }
 
-.nav-logo {
-  font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 16px;
-  color: var(--text-primary); text-decoration: none;
-  display: flex; align-items: center; gap: 10px;
-}
-.nav-logo svg { height: 42px; width: auto; }
-.nav-logo path { fill: var(--accent-org); }
+    .hero p {
+      max-width: 720px;
+      color: #dbeafe;
+      font-size: 19px;
+    }
 
-.nav-title {
-  font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 15px;
-  color: var(--text-primary); position: absolute; left: 50%; transform: translateX(-50%);
-  letter-spacing: 0.02em;
-}
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 34px;
+    }
 
-.nav-right {
-  display: flex; align-items: center; gap: 16px;
-}
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border: 0;
+      border-radius: 18px;
+      padding: 15px 22px;
+      cursor: pointer;
+      font-weight: 800;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
 
-.nav-cta {
-  background: var(--accent-org); color: #060A12;
-  padding: 10px 24px; border-radius: 100px;
-  font-size: 13px; font-weight: 700; text-decoration: none;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-.nav-cta:hover {
-  transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255,107,53,0.3);
-}
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary { background: white; color: #020617; box-shadow: 0 20px 40px rgba(0,0,0,0.18); }
+    .btn-secondary { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.25); }
 
-.hamburger{display:none;flex-direction:column;gap:5px;padding:6px}
-.hamburger span{display:block;width:22px;height:2px;background:var(--text-secondary);border-radius:2px;transition:all .25s var(--ease)}
-.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
-.hamburger.open span:nth-child(2){opacity:0}
-.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+    .snapshot {
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.1);
+      border-radius: 32px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
 
-/* ========== MOBILE MENU OVERLAY ========== */
-.mobile-menu{
-  display:none;
-  position:fixed;inset:0; top:var(--topbar-h);
-  background:var(--bg-secondary);
-  z-index:190;padding:40px 24px 32px;
-  flex-direction:column;overflow-y:auto;
-  transform:translateX(-100%);transition:transform .3s var(--ease);
-}
-.mobile-menu.open{transform:translateX(0)}
+    .snapshot-card {
+      background: white;
+      color: var(--ink);
+      border-radius: 24px;
+      padding: 26px;
+    }
 
-/* ========== LAYOUT ========== */
-.layout{display:flex;min-height:100vh; padding-top:var(--topbar-h)}
+    .snapshot-card h2 { margin: 0 0 18px; font-size: 28px; letter-spacing: -0.04em; }
+    .snapshot-grid { display: grid; gap: 12px; }
+    .field {
+      border: 1px solid var(--line);
+      background: #f8fafc;
+      border-radius: 16px;
+      padding: 14px 16px;
+    }
+    .field strong { display: block; font-size: 13px; color: #475569; }
+    .field span { display: block; color: #94a3b8; margin-top: 3px; }
 
-/* ========== SIDEBAR ========== */
-.sidebar{
-  position:fixed;top:var(--topbar-h);left:0;width:var(--sidebar-w);height:calc(100vh - var(--topbar-h));
-  background:var(--bg-secondary);
-  border-right:1px solid var(--border-subtle);
-  display:flex;flex-direction:column;
-  z-index:100;overflow-y:auto;
-  scrollbar-width:thin;scrollbar-color:var(--border-default) transparent;
-}
-.sb-top{
-  padding:24px 20px 20px;
-  border-bottom:1px solid var(--border-subtle);
-}
-.sb-badge{
-  display:inline-flex;align-items:center;gap:6px;
-  background:var(--accent-org-dim);border:1px solid var(--accent-org-border);
-  border-radius:6px;padding:5px 9px;margin-bottom:10px;
-}
-.sb-badge svg{flex-shrink:0}
-.sb-badge span{font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:500;color:var(--accent-org);letter-spacing:.1em;text-transform:uppercase}
-.sb-title{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;color:var(--text-primary);line-height:1.4}
-.sb-sub{font-size:11px;color:var(--text-muted);margin-top:2px}
+    .sticky-nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,0.88);
+      backdrop-filter: blur(18px);
+    }
 
-.sb-nav{flex:1;padding:16px 0}
-.sb-chapter-label{
-  font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:500;
-  color:var(--text-muted);letter-spacing:.13em;text-transform:uppercase;
-  padding:14px 20px 7px;display:flex;align-items:center;gap:8px;
-}
-.sb-chapter-label::after{content:'';flex:1;height:1px;background:var(--border-subtle)}
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 14px 0;
+    }
 
-.nav-link{
-  display:flex;align-items:center;gap:10px;
-  padding:7px 20px;font-size:12px;color:var(--text-muted);
-  transition:color .2s,background .2s;position:relative;width:100%;text-align:left;
-}
-.nav-link .dot{
-  width:6px;height:6px;border-radius:50%;
-  border:1.5px solid currentColor;flex-shrink:0;
-  transition:all .2s;
-}
-.nav-link:hover{color:var(--text-secondary);background:rgba(255,255,255,.025)}
-.nav-link.active{color:var(--accent-org)}
-.nav-link.active .dot{background:var(--accent-org);border-color:var(--accent-org);box-shadow:0 0 8px rgba(255,107,53,.5)}
-.nav-link.active::before{
-  content:'';position:absolute;left:0;top:0;bottom:0;
-  width:2px;background:var(--accent-org);border-radius:0 2px 2px 0;
-}
+    .search {
+      min-width: 320px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid var(--line);
+      background: white;
+      border-radius: 18px;
+      padding: 12px 14px;
+    }
 
-.sb-footer{padding:18px 20px;border-top:1px solid var(--border-subtle)}
-.sb-footer p{font-size:10.5px;color:var(--text-muted);line-height:1.6}
-.sb-footer strong{color:var(--text-secondary)}
+    .search input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      font: inherit;
+      background: transparent;
+    }
 
-/* ========== MAIN ========== */
-.main{margin-left:var(--sidebar-w);flex:1;min-width:0}
+    .step-links {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
 
-/* ========== SECTION BASE ========== */
-.sec{padding:80px clamp(24px,5vw,72px);position:relative}
-.sec-inner{max-width:840px}
-.eyebrow{
-  font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:500;
-  letter-spacing:.12em;text-transform:uppercase;color:var(--accent-org);
-  margin-bottom:14px;display:flex;align-items:center;gap:10px;
-}
-.eyebrow::before{content:'';width:24px;height:1px;background:var(--accent-org);flex-shrink:0}
-.sec-title{
-  font-family:'Space Grotesk',sans-serif;
-  font-size:clamp(24px,3.5vw,40px);font-weight:700;
-  line-height:1.18;letter-spacing:-.02em;color:var(--text-primary);
-  margin-bottom:14px;
-}
-.sec-lead{font-size:16px;color:var(--text-secondary);line-height:1.85;max-width:680px;margin-bottom:44px}
+    .step-links a {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #3730a3;
+      font-weight: 900;
+      font-size: 13px;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
 
-.report-btn{
-  display:inline-flex;align-items:center;gap:7px;
-  padding:7px 13px;border:1px solid var(--border-default);border-radius:6px;
-  color:var(--text-muted);font-size:11.5px;
-  font-family:'JetBrains Mono',monospace;letter-spacing:.04em;
-  transition:all .2s;margin-top:44px;
-}
-.report-btn:hover{border-color:var(--accent-org-border);color:var(--accent-org);background:var(--accent-org-dim)}
-.report-btn svg{opacity:.55;transition:opacity .2s}
-.report-btn:hover svg{opacity:1}
+    .step-links a:hover { background: #111827; color: white; }
 
-/* ========== HERO ========== */
-#hero{
-  min-height:calc(100vh - var(--topbar-h));display:flex;flex-direction:column;
-  justify-content:flex-end;padding:0;position:relative;overflow:hidden;
-}
-.hero-bg{
-  position:absolute;inset:0;
-  background:url('mockup.jpg') center/cover no-repeat;
-}
-.hero-bg::after{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(to bottom,rgba(6,10,18,.35) 0%,rgba(6,10,18,.65) 45%,rgba(6,10,18,.94) 80%,var(--bg-deep) 100%);
-}
-.hero-grid{position:absolute;inset:0;opacity:.12;pointer-events:none;z-index:1}
-.hero-content{
-  position:relative;z-index:2;
-  padding:clamp(40px,6vw,80px) clamp(24px,5vw,72px);
-  max-width:880px;
-}
-.hero-chip{
-  display:inline-flex;align-items:center;gap:8px;
-  background:var(--accent-org-dim);border:1px solid var(--accent-org-border);
-  border-radius:100px;padding:6px 14px;
-  font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent-org);
-  letter-spacing:.08em;text-transform:uppercase;margin-bottom:22px;
-}
-.hero-title{
-  font-family:'Space Grotesk',sans-serif;
-  font-size:clamp(36px,5.5vw,68px);font-weight:700;
-  line-height:1.07;letter-spacing:-.03em;color:var(--text-primary);
-  margin-bottom:20px;
-}
-.hero-title em{
-  font-style:normal;
-  background:linear-gradient(135deg,var(--accent-org),var(--accent-gold));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-}
-.hero-desc{
-  font-size:clamp(15px,1.6vw,17px);color:var(--text-secondary);
-  line-height:1.8;max-width:580px;margin-bottom:36px;
-}
-.hero-meta{display:flex;align-items:center;gap:24px;flex-wrap:wrap}
-.hero-meta-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-muted)}
-.hero-meta-item svg{color:var(--accent-org)}
-.hero-meta-divider{width:1px;height:16px;background:var(--border-default)}
-.hero-scroll{
-  position:absolute;bottom:32px;right:clamp(24px,5vw,72px);z-index:2;
-  display:flex;flex-direction:column;align-items:center;gap:8px;
-  font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);
-  letter-spacing:.1em;text-transform:uppercase;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .hero-scroll { animation:bobble 2s ease-in-out infinite; }
-}
-@keyframes bobble{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+    .intro-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      padding: 64px 0 28px;
+    }
 
-/* ========== CHAPTER BREAK ========== */
-.chapter-break{
-  position:relative;padding:60px clamp(24px,5vw,72px);
-  border-top:1px solid var(--border-subtle);
-  border-bottom:1px solid var(--border-subtle);
-  background:var(--bg-primary);
-  overflow:hidden;
-}
-.chapter-break-bg{position:absolute;inset:0;opacity:.06;pointer-events:none}
-.chapter-break-inner{position:relative;z-index:1;display:flex;align-items:center;gap:32px;flex-wrap:wrap}
-.chapter-num{
-  font-family:'Space Grotesk',sans-serif;font-size:clamp(48px,8vw,100px);
-  font-weight:700;line-height:1;letter-spacing:-.04em;
-  background:linear-gradient(135deg,var(--accent-blue),var(--accent-teal));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  flex-shrink:0;
-}
-.chapter-info{}
-.chapter-tag{
-  font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent-blue);
-  letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;
-}
-.chapter-label{
-  font-family:'Space Grotesk',sans-serif;font-size:clamp(18px,2.5vw,28px);
-  font-weight:600;color:var(--text-primary);margin-bottom:8px;
-}
-.chapter-desc{font-size:14px;color:var(--text-muted);max-width:440px;line-height:1.7}
+    .mini-card {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 26px;
+      box-shadow: var(--shadow-soft);
+    }
 
-/* ========== CARDS ========== */
-.card-grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));margin-bottom:8px}
-.card{
-  background:var(--bg-card);border:1px solid var(--border-subtle);
-  border-radius:12px;padding:22px;
-  transition:border-color .2s,background .2s,transform .2s;
-}
-.card:hover{border-color:var(--border-highlight);background:var(--bg-elevated);transform:translateY(-2px)}
-.card-icon{
-  width:40px;height:40px;border-radius:10px;
-  display:flex;align-items:center;justify-content:center;
-  margin-bottom:14px;flex-shrink:0;
-}
-.card-icon.org{background:var(--accent-org-dim)}
-.card-icon.blue{background:var(--accent-blue-dim)}
-.card-icon.gold{background:var(--accent-gold-dim)}
-.card-icon.teal{background:rgba(46,204,201,.1)}
-.card-label{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:6px}
-.card-desc{font-size:13px;color:var(--text-muted);line-height:1.65}
+    .mini-card .icon {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      color: white;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      font-size: 22px;
+      margin-bottom: 18px;
+    }
 
-/* ========== IMPACT METRICS ========== */
-.metric-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1px;background:var(--border-subtle);border:1px solid var(--border-subtle);border-radius:12px;overflow:hidden;margin-bottom:40px}
-.metric{background:var(--bg-card);padding:28px 22px}
-.metric-num{
-  font-family:'Space Grotesk',sans-serif;font-size:clamp(28px,3.5vw,44px);
-  font-weight:700;letter-spacing:-.03em;line-height:1;
-  background:linear-gradient(135deg,var(--accent-org),var(--accent-gold));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  margin-bottom:6px;
-}
-.metric-label{font-size:12px;color:var(--text-muted);line-height:1.5}
+    .mini-card h3 { margin: 0 0 8px; font-size: 22px; letter-spacing: -0.03em; }
+    .mini-card p { margin: 0; color: var(--muted); }
 
-/* ========== IMAGE COMPONENT ========== */
-.img-block{border-radius:12px;overflow:hidden;border:1px solid var(--border-subtle);margin:36px 0;position:relative}
-.img-block img{width:100%;height:380px;object-fit:contain;display:block}
-.img-block1{border-radius:12px;overflow:hidden;border:1px solid var(--border-subtle);margin:36px 0;position:relative}
-.img-block1 img{width:100%;height:380px;object-fit:contain;display:block}
-.img-block2{border-radius:12px;overflow:hidden;border:1px solid var(--border-subtle);margin:36px 0;position:relative}
-.img-block2 img{width:100%;height:1080px;object-fit:contain;display:block}
-.img-caption{
-  background:var(--bg-card);padding:12px 18px;
-  font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:8px;
-  border-top:1px solid var(--border-subtle);
-}
-.img-caption svg{flex-shrink:0;opacity:.5}
+    .process { padding: 32px 0 80px; }
+    .step {
+      scroll-margin-top: 95px;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 32px;
+      overflow: hidden;
+      box-shadow: var(--shadow-soft);
+      margin-bottom: 34px;
+    }
 
-/* Two-col image layout */
-.img-pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:36px 0}
-.img-pair .img-block{margin:0}
-.img-pair .img-block img{height:200px}
+    .step-header {
+      color: white;
+      padding: 34px;
+      background: linear-gradient(135deg, var(--c1), var(--c2));
+    }
 
-/* ========== PROBLEM CARDS ========== */
-.problem-grid{display:grid;gap:12px;grid-template-columns:1fr 1fr}
-.prob-card{
-  background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:12px;
-  padding:20px;display:flex;flex-direction:column;gap:10px;
-  transition:border-color .2s;
-}
-.prob-card:hover{border-color:rgba(255,107,53,.2)}
-.prob-icon{width:36px;height:36px;border-radius:8px;background:rgba(255,107,53,.08);display:flex;align-items:center;justify-content:center}
-.prob-title{font-family:'Space Grotesk',sans-serif;font-size:13.5px;font-weight:600;color:var(--text-primary)}
-.prob-desc{font-size:12.5px;color:var(--text-muted);line-height:1.65}
+    .step-topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 18px;
+    }
 
-/* ========== RESEARCH FLOW ========== */
-.research-flow{
-  background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:12px;
-  padding:28px;margin:36px 0;
-}
-.flow-title{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:24px;letter-spacing:.04em;text-transform:uppercase}
-.flow-steps{display:flex;gap:0;align-items:stretch;overflow-x:auto;padding-bottom:4px}
-.flow-step{
-  flex:1;min-width:120px;padding:16px 14px;
-  background:var(--bg-elevated);border:1px solid var(--border-default);border-radius:8px;
-  position:relative;
-}
-.flow-step + .flow-step{margin-left:12px}
-.flow-step::after{
-  content:'→';position:absolute;right:-14px;top:50%;transform:translateY(-50%);
-  color:var(--text-muted);font-size:14px;z-index:1;
-}
-.flow-step:last-child::after{display:none}
-.flow-step-num{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--accent-org);margin-bottom:6px;letter-spacing:.1em}
-.flow-step-name{font-family:'Space Grotesk',sans-serif;font-size:12.5px;font-weight:600;color:var(--text-primary);margin-bottom:4px}
-.flow-step-desc{font-size:11px;color:var(--text-muted);line-height:1.5}
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.16);
+      font-weight: 800;
+      font-size: 13px;
+    }
 
-/* ========== PRINCIPLE CARDS ========== */
-.principles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
-.principle{
-  background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:12px;
-  padding:22px 18px;transition:all .25s;
-}
-.principle:hover{border-color:var(--accent-org-border);background:var(--bg-elevated)}
-.principle-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
-.principle-title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:8px}
-.principle-desc{font-size:12.5px;color:var(--text-muted);line-height:1.65}
+    .step-number {
+      font-size: 72px;
+      line-height: 1;
+      font-weight: 950;
+      color: rgba(255,255,255,0.20);
+      letter-spacing: -0.08em;
+    }
 
-/* ========== PROCESS DIAGRAM ========== */
-.process-diagram{
-  background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:12px;
-  padding:28px;margin:36px 0;overflow-x:auto;
-}
+    .step h2 {
+      margin: 0;
+      font-size: clamp(30px, 4vw, 48px);
+      letter-spacing: -0.05em;
+      line-height: 1.05;
+    }
 
-/* ========== OUTCOME & CONCLUSION ========== */
-.outcome-quote{
-  border-left:3px solid var(--accent-org);padding:20px 24px;
-  background:var(--accent-org-dim);border-radius:0 10px 10px 0;
-  margin:28px 0;
-}
-.outcome-quote p{font-size:15px;color:var(--text-secondary);line-height:1.8;font-style:italic}
+    .step-header p { margin: 10px 0 0; color: rgba(255,255,255,0.86); font-size: 18px; }
 
-#conclusion{background:var(--bg-primary)}
-.conclusion-sig{
-  display:flex;align-items:center;gap:16px;margin-top:32px;
-  padding-top:32px;border-top:1px solid var(--border-subtle);
-}
-.sig-avatar{
-  width:52px;height:52px;border-radius:50%;
-  background:linear-gradient(135deg,var(--accent-org),var(--accent-gold));
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;
-  color:#fff;flex-shrink:0;
-}
-.sig-info p:first-child{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:var(--text-primary)}
-.sig-info p:last-child{font-size:12px;color:var(--text-muted)}
+    .step-body {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+      gap: 34px;
+      padding: 34px;
+    }
 
-/* ========== SCROLL REVEAL ========== */
-@media (prefers-reduced-motion: no-preference) {
-  .reveal{opacity:0;transform:translateY(22px);transition:opacity .55s var(--ease),transform .55s var(--ease)}
-  .reveal.visible{opacity:1;transform:none}
-}
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 12px;
+      font-size: 22px;
+      letter-spacing: -0.03em;
+    }
 
-/* ========== RESPONSIVE ========== */
-@media(max-width:900px){
-  .sidebar{display:none}
-  .hamburger{display:flex}
-  .mobile-menu{display:flex}
-  .main{margin-left:0;}
-  .nav-cta{display:none;}
-  .problem-grid{grid-template-columns:1fr}
-  .img-pair{grid-template-columns:1fr}
-  .chapter-break-inner{flex-direction:column;gap:16px}
-  .flow-steps{flex-direction:column}
-  .flow-step{min-width:unset}
-  .flow-step::after{display:none}
-  .flow-step + .flow-step{margin-left:0;margin-top:10px}
-  .metric-row{grid-template-columns:1fr 1fr}
-}
-@media(max-width:480px){
-  .nav-title{display:none;}
-  .metric-row{grid-template-columns:1fr}
-  .principles-grid{grid-template-columns:1fr}
-  .card-grid{grid-template-columns:1fr}
-}
-</style>
+    .purpose {
+      color: #334155;
+      font-size: 17px;
+      margin-top: 0;
+    }
+
+    .activity-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 12px;
+      counter-reset: activity;
+    }
+
+    .activity-list li {
+      counter-increment: activity;
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 14px;
+      align-items: start;
+      background: #f8fafc;
+      border: 1px solid #eef2f7;
+      border-radius: 18px;
+      padding: 16px;
+      color: #334155;
+    }
+
+    .activity-list li::before {
+      content: counter(activity);
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: #0f172a;
+      color: white;
+      font-weight: 900;
+      font-size: 13px;
+    }
+
+    .callout {
+      margin-top: 22px;
+      border: 1px solid #fde68a;
+      background: #fffbeb;
+      border-radius: 22px;
+      padding: 20px;
+      color: #78350f;
+    }
+
+    .callout strong { display: block; margin-bottom: 6px; color: #451a03; }
+
+    .side-panel {
+      display: grid;
+      gap: 18px;
+      align-content: start;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 20px;
+      background: white;
+    }
+
+    .panel h3 { margin: 0 0 12px; letter-spacing: -0.02em; }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      border-radius: 999px;
+      background: #f1f5f9;
+      color: #334155;
+      padding: 7px 11px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .questions {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .questions li {
+      display: grid;
+      grid-template-columns: 22px 1fr;
+      gap: 8px;
+      color: #475569;
+      font-size: 14px;
+    }
+
+    .questions li::before {
+      content: "✓";
+      display: grid;
+      place-items: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      background: #dcfce7;
+      color: #15803d;
+      font-weight: 900;
+      font-size: 12px;
+    }
+
+    .image-placeholder {
+      min-height: 158px;
+      border: 2px dashed #cbd5e1;
+      border-radius: 22px;
+      background:
+        linear-gradient(135deg, rgba(248,250,252,0.92), rgba(255,255,255,0.96)),
+        repeating-linear-gradient(45deg, #f1f5f9 0 8px, #ffffff 8px 16px);
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      text-align: center;
+      color: #64748b;
+      transition: border 0.2s ease, transform 0.2s ease;
+    }
+
+    .image-placeholder:hover { border-color: #475569; transform: translateY(-2px); }
+    .image-placeholder strong { display: block; color: #1e293b; margin-bottom: 4px; }
+    .image-placeholder span { font-size: 14px; }
+
+    .checklist-section {
+      color: white;
+      background: #020617;
+      padding: 72px 0;
+    }
+
+    .checklist-grid {
+      display: grid;
+      grid-template-columns: 0.85fr 1.15fr;
+      gap: 44px;
+      align-items: start;
+    }
+
+    .checklist-section h2 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 56px);
+      line-height: 1;
+      letter-spacing: -0.06em;
+    }
+
+    .checklist-section p { color: #cbd5e1; }
+    .check-items {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .check-item {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 10px;
+      align-items: start;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.06);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .check-item::before {
+      content: "✓";
+      display: grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      font-weight: 900;
+    }
+
+    .footer {
+      background: white;
+      border-top: 1px solid var(--line);
+      padding: 28px 0;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 980px) {
+      .hero-inner,
+      .step-body,
+      .checklist-grid { grid-template-columns: 1fr; }
+      .intro-cards { grid-template-columns: 1fr; }
+      .nav-inner { align-items: stretch; flex-direction: column; }
+      .search { min-width: 0; width: 100%; }
+    }
+
+    @media (max-width: 640px) {
+      .container { width: min(100% - 28px, 1180px); }
+      .hero-inner { padding: 48px 0; min-height: auto; }
+      .hero h1 { font-size: 42px; }
+      .step-header, .step-body { padding: 24px; }
+      .check-items { grid-template-columns: 1fr; }
+      .step-number { font-size: 52px; }
+    }
+
+    @media print {
+      .sticky-nav, .hero-actions { display: none; }
+      .hero { min-height: auto; }
+      .step { break-inside: avoid; box-shadow: none; }
+      body { background: white; }
+    }
+  </style>
 </head>
 <body>
-
-<!-- ===== PROGRESS BAR ===== -->
-<div id="pbar"></div>
-
-<!-- ===== TOP GLOBAL NAV ===== -->
-<nav class="top-nav">
-  <a href="https://www.gjuxdesign.in/" class="nav-logo" aria-label="Go to homepage">
-    <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 324.06 381.34">
-      <path d="M8.78,313.93c14.86,3.65,22.61-2.45,29.23-15.26,9.74-19.75,15.56-41.24,24.74-61.53,13.53-31.55,35.2-61.29,70.34-70.09,5.05-1.26,10.32-2.25,15.36-2.58,32.22,0,65.12.02,97.39.18,4.76-.04,12.8.32,17.46-.6,21.2-3.24,37.91-22.35,39.61-43.62.15-1.51.24-3.64.25-5.14.21-15.42.33-36.58.54-52.07.11-9.63.6-29.11.84-38.75,0,0,.03-1.21.03-1.21.15-2.1-.68-4.05-1.95-5.7-1.05-1.65-2.62-3.44-4.78-3.47-9.69-.26-22.08-.5-31.78-.56-19.37-.22-38.75-.13-58.12-.44-3.21-.08-6.05.03-9.05.88-8.53,1.39-16.75,5.06-23.7,9.99-18.43,13.55-32.03,32.58-33.53,55.94-1.89,32.16-4.18,64.83-8.45,96.76-1.76-12.92-3.07-25.83-4.24-38.75-1.45-16.02-2.61-32.37-3.56-48.43-.06-1.52-.36-5.78-.43-7.27-.72-11.6.96-23.54,5.15-34.48,9.49-25.51,30.08-41.85,56.89-45.9,5.29-.93,10.62-1.17,15.92-.8,8.22-.02,16.19-.18,24.37-.2,23.23-.17,46.99-.13,70.23-.8,12.01-.43,21.54,5.69,24.4,17.73,1.19,4.26.88,21.4,1.2,26.1.44,21.94.67,48.33.89,70.23.07,1.49-.03,3.83-.04,5.34-.87,31.78-25.27,61.1-56.95,66.33-3.8.67-7.65,1.01-11.5,1.04-33.76.19-75.58.22-105.62.23-24.85,1.37-44.03,15.82-57.76,36.04-9.81,14.07-17.21,29.94-24.65,45.64-5.87,12.2-11.67,25.11-20.22,36.09-9.78,12.84-24.06,19.94-38.51,9.14h0Z"/>
-      <path d="M198.97,12.54c-21.83.01-43.29,7.85-62.54,17.38C79.39,57.72,35.43,110.41,30.47,175.02c-7.25,86.15,56.98,165.39,142.73,176.3,20.45,2.82,41.56,1.66,61.26-4.51,40.22-12.27,67.52-42.61,56.7-86.13-7.66-28.32-36.46-42.9-63.41-31.11-15.62,6.8-26.74,22.74-27.74,39.77-1.61,13.53,8.41,28.39,21.91,31.18,11.83,2.3,24.41-5.05,28.76-16.24,6.36-16.17-3.12-37.15-25.55-44.06,0,0,0-.83,0-.83,19.72-6,40.42,10.09,43.5,29.87,2.55,13.89-2.38,28.92-12.53,38.82-16.15,16.18-42.32,17.43-59.79,2.74-23.75-19.27-24.1-51.57-8.89-76.48,18.06-30.03,58.57-42.18,90.16-26.96,32.01,15.01,45.98,51.6,41.33,85.19-7.76,61.35-75.42,90.86-131.04,88.65-80.63-1.22-155.31-58.74-178.76-135.64-23.15-70.75-1.28-153.26,55.96-201.37C98.83,14.92,137.04,2.07,181.42,1.87c5.89.13,11.71-.26,17.55-.18,0,0,0,10.84,0,10.84h0Z"/>
-      <path d="M104.53,136.06c.18,12.12-11.61,21.78-23.3,18.34-17.93-5.35-17.93-31.34,0-36.69,11.69-3.44,23.48,6.22,23.3,18.34h0ZM80.34,136.06c.18.48.89.24,1.22-.25,1.27-1.65-.19-4.63-2.63-5.21-3.3-.99-6.71,1.98-6.62,5.47-.09,3.48,3.32,6.45,6.62,5.47,2.43-.58,3.9-3.56,2.63-5.21-.33-.49-1.04-.74-1.22-.25h0Z"/>
-    </svg>
-    Ganesh J.
-  </a>
-  
-  <div class="nav-title">MahaRERA Case Study</div>
-
-  <div class="nav-right">
-    <a href="index.html" class="nav-cta">Back to portfolio</a>
-    <button class="hamburger" id="ham" aria-label="Toggle navigation menu">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
-</nav>
-
-<!-- ===== MOBILE MENU ===== -->
-<nav class="mobile-menu" id="mob-menu">
-  <div style="margin-bottom:20px">
-    <div class="sb-badge" style="margin-bottom:10px">
-      <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" fill="#FF6B35"/></svg>
-      <span>Case Study</span>
+  <header class="hero">
+    <div class="container hero-inner">
+      <div>
+        <div class="eyebrow">✦ Modern Lean UX Case Study Template</div>
+        <h1>Design a case study that proves your process, decisions, and impact.</h1>
+        <p>This standalone webpage gives you a complete Lean UX case study structure with detailed step-by-step explanations, artifact guidance, key questions, and dedicated spaces for images, screenshots, research outputs, prototypes, and metrics.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#context">Start the process →</a>
+          <button class="btn btn-secondary" onclick="window.print()">Print / Save as PDF</button>
+        </div>
+      </div>
+      <aside class="snapshot" aria-label="Case study snapshot">
+        <div class="snapshot-card">
+          <h2>Case Study Snapshot</h2>
+          <div class="snapshot-grid">
+            <div class="field"><strong>Product / Project Name</strong><span>Add your project name here</span></div>
+            <div class="field"><strong>User Group</strong><span>Define primary and secondary users</span></div>
+            <div class="field"><strong>Problem Statement</strong><span>Summarise the core user problem</span></div>
+            <div class="field"><strong>My Role</strong><span>UX designer, researcher, facilitator, etc.</span></div>
+            <div class="field"><strong>Timeline</strong><span>Example: 6 weeks / 2 sprints / 1 quarter</span></div>
+            <div class="field"><strong>Tools Used</strong><span>Figma, FigJam, Miro, Maze, GA, Hotjar...</span></div>
+            <div class="field"><strong>Outcome Metrics</strong><span>Completion rate, conversion, adoption, retention...</span></div>
+          </div>
+        </div>
+      </aside>
     </div>
-    <div class="sb-title">MahaRERA Portal Redesign</div>
-    <div class="sb-sub">by Ganesh Javhare</div>
-  </div>
-  <a href="index.html" style="display:inline-block; margin-bottom: 24px; color: var(--accent-org); font-size: 13px; font-weight: 600;">← Back to Main Portfolio</a>
-  
-  <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-muted);letter-spacing:.13em;text-transform:uppercase;margin-bottom:8px">Part 01 — Problem Space</div>
-  <a class="nav-link" href="#overview" onclick="closeMob()"><span class="dot"></span>Overview</a>
-  <a class="nav-link" href="#role" onclick="closeMob()"><span class="dot"></span>Role & Responsibilities</a>
-  <a class="nav-link" href="#impact" onclick="closeMob()"><span class="dot"></span>Impact</a>
-  <a class="nav-link" href="#problems" onclick="closeMob()"><span class="dot"></span>Existing Problems</a>
-  <a class="nav-link" href="#research" onclick="closeMob()"><span class="dot"></span>Research</a>
-  <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-muted);letter-spacing:.13em;text-transform:uppercase;margin:16px 0 8px">Part 02 — Solution Space</div>
-  <a class="nav-link" href="#hypothesis" onclick="closeMob()"><span class="dot"></span>Hypothesis & Goals</a>
-  <a class="nav-link" href="#principles" onclick="closeMob()"><span class="dot"></span>Guiding Principles</a>
-  <a class="nav-link" href="#process" onclick="closeMob()"><span class="dot"></span>Analysis & Prototyping</a>
-  <a class="nav-link" href="#outcome" onclick="closeMob()"><span class="dot"></span>Outcome</a>
-  <a class="nav-link" href="#conclusion" onclick="closeMob()"><span class="dot"></span>Conclusion</a>
-</nav>
+  </header>
 
-<!-- ===== LAYOUT ===== -->
-<div class="layout">
-
-  <!-- ===== SIDEBAR ===== -->
-  <aside class="sidebar">
-    <div class="sb-top">
-      <div class="sb-badge">
-        <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" fill="#FF6B35"/><circle cx="5" cy="5" r="2" fill="white" opacity=".4"/></svg>
-        <span>Case Study</span>
-      </div>
-      <div class="sb-title">MahaRERA Portal Redesign</div>
-      <div class="sb-sub">by Ganesh Javhare · 6 min read</div>
-    </div>
-
-    <nav class="sb-nav">
-      <div class="sb-chapter-label">Part 01 — Problem</div>
-      <a class="nav-link active" href="#overview"><span class="dot"></span>Overview</a>
-      <a class="nav-link" href="#role"><span class="dot"></span>Role & Responsibilities</a>
-      <a class="nav-link" href="#impact"><span class="dot"></span>Impact</a>
-      <a class="nav-link" href="#problems"><span class="dot"></span>Existing Problems</a>
-      <a class="nav-link" href="#research"><span class="dot"></span>Research</a>
-
-      <div class="sb-chapter-label">Part 02 — Solution</div>
-      <a class="nav-link" href="#hypothesis"><span class="dot"></span>Hypothesis & Goals</a>
-      <a class="nav-link" href="#principles"><span class="dot"></span>Guiding Principles</a>
-      <a class="nav-link" href="#process"><span class="dot"></span>Analysis & Prototyping</a>
-      <a class="nav-link" href="#outcome"><span class="dot"></span>Outcome</a>
-      <a class="nav-link" href="#conclusion"><span class="dot"></span>Conclusion</a>
-    </nav>
-
-    <div class="sb-footer">
-      <p><strong>MahaRERA</strong><br>Maharashtra Real Estate<br>Regulatory Authority<br>Portal Redesign · 2024</p>
-    </div>
-  </aside>
-
-  <!-- ===== MAIN CONTENT ===== -->
-  <main class="main" id="main-content">
-
-    <!-- ─────────── HERO ─────────── -->
-    <section id="hero">
-      <div class="hero-bg"></div>
-
-      <!-- Blueprint grid SVG overlay -->
-      <svg class="hero-grid" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <defs>
-          <pattern id="sgrid" width="40" height="40" patternUnits="userSpaceOnUse">
-            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#4FACFE" stroke-width="0.5"/>
-          </pattern>
-          <pattern id="lgrid" width="200" height="200" patternUnits="userSpaceOnUse">
-            <rect width="200" height="200" fill="url(#sgrid)"/>
-            <path d="M 200 0 L 0 0 0 200" fill="none" stroke="#4FACFE" stroke-width="1.5"/>
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#lgrid)"/>
-        <circle cx="120" cy="120" r="60" fill="none" stroke="#FF6B35" stroke-width="0.8" stroke-dasharray="4 6"/>
-        <circle cx="120" cy="120" r="90" fill="none" stroke="#FF6B35" stroke-width="0.4" stroke-dasharray="2 8"/>
-        <line x1="60" y1="120" x2="180" y2="120" stroke="#FF6B35" stroke-width="0.8"/>
-        <line x1="120" y1="60" x2="120" y2="180" stroke="#FF6B35" stroke-width="0.8"/>
-        <rect x="980" y="240" width="140" height="100" fill="none" stroke="#4FACFE" stroke-width="0.8"/>
-        <line x1="980" y1="290" x2="1120" y2="290" stroke="#4FACFE" stroke-width="0.5"/>
-        <line x1="1050" y1="240" x2="1050" y2="340" stroke="#4FACFE" stroke-width="0.5"/>
-      </svg>
-
-      <div class="hero-content">
-        <div class="hero-chip">
-          <svg width="8" height="8" viewBox="0 0 8 8" aria-hidden="true"><circle cx="4" cy="4" r="3" fill="#FF6B35"/></svg>
-          UX Case Study · Civic Tech
-        </div>
-        <h1 class="hero-title">Designing a simpler,<br><em>more accessible</em><br>MahaRERA portal</h1>
-        <p class="hero-desc">Humanizing complex regulatory data to make it transparent and accessible for every citizen in Maharashtra — at a scale of 6 million+ users.</p>
-        <div class="hero-meta">
-          <div class="hero-meta-item">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><circle cx="7" cy="5" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M2.5 12c0-2.5 2-4 4.5-4s4.5 1.5 4.5 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-            Ganesh Javhare — Lead UX Designer
-          </div>
-          <div class="hero-meta-divider"></div>
-          <div class="hero-meta-item">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.3"/><path d="M7 4v3.5l2 2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-            6 min read
-          </div>
-          <div class="hero-meta-divider"></div>
-          <div class="hero-meta-item">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M7 1.5L2 5v7h10V5L7 1.5Z" stroke="currentColor" stroke-width="1.3"/></svg>
-            Maharashtra, India
-          </div>
-        </div>
-      </div>
-      <div class="hero-scroll" aria-hidden="true">
-        scroll
-        <svg width="16" height="22" viewBox="0 0 16 22" fill="none"><rect x="1" y="1" width="14" height="20" rx="7" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="7" r="2" fill="currentColor"/></svg>
-      </div>
-    </section>
-
-    <!-- ─────────── OVERVIEW ─────────── -->
-    <section class="sec" id="overview" style="background:var(--bg-primary)">
-      <div class="sec-inner reveal">
-        <div class="eyebrow">Introduction</div>
-        <h2 class="sec-title">Civic tech at scale</h2>
-        <p class="sec-lead">Working within the civic tech and public infrastructure space presents unique challenges. The goal was to humanize complex regulatory data, making it transparent and accessible for every citizen in Maharashtra.</p>
-
-        <div class="outcome-quote">
-          <p>"During my work on the MahaRERA portal, I developed a passion for designing accessible, large-scale UI, contributing to a seamless digital experience for over 6 million users. The industry soon sought to push the boundaries of interaction, leading me to modernize complex civic environments through intuitive, inclusive design."</p>
-        </div>
-
-        <div class="img-block">
-          <img src="postermhr.png" alt="Government civic infrastructure building representing MahaRERA context" loading="lazy">
-          <div class="img-caption">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><rect x="1" y="1" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.2"/><path d="M1 5h12" stroke="currentColor" stroke-width="1.2"/></svg>
-            Maharashtra public infrastructure — the context where regulatory clarity matters most
-          </div>
-        </div>
-
-        <button class="report-btn" aria-label="View detailed overview report">
-          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true"><rect x=".5" y=".5" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.1"/><path d="M3 4h7M3 6.5h7M3 9h4" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
-          Detailed Case Study Report
-          <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true"><path d="M2 9L9 2M9 2H4M9 2v5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-      </div>
-    </section>
-
-    <!-- ─────────── ROLE ─────────── -->
-    <section class="sec" id="role">
-      <div class="sec-inner reveal">
-        <div class="eyebrow">My Contribution</div>
-        <h2 class="sec-title">Role & Responsibilities</h2>
-        <p class="sec-lead">Leading design end-to-end across a government-scale product required balancing creative vision with regulatory accuracy and cross-functional partnership.</p>
-
-        <div class="card-grid">
-          <div class="card">
-            <div class="card-icon org">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 2L3 7v11h14V7L10 2Z" stroke="#FF6B35" stroke-width="1.5"/><rect x="7" y="12" width="6" height="6" stroke="#FF6B35" stroke-width="1.3"/></svg>
-            </div>
-            <div class="card-label">Lead UX Designer</div>
-            <div class="card-desc">Led design sprints, collaborated with government stakeholders, facilitated user workshops, and mentored junior team members.</div>
-          </div>
-          <div class="card">
-            <div class="card-icon blue">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2" y="3" width="16" height="13" rx="2" stroke="#4FACFE" stroke-width="1.5"/><path d="M6 8h8M6 11h5" stroke="#4FACFE" stroke-width="1.3" stroke-linecap="round"/></svg>
-            </div>
-            <div class="card-label">End-to-End Product Design</div>
-            <div class="card-desc">Crafted the information architecture, user experiences, wireframes, prototypes, and visual design components.</div>
-          </div>
-          <div class="card">
-            <div class="card-icon gold">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="3" stroke="#F5A623" stroke-width="1.5"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.93 4.93l1.41 1.41M13.66 13.66l1.41 1.41M4.93 15.07l1.41-1.41M13.66 6.34l1.41-1.41" stroke="#F5A623" stroke-width="1.3" stroke-linecap="round"/></svg>
-            </div>
-            <div class="card-label">Cross-functional Collaboration</div>
-            <div class="card-desc">Partnered with engineering, data teams, and policy makers to simplify regulatory complexities without losing legal accuracy.</div>
-          </div>
-        </div>
-
-        <button class="report-btn" aria-label="View full role breakdown report">
-          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true"><rect x=".5" y=".5" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.1"/><path d="M3 4h7M3 6.5h7M3 9h4" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
-          Full Role Breakdown
-          <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true"><path d="M2 9L9 2M9 2H4M9 2v5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-      </div>
-    </section>
-
-    <!-- ─────────── IMPACT ─────────── -->
-    <section class="sec" id="impact" style="background:var(--bg-primary)">
-      <div class="sec-inner reveal">
-        <div class="eyebrow">Results at a Glance</div>
-        <h2 class="sec-title">The Impact</h2>
-        <p class="sec-lead">The redesign touched every layer of the public service — from rural homebuyers checking property registration to urban developers filing complaints.</p>
-
-        <div class="metric-row" aria-label="Impact Metrics">
-          <div class="metric">
-            <div class="metric-num" data-target="6">0</div>
-            <div class="metric-label">Million+ users served seamlessly across the platform</div>
-          </div>
-          <div class="metric">
-            <div class="metric-num" data-target="100" data-suffix="%">0%</div>
-            <div class="metric-label">Mobile & desktop responsive across demographics</div>
-          </div>
-          <div class="metric">
-            <div class="metric-num" data-target="3" data-suffix="×">0×</div>
-            <div class="metric-label">Faster design iterations via new component library</div>
-          </div>
-          <div class="metric">
-            <div class="metric-num" data-target="1" data-suffix=" DS">0</div>
-            <div class="metric-label">Unified design system for all MahaRERA services</div>
-          </div>
-        </div>
-
-        <!-- Impact SVG diagram -->
-        <div style="background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:12px;padding:28px;margin-bottom:8px">
-          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:20px">Impact Framework</div>
-          <svg viewBox="0 0 700 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;overflow:visible" aria-hidden="true">
-            <line x1="60" y1="90" x2="640" y2="90" stroke="#1A2238" stroke-width="2"/>
-            <g><circle cx="110" cy="90" r="28" fill="#131929" stroke="#FF6B35" stroke-width="1.5"/><text x="110" y="86" text-anchor="middle" fill="#FF6B35" font-family="Space Grotesk,sans-serif" font-size="14" font-weight="700">6M+</text><text x="110" y="100" text-anchor="middle" fill="#8A97B4" font-family="Inter,sans-serif" font-size="8">Users</text><text x="110" y="130" text-anchor="middle" fill="#4A5570" font-family="Inter,sans-serif" font-size="10">Scale</text></g>
-            <g><circle cx="270" cy="90" r="28" fill="#131929" stroke="#4FACFE" stroke-width="1.5"/><text x="270" y="86" text-anchor="middle" fill="#4FACFE" font-family="Space Grotesk,sans-serif" font-size="11" font-weight="700">WCAG</text><text x="270" y="100" text-anchor="middle" fill="#8A97B4" font-family="Inter,sans-serif" font-size="8">Compliant</text><text x="270" y="130" text-anchor="middle" fill="#4A5570" font-family="Inter,sans-serif" font-size="10">Access</text></g>
-            <g><circle cx="430" cy="90" r="28" fill="#131929" stroke="#F5A623" stroke-width="1.5"/><text x="430" y="86" text-anchor="middle" fill="#F5A623" font-family="Space Grotesk,sans-serif" font-size="14" font-weight="700">3×</text><text x="430" y="100" text-anchor="middle" fill="#8A97B4" font-family="Inter,sans-serif" font-size="8">Velocity</text><text x="430" y="130" text-anchor="middle" fill="#4A5570" font-family="Inter,sans-serif" font-size="10">Speed</text></g>
-            <g><circle cx="590" cy="90" r="28" fill="#131929" stroke="#2ECCC9" stroke-width="1.5"/><text x="590" y="86" text-anchor="middle" fill="#2ECCC9" font-family="Space Grotesk,sans-serif" font-size="11" font-weight="700">Trust</text><text x="590" y="100" text-anchor="middle" fill="#8A97B4" font-family="Inter,sans-serif" font-size="8">Built</text><text x="590" y="130" text-anchor="middle" fill="#4A5570" font-family="Inter,sans-serif" font-size="10">Transparency</text></g>
-            <path d="M138 90 L242 90" stroke="#1E2948" stroke-width="1.5" stroke-dasharray="4 3"/>
-            <path d="M298 90 L402 90" stroke="#1E2948" stroke-width="1.5" stroke-dasharray="4 3"/>
-            <path d="M458 90 L562 90" stroke="#1E2948" stroke-width="1.5" stroke-dasharray="4 3"/>
-          </svg>
-        </div>
-      </div>
-    </section>
-
-    <!-- ─────────── PROBLEMS ─────────── -->
-    <section class="sec" id="problems">
-      <div class="sec-inner reveal">
-        <div class="eyebrow">Problem Discovery</div>
-        <h2 class="sec-title">Existing UX & Problems</h2>
-        <p class="sec-lead">The existing experience presented several hurdles that prevented citizens from confidently using the platform. Four systemic issues emerged clearly.</p>
-
-        <div class="img-block">
-          <img src="oldwebsite.png" alt="Legacy dashboard with cluttered data presentation" loading="lazy">
-          <div class="img-caption">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><rect x="1" y="1" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.2"/><path d="M1 5h12" stroke="currentColor" stroke-width="1.2"/></svg>
-            The legacy portal — dense, inconsistent, and overwhelming for non-tech-savvy citizens
-          </div>
-        </div>
-
-        <div class="problem-grid">
-          <div class="prob-card">
-            <div class="prob-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M9 2L2 15h14L9 2Z" stroke="#FF6B35" stroke-width="1.4"/><path d="M9 8v3" stroke="#FF6B35" stroke-width="1.4" stroke-linecap="round"/><circle cx="9" cy="13" r="0.8" fill="#FF6B35"/></svg></div>
-            <div class="prob-title">Unclear & Complex</div>
-            <div class="prob-desc">Regulatory portals are often overwhelming. The existing user journeys were difficult for non-tech-savvy home buyers to navigate with confidence.</div>
-          </div>
-          <div class="prob-card">
-            <div class="prob-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><rect x="2" y="2" width="14" height="14" rx="2" stroke="#FF6B35" stroke-width="1.4"/><path d="M5 6h8M5 9h5M5 12h6" stroke="#FF6B35" stroke-width="1.3" stroke-linecap="round"/><path d="M13 11l2 2-2 2" stroke="#FF6B35" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <div class="prob-title">Noisy & Dated</div>
-            <div class="prob-desc">The legacy system was riddled with inconsistent patterns, cluttered data presentation, and built on significant technical debt.</div>
-          </div>
-          <div class="prob-card">
-            <div class="prob-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><circle cx="9" cy="9" r="7" stroke="#FF6B35" stroke-width="1.4"/><path d="M6 9l2 2 4-4" stroke="#FF6B35" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity=".4"/><path d="M9 6v4M7 13h4" stroke="#FF6B35" stroke-width="1.3" stroke-linecap="round"/></svg></div>
-            <div class="prob-title">Cold & Bureaucratic Tone</div>
-            <div class="prob-desc">Users from rural homebuyers to urban developers felt intimidated by the dense, impersonal bureaucratic interface that never considered their perspective.</div>
-          </div>
-          <div class="prob-card">
-            <div class="prob-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><rect x="3" y="3" width="5" height="5" rx="1" stroke="#FF6B35" stroke-width="1.4"/><rect x="10" y="3" width="5" height="5" rx="1" stroke="#FF6B35" stroke-width="1.4" opacity=".5"/><rect x="3" y="10" width="5" height="5" rx="1" stroke="#FF6B35" stroke-width="1.4" opacity=".5"/><rect x="10" y="10" width="5" height="5" rx="1" stroke="#FF6B35" stroke-width="1.4" opacity=".25"/></svg></div>
-            <div class="prob-title">Lack of Scalability</div>
-            <div class="prob-desc">An incoming design system was needed to modernize the aesthetic, improve development velocity, and cater to future integrations across services.</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ─────────── RESEARCH ─────────── -->
-    <section class="sec" id="research" style="background:var(--bg-primary)">
-      <div class="sec-inner reveal">
-        <div class="eyebrow">Discovery Phase</div>
-        <h2 class="sec-title">Qual & Quant Research</h2>
-        <p class="sec-lead">A mixed-methods research approach helped surface both the emotional reality of users and the data patterns driving abandonment across key flows.</p>
-
-        <div class="research-flow">
-          <div class="flow-title">Research Methodology Pipeline</div>
-          <div class="flow-steps">
-            <div class="flow-step">
-              <div class="flow-step-num">01 · QUAL</div>
-              <div class="flow-step-name">User Interviews</div>
-              <div class="flow-step-desc">Generative & evaluative sessions with homebuyers, developers, agents</div>
-            </div>
-            <div class="flow-step">
-              <div class="flow-step-num">02 · AUDIT</div>
-              <div class="flow-step-name">Systems Audit</div>
-              <div class="flow-step-desc">Accessibility & UI standards review against WCAG guidelines</div>
-            </div>
-            <div class="flow-step">
-              <div class="flow-step-num">03 · QUANT</div>
-              <div class="flow-step-name">Data Analysis</div>
-              <div class="flow-step-desc">Drop-off rates on registration & complaint-filing flows</div>
-            </div>
-            <div class="flow-step">
-              <div class="flow-step-num">04 · SYNTH</div>
-              <div class="flow-step-name">Insights</div>
-              <div class="flow-step-desc">Patterns mapped to opportunity areas for redesign</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="img-pair">
-          <div class="img-block">
-            <img src="session.png" alt="UX researcher conducting user interview session" loading="lazy">
-          </div>
-          <div class="img-block">
-            <img src="session1.png" alt="UX affinity mapping and research synthesis on whiteboard" loading="lazy">
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- CHAPTER BREAK -->
-    <div class="chapter-break">
-      <svg class="chapter-break-bg" viewBox="0 0 1200 200" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <defs><pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="12" cy="12" r="1" fill="#4FACFE"/></pattern></defs>
-        <rect width="100%" height="100%" fill="url(#dots)"/>
-      </svg>
-      <div class="chapter-break-inner">
-        <div class="chapter-num">02</div>
-        <div class="chapter-info">
-          <div class="chapter-tag">Part Two · The Solution Space</div>
-          <div class="chapter-label">From insights to action</div>
-          <div class="chapter-desc">With the problem clearly framed through research, the team moved to hypothesis formation, principled design decisions, and rapid iterative prototyping.</div>
-        </div>
+  <nav class="sticky-nav" aria-label="Lean UX process navigation">
+    <div class="container nav-inner">
+      <label class="search">🔎 <input id="searchInput" type="search" placeholder="Search steps, artifacts, or activities..." /></label>
+      <div class="step-links">
+        <a href="#context">01</a><a href="#assumptions">02</a><a href="#outcomes">03</a><a href="#research">04</a><a href="#problem">05</a><a href="#ideation">06</a><a href="#hypotheses">07</a><a href="#prototype">08</a><a href="#validation">09</a><a href="#measure">10</a><a href="#iteration">11</a><a href="#delivery">12</a><a href="#launch">13</a><a href="#reflection">14</a>
       </div>
     </div>
+  </nav>
 
-    <!-- ─────────── HYPOTHESIS ─────────── -->
-    <section class="sec" id="hypothesis">
-      <div class="sec-inner reveal">
-        <div class="eyebrow">Strategic Direction</div>
-        <h2 class="sec-title">Hypothesis & Goals</h2>
-        <p class="sec-lead">Through comprehensive user journeys and responsive design, develop a simplified, inclusive, and scalable experience that helps citizens navigate complex real estate data with confidence.</p>
-
-        <div style="background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:12px;padding:28px;margin:28px 0">
-          <svg viewBox="0 0 680 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto" aria-hidden="true">
-            <line x1="60" y1="60" x2="620" y2="60" stroke="#1A2238" stroke-width="1.5"/>
-            <rect x="0" y="36" width="120" height="48" rx="8" fill="#1A2238" stroke="#FF6B35" stroke-width="1"/>
-            <text x="60" y="57" text-anchor="middle" fill="#FF6B35" font-family="JetBrains Mono,monospace" font-size="9" letter-spacing="1">IF</text>
-            <text x="60" y="72" text-anchor="middle" fill="#8A97B4" font-family="Inter,sans-serif" font-size="9">Research + Empathy</text>
-            <path d="M120 60h40" stroke="#1A2238" stroke-width="1.5" marker-end="url(#arr)"/>
-            <rect x="160" y="36" width="140" height="48" rx="8" fill="#1A2238" stroke="#4FACFE" stroke-width="1"/>
-            <text x="230" y="57" text-anchor="middle" fill="#4FACFE" font-family="JetBrains Mono,monospace" font-size="9" letter-spacing="1">THEN</text>
-            <text x="230" y="72" text-anchor="middle" fill="#8A97B4" font-family="Inter,sans-serif" font-size="9">Simplified UX + Trust</text>
-            <path d="M300 60h40" stroke="#1A2238" stroke-width="1.5"/>
-            <rect x="340" y="36" width="160" height="48" rx="8" fill="#1A2238" stroke="#F5A623" stroke-width="1"/>
-            <text x="420" y="57" text-anchor="middle" fill="#F5A623" font-family="JetBrains Mono,monospace" font-size="9" letter-spacing="1">RESULT</text>
-            <text x="420" y="72" text-anchor="middle" fill="#8A97B4" font-family="Inter,sans-serif" font-size="9">Citizens empowered</text>
-            <path d="M500 60h40" stroke="#1A2238" stroke-width="1.5"/>
-            <rect x="540" y="36" width="140" height="48" rx="8" fill="#1A2238" stroke="#2ECCC9" stroke-width="1"/>
-            <text x="610" y="57" text-anchor="middle" fill="#2ECCC9" font-family="JetBrains Mono,monospace" font-size="9" letter-spacing="1">GOAL</text>
-            <text x="610" y="72" text-anchor="middle" fill="#8A97B4" font-family="Inter,sans-serif" font-size="9">Scalable Design System</text>
-          </svg>
-        </div>
-
-        <div class="img-block2">
-            <img src="newwebsite.png" alt="UX affinity mapping and research synthesis on whiteboard" loading="lazy">
-          </div>
-      </div>
+  <main>
+    <section class="container intro-cards">
+      <article class="mini-card"><div class="icon">⚡</div><h3>Lean UX mindset</h3><p>Work in short cycles, test assumptions early, collaborate continuously, and use evidence to guide product decisions.</p></article>
+      <article class="mini-card"><div class="icon">🎯</div><h3>Case study goal</h3><p>Show your reasoning, research, trade-offs, experiments, iterations, and measurable impact — not only polished final screens.</p></article>
+      <article class="mini-card"><div class="icon">🖼️</div><h3>Artifact spaces</h3><p>Each major section includes placeholders for screenshots, workshop photos, journey maps, matrices, prototypes, reports, and dashboards.</p></article>
     </section>
 
-    <!-- ─────────── PRINCIPLES ─────────── -->
-    <section class="sec" id="principles" style="background:var(--bg-primary)">
-      <div class="sec-inner reveal">
-        <div class="eyebrow">Design Foundation</div>
-        <h2 class="sec-title">Guiding Principles</h2>
-        <div class="principles-grid">
-          <div class="principle">
-            <div class="principle-icon" style="background:var(--accent-org-dim)">
-              <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true"><path d="M11 19s-7-5-7-10a7 7 0 0114 0c0 5-7 10-7 10z" stroke="#FF6B35" stroke-width="1.5"/><circle cx="11" cy="9" r="2.5" stroke="#FF6B35" stroke-width="1.3"/></svg>
-            </div>
-            <div class="principle-title">Humanized</div>
-            <div class="principle-desc">Shift away from a cold, bureaucratic feel using clearer messaging and readable typography.</div>
-          </div>
-          <div class="principle">
-            <div class="principle-icon" style="background:var(--accent-blue-dim)">
-              <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="8" stroke="#4FACFE" stroke-width="1.5"/><path d="M7 11h8M11 7v8" stroke="#4FACFE" stroke-width="1.3" stroke-linecap="round"/></svg>
-            </div>
-            <div class="principle-title">Clear & Simple</div>
-            <div class="principle-desc">Create a clean, intuitive interface that minimizes cognitive load and reduces steps.</div>
-          </div>
-          <div class="principle">
-            <div class="principle-icon" style="background:rgba(46,204,201,.1)">
-              <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true"><circle cx="11" cy="7" r="2.5" stroke="#2ECCC9" stroke-width="1.4"/><path d="M6 19c0-3 2-5 5-5s5 2 5 5" stroke="#2ECCC9" stroke-width="1.4" stroke-linecap="round"/><path d="M3 11h3M16 11h3" stroke="#2ECCC9" stroke-width="1.3" stroke-linecap="round"/><circle cx="4" cy="11" r="1.5" stroke="#2ECCC9" stroke-width="1.2" opacity=".6"/><circle cx="18" cy="11" r="1.5" stroke="#2ECCC9" stroke-width="1.2" opacity=".6"/></svg>
-            </div>
-            <div class="principle-title">Inclusive</div>
-            <div class="principle-desc">Ensure the platform is accessible to all users regardless of digital literacy.</div>
-          </div>
-          <div class="principle">
-            <div class="principle-icon" style="background:var(--accent-gold-dim)">
-              <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5" stroke="#F5A623" stroke-width="1.4"/><rect x="12" y="3" width="7" height="7" rx="1.5" stroke="#F5A623" stroke-width="1.4" opacity=".6"/><rect x="3" y="12" width="7" height="7" rx="1.5" stroke="#F5A623" stroke-width="1.4" opacity=".6"/><rect x="12" y="12" width="7" height="7" rx="1.5" stroke="#F5A623" stroke-width="1.4" opacity=".3"/></svg>
-            </div>
-            <div class="principle-title">Scalable</div>
-            <div class="principle-desc">Test and iterate on cross-functional components using atomic design principles.</div>
-          </div>
+    <section class="container process" id="process">
+      <!-- STEP 01 -->
+      <article class="step" id="context" data-search="project context setup brief role team timeline scope constraints success criteria">
+        <div class="step-header" style="--c1:#0f172a;--c2:#334155"><div class="step-topline"><span class="tag">📄 Lean UX Step 01</span><span class="step-number">01</span></div><h2>Project Context & Case Study Setup</h2><p>Define the product story before showing the process.</p></div>
+        <div class="step-body"><div><h3 class="section-title">🎯 Purpose</h3><p class="purpose">A UX case study needs a clear frame: what problem existed, who was affected, what your role was, what constraints shaped the work, and what outcome the team pursued.</p><h3 class="section-title">🧩 Step-by-step activities</h3><ol class="activity-list"><li>Write a short product overview: product name, domain, platform, audience, and business context.</li><li>State the challenge in one concise paragraph without jumping to a solution.</li><li>Clarify your role and contributions across research, design, facilitation, testing, and delivery.</li><li>List the team members and stakeholders involved in decisions.</li><li>Document constraints such as timeline, budget, technical limits, compliance, accessibility, brand rules, and data availability.</li><li>Define what success would look like from user, business, and technical perspectives.</li><li>Set boundaries: what was in scope, out of scope, and deferred.</li></ol><div class="callout"><strong>What to explain</strong>Explain why the project mattered, why the problem was worth solving, what you owned personally, and what limitations shaped the process.</div></div><aside class="side-panel"><div class="panel"><h3>Artifacts to include</h3><div class="chips"><span class="chip">Project brief</span><span class="chip">Role matrix</span><span class="chip">Timeline</span><span class="chip">Scope map</span><span class="chip">Success criteria</span></div></div><div class="panel"><h3>Key questions</h3><ul class="questions"><li>Why did this project matter?</li><li>Who was the user?</li><li>What was the business opportunity or risk?</li><li>What did I personally contribute?</li></ul></div><div class="image-placeholder"><div><strong>Insert image/artifact</strong><span>Hero product screenshot or conceptual mockup</span></div></div><div class="image-placeholder"><div><strong>Insert image/artifact</strong><span>Project timeline or scope map</span></div></div></aside></div>
+      </article>
+
+      <!-- STEP 02 -->
+      <article class="step" id="assumptions" data-search="assumptions risks proto personas hypothesis backlog evidence tracker">
+        <div class="step-header" style="--c1:#d97706;--c2:#ea580c"><div class="step-topline"><span class="tag">💡 Lean UX Step 02</span><span class="step-number">02</span></div><h2>Assumptions, Risks & Proto-Personas</h2><p>Make team beliefs visible before investing in solutions.</p></div>
+        <div class="step-body"><div><h3 class="section-title">🎯 Purpose</h3><p class="purpose">Lean UX begins by exposing assumptions. Instead of writing large requirement documents upfront, the team captures what it believes to be true and identifies which beliefs must be validated quickly.</p><h3 class="section-title">🧩 Step-by-step activities</h3><ol class="activity-list"><li>Run an assumptions workshop with product, design, engineering, support, and stakeholders.</li><li>Ask everyone to write assumptions about users, needs, behaviours, barriers, channels, business value, feasibility, and risks.</li><li>Cluster similar assumptions into themes such as user needs, market context, adoption risks, and technical dependencies.</li><li>Convert the riskiest assumptions into testable hypotheses.</li><li>Create proto-personas using current knowledge: goals, behaviours, pains, context, triggers, tools, and decision criteria.</li><li>Rank assumptions by uncertainty and impact.</li><li>Document what evidence supports each assumption and what evidence is missing.</li></ol><div class="callout"><strong>What to explain</strong>Show that the team did not pretend to know everything. Explain which assumptions were risky and how you chose what to test first.</div></div><aside class="side-panel"><div class="panel"><h3>Artifacts to include</h3><div class="chips"><span class="chip">Assumption map</span><span class="chip">Risk matrix</span><span class="chip">Proto-personas</span><span class="chip">Hypothesis backlog</span><span class="chip">Evidence tracker</span></div></div><div class="panel"><h3>Key questions</h3><ul class="questions"><li>What are we assuming users need?</li><li>Which assumption is most dangerous if wrong?</li><li>What evidence do we already have?</li><li>What should we test first?</li></ul></div><div class="image-placeholder"><div><strong>Insert image/artifact</strong><span>Assumption mapping board</span></div></div><div class="image-placeholder"><div><strong>Insert image/artifact</strong><span>Proto-persona card</span></div></div></aside></div>
+      </article>
+
+      <!-- STEP 03 -->
+      <article class="step" id="outcomes" data-search="business outcomes user outcomes metrics measurement plan north star baseline kpi">
+        <div class="step-header" style="--c1:#1d4ed8;--c2:#0891b2"><div class="step-topline"><span class="tag">🎯 Lean UX Step 03</span><span class="step-number">03</span></div><h2>Business Outcomes & User Outcomes</h2><p>Shift from output thinking to outcome thinking.</p></div>
+        <div class="step-body"><div><h3 class="section-title">🎯 Purpose</h3><p class="purpose">A strong Lean UX case study shows that the team did not simply ship screens. It explains the user behaviour the team wanted to change and how that behaviour supports business value.</p><h3 class="section-title">🧩 Step-by-step activities</h3><ol class="activity-list"><li>Define business outcomes such as increased activation, reduced support calls, higher completion rate, better retention, or improved conversion.</li><li>Define user outcomes such as confidence, independence, faster task completion, fewer errors, or greater trust.</li><li>Connect business outcomes to user outcomes so the story is not purely commercial or purely aesthetic.</li><li>Identify leading indicators and lagging indicators.</li><li>Avoid vanity metrics and focus on meaningful behaviour.</li><li>Create a measurement plan before design work begins.</li><li>Agree on baseline data or define how the baseline will be collected.</li></ol><div class="callout"><strong>What to explain</strong>Clarify what success meant before you designed. Show the relationship between user benefit and business value.</div></div><aside class="side-panel"><div class="panel"><h3>Artifacts to include</h3><div class="chips"><span class="chip">Outcome statement</span><span class="chip">Metric tree</span><span class="chip">KPI baseline</span><span class="chip">Measurement plan</span><span class="chip">North Star metric</span></div></div><div class="panel"><h3>Key questions</h3><ul class="questions"><li>What behaviour are we trying to change?</li><li>How will we know the solution worked?</li><li>What metric could mislead us?</li><li>What baseline do we need?</li></ul></div><div class="image-placeholder"><div><strong>Insert image/artifact</strong><span>Outcome-to-metric diagram</span></div></div><div class="image-placeholder"><div><strong>Insert image/artifact</strong><span>Analytics baseline screenshot</span></div></div></aside></div>
+      </article>
+
+      <!-- STEP 04 -->
+      <article class="step" id="research" data-search="discovery research interviews surveys analytics support logs affinity map insights quotes">
+        <div class="step-header" style="--c1:#047857;--c2:#0d9488"><div class="step-topline"><span class="tag">👥 Lean UX Step 04</span><span class="step-number">04</span></div><h2>Discovery Research</h2><p>Learn enough to reduce uncertainty, not everything possible.</p></div>
+        <div class="step-body"><div><h3 class="section-title">🎯 Purpose</h3><p class="purpose">Lean UX research is lightweight but rigorous. The goal is to gather enough evidence to guide the next experiment and prevent the team from building the wrong thing.</p><h3 class="section-title">🧩 Step-by-step activities</h3><ol class="activity-list"><li>Create a research plan with objectives, target participants, method, recruitment criteria, script, timeline, and analysis approach.</li><li>Choose methods based on uncertainty: interviews for motivations, usability tests for interactions, surveys for broader signals, analytics for behaviour, and support logs for pain points.</li><li>Recruit participants who match the audience, including edge cases and accessibility needs where relevant.</li><li>Conduct interviews focused on past behaviour rather than imagined future preferences.</li><li>Capture direct quotes, observed behaviours, workarounds, emotional moments, decision triggers, and unmet needs.</li><li>Review existing data such as funnels, support tickets, app reviews, sales notes, CRM data, and search logs.</li><li>Synthesise findings into themes, opportunities, and evidence-backed problem statements.</li></ol><div class="callout"><strong>What to explain</strong>Do not only say “we interviewed users.” Explain who you spoke to, why, what you learned, and how it changed the direction.</div></div><aside class="side-panel"><div class="panel"><h3>Artifacts to include</h3><div class="chips"><span class="chip">Research plan</span><span class="chip">Interview script</span><span class="chip">Participant screener</span><span class="chip">Affinity map</span><span class="chip">Insight report</span><span class="chip">Quote bank</span></div></div><div class="panel"><h3>Key questions</h3><ul class="questions"><li>What do users actually do today?</li><li>Where do they struggle?</li><li>What triggers the need?</li><li>What language do users use?</li></ul></div><div class="image-placeholder"><div><strong>Insert image/artifact</strong><span>Affinity mapping board</span></div></div><div class="image-placeholder"><div><strong>Insert image/artifact</strong><span>User quote cards or notes</span></div></div></aside></div>
+      </article>
+
+      <!-- STEP 05 -->
+      <article class="step" id="problem" data-search="problem framing journey map insights how might we opportunity prioritisation">
+        <div class="step-header" style="--c1:#7e22ce;--c2:#c026d3"><div class="step-topline"><span class="tag">🗺️ Lean UX Step 05</span><span class="step-number">05</span></div><h2>Problem Framing & Opportunity Definition</h2><p>Turn research into a sharp design challenge.</p></div>
+        <div class="step-body"><div><h3 class="section-title">🎯 Purpose</h3><p class="purpose">Before ideating, the team must align on the real problem. This section shows how raw observations became focused opportunities.</p><h3 class="section-title">🧩 Step-by-step activities</h3><ol class="activity-list"><li>Summarise research into key insights supported by quotes, observations, or data.</li><li>Create journey maps showing stages, touchpoints, pain points, emotions, questions, and opportunities.</li><li>Write problem statements that identify user, need, context, and barrier.</li><li>Use “How Might We” questions to reframe problems into opportunity areas.</li><li>Prioritise opportunities by impact, confidence, effort, risk, and strategic alignment.</li><li>Identify moments that matter — the points where intervention can create the largest improvement.</li><li>Confirm stakeholder alignment before moving into solution exploration.</li></ol><div class="callout"><strong>What to explain</strong>Explain why this was the right problem to solve now and what you intentionally chose not to solve.</div></div><aside class="side-panel"><div class="panel"><h3>Artifacts to include</h3><div class="chips"><span class="chip">Insight cards</span><span class="chip">Journey map</span><span class="chip">Problem statement</span><span class="chip">HMW list</span><span class="chip">Opportunity grid</span></div></div><div class="panel"><h3>Key questions</h3><ul class="questions"><li>What is the root problem?</li><li>Which pain point matters most?</li><li>Which opportunity is valuable and feasible?</li><li>What should not be solved right now?</li></ul></div><div class="image-placeholder"><div><strong>Insert image/artifact</strong><span>User journey map</span></div></div><div class="image-placeholder"><div><strong>Insert image/artifact</strong><span>Opportunity prioritisation matrix</span></div></div></aside></div>
+      </article>
+
+      <!-- STEP 06 -->
+      <article class="step" id="ideation" data-search="collaborative ideation crazy 8 design studio sketches dot voting storyboard">
+        <div class="step-header" style="--c1:#be185d;--c2:#e11d48"><div class="step-topline"><span class="tag">✨ Lean UX Step 06</span><span class="step-number">06</span></div><h2>Collaborative Ideation</h2><p>Generate many possible solutions before choosing one.</p></div>
+        <div class="step-body"><div><h3 class="section-title">🎯 Purpose</h3><p class="purpose">Lean UX works best when ideation is collaborative. Designers do not disappear and return with a finished answer; the team explores options together.</p><h3 class="section-title">🧩 Step-by-step activities</h3><ol class="activity-list"><li>Invite a cross-functional group so ideas include user value, feasibility, business needs, and operational realities.</li><li>Start with selected “How Might We” questions.</li><li>Use time-boxed methods such as Crazy 8s, design studio, mind mapping, storyboarding, or solution sketching.</li><li>Encourage quantity first, then evaluate quality later.</li><li>Ask participants to explain assumptions behind ideas.</li><li>Cluster ideas into themes such as guidance, automation, simplification, education, navigation, trust-building, and error prevention.</li><li>Vote or score ideas against desirability, viability, feasibility, accessibility, and risk reduction.</li></ol><div class="callout"><strong>What to explain</strong>Show the breadth of explored options and why the selected direction was strongest.</div></div><aside class="side-panel"><div class="panel"><h3>Artifacts to include</h3><div class="chips"><span class="chip">Sketches</span><span class="chip">Idea wall</span><span class="chip">Design studio outputs</span><span class="chip">Voting results</span><span class="chip">Storyboards</span></div></div><div class="panel"><h3>Key questions</h3><ul class="questions"><li>What are all the ways we could solve this?</li><li>Which ideas test the riskiest hypothesis?</li><li>Which ideas are small enough to learn from quickly?</li><li>What trade-offs exist?</li></ul></div><div class="image-placeholder"><div><strong>Insert image/artifact</strong><span>Workshop sketches</span></div></div><div class="image-placeholder"><div><strong>Insert image/artifact</strong><span>Dot-voting board</span></div></div></aside></div>
+      </article>
+
+      <!-- STEP 07 -->
+      <article class="step" id="hypotheses" data-search="hypotheses experiment planning build measure learn testable assumptions">
+        <div class="step-header" style="--c1:#4338ca;--c2:#7c3aed"><div class="step-topline"><span class="tag">🧪 Lean UX Step 07</span><span class="step-number">07</span></div><h2>Hypotheses & Experiment Planning</h2><p>Convert ideas into testable learning loops.</p></div>
+        <div class="step-body"><div><h3 class="section-title">🎯 Purpose</h3><p class="purpose">Each design decision should connect to a hypothesis and an experiment that can prove or disprove it. This creates the Lean UX build-measure-learn loop.</p><h3 class="section-title">🧩 Step-by-step activities</h3><ol class="activity-list"><li>Write hypotheses using: “We believe [user type] needs [capability] because [insight]. We will know this is true when [measurable outcome].”</li><li>Define the riskiest assumption each hypothesis addresses.</li><li>Choose the smallest experiment that can generate useful evidence.</li><li>Select experiment types such as paper prototype, clickable prototype, concierge test, Wizard-of-Oz test, landing page test, usability test, A/B test, survey, fake-door test, or analytics review.</li><li>Define participants, tasks, success criteria, data to collect, and decision rules.</li><li>Set learning goals before building the prototype.</li><li>Create an experiment backlog and prioritise by risk, impact, and speed.</li></ol><div class="callout"><strong>What to explain</strong>Describe what result would change your mind. This shows maturity and avoids confirmation bias.</div></div><aside class="side-panel"><div class="panel"><h3>Artifacts to include</h3><div class="chips"><span class="chip">Hypothesis cards</span><span class="chip">Experiment plan</span><span class="chip">Learning backlog</span><span class="chip">Test script</span><span class="chip">Decision criteria</span></div></div><div class="panel"><h3>Key questions</h3><ul class="questions"><li>What do we need to learn next?</li><li>What is the cheapest way to learn it?</li><li>What result would change our mind?</li><li>What will we do if the hypothesis fails?</li></ul></div><div class="image-placeholder"><div><strong>Insert image/artifact</strong><span>Hypothesis card examples</span></div></div><div class="image-placeholder"><div><strong>Insert image/artifact</strong><span>Experiment canvas</span></div></div></aside></div>
+      </article>
+
+      <!-- STEP 08 -->
+      <article class="step" id="prototype" data-search="mvp prototype wireframes user flow information architecture clickable prototype design exploration">
+        <div class="step-header" style="--c1:#0e7490;--c2:#0284c7"><div class="step-topline"><span class="tag">✏️ Lean UX Step 08</span><span class="step-number">08</span></div><h2>MVP, Prototype & Design Exploration</h2><p>Build only what is needed to learn.</p></div>
+        <div class="step-body"><div><h3 class="section-title">🎯 Purpose</h3><p class="purpose">In Lean UX, prototypes are learning tools. They should be realistic enough to test the hypothesis but not so polished that the team becomes attached too early.</p><h3 class="section-title">🧩 Step-by-step activities</h3><ol class="activity-list"><li>Start with sketches or wireframes to explore structure, content, flow, and priority.</li><li>Map key user flows from entry point to desired outcome, including empty states, error states, edge cases, and recovery paths.</li><li>Create clickable prototypes when interaction flow matters.</li><li>Increase fidelity only when visual hierarchy, trust, brand perception, or detailed interaction behaviour must be tested.</li><li>Use design system components where possible to reduce implementation waste.</li><li>Define the MVP as the smallest version that delivers user value and generates learning.</li><li>Annotate design decisions with the insight, assumption, or hypothesis they support.</li></ol><div class="callout"><strong>What to explain</strong>Show why you selected the prototype fidelity and how it matched the learning objective.</div></div><aside class="side-panel"><div class="panel"><h3>Artifacts to include</h3><div class="chips"><span class="chip">User flow</span><span class="chip">Information architecture</span><span class="chip">Wireframes</span><span class="chip">Clickable prototype</span><span class="chip">MVP scope</span></div></div><div class="panel"><h3>Key questions</h3><ul class="questions"><li>What is the minimum thing we need to build?</li><li>Which parts need fidelity?</li><li>What edge cases could break the experience?</li><li>What can be faked for learning?</li></ul></div><div class="image-placeholder"><div><strong>Insert image/artifact</strong><span>Wireframe set</span></div></div><div class="image-placeholder"><div><strong>Insert image/artifact</strong><span>User flow diagram</span></div></div></aside></div>
+      </article>
+
+      <!-- STEP 09 -->
+      <article class="step" id="validation" data-search="usability testing validation task success error rate issue log severity matrix">
+        <div class="step-header" style="--c1:#15803d;--c2:#65a30d"><div class="step-topline"><span class="tag">✅ Lean UX Step 09</span><span class="step-number">09</span></div><h2>Usability Testing & Validation</h2><p>Observe behaviour, not just opinions.</p></div>
+        <div class="step-body"><div><h3 class="section-title">🎯 Purpose</h3><p class="purpose">Validation reveals whether the design helps users achieve the intended outcome. It exposes usability issues, comprehension gaps, trust problems, and mismatches between expectations and product behaviour.</p><h3 class="section-title">🧩 Step-by-step activities</h3><ol class="activity-list"><li>Prepare a test plan with research goals, participant criteria, tasks, prototype links, success metrics, and facilitator notes.</li><li>Use realistic scenarios instead of leading instructions.</li><li>Ask participants to think aloud, but prioritise observed behaviour over stated preference.</li><li>Track task success, time on task, error rate, hesitation, misclicks, comprehension, confidence, and qualitative comments.</li><li>Avoid defending the design during sessions. Ask neutral follow-up questions.</li><li>Debrief after each session and capture issues while evidence is fresh.</li><li>Rate issues by severity, frequency, and impact on the target outcome.</li></ol><div class="callout"><strong>What to explain</strong>Show what failed as well as what worked. Strong case studies demonstrate learning, not perfection.</div></div><aside class="side-panel"><div class="panel"><h3>Artifacts to include</h3><div class="chips"><span class="chip">Test plan</span><span class="chip">Task script</span><span class="chip">Session notes</span><span class="chip">Issue log</span><span class="chip">Severity matrix</span><span class="chip">Validation report</span></div></div><div class="panel"><h3>Key questions</h3><ul class="questions"><li>Can users complete the task?</li><li>Where do they hesitate?</li><li>What do they misunderstand?</li><li>Does the design support the target behaviour?</li></ul></div><div class="image-placeholder"><div><strong>Insert image/artifact</strong><span>Testing session screenshot</span></div></div><div class="image-placeholder"><div><strong>Insert image/artifact</strong><span>Usability issue log</span></div></div></aside></div>
+      </article>
+
+      <!-- STEP 10 -->
+      <article class="step" id="measure" data-search="measure learn decide experiment results decision log dashboard validated invalidated inconclusive">
+        <div class="step-header" style="--c1:#b91c1c;--c2:#ea580c"><div class="step-topline"><span class="tag">📊 Lean UX Step 10</span><span class="step-number">10</span></div><h2>Measure, Learn & Decide</h2><p>Turn evidence into product decisions.</p></div>
+        <div class="step-body"><div><h3 class="section-title">🎯 Purpose</h3><p class="purpose">Lean UX is not complete when testing ends. The team must interpret evidence and decide whether to persevere, pivot, iterate, narrow scope, or stop.</p><h3 class="section-title">🧩 Step-by-step activities</h3><ol class="activity-list"><li>Compare results against the success criteria defined in the experiment plan.</li><li>Separate validated learning from opinions, preferences, and isolated anecdotes.</li><li>Look for patterns across research, analytics, support data, and stakeholder feedback.</li><li>Update hypothesis status: validated, invalidated, partially validated, or inconclusive.</li><li>Decide the next action: iterate, run another experiment, narrow scope, pivot, or move into delivery.</li><li>Document what changed because of the evidence.</li><li>Share a concise learning report with stakeholders.</li></ol><div class="callout"><strong>What to explain</strong>Make the decision logic visible. Hiring managers and stakeholders want to see how evidence changed the work.</div></div><aside class="side-panel"><div class="panel"><h3>Artifacts to include</h3><div class="chips"><span class="chip">Learning report</span><span class="chip">Experiment results</span><span class="chip">Dashboard</span><span class="chip">Decision log</span><span class="chip">Updated backlog</span></div></div><div class="panel"><h3>Key questions</h3><ul class="questions"><li>What did we learn?</li><li>What evidence supports the decision?</li><li>What remains uncertain?</li><li>What should change next?</li></ul></div><div class="image-placeholder"><div><strong>Insert image/artifact</strong><span>Results dashboard</span></div></div><div class="image-placeholder"><div><strong>Insert image/artifact</strong><span>Decision log excerpt</span></div></div></aside></div>
+      </article>
+
+      <!-- STEP 11 -->
+      <article class="step" id="iteration" data-search="iteration design refinement before after accessibility checklist revised prototype rationale">
+        <div class="step-header" style="--c1:#0f766e;--c2:#10b981"><div class="step-topline"><span class="tag">🔁 Lean UX Step 11</span><span class="step-number">11</span></div><h2>Iteration & Design Refinement</h2><p>Improve the solution based on evidence.</p></div>
+        <div class="step-body"><div><h3 class="section-title">🎯 Purpose</h3><p class="purpose">Iteration is where Lean UX becomes visible. A strong case study shows how the design changed, why it changed, and what evidence informed each revision.</p><h3 class="section-title">🧩 Step-by-step activities</h3><ol class="activity-list"><li>Prioritise usability issues and improvements by severity, outcome impact, effort, and confidence.</li><li>Revise flows, screens, content, states, navigation, hierarchy, and interaction patterns.</li><li>Create before-and-after comparisons to show design evolution.</li><li>Update accessibility considerations such as keyboard navigation, contrast, focus states, labels, errors, touch targets, and screen reader support.</li><li>Review feasibility with engineering before finalising refined designs.</li><li>Run follow-up tests if changes affect critical assumptions or high-risk interactions.</li><li>Maintain clear rationale for every major design change.</li></ol><div class="callout"><strong>What to explain</strong>Do not hide earlier versions. Showing how the design improved makes your process more credible.</div></div><aside class="side-panel"><div class="panel"><h3>Artifacts to include</h3><div class="chips"><span class="chip">Iteration log</span><span class="chip">Before/after mockups</span><span class="chip">Revised prototype</span><span class="chip">Accessibility checklist</span><span class="chip">Design rationale</span></div></div><div class="panel"><h3>Key questions</h3><ul class="questions"><li>What changed after testing?</li><li>Why is the new version better?</li><li>Did the fix introduce new problems?</li><li>Is the design ready for delivery?</li></ul></div><div class="image-placeholder"><div><strong>Insert image/artifact</strong><span>Before-and-after screens</span></div></div><div class="image-placeholder"><div><strong>Insert image/artifact</strong><span>Annotated improvements</span></div></div></aside></div>
+      </article>
+
+      <!-- STEP 12 -->
+      <article class="step" id="delivery" data-search="delivery handoff implementation support design qa acceptance criteria analytics events">
+        <div class="step-header" style="--c1:#1e293b;--c2:#1d4ed8"><div class="step-topline"><span class="tag">🚀 Lean UX Step 12</span><span class="step-number">12</span></div><h2>Delivery, Handoff & Implementation Support</h2><p>Translate validated design into buildable product work.</p></div>
+        <div class="step-body"><div><h3 class="section-title">🎯 Purpose</h3><p class="purpose">Lean UX does not end with prototypes. The design must be implemented with quality, clarity, and alignment across product, engineering, and design.</p><h3 class="section-title">🧩 Step-by-step activities</h3><ol class="activity-list"><li>Prepare production-ready designs using design system components and responsive layouts.</li><li>Document flows, states, rules, content, microcopy, accessibility requirements, analytics events, and acceptance criteria.</li><li>Define empty states, loading states, error states, permission issues, offline states, validation errors, and partial completion.</li><li>Hold handoff sessions with engineers and product managers.</li><li>Support implementation through design QA, sprint reviews, and bug triage.</li><li>Check analytics instrumentation against the measurement plan.</li><li>Create release notes or internal enablement material where needed.</li></ol><div class="callout"><strong>What to explain</strong>Show that you can move from design thinking to practical delivery without losing quality.</div></div><aside class="side-panel"><div class="panel"><h3>Artifacts to include</h3><div class="chips"><span class="chip">Final UI</span><span class="chip">Design spec</span><span class="chip">Components</span><span class="chip">Acceptance criteria</span><span class="chip">Analytics map</span><span class="chip">QA checklist</span></div></div><div class="panel"><h3>Key questions</h3><ul class="questions"><li>Can engineering build this clearly?</li><li>Are all states specified?</li><li>How will we measure launch impact?</li><li>What quality checks are needed?</li></ul></div><div class="image-placeholder"><div><strong>Insert image/artifact</strong><span>Final mockups</span></div></div><div class="image-placeholder"><div><strong>Insert image/artifact</strong><span>Handoff annotation screenshot</span></div></div></aside></div>
+      </article>
+
+      <!-- STEP 13 -->
+      <article class="step" id="launch" data-search="launch monitoring continuous learning post launch analytics feedback adoption retention support">
+        <div class="step-header" style="--c1:#4d7c0f;--c2:#16a34a"><div class="step-topline"><span class="tag">⏱️ Lean UX Step 13</span><span class="step-number">13</span></div><h2>Launch, Monitoring & Continuous Learning</h2><p>Measure real-world impact and keep learning.</p></div>
+        <div class="step-body"><div><h3 class="section-title">🎯 Purpose</h3><p class="purpose">After launch, real usage data reveals whether the solution creates intended outcomes at scale. This section closes the loop with impact and future improvements.</p><h3 class="section-title">🧩 Step-by-step activities</h3><ol class="activity-list"><li>Monitor agreed metrics after release and compare them to baseline.</li><li>Review qualitative feedback from users, support, sales, app reviews, surveys, or customer success teams.</li><li>Track adoption, completion, retention, drop-off, errors, support contacts, satisfaction, and accessibility feedback.</li><li>Identify unexpected behaviours, new pain points, and technical issues.</li><li>Run post-launch experiments if uncertainty remains.</li><li>Document what improved, what did not, and why.</li><li>Define next iteration opportunities and add them to the product backlog.</li></ol><div class="callout"><strong>What to explain</strong>Connect launch data back to the original outcomes. If results are mixed, say so honestly.</div></div><aside class="side-panel"><div class="panel"><h3>Artifacts to include</h3><div class="chips"><span class="chip">Launch dashboard</span><span class="chip">Post-launch report</span><span class="chip">Feedback themes</span><span class="chip">Impact summary</span><span class="chip">Next backlog</span></div></div><div class="panel"><h3>Key questions</h3><ul class="questions"><li>Did the solution achieve the outcome?</li><li>What changed in real behaviour?</li><li>What surprised us?</li><li>What should we improve next?</li></ul></div><div class="image-placeholder"><div><strong>Insert image/artifact</strong><span>Post-launch analytics dashboard</span></div></div><div class="image-placeholder"><div><strong>Insert image/artifact</strong><span>User feedback summary</span></div></div></aside></div>
+      </article>
+
+      <!-- STEP 14 -->
+      <article class="step" id="reflection" data-search="results reflection impact lessons learned final screens future roadmap">
+        <div class="step-header" style="--c1:#111827;--c2:#404040"><div class="step-topline"><span class="tag">💬 Lean UX Step 14</span><span class="step-number">14</span></div><h2>Case Study Results & Reflection</h2><p>End with impact, learning, and maturity.</p></div>
+        <div class="step-body"><div><h3 class="section-title">🎯 Purpose</h3><p class="purpose">A memorable UX case study explains not only what was designed, but what was learned, what trade-offs were made, and how the work improved the product or organisation.</p><h3 class="section-title">🧩 Step-by-step activities</h3><ol class="activity-list"><li>Summarise measurable outcomes, qualitative outcomes, and business impact.</li><li>Show the final solution and connect it back to the original problem.</li><li>Explain key trade-offs, constraints, and difficult decisions.</li><li>Reflect on what worked well and what you would improve next time.</li><li>Highlight how product, engineering, stakeholders, and users influenced the result.</li><li>Explain limitations honestly if data was incomplete, sample size was small, or metrics were still maturing.</li><li>Close with next steps and future opportunities.</li></ol><div class="callout"><strong>What to explain</strong>End with confidence and honesty. Show impact, but also show what you learned as a designer.</div></div><aside class="side-panel"><div class="panel"><h3>Artifacts to include</h3><div class="chips"><span class="chip">Impact summary</span><span class="chip">Final screens</span><span class="chip">Lessons learned</span><span class="chip">Future roadmap</span><span class="chip">Personal reflection</span></div></div><div class="panel"><h3>Key questions</h3><ul class="questions"><li>What was the result?</li><li>What did I learn?</li><li>What would I do differently?</li><li>What is the next opportunity?</li></ul></div><div class="image-placeholder"><div><strong>Insert image/artifact</strong><span>Final product image</span></div></div><div class="image-placeholder"><div><strong>Insert image/artifact</strong><span>Outcome metric cards</span></div></div></aside></div>
+      </article>
+    </section>
+
+    <section class="checklist-section">
+      <div class="container checklist-grid">
+        <div><h2>Final case study checklist</h2><p>Before publishing, confirm that the story is complete, evidence-based, and easy for hiring managers, stakeholders, or clients to evaluate.</p></div>
+        <div class="check-items">
+          <div class="check-item">Problem and context are clear before showing screens.</div>
+          <div class="check-item">Role, team, timeline, and constraints are transparent.</div>
+          <div class="check-item">Assumptions and hypotheses are explicitly documented.</div>
+          <div class="check-item">Research insights are supported by evidence.</div>
+          <div class="check-item">Problem framing connects directly to ideation.</div>
+          <div class="check-item">Prototype fidelity matches the learning goal.</div>
+          <div class="check-item">Testing method matches the hypothesis.</div>
+          <div class="check-item">Iterations show before-and-after evidence.</div>
+          <div class="check-item">Metrics connect user outcomes to business outcomes.</div>
+          <div class="check-item">Final impact is honest, measurable, and reflective.</div>
         </div>
       </div>
     </section>
+  </main>
 
-    <!-- ─────────── OUTCOME & CONCLUSION ─────────── -->
-    <section class="sec" id="outcome">
-      <div class="sec-inner reveal">
-        <div class="eyebrow">Results & Conclusion</div>
-        <h2 class="sec-title">Outcome & Closing Thoughts</h2>
-        <p class="sec-lead">The revamped MahaRERA platform significantly enhanced the digital public infrastructure, bridging the gap between citizens and critical regulatory data.</p>
-        <div class="outcome-quote">
-          <p>"Designing for the public sector taught me that true impact lies in making the complex accessible and empowering to everyone — not just those comfortable with technology."</p>
-        </div>
-        <div class="img-pair">
-          <div class="img-block1">
-            <img src="award.png" alt="UX researcher conducting user interview session" loading="lazy">
-          </div>
-          <div class="img-block1">
-            <img src="gov.png" alt="UX affinity mapping and research synthesis on whiteboard" loading="lazy">
-          </div>
-        </div>
-        <div class="conclusion-sig">
-          <div class="sig-avatar">GJ</div>
-          <div class="sig-info">
-            <p>Ganesh Javhare</p>
-            <p>Lead UX Designer · MahaRERA Portal Redesign</p>
-          </div>
-        </div>
-      </div>
-    </section>
+  <footer class="footer">
+    <div class="container">Lean UX Case Study Template — replace placeholders with your own project artifacts, images, metrics, and final designs.</div>
+  </footer>
 
-    <!-- Footer -->
-    <footer style="padding:28px clamp(24px,5vw,72px);border-top:1px solid var(--border-subtle);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-      <p style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--text-muted)">MahaRERA Portal Redesign · Case Study by Ganesh Javhare</p>
-      <p style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--text-muted)">Civic Tech · UX Design · Maharashtra 2024</p>
-    </footer>
+  <script>
+    const input = document.getElementById('searchInput');
+    const steps = [...document.querySelectorAll('.step')];
 
-  </main><!-- /main -->
-</div><!-- /layout -->
-
-<script>
-/* ── Progress bar ── */
-const pbar = document.getElementById('pbar');
-window.addEventListener('scroll', () => {
-  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
-  pbar.style.width = pct + '%';
-}, { passive: true });
-
-/* ── Mobile menu ── */
-const ham    = document.getElementById('ham');
-const mob    = document.getElementById('mob-menu');
-ham.addEventListener('click', () => {
-  const open = mob.classList.toggle('open');
-  ham.classList.toggle('open', open);
-  // Accessibility
-  ham.setAttribute('aria-expanded', open);
-  document.body.style.overflow = open ? 'hidden' : '';
-});
-function closeMob() {
-  mob.classList.remove('open');
-  ham.classList.remove('open');
-  ham.setAttribute('aria-expanded', 'false');
-  document.body.style.overflow = '';
-}
-
-/* ── Active nav via IntersectionObserver ── */
-const sections  = document.querySelectorAll('section[id], .chapter-break');
-const navLinks  = document.querySelectorAll('.sidebar .nav-link');
-const ioOptions = { rootMargin: '-30% 0px -60% 0px', threshold: 0 };
-
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      const id = e.target.id;
-      navLinks.forEach(a => {
-        const match = a.getAttribute('href') === '#' + id;
-        a.classList.toggle('active', match);
+    input.addEventListener('input', function () {
+      const q = this.value.trim().toLowerCase();
+      steps.forEach(step => {
+        const haystack = (step.innerText + ' ' + step.dataset.search).toLowerCase();
+        step.style.display = haystack.includes(q) ? '' : 'none';
       });
-    }
-  });
-}, ioOptions);
-
-document.querySelectorAll('section[id]').forEach(s => observer.observe(s));
-
-/* ── Scroll reveal ── */
-const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-if (!prefersReducedMotion) {
-  const revealObs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        revealObs.unobserve(e.target);
-      }
     });
-  }, { threshold: 0.08, rootMargin: '0px 0px -60px 0px' });
-  
-  document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
-} else {
-  // If user prefers reduced motion, make all reveals visible immediately
-  document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
-}
-
-/* ── Animated counters ── */
-function animateNum(el, target, suffix) {
-  if (prefersReducedMotion) {
-    el.textContent = target + (suffix || '');
-    return;
-  }
-  const duration = 1400;
-  const start    = performance.now();
-  const step = ts => {
-    const p   = Math.min((ts - start) / duration, 1);
-    const ease = 1 - Math.pow(1 - p, 3);
-    el.textContent = Math.round(ease * target) + (suffix || '');
-    if (p < 1) requestAnimationFrame(step);
-  };
-  requestAnimationFrame(step);
-}
-
-const counterObs = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      const target = +e.target.dataset.target;
-      const suffix = e.target.dataset.suffix || '';
-      animateNum(e.target, target, suffix);
-      counterObs.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.4 });
-
-document.querySelectorAll('.metric-num[data-target]').forEach(el => counterObs.observe(el));
-
-/* ── Report button placeholder ── */
-document.querySelectorAll('.report-btn').forEach(btn => {
-  btn.addEventListener('click', e => {
-    e.preventDefault();
-    btn.textContent = 'Full report coming soon';
-    setTimeout(() => {
-      btn.innerHTML = `
-        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true"><rect x=".5" y=".5" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.1"/><path d="M3 4h7M3 6.5h7M3 9h4" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
-        Detailed Case Study Report
-        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true"><path d="M2 9L9 2M9 2H4M9 2v5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-    }, 2000);
-  });
-});
-</script>
+  </script>
 </body>
 </html>
