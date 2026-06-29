@@ -1,1882 +1,1659 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Imagine As You Read — UX Case Study</title>
+<title>Imagine As You Read — UX Case Study by Ganesh Javhare</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <style>
- *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* ========== DESIGN TOKENS (DARK & LIGHT MODE) ========== */
+:root {
+  /* Default Dark Theme */
+  --bg-deep:       #060A12;
+  --bg-primary:    #0A0F1C;
+  --bg-secondary:  #0E1424;
+  --bg-card:       #131A2C;
+  --bg-elevated:   #1A2238;
+  --bg-hover:      #202840;
 
-  :root {
-    --bg: #0a0a0f;
-    --surface: rgba(19, 18, 18, 0.881);
-    --border: rgba(255,255,255,0.07);
-    --text: #e8e6f0;
-    --muted: #7a7890;
-    --accent: #c8f060;
-    --accent2: #7b6cff;
-    --accent3: #ff6b8a;
-    --card-bg: #14141e;
-    
-    --serif: 'Syne', sans-serif;
-    --sans: 'DM Sans', sans-serif;
-    --radius: 20px;
-    --radius-sm: 12px;
-    --shadow: 0 10px 30px rgba(0,0,0,0.3);
-    --shadow-hover: 0 24px 60px rgba(0,0,0,0.5);
-  }
+  --accent-org:        #FF6B35;
+  --accent-org-dim:    rgba(255,107,53,.10);
+  --accent-org-border: rgba(255,107,53,.28);
+  --accent-blue:       #4FACFE;
+  --accent-blue-dim:   rgba(79,172,254,.10);
+  --accent-gold:       #F5A623;
+  --accent-gold-dim:   rgba(245,166,35,.10);
+  --accent-teal:       #2ECCC9;
 
-  html { scroll-behavior: smooth; }
+  --text-primary:   #E2E8F5;
+  --text-secondary: #8A97B4;
+  --text-muted:     #637396;
+  --text-inverse:   #ffffff;
 
-  body {
-    font-family: var(--sans);
-    background: var(--bg);
-    color: var(--text);
-    font-size: 16px;
-    line-height: 1.7;
-    -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
-    cursor: none; /* Hide default cursor for custom one */
-    position: relative;
-    z-index: 1;
-  }
-
-  /* ── Custom Cursor ── */
-  #cursor {
-    position: fixed; top: 0; left: 0;
-    width: 12px; height: 12px;
-    background: var(--accent);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-    transition: transform 0.15s ease, width 0.25s ease, height 0.25s ease, background 0.2s;
-    transform: translate(-50%, -50%);
-  }
-  #cursor-ring {
-    position: fixed; top: 0; left: 0;
-    width: 36px; height: 36px;
-    border: 1.5px solid rgba(200,240,96,0.4);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9998;
-    transform: translate(-50%, -50%);
-    transition: transform 0.08s linear, width 0.25s ease, height 0.25s ease, border-color 0.2s;
-  }
-  body:hover #cursor { opacity: 1; }
-
-  /* ── Grid Background ── */
-  .grid-background {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    pointer-events: none;
-    overflow: hidden;
-    background: var(--bg);
-  }
-
-  .grid-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image:
-      linear-gradient(0deg, rgba(200, 240, 96, 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(200, 240, 96, 0.05) 1px, transparent 1px);
-    background-size: 60px 60px;
-    background-attachment: fixed;
-    opacity: 0.5;
-  }
-
-  .grid-container::before {
-    display: none;
-  }
-
-  /* ── Noise Overlay ──*/
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-    pointer-events: none; z-index: 1000; opacity: 0.4;
-  }
-
-  /* ---------- DOTS LAYER ---------- */
-  .dot-layer {
-      position: absolute; 
-      top: 0; left: 0; width: 100%; min-height: 100vh;
-      z-index: -1; pointer-events: none; 
-  }
-  .dot-layer canvas { width: 100%; height: 100%; display: block; }
-/* --- WORK IN PROGRESS BANNER --- */
-    .wip-banner {
-      background: linear-gradient(90deg, rgba(20, 20, 32, 0.95), rgba(10, 10, 15, 0.95));
-      border-bottom: 2px solid var(--accent);
-      padding: 24px 64px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-      z-index: 1200;
-      box-shadow: 0 4px 30px rgba(200, 240, 96, 0.12);
-    }
-
-    .wip-content {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      max-width: 1200px;
-      width: 100%;
-      justify-content: center;
-    }
-
-    .wip-cat-gif {
-      height: 500px;
-      width: auto;
-      object-fit: contain;
-      border-radius: 6px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .wip-text-wrap {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .wip-tag {
-      background: rgba(200, 240, 96, 0.1);
-      border: 1px solid rgba(200, 240, 96, 0.3);
-      color: var(--accent);
-      font-size: 0.7rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      padding: 24px 22px;
-      border-radius: 100px;
-      letter-spacing: 0.08em;
-      white-space: nowrap;
-    }
-
-    .wip-desc {
-      font-size: 0.88rem;
-      color: var(--text);
-      font-weight: 500;
-      letter-spacing: 0.01em;
-    }
-  /* ── NAV ── */
-  nav {
-    position: sticky; top: 0; z-index: 100;
-    background: linear-gradient(to bottom, rgba(10,10,15,0.95), transparent);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border);
-    padding: 24px 2rem;
-    transition: background 0.3s, backdrop-filter 0.3s;
-  }
-  .nav-inner {
-    max-width: 1100px; margin: 0 auto;
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 2rem;
-  }
-  .nav-logo {
-    font-family: var(--serif); font-size: 1.1rem; font-weight: 800;
-    color: var(--text); text-decoration: none; letter-spacing: -0.02em;
-  }
-  .nav-logo span { color: var(--accent); }
-  .nav-links { display: flex; gap: 36px; list-style: none; align-items: center; }
-  .nav-links a {
-    font-size: 0.85rem; font-weight: 400; color: var(--muted);
-    text-decoration: none; letter-spacing: 0.04em; text-transform: uppercase;
-    position: relative; padding: 8px 0; transition: color 0.25s ease, transform 0.25s ease;
-  }
-  .nav-links a::after {
-    content: ''; position: absolute; bottom: -4px; left: 0;
-    width: 0; height: 2px; background: var(--accent); border-radius: 999px;
-    transition: width 0.3s ease;
-  }
-  .nav-links a:hover { color: var(--accent); transform: translateY(-1px); }
-  .nav-links a:hover::after { width: 100%; }
+  --border-subtle:    rgba(255,255,255,.05);
+  --border-default:   rgba(255,255,255,.08);
+  --border-highlight: rgba(255,255,255,.13);
   
-  /* Nav Button Highlight */
-  .nav-links a.nav-cta {
-    background: var(--accent);
-    color: #0a0a0f !important;
-    padding: 10px 24px;
-    border-radius: 100px;
-    font-weight: 600;
-    font-family: var(--serif);
-  }
-  .nav-links a.nav-cta::after {
-    display: none; /* Removes the underline hover effect for the button */
-  }
-  .nav-links a.nav-cta:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 24px rgba(200,240,96,0.3);
-    background: rgba(200,240,96,0.95);
-  }
+  --shadow-soft:      0 12px 30px rgba(0, 0, 0, 0.4);
 
-  /* ── LAYOUT ── */
-  .page { max-width: 1100px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 2; }
+  --sidebar-w: 260px;
+  --right-panel-w: 300px;
+  --topbar-h: 72px;
+  --ease: cubic-bezier(.4,0,.2,1);
+}
 
-  /* ── HERO ── */
-  .hero {
-    padding: 60px 1rem 80px; max-width: 1200px; margin: 0 auto;
-    display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; align-items: flex-start;
-    position: relative; z-index: 2;
-    background-size: cover;
-    background-position: center;
-    background-attachment: scroll;
-  }
+[data-theme="light"] {
+  --bg-deep:       #F0F4F8;
+  --bg-primary:    #FFFFFF;
+  --bg-secondary:  #F8FAFC;
+  --bg-card:       #FFFFFF;
+  --bg-elevated:   #F1F5F9;
+  --bg-hover:      #E2E8F0;
+
+  --text-primary:   #0F172A;
+  --text-secondary: #334155;
+  --text-muted:     #64748B;
+  --text-inverse:   #ffffff;
+
+  --border-subtle:    rgba(0,0,0,.06);
+  --border-default:   rgba(0,0,0,.1);
+  --border-highlight: rgba(0,0,0,.15);
   
-  .hero-content {
-    display: flex;
-    flex-direction: column;
-  }
-  .hero-eyebrow {
-    font-size: 0.78rem; font-weight: 500; color: var(--accent);
-    letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 28px;
-    display: inline-flex; align-items: center; gap: 10px;
-  }
-  .hero-eyebrow::before {
-    content: ''; width: 6px; height: 6px; background: var(--accent); border-radius: 50%;
-    animation: pulse 2s infinite;
-  }
-  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
-  
-  .hero h1 {
-    font-family: var(--serif); font-size: clamp(2.5rem, 2.5vw, 3.5rem);
-    font-weight: 800; line-height: 1.12; letter-spacing: -0.02em; color: var(--text); margin-bottom: 32px;
-  }
-  .hero h1 em { font-style: normal; color: var(--accent); }
-  .hero-sub {
-    font-size: 1.1rem; font-weight: 300; color: var(--muted);
-    line-height: 1.7; max-width: 520px; margin-bottom: 48px;
-  }
-  .hero-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;}
-  .tag {
-    display: inline-flex; align-items: center; padding: 6px 16px;
-    border-radius: 100px; font-size: 0.8rem; color: var(--muted);
-    border: 1px solid var(--border); background: transparent; transition: all 0.2s;
-  }
-  .tag.accent { border-color: rgba(123,108,255,0.4); color: var(--accent2); background: rgba(123,108,255,0.1); }
-  
-  /* Project role CARD */
-  .meta-card {
-    background: var(--card-bg); border: 1px solid var(--border);
-    border-radius: var(--radius-sm); padding: 16px 24px; box-shadow: var(--shadow);
-    position: absolute;
-    bottom: 120px;
-    right: 0;
-     width: 560px;        /* fixed width */
-  max-width: 100%;     /* keep responsive */
-  min-height: 80px;   /* ensure a taller card */
-  height: auto;        /* or height: 240px; for fixed height */
-    max-width: 800px;
-  }
-  .meta-card h3 {
-    font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.14em;
-    color: var(--accent); font-weight: 800; margin-bottom: 12px;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .meta-row1 { 
-    display: flex; 
-    flex-direction: row; 
-    gap: 9.5rem; 
-    margin-bottom: 0; 
-    padding-bottom: 0; 
-    border-bottom: none;
-    align-items: center;
-  }
-  .meta-row2 { 
-    display: flex; 
-    flex-direction: row; 
-    gap: 13.9rem; 
-    margin-bottom: 0; 
-    padding-bottom: 0; 
-    border-bottom: none;
-    align-items: center;
-  }
-  .meta-item label { 
-    font-size: 0.65rem; 
-    text-transform: uppercase; 
-    letter-spacing: 0.08em; 
-    color: var(--muted); 
-    margin-bottom: 0;
-    font-weight: 500;
-    min-width: 50px;
-  }
-  .meta-item p { 
-    font-size: 0.8rem; 
-    color: var(--text); 
-    line-height: 1.4; 
-    font-weight: 500;
-  }
-  .tools-grid { display: none; }
-  .tool-chip { display: none; }
-  .hero-cta { display: none; }
+  --shadow-soft:      0 12px 30px rgba(15, 23, 42, 0.08);
+}
 
-  /* ── HERO MOCKUPS ── */
-  .mockup-screen {
-    width: 180px;
-    height: 390px;
-    background: transparent;
-    border: 2px solid rgba(255, 255, 255, 0.16);
-    border-radius: 42px;
-    padding: 12px;
-    box-shadow: none;
-    overflow: hidden;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: top;
-    justify-content: center;
-  }
+/* ========== RESET ========== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{background:var(--bg-deep);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.7;overflow-x:hidden; transition: background 0.3s ease, color 0.3s ease, padding-top 0.3s var(--ease);}
+img{max-width:100%;height:auto;display:block}
+a{color:var(--accent-org);text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none; color: var(--text-primary);}
 
-  .mockup-screen::before {
-    content: '';
-    position: absolute;
-    top: 14px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 64px;
-    height: 6px;
-    background: rgba(255, 255, 255, 0.18);
-    border-radius: 999px;
-    z-index: 10;
-  }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent-org); outline-offset: 2px; }
 
-  .mockup-screen img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 32px;
-  }
+/* ========== TOP GLOBAL NAV & PROGRESS BAR ========== */
+.top-nav {
+  position: fixed; top: 0; left: 0; right: 0; height: var(--topbar-h);
+  background: var(--bg-deep); 
+  background: color-mix(in srgb, var(--bg-deep) 85%, transparent);
+  backdrop-filter: blur(12px);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 clamp(20px, 5vw, 60px); z-index: 1000;
+  transition: background 0.3s, border-color 0.3s;
+}
 
-  .mockup-screen-placeholder {
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.04);
-    border-radius: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.75rem;
-    color: var(--muted);
-    text-align: center;
-    padding: 16px;
-  }
+#pbar {
+  position: absolute; bottom: 0; left: 0; width: 0; height: 2px;
+  background: linear-gradient(90deg, var(--accent-org), var(--accent-blue));
+  transition: width 60ms linear; z-index: 1001;
+}
 
-  .hero-mockups {
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    gap: 0;
-    min-height: 500px;
-    margin-top: -40px;
-    position: relative;
-    perspective: 1200px;
-  }
+.nav-logo {
+  font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 16px;
+  color: var(--text-primary); text-decoration: none;
+  display: flex; align-items: center; gap: 10px;
+}
+.nav-logo svg { height: 42px; width: auto; }
+.nav-logo path { fill: var(--accent-org); }
 
-  .mockup-container {
-    position: relative;
-    flex-shrink: 0;
-    transition: transform 0.35s ease, z-index 0.35s ease;
-    transform-style: preserve-3d;
-  }
+.nav-title {
+  font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 15px;
+  color: var(--text-primary); position: absolute; left: 50%; transform: translateX(-50%);
+  letter-spacing: 0.02em;
+}
 
-  .mockup-left {
-    transform: translateY(12px) translateX(-34px) translateZ(-12px) rotateZ(-10deg) rotateY(14deg) scale(0.94);
-    z-index: 1;
-  }
+.nav-right { display: flex; align-items: center; gap: 12px; }
 
-  .mockup-middle {
-    transform: translateY(-22px) translateZ(20px) rotateZ(0deg) rotateY(0deg) scale(1.03);
-    z-index: 3;
-  }
+.icon-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--bg-secondary); border: 1px solid var(--border-subtle);
+  color: var(--text-secondary); transition: all 0.2s; 
+}
+.icon-btn:hover { background: var(--bg-hover); color: var(--accent-org); transform: translateY(-2px); }
 
-  .mockup-right {
-    transform: translateY(12px) translateX(34px) translateZ(-12px) rotateZ(10deg) rotateY(-14deg) scale(0.94);
-    z-index: 2;
-  }
+.nav-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--accent-org); color: #fff !important;
+  padding: 10px 24px; border-radius: 100px;
+  font-size: 13px; font-weight: 700; text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s; margin-left: 8px;
+}
+.nav-cta svg { transition: transform 0.2s ease; }
+.nav-cta:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255,107,53,0.3); }
+.nav-cta:hover svg { transform: translateX(-4px); }
 
-  .hero-mockups:hover .mockup-left { transform: translateY(0) translateX(-14px) translateZ(0) rotateZ(0deg) rotateY(0deg) scale(0.98); }
-  .hero-mockups:hover .mockup-middle { transform: translateY(0) translateX(0) translateZ(0) rotateZ(0deg) rotateY(0deg) scale(1); }
-  .hero-mockups:hover .mockup-right { transform: translateY(0) translateX(14px) translateZ(0) rotateZ(0deg) rotateY(0deg) scale(0.98); }
+.hamburger{display:none;flex-direction:column;gap:5px;padding:6px}
+.hamburger span{display:block;width:22px;height:2px;background:var(--text-secondary);border-radius:2px;transition:all .25s var(--ease)}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
 
-  /* ── SECTION SYSTEM ── */
-  section { padding: 100px 0; border-top: 1px solid var(--border); position: relative;}
-  .section-header { margin-bottom: 64px; }
-  .section-num {
-    font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
-    color: var(--accent); font-weight: 500; margin-bottom: 16px;
-    display: flex; align-items: center; gap: 10px;
-  }
-  .section-num::before { content: ''; width: 24px; height: 1px; background: var(--accent); }
-  .section-header h2 {
-    font-family: var(--serif); font-size: clamp(2rem, 4vw, 3.2rem);
-    letter-spacing: -0.02em; line-height: 1.15; color: var(--text); margin-bottom: 20px; font-weight: 700;
-  }
-  .section-header p { font-size: 1rem; color: var(--muted); max-width: 640px; line-height: 1.7; }
+/* ========== DYNAMIC BREADCRUMB BAR ========== */
+.breadcrumb-bar {
+  position: fixed; top: var(--topbar-h); left: 0; right: 0;
+  background: var(--bg-card); border-bottom: 1px solid var(--border-subtle);
+  padding: 10px clamp(20px, 5vw, 60px); z-index: 99;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted);
+  transform: translateY(-100%); opacity: 0; transition: transform 0.3s var(--ease), opacity 0.3s var(--ease);
+  pointer-events: none; display: flex; align-items: center; gap: 4px;
+}
+.breadcrumb-bar.visible { transform: translateY(0); opacity: 1; pointer-events: auto; border-top: 1px solid var(--border-subtle); }
 
-  /* ── CARDS ── */
-  .card {
-    background: var(--card-bg); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-  }
-  .card:hover { transform: translateY(-6px); box-shadow: var(--shadow-hover); border-color: rgba(255,255,255,0.12);}
-  .card-label {
-    font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em;
-    color: var(--muted); font-weight: 500; margin-bottom: 16px;
-  }
-  .card h3 { font-family: var(--serif); font-size: 1.25rem; font-weight: 700; color: var(--text); margin-bottom: 12px; }
-  .card p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+.bc-dropdown { position: relative; display: inline-block; cursor: pointer; }
+.bc-dropdown span {
+  padding: 4px 8px; border-radius: 6px; transition: background 0.2s;
+  color: var(--accent-org); font-weight: 500; display: inline-block;
+}
+.bc-dropdown:hover span { background: var(--border-subtle); }
 
-  /* ── GRIDS ── */
-  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
-  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+.bc-dropdown-menu {
+  position: absolute; top: 100%; left: 0;
+  background: var(--bg-card); border: 1px solid var(--border-subtle);
+  border-radius: 8px; box-shadow: var(--shadow-soft);
+  min-width: 220px; padding: 8px 0;
+  opacity: 0; visibility: hidden; transform: translateY(10px);
+  transition: all 0.2s ease; z-index: 1000;
+}
+.bc-dropdown:hover .bc-dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+.bc-dropdown-menu a {
+  display: block; padding: 8px 16px; color: var(--text-primary);
+  font-size: 12px; text-decoration: none; font-family: 'Inter', sans-serif; text-transform: none;
+}
+.bc-dropdown-menu a:hover { background: var(--bg-hover); color: var(--accent-org); }
 
-  /* ── STAT BLOCKS ── */
-  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 64px; }
-  .stat-block { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; text-align: center; }
-  .stat-num { font-family: var(--serif); font-size: 3rem; font-weight: 700; color: var(--text); line-height: 1; margin-bottom: 12px; }
-  .stat-label { font-size: 0.85rem; color: var(--muted); }
+/* ========== LAYOUT ========== */
+.layout{
+  display:flex;min-height:100vh; padding-top:var(--topbar-h);
+  transition: padding-left 0.3s var(--ease), padding-right 0.3s var(--ease);
+}
 
-  /* ── PERSONA CARDS ── */
-  .persona-card {
-    background: var(--card-bg); border: 1px solid var(--border);
-    border-radius: var(--radius); overflow: hidden; transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  .persona-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-6px); }
-  .persona-header { padding: 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 16px; background: var(--bg);}
-  .persona-avatar {
-    width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    font-family: var(--serif); font-size: 1.2rem; font-weight: 700; flex-shrink: 0; color: #0a0a0f;
-  }
-  .persona-avatar.v { background: linear-gradient(135deg, var(--accent), #40c0c0); }
-  .persona-avatar.j { background: linear-gradient(135deg, var(--accent2), var(--accent3)); }
-  .persona-avatar.e { background: linear-gradient(135deg, var(--accent3), #ff9900); }
-  .persona-name { font-family: var(--serif); font-weight: 700; font-size: 1.2rem; color: var(--text); margin-bottom: 4px; }
-  .persona-role { font-size: 0.75rem; color: var(--muted); }
-  .persona-body { padding: 24px; }
-  .persona-quote {
-    font-family: var(--sans); font-size: 0.9rem; color: var(--accent); line-height: 1.6;
-    border-left: 2px solid var(--border); padding-left: 16px; margin-bottom: 24px; font-style: italic;
-  }
-  .persona-section-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 500; margin-bottom: 12px; margin-top: 24px; }
-  .persona-list { list-style: none; }
-  .persona-list li { font-size: 0.85rem; color: var(--muted); padding: 4px 0 4px 16px; position: relative; line-height: 1.6; }
-  .persona-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-size: 0.8rem; }
+/* ========== FADED SIDE TOGGLES ========== */
+.side-toggle {
+  position: fixed; top: 50%; transform: translateY(-50%);
+  width: 24px; height: 64px;
+  background: var(--bg-card); border: 1px solid var(--border-subtle);
+  color: var(--text-muted); z-index: 1001;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; opacity: 0.3; transition: all 0.3s ease;
+}
+.side-toggle:hover { opacity: 1; background: var(--bg-hover); color: var(--accent-org); }
+.left-toggle { left: var(--sidebar-w); border-left: none; border-radius: 0 8px 8px 0; }
+.right-toggle { right: var(--right-panel-w); border-right: none; border-radius: 8px 0 0 8px; }
 
-  /* ── ARTIFACT ZONES ── */
-  .artifact-zone {
-    border: 1px solid var(--border); border-radius: var(--radius);
-    background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center;
-    text-align: center; padding: 48px 32px; transition: all 0.3s; position: relative; overflow: hidden; min-height: 260px;
-  }
-  .artifact-zone:hover { border-color: var(--accent); background: var(--card-bg); transform: translateY(-4px); }
-  .artifact-icon {
-    width: 64px; height: 64px; border-radius: 16px; background: rgba(255,255,255,0.03);
-    border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
-    margin-bottom: 20px; font-size: 1.5rem;
-  }
-  .artifact-zone h4 { font-family: var(--serif); font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 8px; }
-  .artifact-zone p { font-size: 0.85rem; color: var(--muted); max-width: 280px; line-height: 1.6; }
-  .artifact-badge {
-    display: inline-flex; align-items: center; gap: 8px; margin-top: 24px; padding: 6px 16px;
-    background: var(--card-bg); border: 1px solid var(--border); border-radius: 100px;
-    font-size: 0.75rem; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; font-weight: 500;
-  }
-  .artifact-badge.filled { color: var(--accent); border-color: rgba(200,240,96,0.3); }
-  .artifact-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+body.sidebar-hidden .left-toggle { left: 0; }
+body.sidebar-hidden .left-toggle svg { transform: rotate(180deg); }
+body.right-panel-hidden .right-toggle { right: 0; }
+body.right-panel-hidden .right-toggle svg { transform: rotate(180deg); }
 
-  /* ── FIDELITY STRIP ── */
-  .fidelity-strip {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px;
-    background: var(--border); border: 1px solid var(--border); border-radius: var(--radius);
-    overflow: hidden; margin-bottom: 48px;
-  }
-  .fidelity-step { background: var(--bg); padding: 24px 20px; text-align: center; transition: background 0.3s; }
-  .fidelity-step.active { background: var(--card-bg); }
-  .fidelity-step-num { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 500; margin-bottom: 8px; }
-  .fidelity-step-name { font-family: var(--serif); font-size: 1.1rem; font-weight: 700; color: var(--text); }
-  .fidelity-step.active .fidelity-step-name { color: var(--accent); }
-  .fidelity-step-desc { font-size: 0.8rem; color: var(--muted); margin-top: 8px; }
+/* ========== SIDEBAR (LEFT) ========== */
+.sidebar {
+  position: fixed; top: var(--topbar-h); left: 0; width: var(--sidebar-w); height: calc(100vh - var(--topbar-h));
+  background: var(--bg-secondary); border-right: 1px solid var(--border-subtle);
+  display: flex; flex-direction: column; z-index: 100;
+  transition: transform 0.3s var(--ease), background 0.3s, border-color 0.3s;
+}
 
-  /* ── TESTING TABLE ── */
-  .test-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-  .test-table th {
-    text-align: left; padding: 16px 24px; font-size: 0.75rem; text-transform: uppercase;
-    letter-spacing: 0.08em; color: var(--muted); font-weight: 500;
-    border-bottom: 1px solid var(--border); background: var(--bg);
-  }
-  .test-table td { padding: 16px 24px; border-bottom: 1px solid var(--border); color: var(--muted); vertical-align: middle; }
-  .test-table tr:last-child td { border-bottom: none; }
-  .test-table tr:hover td { background: var(--bg); }
-  .pass-badge { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 100px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
-  .pass-badge.pass { background: rgba(200,240,96,0.1); color: var(--accent); }
-  .pass-badge.fail { background: rgba(255,107,138,0.1); color: var(--accent3); }
-  .score-bar-wrap { display: flex; align-items: center; gap: 12px; }
-  .score-bar { height: 4px; border-radius: 4px; background: var(--border); flex: 1; overflow: hidden; }
-  .score-fill { height: 100%; border-radius: 4px; }
-  .score-fill.green { background: linear-gradient(90deg, var(--accent2), var(--accent)); }
-  .score-fill.amber { background: var(--accent2); }
-  .score-fill.red { background: var(--accent3); }
-  .score-val { font-size: 0.85rem; font-weight: 600; min-width: 32px; }
+.sb-top { padding: 24px 20px 20px; border-bottom: 1px solid var(--border-subtle); flex-shrink: 0;}
+.sb-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--accent-org-dim); border: 1px solid var(--accent-org-border);
+  border-radius: 6px; padding: 5px 9px; margin-bottom: 10px;
+}
+.sb-badge svg { flex-shrink: 0; }
+.sb-badge span { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; font-weight: 500; color: var(--accent-org); letter-spacing: .1em; text-transform: uppercase; }
+.sb-title { font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; color: var(--text-primary); line-height: 1.4; }
+.sb-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 
-  /* ── ITERATION BEFORE/AFTER ── */
-  .iteration-block {
-    background: var(--card-bg); border: 1px solid var(--border);
-    border-radius: var(--radius); overflow: hidden; margin-bottom: 32px; transition: transform 0.3s;
-  }
-  .iteration-block:hover { transform: translateY(-4px); border-color: var(--accent); }
-  .iteration-header { padding: 24px 32px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 16px; background: var(--bg);}
-  .iter-num {
-    width: 36px; height: 36px; border-radius: 10px; background: var(--accent); color: #0a0a0f;
-    font-family: var(--serif); font-size: 1rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  }
-  .iteration-header h3 { font-family: var(--serif); font-size: 1.1rem; font-weight: 700; color: var(--text); }
-  .iteration-body { display: grid; grid-template-columns: 1fr 1fr; }
-  .iter-before, .iter-after { padding: 32px; }
-  .iter-before { border-right: 1px solid var(--border); background: var(--bg); }
-  .iter-before-label, .iter-after-label {
-    font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em;
-    font-weight: 500; margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
-  }
-  .iter-before-label { color: var(--accent3); }
-  .iter-after-label { color: var(--accent); }
-  .iter-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-  .iter-dot.red { background: var(--accent3); }
-  .iter-dot.green { background: var(--accent); }
-  .iter-before p, .iter-after p { font-size: 0.85rem; color: var(--muted); line-height: 1.7; }
+/* ── EXPANDABLE PROJECTS MENU (GMAIL STYLE) ── */
+.sb-more-projects { margin-top: 20px; }
+.more-projects-toggle {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; padding: 8px 12px; margin-left: -12px;
+  font-family: 'Inter', sans-serif; font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--text-secondary); cursor: pointer; transition: all 0.2s ease;
+  border-radius: 6px;
+}
+.more-projects-toggle:hover {
+  color: var(--text-primary);
+  background: var(--border-subtle);
+}
+.more-projects-toggle .chevron { transition: transform 0.3s var(--ease); }
+.more-projects-toggle.open .chevron { transform: rotate(180deg); }
 
-  /* ── INSIGHT CALLOUT ── */
-  .insight-callout {
-    background: rgba(123,108,255,0.05); border: 1px solid rgba(123,108,255,0.2);
-    border-left: 4px solid var(--accent2); border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-    padding: 24px 32px; margin: 48px 0;
-  }
-  .insight-callout p { font-size: 0.95rem; color: var(--text); line-height: 1.7; font-style: italic; }
+.more-projects-list {
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.3s var(--ease), opacity 0.3s var(--ease), margin 0.3s var(--ease);
+  opacity: 0; display: flex; flex-direction: column; gap: 4px;
+}
+.more-projects-list.open {
+  max-height: 200px; opacity: 1; margin-top: 8px; margin-bottom: 8px;
+}
+.more-project-link {
+  font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 500;
+  color: var(--text-secondary); text-decoration: none;
+  padding: 8px 12px; border-radius: 6px; transition: all 0.2s ease;
+  display: block; margin-left: -12px; width: calc(100% + 24px);
+}
+.more-project-link:hover {
+  color: var(--accent-org); background: var(--accent-org-dim);
+}
 
-  /* ── METHODOLOGY STEPS ── */
-  .method-steps { display: flex; flex-direction: column; gap: 0; }
-  .method-step { display: flex; gap: 24px; padding: 32px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
-  .method-step:last-child { border-bottom: none; }
-  .method-step-icon {
-    width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
-    font-size: 1.2rem; flex-shrink: 0; background: var(--bg); border: 1px solid var(--border); color: var(--accent);
-  }
-  .method-step h4 { font-family: var(--serif); font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; color: var(--text); }
-  .method-step p { font-size: 0.85rem; color: var(--muted); line-height: 1.7; }
 
-  /* ── PHASE TIMELINE ── */
-  .phase-timeline {
-    display: flex; align-items: stretch; gap: 0; margin: 48px 0;
-    border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
-  }
-  .phase { flex: 1; padding: 32px 24px; border-right: 1px solid var(--border); background: var(--card-bg); transition: background 0.3s; }
-  .phase:hover { background: var(--surface); }
-  .phase:last-child { border-right: none; }
-  .phase-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 500; margin-bottom: 16px; color: var(--accent);}
-  .phase.think .phase-label { color: var(--accent); }
-  .phase.make .phase-label { color: var(--accent2); }
-  .phase.check .phase-label { color: var(--accent3); }
-  .phase h4 { font-family: var(--serif); font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; color: var(--text); }
-  .phase ul { list-style: none; }
-  .phase ul li { font-size: 0.85rem; color: var(--muted); padding: 4px 0 4px 16px; position: relative; }
-  .phase ul li::before { content: '→'; position: absolute; left: 0; color: var(--border); }
+.sb-scrollable {
+  flex: 1; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--border-default) transparent;
+  display: flex; flex-direction: column; padding-bottom: 24px;
+}
 
-  /* ── COMPETITOR TABLE ── */
-  .comp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 48px; }
-  .comp-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow); }
-  .comp-name { font-family: var(--serif); font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 20px; }
-  .comp-row { display: flex; gap: 12px; margin-bottom: 12px; align-items: flex-start; }
-  .comp-icon { font-size: 1rem; flex-shrink: 0; }
-  .comp-text { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+.sb-nav { padding: 16px 0 24px; }
+.sb-chapter-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 500;
+  color: var(--text-muted); letter-spacing: .13em; text-transform: uppercase;
+  padding: 14px 20px 7px; display: flex; align-items: center; gap: 8px;
+}
+.sb-chapter-label::after { content: ''; flex: 1; height: 1px; background: var(--border-subtle); }
 
-  /* ── HYPOTHESIS LIST ── */
-  .hypothesis-list { display: flex; flex-direction: column; gap: 2px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-  .hypothesis-item { background: var(--bg); padding: 24px 32px; display: flex; align-items: flex-start; gap: 20px; transition: background 0.3s; }
-  .hypothesis-item:hover { background: var(--card-bg); }
-  .hyp-num { font-family: var(--serif); font-size: 1rem; font-weight: 700; color: var(--accent); min-width: 32px; }
-  .hyp-text { font-size: 0.9rem; color: var(--muted); line-height: 1.7; }
-  .hyp-text strong { color: var(--text); font-weight: 500; }
+.nav-link {
+  display: flex; align-items: center; gap: 10px;
+  padding: 7px 20px; font-size: 12px; color: var(--text-muted);
+  transition: color .2s, background .2s; position: relative; width: 100%; text-align: left;
+}
+.nav-link .dot {
+  width: 6px; height: 6px; border-radius: 50%; border: 1.5px solid currentColor; flex-shrink: 0; transition: all .2s;
+}
+.nav-link:hover { color: var(--text-secondary); background: var(--border-subtle); }
+.nav-link.active { color: var(--accent-org); }
+.nav-link.active .dot { background: var(--accent-org); border-color: var(--accent-org); box-shadow: 0 0 8px rgba(255,107,53,.5); }
+.nav-link.active::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 2px; background: var(--accent-org); border-radius: 0 2px 2px 0;
+}
 
-  /* ── OUTCOME PILLARS ── */
-  .outcome-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-  .outcome-card {
-    background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 32px; box-shadow: var(--shadow); transition: transform 0.3s; position: relative; overflow: hidden;
-  }
-  .outcome-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.12); }
-  .outcome-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; }
-  .outcome-card.green::before { background: var(--accent); }
-  .outcome-card.amber::before { background: var(--accent2); }
-  .outcome-card.blue::before { background: var(--accent3); }
-  .outcome-card h4 { font-family: var(--serif); font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 12px; }
-  .outcome-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.7; }
+/* ========== RIGHT PANEL (ARTIFACTS & QUESTIONS) ========== */
+.right-panel {
+  position: fixed; top: var(--topbar-h); right: 0;
+  width: var(--right-panel-w); height: calc(100vh - var(--topbar-h));
+  background: var(--bg-secondary); border-left: 1px solid var(--border-subtle);
+  padding: 24px 20px; overflow-y: auto;
+  transition: transform 0.3s var(--ease), background 0.3s, border-color 0.3s;
+  z-index: 100;
+  scrollbar-width: thin; scrollbar-color: var(--border-default) transparent;
+}
+.right-panel-title {
+  font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600;
+  color: var(--text-primary); margin-bottom: 20px;
+  display: flex; align-items: center; gap: 8px;
+}
 
-  /* ── NEXT STEPS ── */
-  .next-steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-  .next-step { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow); }
-  .next-step-phase {
-    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 20px;
-    padding: 6px 12px; border-radius: 100px; display: inline-block; background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--border);
-  }
-  .next-step-phase.immediate { color: var(--accent); border-color: rgba(200,240,96,0.3); }
-  .next-step-phase.short { color: var(--accent2); border-color: rgba(123,108,255,0.3); }
-  .next-step-phase.long { color: var(--accent3); border-color: rgba(255,107,138,0.3); }
-  .next-step h4 { font-family: var(--serif); font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 16px; }
-  .next-step ul { list-style: none; }
-  .next-step ul li { font-size: 0.85rem; color: var(--muted); padding: 6px 0 6px 20px; position: relative; line-height: 1.6; }
-  .next-step ul li::before { content: '→'; position: absolute; left: 0; color: var(--border); }
+/* Artifact Card Styling */
+.artifact-card {
+  background: var(--bg-card); border: 1px solid var(--border-subtle);
+  border-radius: 12px; padding: 16px; margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: transform 0.2s, border-color 0.2s;
+}
+/* Snapshot smooth hiding animations */
+#snapshot-card {
+  transition: all 0.4s var(--ease); overflow: hidden; max-height: 500px; opacity: 1;
+}
+#snapshot-card.hidden-snapshot {
+  max-height: 0; opacity: 0; margin-bottom: 0; padding-top: 0; padding-bottom: 0;
+  border-width: 0; pointer-events: none;
+}
 
-  /* ── CLOSING QUOTE ── */
-  .closing-quote {
-    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 80px 48px; text-align: center; margin: 64px 0; position: relative; overflow: hidden;
-  }
-  .closing-quote blockquote {
-    font-family: var(--serif); font-size: clamp(1.5rem, 3vw, 2.2rem); font-weight: 700;
-    line-height: 1.4; color: var(--text); max-width: 800px; margin: 0 auto 32px; letter-spacing: -0.01em;
-  }
-  .closing-quote blockquote em { color: var(--accent); font-style: normal; }
-  .closing-quote cite { font-size: 0.85rem; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; }
+.artifact-card h3 { font-size: 13px; font-family: 'Space Grotesk', sans-serif; color: var(--text-primary); margin: 0 0 10px; }
+.artifact-row { font-size: 11.5px; color: var(--text-muted); margin-bottom: 6px; display: flex; justify-content: space-between;}
+.artifact-row strong { color: var(--text-secondary); font-weight: 600;}
 
-  /* ── FOOTER ── */
-  footer {
-    border-top: 1px solid var(--border); padding: 40px 2rem;
-    display: flex; align-items: center; justify-content: space-between;
-    max-width: 1100px; margin: 0 auto; position: relative; z-index: 2;
-  }
-  footer p { font-size: 0.85rem; color: var(--muted); }
-  footer a { color: var(--accent); text-decoration: none; transition: color 0.2s;}
-  footer a:hover { color: var(--text); }
+/* Dynamic Panel Section inside Right Panel */
+.dynamic-panel {
+  background: var(--bg-card); border: 1px solid var(--border-subtle);
+  border-radius: 16px; padding: 18px; margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: background 0.3s, border-color 0.3s;
+}
+.dynamic-panel h3 {
+  font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 700;
+  color: var(--text-primary); margin: 0 0 14px 0;
+}
 
-  /* ── OVERRIDES for inline styles present in the original HTML ── */
-  /* This prevents having to change inline HTML CSS */
-  .card, .artifact-zone, .iteration-block, .stat-block, .method-step, .hypothesis-item, .outcome-card {
-    border-left: 1px solid var(--border) !important;
-    border-top: 1px solid var(--border) !important;
-  }
-  .outcome-card.green, .outcome-card.amber, .outcome-card.blue { border-top-width: 3px !important; }
-  div[style*="background:white"], div[style*="background: white"], div[style*="background:#fff"] { background: var(--card-bg) !important; border-color: var(--border) !important; color: var(--text) !important;}
-  span[style*="color:#3b6d11"], span[style*="color:#854f0b"], span[style*="color:#a32d2d"] { color: var(--text) !important; }
+/* Chips Design */
+.dyn-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.dyn-chip {
+  background: var(--bg-elevated); border: 1px solid var(--border-subtle);
+  border-radius: 999px; padding: 6px 12px; font-size: 11px; font-weight: 600;
+  color: var(--text-secondary); transition: all 0.2s;
+}
 
-  /* ── ANIMATIONS ── */
-  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
-  .reveal.visible { opacity: 1; transform: translate(0, 0); }
+/* Tick List Design */
+.dyn-questions { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.dyn-questions li {
+  display: grid; grid-template-columns: 18px 1fr; gap: 8px; align-items: start;
+  color: var(--text-secondary); font-size: 11.5px; line-height: 1.5;
+}
+.dyn-questions li .tick {
+  display: grid; place-items: center; width: 16px; height: 16px; border-radius: 50%;
+  background: var(--bg-elevated); color: var(--text-muted); font-size: 10px; font-weight: 900;
+  transition: all 0.3s ease; margin-top: 1px;
+}
+.dyn-questions li.active .tick { background: rgba(16, 185, 129, 0.15); color: #10b981; }
 
-  /* ── RESPONSIVE ── */
-  @media (max-width: 900px) {
-    .hero { grid-template-columns: 1fr; gap: 2.5rem; }
-    .meta-card { position: static; }
-    .grid-3, .grid-4 { grid-template-columns: repeat(2, 1fr); }
-    .stat-grid { grid-template-columns: repeat(2, 1fr); }
-    .fidelity-strip { grid-template-columns: repeat(2, 1fr); }
-    .iteration-body { grid-template-columns: 1fr; }
-    .iter-before { border-right: none; border-bottom: 1px solid var(--border); }
-    .phase-timeline { flex-direction: column; }
-    .phase { border-right: none; border-bottom: 1px solid var(--border); }
-    .outcome-grid, .next-steps-grid { grid-template-columns: 1fr; }
-    .comp-grid { grid-template-columns: 1fr; }
-  }
-  @media (max-width: 600px) {
-    .hero { padding: 100px 1.5rem 64px; }
-    .page { padding: 0 1.5rem; }
-    section { padding: 64px 0;}
-    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
-    .stat-grid { grid-template-columns: repeat(2, 1fr); }
-    footer { flex-direction: column; gap: 1rem; text-align: center; }
-    nav { padding: 16px; }
-    .nav-links { display: none; }
-  }
+/* ========== MAIN ========== */
+.main{
+  flex:1;min-width:0;
+  margin-left: var(--sidebar-w); margin-right: var(--right-panel-w);
+  transition: margin 0.3s var(--ease);
+}
+
+/* TOGGLE STATES */
+body.sidebar-hidden .sidebar { transform: translateX(-100%); }
+body.sidebar-hidden .main { margin-left: 0; }
+body.right-panel-hidden .right-panel { transform: translateX(100%); }
+body.right-panel-hidden .main { margin-right: 0; }
+body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
+
+/* ========== HERO (IYR Exact Styles) ========== */
+#hero {
+  background: #0a0a0f;
+  position: relative;
+  overflow: hidden;
+  padding: 60px 1rem 120px;
+  width: 100%;
+}
+.iyr-hero-grid-bg {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background-image: linear-gradient(0deg, rgba(200, 240, 96, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(200, 240, 96, 0.05) 1px, transparent 1px);
+  background-size: 60px 60px; pointer-events: none; z-index: 1; opacity: 0.5;
+}
+.iyr-hero-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; align-items: flex-start;
+  position: relative; z-index: 2;
+}
+.iyr-hero-content { display: flex; flex-direction: column; }
+.iyr-hero-eyebrow {
+  font-size: 0.78rem; font-weight: 500; color: #c8f060;
+  letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 28px;
+  display: inline-flex; align-items: center; gap: 10px; font-family: 'DM Sans', sans-serif;
+}
+.iyr-hero-eyebrow::before {
+  content: ''; width: 6px; height: 6px; background: #c8f060; border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
+.iyr-hero h1 {
+  font-family: 'Syne', sans-serif; font-size: clamp(2.5rem, 2.5vw, 3.5rem);
+  font-weight: 800; line-height: 1.12; letter-spacing: -0.02em; color: #e8e6f0; margin-bottom: 32px;
+}
+.iyr-hero h1 em { font-style: normal; color: #c8f060; }
+.iyr-hero-sub {
+  font-family: 'DM Sans', sans-serif; font-size: 1.1rem; font-weight: 300; color: #7a7890;
+  line-height: 1.7; max-width: 520px; margin-bottom: 48px;
+}
+.iyr-hero-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;}
+.iyr-tag {
+  display: inline-flex; align-items: center; padding: 6px 16px; font-family: 'DM Sans', sans-serif;
+  border-radius: 100px; font-size: 0.8rem; color: #7a7890;
+  border: 1px solid rgba(255,255,255,0.07); background: transparent; transition: all 0.2s;
+}
+.iyr-tag.accent { border-color: rgba(123,108,255,0.4); color: #7b6cff; background: rgba(123,108,255,0.1); }
+
+/* IYR Hero Mockups */
+.iyr-hero-mockups {
+  display: flex; align-items: flex-end; justify-content: center; gap: 0;
+  min-height: 500px; margin-top: -40px; position: relative; perspective: 1200px;
+}
+.iyr-mockup-container { position: relative; flex-shrink: 0; transition: transform 0.35s ease, z-index 0.35s ease; transform-style: preserve-3d; }
+.iyr-mockup-left { transform: translateY(12px) translateX(-34px) translateZ(-12px) rotateZ(-10deg) rotateY(14deg) scale(0.94); z-index: 1; }
+.iyr-mockup-middle { transform: translateY(-22px) translateZ(20px) rotateZ(0deg) rotateY(0deg) scale(1.03); z-index: 3; }
+.iyr-mockup-right { transform: translateY(12px) translateX(34px) translateZ(-12px) rotateZ(10deg) rotateY(-14deg) scale(0.94); z-index: 2; }
+.iyr-hero-mockups:hover .iyr-mockup-left { transform: translateY(0) translateX(-14px) translateZ(0) rotateZ(0deg) rotateY(0deg) scale(0.98); }
+.iyr-hero-mockups:hover .iyr-mockup-middle { transform: translateY(0) translateX(0) translateZ(0) rotateZ(0deg) rotateY(0deg) scale(1); }
+.iyr-hero-mockups:hover .iyr-mockup-right { transform: translateY(0) translateX(14px) translateZ(0) rotateZ(0deg) rotateY(0deg) scale(0.98); }
+
+.iyr-mockup-screen {
+  width: 180px; height: 390px; background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.16); border-radius: 42px; padding: 12px;
+  position: relative; display: flex; flex-direction: column; align-items: top; justify-content: center;
+}
+.iyr-mockup-screen::before {
+  content: ''; position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
+  width: 64px; height: 6px; background: rgba(255, 255, 255, 0.18); border-radius: 999px; z-index: 10;
+}
+.iyr-mockup-screen-placeholder {
+  width: 100%; height: 100%; background: rgba(255, 255, 255, 0.04); border-radius: 32px;
+  display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: #7a7890; text-align: center; padding: 16px;
+}
+
+/* IYR Meta Card */
+.iyr-meta-card {
+  background: #14141e; border: 1px solid rgba(255,255,255,0.07); font-family: 'DM Sans', sans-serif;
+  border-radius: 12px; padding: 16px 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  position: absolute; bottom: 30px; right: 1rem; width: 560px; max-width: calc(100% - 2rem); z-index: 10;
+}
+.iyr-meta-card h3 {
+  font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.14em;
+  color: #c8f060; font-weight: 800; margin: 0 0 12px 0;
+}
+.iyr-meta-row { display: flex; gap: 4rem; margin-bottom: 12px; }
+.iyr-meta-row:last-child { margin-bottom: 0; }
+.iyr-meta-item label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; color: #7a7890; margin-bottom: 2px; font-weight: 500; display: block;}
+.iyr-meta-item p { font-size: 0.8rem; color: #e8e6f0; line-height: 1.4; font-weight: 500; margin: 0;}
+
+/* ========== IYR Specific Content Component Adaptations ========== */
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; }
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 24px; margin-bottom: 32px; }
+.stat-block { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 24px; text-align: center; }
+.stat-num { font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 700; color: var(--accent-org); line-height: 1; margin-bottom: 8px; }
+.stat-label { font-size: 0.85rem; color: var(--text-muted); }
+
+.persona-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 16px; overflow: hidden; }
+.persona-header { padding: 20px; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; gap: 16px; background: var(--bg-elevated);}
+.persona-avatar { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; flex-shrink: 0; color: #fff; background: var(--accent-org); }
+.persona-name { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--text-primary); margin-bottom: 2px; }
+.persona-role { font-size: 0.75rem; color: var(--text-muted); }
+.persona-body { padding: 20px; }
+.persona-quote { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; border-left: 2px solid var(--accent-org); padding-left: 16px; margin-bottom: 20px; font-style: italic; }
+.persona-section-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-primary); font-weight: 600; margin-bottom: 10px; margin-top: 20px; }
+.persona-list { list-style: none; padding:0; margin:0;}
+.persona-list li { font-size: 0.85rem; color: var(--text-muted); padding: 4px 0 4px 16px; position: relative; line-height: 1.6; }
+.persona-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent-org); font-size: 0.8rem; }
+
+.phase-timeline { display: flex; align-items: stretch; gap: 0; margin: 32px 0; border: 1px solid var(--border-subtle); border-radius: 16px; overflow: hidden; flex-wrap: wrap; }
+.phase { flex: 1; min-width: 200px; padding: 24px; border-right: 1px solid var(--border-subtle); background: var(--bg-card); }
+.phase:last-child { border-right: none; }
+.phase-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 12px; color: var(--accent-org);}
+.phase h4 { font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; color: var(--text-primary); }
+.phase ul { list-style: none; padding:0; margin:0; }
+.phase ul li { font-size: 0.85rem; color: var(--text-muted); padding: 4px 0 4px 16px; position: relative; }
+.phase ul li::before { content: '→'; position: absolute; left: 0; color: var(--border-highlight); }
+
+.test-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+.test-table th { text-align: left; padding: 12px 16px; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border-subtle); background: var(--bg-elevated); }
+.test-table td { padding: 12px 16px; border-bottom: 1px solid var(--border-subtle); color: var(--text-secondary); vertical-align: middle; }
+.pass-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 100px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
+.pass-badge.pass { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+.pass-badge.fail { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+
+.fidelity-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 2px; background: var(--border-subtle); border: 1px solid var(--border-subtle); border-radius: 16px; overflow: hidden; margin-bottom: 32px; }
+.fidelity-step { background: var(--bg-primary); padding: 20px 16px; text-align: center; }
+.fidelity-step.active { background: var(--bg-elevated); }
+.fidelity-step-num { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-bottom: 8px; }
+.fidelity-step-name { font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 700; color: var(--text-primary); }
+.fidelity-step.active .fidelity-step-name { color: var(--accent-org); }
+.fidelity-step-desc { font-size: 0.8rem; color: var(--text-muted); margin-top: 6px; line-height: 1.4; }
+
+.iteration-block { background: var(--bg-primary); border: 1px solid var(--border-subtle); border-radius: 16px; overflow: hidden; margin-bottom: 32px; }
+.iteration-header { padding: 20px 24px; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; gap: 16px; background: var(--bg-elevated);}
+.iter-num { width: 32px; height: 32px; border-radius: 8px; background: var(--accent-org); color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.iteration-header h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin:0; }
+.iteration-body { display: grid; grid-template-columns: 1fr 1fr; }
+.iter-before, .iter-after { padding: 24px; }
+.iter-before { border-right: 1px solid var(--border-subtle); }
+.iter-before-label, .iter-after-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.iter-before-label { color: #ef4444; }
+.iter-after-label { color: #10b981; }
+.iter-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.iter-dot.red { background: #ef4444; }
+.iter-dot.green { background: #10b981; }
+.iter-before p, .iter-after p { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; margin:0;}
+
+.comp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 32px; }
+.comp-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 24px; }
+.comp-name { font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; }
+.comp-row { display: flex; gap: 12px; margin-bottom: 8px; align-items: flex-start; }
+.comp-icon { font-size: 1rem; flex-shrink: 0; }
+.comp-text { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
+
+.hypothesis-list { display: flex; flex-direction: column; gap: 2px; background: var(--border-subtle); border: 1px solid var(--border-subtle); border-radius: 16px; overflow: hidden; }
+.hypothesis-item { background: var(--bg-primary); padding: 20px 24px; display: flex; align-items: flex-start; gap: 16px; }
+.hyp-num { font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 700; color: var(--accent-org); min-width: 28px; }
+.hyp-text { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; }
+.hyp-text strong { color: var(--text-primary); font-weight: 600; }
+
+.outcome-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-bottom: 32px;}
+.outcome-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 24px; border-top-width: 3px; }
+.outcome-card.green { border-top-color: #10b981; }
+.outcome-card.amber { border-top-color: #f59e0b; }
+.outcome-card.blue { border-top-color: #3b82f6; }
+.outcome-card h4 { font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin: 0 0 12px 0; }
+.outcome-card p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; margin:0;}
+
+/* ========== LEAN UX CARDS ========== */
+.sec { padding: 40px clamp(20px, 4vw, 50px); position: relative; }
+.sec-inner { max-width: 900px; margin: 0 auto; }
+
+.step {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+  margin-bottom: 40px;
+  transition: background 0.3s, border-color 0.3s;
+}
+
+.step-header {
+  padding: 40px; background: #232d3f; border-bottom: 1px solid rgba(255,255,255,0.05); position: relative;
+}
+[data-theme="light"] .step-header { background: #1e293b; }
+
+.step-topline { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 18px; }
+.tag {
+  display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px;
+  border-radius: 999px; background: rgba(255,255,255,0.1);
+  font-weight: 700; font-size: 11px; color: #fff; font-family: 'Inter', sans-serif;
+}
+.tag svg { color: #fff; width: 14px; height: 14px; opacity: 0.8;}
+
+.step-number {
+  position: absolute; top: 24px; right: 32px; font-size: 80px; line-height: 1;
+  font-weight: 900; color: rgba(255,255,255,0.08); font-family: 'Space Grotesk', sans-serif;
+  letter-spacing: -0.05em; user-select: none;
+}
+.step-title {
+  margin: 0; font-size: clamp(28px, 4vw, 38px); font-family: 'Inter', sans-serif;
+  font-weight: 800; color: #fff; letter-spacing: -0.04em; line-height: 1.1; position: relative; z-index: 2;
+}
+.step-header p {
+  margin: 12px 0 0; color: rgba(255,255,255,0.7); font-size: 15px; max-width: 600px; position: relative; z-index: 2;
+}
+
+.step-body { padding: 40px; background: var(--bg-card); }
+.section-title {
+  display: flex; align-items: center; gap: 10px; margin: 0 0 16px; font-size: 18px;
+  font-weight: 700; font-family: 'Inter', sans-serif; color: var(--text-primary);
+}
+.purpose { color: var(--text-secondary); font-size: 15px; margin-bottom: 32px; line-height: 1.7; }
+
+.activity-list { list-style: none; padding: 0; margin: 0 0 32px 0; counter-reset: step; }
+.activity-list li {
+  display: flex; align-items: flex-start; gap: 16px; margin-bottom: 12px; padding: 18px 20px;
+  background: var(--bg-primary); border: 1px solid var(--border-subtle); border-radius: 12px;
+  color: var(--text-secondary); font-size: 14.5px; line-height: 1.6;
+}
+.activity-list li::before {
+  counter-increment: step; content: counter(step); display: flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px; border-radius: 50%; background: var(--bg-deep); color: var(--text-primary);
+  font-size: 12px; font-weight: 700; flex-shrink: 0; margin-top: 2px;
+}
+
+.yellow-callout {
+  margin-top: 24px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 24px; color: #78350f; font-size: 14.5px; line-height: 1.6;
+}
+.yellow-callout strong { display: block; margin-bottom: 8px; color: #451a03; font-size: 15px; font-weight: 700;}
+[data-theme="dark"] .yellow-callout { background: rgba(245, 166, 35, 0.08); border-color: rgba(245, 166, 35, 0.2); color: rgba(255,255,255,0.8); }
+[data-theme="dark"] .yellow-callout strong { color: #F5A623; }
+
+.expandable-img {
+  position: relative; border-radius: 12px; overflow: hidden;
+  border: 1px solid var(--border-subtle); margin-bottom: 24px; background: var(--bg-primary);
+}
+.expandable-img img {
+  width: 100%; height: auto; max-height: 400px;
+  object-fit: cover; object-position: top;
+  display: block; cursor: pointer;
+}
+.expand-btn {
+  position: absolute; top: 12px; right: 12px;
+  width: 28px; height: 28px; border-radius: 6px;
+  background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.2); transition: all 0.2s ease; z-index: 10;
+}
+.expand-btn:hover { background: rgba(0, 0, 0, 0.9); transform: scale(1.05); }
+.expand-btn::after {
+  content: 'Expand'; position: absolute; right: 36px; background: #000; color: #fff;
+  font-size: 11px; padding: 4px 8px; border-radius: 4px; opacity: 0; pointer-events: none; transition: opacity 0.2s; white-space: nowrap;
+}
+.expand-btn:hover::after { opacity: 1; }
+
+/* ========== MODAL FOR FULLSCREEN IMAGE VIEWING ========== */
+.img-modal {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px);
+  z-index: 10000; flex-direction: column;
+}
+.modal-close-wrapper { position: absolute; top: 24px; right: 24px; z-index: 10001; }
+.modal-zoom-controls { position: absolute; bottom: 24px; right: 24px; display: flex; gap: 12px; z-index: 10001; }
+
+.modal-btn {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff; display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+.modal-btn:hover { background: rgba(255, 255, 255, 0.3); transform: scale(1.05); }
+
+.modal-content-wrapper {
+  flex: 1; display: flex; align-items: flex-start; justify-content: center;
+  overflow: auto; padding: 60px 40px; 
+}
+.modal-img {
+  width: 100%; max-width: 100%; height: auto; transition: width 0.2s ease, max-width 0.2s ease; object-fit: contain;
+}
+
+/* ========== RESPONSIVE ========== */
+@media(max-width:1150px){
+  body:not(.force-right-panel) .right-panel { transform: translateX(100%); }
+  body:not(.force-right-panel) .main { margin-right: 0; }
+  .right-toggle { display: none; }
+  .iyr-meta-card { position: static; margin-top: 2rem; width: 100%; }
+}
+@media(max-width:900px){
+  .sidebar{ transform: translateX(-100%); }
+  .main{ margin-left: 0; }
+  .hamburger{display:flex}
+  .mobile-menu{display:flex}
+  .nav-cta span{display:none;}
+  .side-toggle { display: none !important; }
+  .iyr-hero-inner { grid-template-columns: 1fr; }
+  .iteration-body { grid-template-columns: 1fr; }
+  .iter-before { border-right: none; border-bottom: 1px solid var(--border-subtle); }
+}
+@media(max-width:480px){
+  .nav-title{display:none;}
+  .step-header{padding:24px;}
+  .step-body{padding:24px;}
+  .step-title{font-size:24px;}
+  .iyr-hero h1 { font-size: 2rem; }
+  .iyr-meta-row { flex-direction: column; gap: 1rem; }
+}
 </style>
 </head>
 <body>
-<div class="grid-background">
-  <div class="grid-container"></div>
-</div>
-<div class="dot-layer"><canvas id="dots"></canvas></div>
-<div id="cursor"></div><div id="cursor-ring"></div>
 
-<!-- NAV -->
-<nav>
-  <div class="nav-inner">
-    <a href="#" class="nav-logo">Imagine As You <span>Read</span></a>
-    <ul class="nav-links">
-      <li><a href="#overview">Overview</a></li>
-      <!--<li><a href="#research">Process</a></li>-->
-      <li><a href="#design">Design</a></li>
-      <!--<li><a href="#prototypes">Process</a></li>-->
-      <!--<li><a href="#testing">Testing</a></li>-->
-      <li><a href="#outcomes">Outcomes</a></li>
-      <li><a href="https://www.gjuxdesign.in/#work" class="nav-cta">Back to Portfolio ↗</a></li>
-    </ul>
+<!-- ===== TOP GLOBAL NAV & PROGRESS BAR ===== -->
+<nav class="top-nav">
+  <a href="index.html" class="nav-logo" aria-label="Go to homepage">
+    <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 324.06 381.34">
+      <path d="M8.78,313.93c14.86,3.65,22.61-2.45,29.23-15.26,9.74-19.75,15.56-41.24,24.74-61.53,13.53-31.55,35.2-61.29,70.34-70.09,5.05-1.26,10.32-2.25,15.36-2.58,32.22,0,65.12.02,97.39.18,4.76-.04,12.8.32,17.46-.6,21.2-3.24,37.91-22.35,39.61-43.62.15-1.51.24-3.64.25-5.14.21-15.42.33-36.58.54-52.07.11-9.63.6-29.11.84-38.75,0,0,.03-1.21.03-1.21.15-2.1-.68-4.05-1.95-5.7-1.05-1.65-2.62-3.44-4.78-3.47-9.69-.26-22.08-.5-31.78-.56-19.37-.22-38.75-.13-58.12-.44-3.21-.08-6.05.03-9.05.88-8.53,1.39-16.75,5.06-23.7,9.99-18.43,13.55-32.03,32.58-33.53,55.94-1.89,32.16-4.18,64.83-8.45,96.76-1.76-12.92-3.07-25.83-4.24-38.75-1.45-16.02-2.61-32.37-3.56-48.43-.06-1.52-.36-5.78-.43-7.27-.72-11.6.96-23.54,5.15-34.48,9.49-25.51,30.08-41.85,56.89-45.9,5.29-.93,10.62-1.17,15.92-.8,8.22-.02,16.19-.18,24.37-.2,23.23-.17,46.99-.13,70.23-.8,12.01-.43,21.54,5.69,24.4,17.73,1.19,4.26.88,21.4,1.2,26.1.44,21.94.67,48.33.89,70.23.07,1.49-.03,3.83-.04,5.34-.87,31.78-25.27,61.1-56.95,66.33-3.8.67-7.65,1.01-11.5,1.04-33.76.19-75.58.22-105.62.23-24.85,1.37-44.03,15.82-57.76,36.04-9.81,14.07-17.21,29.94-24.65,45.64-5.87,12.2-11.67,25.11-20.22,36.09-9.78,12.84-24.06,19.94-38.51,9.14h0Z"/>
+      <path d="M198.97,12.54c-21.83.01-43.29,7.85-62.54,17.38C79.39,57.72,35.43,110.41,30.47,175.02c-7.25,86.15,56.98,165.39,142.73,176.3,20.45,2.82,41.56,1.66,61.26-4.51,40.22-12.27,67.52-42.61,56.7-86.13-7.66-28.32-36.46-42.9-63.41-31.11-15.62,6.8-26.74,22.74-27.74,39.77-1.61,13.53,8.41,28.39,21.91,31.18,11.83,2.3,24.41-5.05,28.76-16.24,6.36-16.17-3.12-37.15-25.55-44.06,0,0,0-.83,0-.83,19.72-6,40.42,10.09,43.5,29.87,2.55,13.89-2.38,28.92-12.53,38.82-16.15,16.18-42.32,17.43-59.79,2.74-23.75-19.27-24.1-51.57-8.89-76.48,18.06-30.03,58.57-42.18,90.16-26.96,32.01,15.01,45.98,51.6,41.33,85.19-7.76,61.35-75.42,90.86-131.04,88.65-80.63-1.22-155.31-58.74-178.76-135.64-23.15-70.75-1.28-153.26,55.96-201.37C98.83,14.92,137.04,2.07,181.42,1.87c5.89.13,11.71-.26,17.55-.18,0,0,0,10.84,0,10.84h0Z"/>
+      <path d="M104.53,136.06c.18,12.12-11.61,21.78-23.3,18.34-17.93-5.35-17.93-31.34,0-36.69,11.69-3.44,23.48,6.22,23.3,18.34h0ZM80.34,136.06c.18.48.89.24,1.22-.25,1.27-1.65-.19-4.63-2.63-5.21-3.3-.99-6.71,1.98-6.62,5.47-.09,3.48,3.32,6.45,6.62,5.47,2.43-.58,3.9-3.56,2.63-5.21-.33-.49-1.04-.74-1.22-.25h0Z"/>
+    </svg>
+    Ganesh J.
+  </a>
+  
+  <div class="nav-title">Imagine As You Read</div>
+
+  <div class="nav-right">
+    <!-- Panel Layout Toggle -->
+    <button class="icon-btn" id="panel-layout-toggle" title="Toggle Panel Layout">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="9" y1="3" x2="9" y2="21"></line>
+            <line x1="15" y1="3" x2="15" y2="21"></line>
+        </svg>
+    </button>
+
+    <!-- Light/Dark Mode Toggle -->
+    <button class="icon-btn" id="theme-toggle" title="Toggle Light/Dark Mode">
+        <svg class="sun-icon" style="display:none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        <svg class="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </button>
+
+    <a href="index.html" class="nav-cta">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+      <span>Back to portfolio</span>
+    </a>
+    
+    <button class="hamburger" id="ham" aria-label="Toggle navigation menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
+  
+  <div id="pbar"></div>
 </nav>
 
-  <!-- WORK IN PROGRESS BANNER -->
-  <div class="wip-banner">
-    <div class="wip-content">
-      <img src="wip.gif" 
-           alt="wip" 
-           class="wip-cat-gif" 
-           onerror="this.src='https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=150&q=80'">
-      <div class="wip-text-wrap">
-        <span class="wip-tag">Work in Progress</span>
-        <span class="wip-desc">Case study updates underway for 2026 milestones. Currently being curated!</span>
-      </div>
+<!-- ===== DYNAMIC BREADCRUMB BAR (With Dropdowns) ===== -->
+<div id="breadcrumb-bar" class="breadcrumb-bar">
+  <div class="bc-dropdown">
+    <span style="color: var(--text-primary);">Imagine As You Read</span>
+    <div class="bc-dropdown-menu">
+      <a href="imagine-as-you-read.html">Imagine As you Read</a>
+      <a href="focusxr.html">FocusXR</a>
+      <a href="zensphere.html">Zensphere</a>
     </div>
   </div>
-<!-- HERO -->
-<div class="hero" id="hero-section" style="background-image: url(''); position: relative;">
-  <div class="hero-content">
-    <p class="hero-eyebrow">UX Design Case Study · Kingston University CI7801</p>
-    <h1>Imagine As You <em>Read</em> — Designing an AI-Powered Immersive Reading Companion</h1>
-    <p class="hero-sub">Transforming passive, text-only reading into a dynamic visual experience — using Generative AI and AR/VR, with the reader always in control.</p>
-    <div class="hero-tags">
-      <span class="tag accent">Lean UX</span>
-      <span class="tag">User Research</span>
-      <span class="tag">Generative AI</span>
-      <span class="tag">AR / VR</span>
-      <span class="tag">Mobile-First</span>
-      <span class="tag">Accessibility</span>
+  <span style="margin:0 4px; color:var(--text-muted); font-weight:normal;">/</span>
+  
+  <div class="bc-dropdown">
+    <span id="bc-chapter">Part 01 — Discovery</span>
+    <div class="bc-dropdown-menu">
+      <a href="#overview">Part 01 — Discovery</a>
+      <a href="#design">Part 02 — Definition</a>
+      <a href="#prototypes">Part 03 — Development</a>
+      <a href="#outcomes">Part 04 — Delivery</a>
     </div>
   </div>
   
-  <div class="hero-mockups">
-    <div class="mockup-container mockup-left">
-      <div class="mockup-screen">
-        <div class="mockup-screen-placeholder">Add Screen 1 Image</div>
-      </div>
-    </div>
-    <div class="mockup-container mockup-middle">
-      <div class="mockup-screen">
-        <div class="mockup-screen-placeholder">Add Screen 2 Image</div>
-      </div>
-    </div>
-    <div class="mockup-container mockup-right">
-      <div class="mockup-screen">
-        <div class="mockup-screen-placeholder">Add Screen 3 Image</div>
-      </div>
-    </div>
-  </div>
+  <span style="margin:0 4px; color:var(--text-muted); font-weight:normal;">/</span>
 
-  <div class="meta-card">
-    <h3>Project Details</h3>
-    <div class="meta-row1">
-      <div class="meta-item"><label>Student</label><p>Ganesh Suresh Javhare</p></div>
-      <div class="meta-item"><label>Role</label><p>UX Researcher & Designer</p></div>
-    </div>
-    <div class="meta-row2">
-      <div class="meta-item"><label>Timeline</label><p>2025–2026</p></div>
-      <div class="meta-item"><label>Methodology</label><p>Lean UX</p></div>
+  <div class="bc-dropdown">
+    <span id="bc-section">Overview</span>
+    <div class="bc-dropdown-menu" id="bc-section-menu">
+      <!-- Populated by JS -->
     </div>
   </div>
 </div>
 
-<!-- OVERVIEW -->
-<section id="overview">
-  <div class="page">
-    <div class="section-header">
-      <p class="section-num">01 — Overview</p>
-      <h2>The Challenge & The Solution</h2>
-      <p>Reading is declining — not because stories matter less, but because text-only formats aren't meeting readers where they are cognitively and visually.</p>
-    </div>
+<!-- ===== FADED SIDE TOGGLES ===== -->
+<button id="toggle-left-side" class="side-toggle left-toggle" title="Hide Left Panel">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+</button>
+<button id="toggle-right-side" class="side-toggle right-toggle" title="Hide Right Panel">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+</button>
 
-    <div class="grid-2" style="margin-bottom:2.5rem;">
-      <div class="card" style="border-left:4px solid var(--accent);">
-        <div class="card-label">The Core Problem</div>
-        <h3>Digital tools digitised text without transforming the reading experience</h3>
-        <p>Existing reading platforms preserve the very problem they claim to solve. Readers who struggle to visualise scenes, sustain focus, or emotionally connect with narrative — particularly visual learners, students, and attention-challenged individuals — have no meaningful support beyond the same wall of text, now on a screen.</p>
-      </div>
-      <div class="card" style="border-left:4px solid var(--teal);">
-        <div class="card-label">The Design Solution</div>
-        <h3>AI-generated visuals, on demand, under the reader's control</h3>
-        <p>"Imagine As You Read" is a mobile-first reading companion that uses Generative AI to transform selected text into contextual visual scenes — user-triggered, non-intrusive, and designed to support imagination without ever replacing the act of reading itself.</p>
-      </div>
-    </div>
+<!-- ===== LAYOUT ===== -->
+<div class="layout">
 
-    <div class="phase-timeline">
-      <div class="phase think">
-        <div class="phase-label">Think</div>
-        <h4>Research & Ideation</h4>
-        <ul>
-          <li>Literature review</li>
-          <li>User interviews (n=8)</li>
-          <li>Survey (n=66)</li>
-          <li>Affinity mapping</li>
-          <li>Competitor analysis</li>
-          <li>Assumptions mapping</li>
-        </ul>
+  <!-- ===== SIDEBAR (LEFT) ===== -->
+  <aside class="sidebar" id="left-sidebar">
+    <div class="sb-top">
+      <div class="sb-badge">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" fill="#FF6B35"/><circle cx="5" cy="5" r="2" fill="white" opacity=".4"/></svg>
+        <span>Case Study</span>
       </div>
-      <div class="phase make">
-        <div class="phase-label">Make</div>
-        <h4>Design & Prototype</h4>
-        <ul>
-          <li>Card sorting / IA</li>
-          <li>User flows</li>
-          <li>Lo-Fi paper prototype</li>
-          <li>Mid-Fi digital prototype</li>
-          <li>Hi-Fi Figma prototype</li>
-          <li>Accessibility review</li>
-        </ul>
-      </div>
-      <div class="phase check">
-        <div class="phase-label">Check</div>
-        <h4>Test & Validate</h4>
-        <ul>
-          <li>Lo-Fi prototype testing</li>
-          <li>Mid-Fi usability testing</li>
-          <li>Hi-Fi usability testing</li>
-          <li>Hypothesis validation</li>
-          <li>Weighted scoring</li>
-          <li>Qualitative feedback</li>
-        </ul>
+      <div class="sb-title">Imagine As You Read</div>
+      <div class="sb-sub">by Ganesh Javhare · 10 min read</div>
+      
+      <!-- EXPANDABLE PROJECTS MENU -->
+      <div class="sb-more-projects">
+        <button class="more-projects-toggle" id="more-projects-btn" title="View More projects">
+          <span>View More Case Study</span>
+          <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="more-projects-list" id="more-projects-list">
+          <a href="maharera-case-study.html" class="more-project-link">MahaRERA Portal Design</a>
+          <a href="focusxr.html" class="more-project-link">Focus XR</a>
+          <a href="zensphere.html" class="more-project-link">ZenSphere</a>
+        </div>
       </div>
     </div>
 
-    <div class="insight-callout">
-      <p>"The most important design decision was the one I didn't make — choosing not to make visual generation automatic, resisting the temptation to showcase AI capability. Research consistently and emphatically said: give users control."</p>
-    </div>
-  </div>
-</section>
+    <div class="sb-scrollable">
+        <nav class="sb-nav">
+          <div class="sb-chapter-label" data-chapter="Part 01 — Discovery">Part 01 — Discovery</div>
+          <a class="nav-link active" href="#overview" data-name="Overview"><span class="dot"></span>Overview</a>
+          <a class="nav-link" href="#research" data-name="Research & Data"><span class="dot"></span>Research & Data</a>
+          <a class="nav-link" href="#personas" data-name="User Personas"><span class="dot"></span>User Personas</a>
 
-<!-- RESEARCH -->
-<section id="research">
-  <div class="page">
-    <div class="section-header">
-      <p class="section-num">02 — Research & Discovery</p>
-      <h2>What the Data Revealed</h2>
-      <p>A mixed-methods approach — combining qualitative depth with quantitative breadth — to ensure design decisions were grounded in real user behaviour, not assumptions.</p>
-    </div>
+          <div class="sb-chapter-label" data-chapter="Part 02 — Definition">Part 02 — Definition</div>
+          <a class="nav-link" href="#design" data-name="Design Approach"><span class="dot"></span>Design Approach</a>
+          
+          <div class="sb-chapter-label" data-chapter="Part 03 — Development">Part 03 — Development</div>
+          <a class="nav-link" href="#prototypes" data-name="Prototyping"><span class="dot"></span>Prototyping</a>
+          <a class="nav-link" href="#testing" data-name="Usability Testing"><span class="dot"></span>Usability Testing</a>
+          <a class="nav-link" href="#iterations" data-name="Design Iterations"><span class="dot"></span>Design Iterations</a>
 
-    <div class="stat-grid">
-      <div class="stat-block">
-        <div class="stat-num">8</div>
-        <div class="stat-label">Semi-structured interviews conducted</div>
-      </div>
-      <div class="stat-block">
-        <div class="stat-num">66</div>
-        <div class="stat-label">Survey responses collected</div>
-      </div>
-      <div class="stat-block">
-        <div class="stat-num">77%</div>
-        <div class="stat-label">Find visuals significantly helpful for comprehension</div>
-      </div>
-      <div class="stat-block">
-        <div class="stat-num">50%</div>
-        <div class="stat-label">Preferred text with optional visuals — not automatic</div>
-      </div>
+          <div class="sb-chapter-label" data-chapter="Part 04 — Delivery">Part 04 — Delivery</div>
+          <a class="nav-link" href="#outcomes" data-name="Outcomes"><span class="dot"></span>Outcomes</a>
+        </nav>
+    </div>
+  </aside>
+
+  <!-- ===== RIGHT PANEL (ARTIFACTS & NEXT PROJECT) ===== -->
+  <aside class="right-panel" id="right-panel">
+    <div class="right-panel-title">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-org)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+      Project Highlights
     </div>
 
-    <div class="grid-2" style="margin-bottom:2.5rem;">
-      <div>
-        <div class="card-label" style="margin-bottom:1rem;">Methodology</div>
-        <div class="method-steps">
-          <div class="method-step">
-            <div class="method-step-icon orange">🎙</div>
-            <div>
-              <h4>Semi-Structured Interviews</h4>
-              <p>8 participants screened and interviewed using an 11-question open-ended script. Moved from surface reading habits to deep emotional territory — the precise moment a reader loses focus or hits cognitive friction.</p>
+    <div class="artifact-card" id="snapshot-card">
+      <h3>Case Study Snapshot</h3>
+      <div class="artifact-row"><span>Product:</span> <strong>Imagine As You Read</strong></div>
+      <div class="artifact-row"><span>My Role:</span> <strong>UX Researcher & Designer</strong></div>
+      <div class="artifact-row"><span>Context:</span> <strong>Kingston Univ. Major Project</strong></div>
+      <div class="artifact-row"><span>Timeline:</span> <strong>2025–2026</strong></div>
+    </div>
+
+    <!-- Dynamic Artifacts & Questions Container -->
+    <div id="dynamic-artifacts-container">
+        <div class="dynamic-panel">
+            <h3>Artifacts to include</h3>
+            <div class="dyn-chips" id="dyn-artifacts">
+               <!-- Populated by JS -->
             </div>
+        </div>
+        <div class="dynamic-panel" style="margin-bottom: 40px;">
+            <h3>Key questions</h3>
+            <ul class="dyn-questions" id="dyn-questions">
+               <!-- Populated by JS -->
+            </ul>
+        </div>
+    </div>
+
+    <!-- Next Case Study Footer -->
+    <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: var(--shadow-soft);">
+        <p style="margin:0; font-size: 10px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; text-transform: uppercase; font-weight: 500; letter-spacing: 0.05em;">Next Case Study</p>
+        <img src="mockup.jpg" style="width: 100%; height: 110px; border-radius: 8px; object-fit: cover;" alt="Next Case Study Thumbnail">
+        <div>
+           <h3 style="margin: 0 0 10px; font-size: 14px; font-family: 'Space Grotesk', sans-serif; color: var(--text-primary);">MahaRERA Portal</h3>
+           <a href="#" class="nav-cta" style="margin:0; font-size: 11px; padding: 8px 16px; display: inline-flex; align-items: center; gap: 6px; width: 100%; justify-content: center;">
+              View Case Study
+           </a>
+        </div>
+    </div>
+  </aside>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="main" id="main-content">
+
+    <!-- ─────────── EXACT IYR HERO ─────────── -->
+    <section id="hero">
+      <div class="iyr-hero-grid-bg"></div>
+      <div class="iyr-hero-inner">
+        <div class="iyr-hero-content">
+          <p class="iyr-hero-eyebrow">UX Design Case Study · Kingston University CI7801</p>
+          <h1 class="iyr-hero-title">Imagine As You <em>Read</em> — Designing an AI-Powered Immersive Reading Companion</h1>
+          <p class="iyr-hero-sub">Transforming passive, text-only reading into a dynamic visual experience — using Generative AI and AR/VR, with the reader always in control.</p>
+          <div class="iyr-hero-tags">
+            <span class="iyr-tag accent">Lean UX</span>
+            <span class="iyr-tag">User Research</span>
+            <span class="iyr-tag">Generative AI</span>
+            <span class="iyr-tag">AR / VR</span>
+            <span class="iyr-tag">Mobile-First</span>
+            <span class="iyr-tag">Accessibility</span>
           </div>
-          <div class="method-step">
-            <div class="method-step-icon blue">📋</div>
-            <div>
-              <h4>Quantitative Survey</h4>
-              <p>66 responses across students and working professionals. Captured reading frequency, device usage, attitudes toward visual content, and openness to AI and AR features. Validated patterns at scale.</p>
+        </div>
+        
+        <div class="iyr-hero-mockups">
+          <div class="iyr-mockup-container iyr-mockup-left">
+            <div class="iyr-mockup-screen"><div class="iyr-mockup-screen-placeholder">Add Screen 1 Image</div></div>
+          </div>
+          <div class="iyr-mockup-container iyr-mockup-middle">
+            <div class="iyr-mockup-screen"><div class="iyr-mockup-screen-placeholder">Add Screen 2 Image</div></div>
+          </div>
+          <div class="iyr-mockup-container iyr-mockup-right">
+            <div class="iyr-mockup-screen"><div class="iyr-mockup-screen-placeholder">Add Screen 3 Image</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="iyr-meta-card">
+        <h3>Project Details</h3>
+        <div class="iyr-meta-row">
+          <div class="iyr-meta-item"><label>Student</label><p>Ganesh Suresh Javhare</p></div>
+          <div class="iyr-meta-item"><label>Role</label><p>UX Researcher & Designer</p></div>
+        </div>
+        <div class="iyr-meta-row">
+          <div class="iyr-meta-item"><label>Timeline</label><p>2025–2026</p></div>
+          <div class="iyr-meta-item"><label>Methodology</label><p>Lean UX</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────── STEP 1: OVERVIEW ─────────── -->
+    <section class="sec" id="overview">
+      <div class="sec-inner reveal">
+        <article class="step">
+          <div class="step-header">
+            <div class="step-topline">
+              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg> Part 01 · Step 01</span>
+              <span class="step-number">01</span>
             </div>
+            <h2 class="step-title">Project Context & Setup</h2>
+            <p>The Challenge & The Solution</p>
           </div>
-          <div class="method-step">
-            <div class="method-step-icon teal">🗂</div>
-            <div>
-              <h4>Literature Review</h4>
-              <p>Reviewed cognitive load theory, visual learning research, digital reading behaviour, generative AI capabilities, and existing AR/VR educational applications to ground hypotheses in evidence.</p>
-            </div>
-          </div>
-          <div class="method-step">
-            <div class="method-step-icon amber">🔍</div>
-            <div>
-              <h4>Competitor Analysis</h4>
-              <p>Mapped Wonderscope, Google Learn Your Way, Microsoft Copilot, and Google Gemini against 8 dimensions to identify the precise gap "Imagine As You Read" was designed to fill.</p>
-            </div>
-          </div>
-        </div>
-      </div>
+          <div class="step-body">
+            <h3 class="section-title">🎯 The Core Problem</h3>
+            <p class="purpose">Reading is declining — not because stories matter less, but because text-only formats aren't meeting readers where they are cognitively and visually. Digital tools digitised text without transforming the reading experience. Readers who struggle to visualise scenes, sustain focus, or emotionally connect with narrative have no meaningful support beyond the same wall of text, now on a screen.</p>
+            
+            <h3 class="section-title">🧩 The Design Solution</h3>
+            <ul class="activity-list">
+              <li><strong>AI-generated visuals, on demand, under the reader's control.</strong> "Imagine As You Read" is a mobile-first reading companion that uses Generative AI to transform selected text into contextual visual scenes.</li>
+              <li>It is user-triggered, non-intrusive, and designed to support imagination without ever replacing the act of reading itself.</li>
+            </ul>
 
-      <div>
-        <div class="card-label" style="margin-bottom:1rem;">Key Qualitative Findings</div>
-        <div style="display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">
-          <div style="background:white;padding:1.1rem 1.5rem;">
-            <div style="font-size:12px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;">Finding 01 — The Overwhelmed Student</div>
-            <p style="font-size:14px;color:var(--ink-mid);line-height:1.6;">Students reported hitting a cognitive wall with text-heavy academic content — not from lack of ability, but from lack of visual scaffolding to anchor abstract concepts.</p>
-          </div>
-          <div style="background:white;padding:1.1rem 1.5rem;">
-            <div style="font-size:12px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;">Finding 02 — The Disconnected Reader</div>
-            <p style="font-size:14px;color:var(--ink-mid);line-height:1.6;">Young adults who loved fiction lost their reading thread mid-chapter because digital environments fractured attention. The story wasn't the problem — the context was.</p>
-          </div>
-          <div style="background:white;padding:1.1rem 1.5rem;">
-            <div style="font-size:12px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;">Finding 03 — Notifications as Cognitive Disruptors</div>
-            <p style="font-size:14px;color:var(--ink-mid);line-height:1.6;">6 of 8 interview participants named mobile notifications as their primary reading disruptor. The interface itself was rarely the problem — the surrounding environment was.</p>
-          </div>
-          <div style="background:white;padding:1.1rem 1.5rem;">
-            <div style="font-size:12px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;">Finding 04 — Control Over Automation</div>
-            <p style="font-size:14px;color:var(--ink-mid);line-height:1.6;">Users were curious about AI-assisted reading but consistently cautious. The defining concern: "I don't want something interrupting my focus." User-triggered always outperforms automated.</p>
-          </div>
-          <div style="background:white;padding:1.1rem 1.5rem;">
-            <div style="font-size:12px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;">Finding 05 — Screen Fatigue is Underreported</div>
-            <p style="font-size:14px;color:var(--ink-mid);line-height:1.6;">5 of 8 participants reported eye strain or screen fatigue — a barrier that existing digital reading tools largely ignore in their feature design.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ARTIFACT: Affinity Diagram -->
-    <div class="grid-2" style="margin-bottom:1.25rem;">
-      <div class="artifact-zone">
-        <div class="artifact-icon">🗂</div>
-        <h4>Affinity Diagram</h4>
-        <p>Observations clustered into 5 themes: Reading Behaviour, Visual Cognition, Digital Engagement, Generative AI, and AR/VR.</p>
-        <span class="artifact-badge filled"><span class="dot"></span>Upload Affinity Diagram Image</span>
-      </div>
-      <div class="artifact-zone">
-        <div class="artifact-icon">🃏</div>
-        <h4>Card Sorting Results</h4>
-        <p>Mental model mapping that directly shaped the app's Information Architecture and mode structure.</p>
-        <span class="artifact-badge filled"><span class="dot"></span>Upload Card Sort Image</span>
-      </div>
-    </div>
-
-    <div class="comp-grid">
-      <div class="comp-card">
-        <div class="comp-name">Wonderscope</div>
-        <div class="comp-row"><span class="comp-icon">✅</span><span class="comp-text">AR storytelling, engaging for children, strong imagination support</span></div>
-        <div class="comp-row"><span class="comp-icon">❌</span><span class="comp-text">Predefined content only; no dynamic text-to-visual generation; limited to children</span></div>
-      </div>
-      <div class="comp-card">
-        <div class="comp-name">Google Learn Your Way</div>
-        <div class="comp-row"><span class="comp-icon">✅</span><span class="comp-text">GenAI-powered; alternative visual representations; educational depth</span></div>
-        <div class="comp-row"><span class="comp-icon">❌</span><span class="comp-text">Education-only; no AR/VR; visuals not integrated into continuous reading flow</span></div>
-      </div>
-      <div class="comp-card">
-        <div class="comp-name">Microsoft Copilot</div>
-        <div class="comp-row"><span class="comp-icon">✅</span><span class="comp-text">Powerful text-to-image; strong contextual understanding; fast generation</span></div>
-        <div class="comp-row"><span class="comp-icon">❌</span><span class="comp-text">Not reading-centred; requires manual prompting; disrupts reading flow</span></div>
-      </div>
-      <div class="comp-card">
-        <div class="comp-name">Google Gemini</div>
-        <div class="comp-row"><span class="comp-icon">✅</span><span class="comp-text">Multimodal; strong semantic understanding; flexible content generation</span></div>
-        <div class="comp-row"><span class="comp-icon">❌</span><span class="comp-text">Task-based, not reading-centred; no immersive interface; not embedded in long-form reading</span></div>
-      </div>
-    </div>
-    <div class="insight-callout">
-      <p>No competitor integrated real-time text interpretation, generative visualisation, and reading-focused UX in a single product. This was the gap "Imagine As You Read" was designed to fill.</p>
-    </div>
-  </div>
-</section>
-
-<!-- PERSONAS -->
-<section id="personas">
-  <div class="page">
-    <div class="section-header">
-      <p class="section-num">03 — User Personas</p>
-      <h2>Three Distinct Readers, One Shared Need</h2>
-      <p>Evidence-based archetypes built from interviews, surveys, and literature — not invented profiles, but real patterns observed in the research data.</p>
-    </div>
-
-    <div class="grid-3">
-      <div class="persona-card">
-        <div class="persona-header">
-          <div class="persona-avatar v">V</div>
-          <div>
-            <div class="persona-name">Vishnu</div>
-            <div class="persona-role">Student, 22–25 · The Overwhelmed Reader</div>
-          </div>
-        </div>
-        <div class="persona-body">
-          <div class="persona-quote">"I don't want reading to feel harder — I just want a bit of help imagining things when I need it."</div>
-          <div class="persona-section-title">Goals</div>
-          <ul class="persona-list">
-            <li>Understand complex material more quickly</li>
-            <li>Stay focused during long digital sessions</li>
-            <li>Make reading feel less cognitively overwhelming</li>
-          </ul>
-          <div class="persona-section-title">Pain Points</div>
-          <ul class="persona-list">
-            <li>Notifications shatter reading context instantly</li>
-            <li>Struggles to visualise abstract concepts from prose</li>
-            <li>Resents any visual that interrupts reading flow</li>
-            <li>Finds most digital tools either too basic or too distracting</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="persona-card">
-        <div class="persona-header">
-          <div class="persona-avatar j">J</div>
-          <div>
-            <div class="persona-name">Josh</div>
-            <div class="persona-role">Young Professional, 28–32 · The Disconnected Reader</div>
-          </div>
-        </div>
-        <div class="persona-body">
-          <div class="persona-quote">"I love stories, but digital reading just doesn't pull me in enough."</div>
-          <div class="persona-section-title">Goals</div>
-          <ul class="persona-list">
-            <li>Re-establish reading as a genuine leisure habit</li>
-            <li>Visualise scenes and narratives more vividly</li>
-            <li>Find a tool that fits naturally into commuting</li>
-          </ul>
-          <div class="persona-section-title">Pain Points</div>
-          <ul class="persona-list">
-            <li>Digital text feels flat compared to podcasts and video</li>
-            <li>Loses interest in long-form content mid-way</li>
-            <li>Doesn't want complexity — just story-enhancing support</li>
-            <li>Switches media formats out of boredom, not choice</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="persona-card">
-        <div class="persona-header">
-          <div class="persona-avatar e">E</div>
-          <div>
-            <div class="persona-name">Emma</div>
-            <div class="persona-role">Student, 18–22 · The Anxious Visual Learner</div>
-          </div>
-        </div>
-        <div class="persona-body">
-          <div class="persona-quote">"I understand things better when I can see them, not just read about them."</div>
-          <div class="persona-section-title">Goals</div>
-          <ul class="persona-list">
-            <li>Feel confident tackling difficult academic subjects</li>
-            <li>Tools that reduce cognitive stress, not add to it</li>
-            <li>Stay focused without burning out during study</li>
-          </ul>
-          <div class="persona-section-title">Pain Points</div>
-          <ul class="persona-list">
-            <li>Dense historical/scientific content genuinely difficult to retain</li>
-            <li>Switches apps when overwhelmed — avoidance as coping</li>
-            <li>Boring or complex study apps actively discourage use</li>
-            <li>Needs predictable, calm UI — surprise changes increase anxiety</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- DESIGN -->
-<section id="design">
-  <div class="page">
-    <div class="section-header">
-      <p class="section-num">04 — Design Approach</p>
-      <h2>From Insights to Architecture</h2>
-      <p>Every structural decision traces directly to a specific research finding. The design rationale is as important as the design itself.</p>
-    </div>
-
-    <div class="grid-2" style="margin-bottom:2.5rem;align-items:start;">
-      <div>
-        <div class="card-label" style="margin-bottom:1rem;">Core Design Principle</div>
-        <div class="card" style="margin-bottom:1.25rem;">
-          <h3 style="margin-bottom:0.5rem;">Progressive Disclosure — Users Always Feel in Control</h3>
-          <p>The IA was structured around a single governing principle: users should always feel in control of how deep they go. This meant separating the experience into clearly defined modes rather than layering everything onto one interface. Survey data showed 50% of users explicitly wanted "text with optional visuals." Burying visual features inside reading mode would have violated their primary expectation.</p>
-        </div>
-        <div class="card">
-          <h3 style="margin-bottom:0.5rem;">MoSCoW: Cutting With Intention</h3>
-          <p>MoSCoW prioritisation was applied ruthlessly to prevent feature bloat — which would have directly contradicted the core research insight that users wanted simplicity and control. The "Won't Have" list was as important as the "Must Have" list. Each item on it represented a real assumption that testing could not yet validate.</p>
-        </div>
-      </div>
-      <div>
-        <div class="card-label" style="margin-bottom:1rem;">Information Architecture</div>
-        <div style="background:white;border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;box-shadow:var(--shadow);">
-          <div style="text-align:center;margin-bottom:1.25rem;">
-            <div style="display:inline-block;background:var(--ink);color:white;padding:8px 20px;border-radius:6px;font-size:14px;font-weight:500;">Home / Library</div>
-          </div>
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;margin-bottom:1rem;">
-            <div style="background:var(--accent-soft);border:1px solid rgba(200,68,10,0.2);border-radius:8px;padding:10px 6px;">
-              <div style="font-size:12px;font-weight:500;color:var(--accent);margin-bottom:4px;">Library</div>
-              <div style="font-size:11px;color:var(--ink-soft);">Books, History, Saved</div>
-            </div>
-            <div style="background:var(--teal-soft);border:1px solid rgba(15,110,86,0.2);border-radius:8px;padding:10px 6px;">
-              <div style="font-size:12px;font-weight:500;color:var(--teal);margin-bottom:4px;">Read Mode</div>
-              <div style="font-size:11px;color:var(--ink-soft);">Text-first, minimal</div>
-            </div>
-            <div style="background:var(--blue-soft);border:1px solid rgba(24,95,165,0.2);border-radius:8px;padding:10px 6px;">
-              <div style="font-size:12px;font-weight:500;color:var(--blue);margin-bottom:4px;">Visualise</div>
-              <div style="font-size:11px;color:var(--ink-soft);">AI visuals, on demand</div>
-            </div>
-            <div style="background:var(--amber-soft);border:1px solid rgba(133,79,11,0.2);border-radius:8px;padding:10px 6px;">
-              <div style="font-size:12px;font-weight:500;color:var(--amber);margin-bottom:4px;">Immersive</div>
-              <div style="font-size:11px;color:var(--ink-soft);">AR/VR, opt-in only</div>
-            </div>
-          </div>
-          <p style="font-size:13px;color:var(--ink-soft);text-align:center;font-style:italic;">AR/VR features surface only after user engages with core reading → prevents cognitive overload for new users</p>
-        </div>
-
-        <div style="margin-top:1.25rem;">
-          <div class="card-label" style="margin-bottom:0.75rem;">MoSCoW Priority Split</div>
-          <div style="display:flex;flex-direction:column;gap:8px;">
-            <div style="background:white;border:1px solid var(--border);border-radius:8px;padding:10px 14px;display:flex;gap:10px;align-items:flex-start;">
-              <span style="font-size:11px;font-weight:500;color:#3b6d11;background:#eaf3de;padding:2px 8px;border-radius:100px;white-space:nowrap;margin-top:1px;">Must Have</span>
-              <span style="font-size:13px;color:var(--ink-mid);">User-triggered visuals · Disable at any time · Side-panel display · One visual maximum · Clean interface</span>
-            </div>
-            <div style="background:white;border:1px solid var(--border);border-radius:8px;padding:10px 14px;display:flex;gap:10px;align-items:flex-start;">
-              <span style="font-size:11px;font-weight:500;color:#185fa5;background:#e6f1fb;padding:2px 8px;border-radius:100px;white-space:nowrap;margin-top:1px;">Should Have</span>
-              <span style="font-size:13px;color:var(--ink-mid);">Intensity controls · Diagram visuals · Regenerate/dismiss · Study vs Leisure modes</span>
-            </div>
-            <div style="background:white;border:1px solid var(--border);border-radius:8px;padding:10px 14px;display:flex;gap:10px;align-items:flex-start;">
-              <span style="font-size:11px;font-weight:500;color:#a32d2d;background:#fcebeb;padding:2px 8px;border-radius:100px;white-space:nowrap;margin-top:1px;">Won't Have</span>
-              <span style="font-size:13px;color:var(--ink-mid);">Always-on AR/VR · Cinematic animations · Auto visuals without consent · Gamification</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ARTIFACT: IA + User Flow -->
-    <div class="grid-2" style="margin-bottom:1.25rem;">
-      <div class="artifact-zone">
-        <div class="artifact-icon">🗺</div>
-        <h4>Information Architecture Diagram</h4>
-        <p>Full IA map showing Library, Reading Mode, Visualise Mode, Immersive Mode, and Settings hierarchies.</p>
-        <span class="artifact-badge filled"><span class="dot"></span>Upload IA Diagram</span>
-      </div>
-      <div class="artifact-zone">
-        <div class="artifact-icon">➡️</div>
-        <h4>User Flow Diagrams</h4>
-        <p>Onboarding flow and Home Screen feature flow — showing every branch and return path to reading state.</p>
-        <span class="artifact-badge filled"><span class="dot"></span>Upload User Flow Diagrams</span>
-      </div>
-    </div>
-
-    <!-- ARTIFACT: Assumption + Hypothesis -->
-    <div class="grid-2">
-      <div class="artifact-zone">
-        <div class="artifact-icon">⚖️</div>
-        <h4>Assumption Prioritisation Matrix</h4>
-        <p>Risk vs. value matrix plotting user and business assumptions to identify what to test first.</p>
-        <span class="artifact-badge filled"><span class="dot"></span>Upload Assumption Map</span>
-      </div>
-      <div class="artifact-zone">
-        <div class="artifact-icon">🎯</div>
-        <h4>Bull's Eye Diagram</h4>
-        <p>Feature prioritisation — core value centre ring vs. future enhancements vs. out-of-scope items.</p>
-        <span class="artifact-badge filled"><span class="dot"></span>Upload Bull's Eye Diagram</span>
-      </div>
-    </div>
-
-    <div style="margin-top:2.5rem;">
-      <div class="card-label" style="margin-bottom:1rem;">Key Hypotheses Tested</div>
-      <div class="hypothesis-list">
-        <div class="hypothesis-item">
-          <span class="hyp-num">H1</span>
-          <span class="hyp-text">We believe <strong>increased reading engagement</strong> will be achieved if students attain <strong>improved understanding of complex material</strong> with optional AI-generated visuals triggered during reading.</span>
-        </div>
-        <div class="hypothesis-item">
-          <span class="hyp-num">H2</span>
-          <span class="hyp-text">We believe <strong>longer reading session time</strong> will be achieved if students and professionals attain <strong>sustained focus and reduced distraction</strong> with user-controlled text-to-visual generation.</span>
-        </div>
-        <div class="hypothesis-item">
-          <span class="hyp-num">H3</span>
-          <span class="hyp-text">We believe <strong>improved comprehension and retention</strong> will be achieved if visual learners attain <strong>clear mental imagery</strong> with concept-based visuals such as diagrams and simplified representations.</span>
-        </div>
-        <div class="hypothesis-item">
-          <span class="hyp-num">H5</span>
-          <span class="hyp-text">We believe <strong>increased user trust</strong> will be achieved if academic readers attain <strong>confidence that visuals support rather than replace reading</strong> with visual intensity controls and dismiss/regenerate options.</span>
-        </div>
-        <div class="hypothesis-item">
-          <span class="hyp-num">H9</span>
-          <span class="hyp-text">We believe <strong>greater user control</strong> will be achieved if students attain <strong>a sense of autonomy during reading</strong> with manual activation of visual features.</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PROTOTYPES -->
-<section id="prototypes">
-  <div class="page">
-    <div class="section-header">
-      <p class="section-num">05 — Prototyping</p>
-      <h2>Three Fidelity Levels, One Consistent Philosophy</h2>
-      <p>Each prototype level was designed to answer specific, bounded questions — not to demonstrate completeness, but to validate one layer of assumption at a time.</p>
-    </div>
-
-    <div class="fidelity-strip">
-      <div class="fidelity-step">
-        <div class="fidelity-step-num">Stage 1</div>
-        <div class="fidelity-step-name">Wireframes</div>
-        <div class="fidelity-step-desc">Concept sketches & layout exploration</div>
-      </div>
-      <div class="fidelity-step">
-        <div class="fidelity-step-num">Stage 2</div>
-        <div class="fidelity-step-name">Lo-Fi Paper</div>
-        <div class="fidelity-step-desc">Hand-drawn interaction model testing</div>
-      </div>
-      <div class="fidelity-step">
-        <div class="fidelity-step-num">Stage 3</div>
-        <div class="fidelity-step-name">Mid-Fi Digital</div>
-        <div class="fidelity-step-desc">Navigation & flow validation</div>
-      </div>
-      <div class="fidelity-step active">
-        <div class="fidelity-step-num">Stage 4</div>
-        <div class="fidelity-step-name">Hi-Fi Figma</div>
-        <div class="fidelity-step-desc">Full visual & interactive simulation</div>
-      </div>
-    </div>
-
-    <!-- WIREFRAMES -->
-    <div style="margin-bottom:2.5rem;">
-      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;">
-        <div style="width:32px;height:32px;background:var(--paper-mid);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;">✏️</div>
-        <h3 style="font-size:18px;font-weight:500;">Wireframes — Sketching the Concept</h3>
-      </div>
-      <p style="font-size:15px;color:var(--ink-mid);max-width:680px;margin-bottom:1.5rem;line-height:1.65;">Initial concept sketches exploring the core layout patterns — text-first reading experience, mode-switching architecture, and the side-panel visual placement that became the defining structural decision of the project.</p>
-      <div class="grid-3">
-        <div class="artifact-zone" style="min-height:220px;">
-          <div class="artifact-icon">📄</div>
-          <h4>Home Screen Wireframe</h4>
-          <p>Layout exploration for the central library hub and navigation architecture</p>
-          <span class="artifact-badge filled"><span class="dot"></span>Upload Wireframe</span>
-        </div>
-        <div class="artifact-zone" style="min-height:220px;">
-          <div class="artifact-icon">📄</div>
-          <h4>Reading Mode Wireframe</h4>
-          <p>Text-first layout with side-panel visual zone placement and minimal chrome</p>
-          <span class="artifact-badge filled"><span class="dot"></span>Upload Wireframe</span>
-        </div>
-        <div class="artifact-zone" style="min-height:220px;">
-          <div class="artifact-icon">📄</div>
-          <h4>Mode Transition Wireframe</h4>
-          <p>Read → Visualise → Immersive mode switching flow and progressive escalation</p>
-          <span class="artifact-badge filled"><span class="dot"></span>Upload Wireframe</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- LO-FI -->
-    <div style="margin-bottom:2.5rem;">
-      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;">
-        <div style="width:32px;height:32px;background:var(--accent-soft);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;">✍️</div>
-        <h3 style="font-size:18px;font-weight:500;">Lo-Fi Paper Prototype — Testing the Concept, Not the Pixels</h3>
-      </div>
-      <p style="font-size:15px;color:var(--ink-mid);max-width:680px;margin-bottom:1.5rem;line-height:1.65;">Paper prototypes created psychological safety — participants gave honest feedback because it was clearly unfinished. The goal was to validate whether user-triggered visual generation made intuitive sense, not whether the button colour was right.</p>
-      <div class="grid-2" style="margin-bottom:1rem;">
-        <div class="artifact-zone" style="min-height:280px;">
-          <div class="artifact-icon">📝</div>
-          <h4>Lo-Fi Paper Prototype — Screens 1–8</h4>
-          <p>Home, Onboarding, Text-to-Visual interaction, Mode switching, Settings, Immersive entry</p>
-          <span class="artifact-badge filled"><span class="dot"></span>Upload Lo-Fi Photos</span>
-        </div>
-        <div class="artifact-zone" style="min-height:280px;">
-          <div class="artifact-icon">📝</div>
-          <h4>Lo-Fi Paper Prototype — Screens 9–16</h4>
-          <p>Visual Mode panel, Regenerate/Dismiss flow, Reading Mode return, Accessibility settings</p>
-          <span class="artifact-badge filled"><span class="dot"></span>Upload Lo-Fi Photos</span>
-        </div>
-      </div>
-      <div class="insight-callout" style="margin:0;">
-        <p>Key discovery from Lo-Fi testing: users immediately looked for a way to dismiss a generated visual. The "dismiss/regenerate" control — which became a core feature — was discovered here, not designed in advance.</p>
-      </div>
-    </div>
-
-    <!-- MID-FI -->
-    <div style="margin-bottom:2.5rem;">
-      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;">
-        <div style="width:32px;height:32px;background:var(--teal-soft);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;">🖥</div>
-        <h3 style="font-size:18px;font-weight:500;">Mid-Fi Digital Prototype — Testing Interaction Logic</h3>
-      </div>
-      <p style="font-size:15px;color:var(--ink-mid);max-width:680px;margin-bottom:1.5rem;line-height:1.65;">Grayscale digital layouts with realistic content placeholders. Validated navigation flows, mode-switching behaviour, and visual control comprehension. Participants found mode transitions more intuitive than expected — the separation of modes as distinct "spaces" mapped well to their mental models.</p>
-      <div class="grid-3" style="margin-bottom:1rem;">
-        <div class="artifact-zone" style="min-height:260px;">
-          <div class="artifact-icon">🖥</div>
-          <h4>Mid-Fi — Reading Mode</h4>
-          <p>Text layout, scroll behaviour, bookmarking, and the AI visual trigger placement</p>
-          <span class="artifact-badge filled"><span class="dot"></span>Upload Mid-Fi Screen</span>
-        </div>
-        <div class="artifact-zone" style="min-height:260px;">
-          <div class="artifact-icon">🖥</div>
-          <h4>Mid-Fi — Visualise Mode</h4>
-          <p>Side-panel visual zone, intensity toggle, regenerate/dismiss controls</p>
-          <span class="artifact-badge filled"><span class="dot"></span>Upload Mid-Fi Screen</span>
-        </div>
-        <div class="artifact-zone" style="min-height:260px;">
-          <div class="artifact-icon">🖥</div>
-          <h4>Mid-Fi — Immersive Mode</h4>
-          <p>AR/VR entry flow, mode switching, pause/disable controls</p>
-          <span class="artifact-badge filled"><span class="dot"></span>Upload Mid-Fi Screen</span>
-        </div>
-      </div>
-      <div class="insight-callout" style="margin:0;">
-        <p>Mid-Fi testing revealed that participants wanted finer-grained visual intensity control than the initial three-state toggle provided — directly shaping the slider design in the Hi-Fi prototype.</p>
-      </div>
-    </div>
-
-    <!-- HI-FI -->
-    <div>
-      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;">
-        <div style="width:32px;height:32px;background:var(--blue-soft);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;">✨</div>
-        <h3 style="font-size:18px;font-weight:500;">Hi-Fi Figma Prototype — The Full Experience</h3>
-      </div>
-      <p style="font-size:15px;color:var(--ink-mid);max-width:680px;margin-bottom:1.5rem;line-height:1.65;">A complete, realistic simulation covering 5 critical user flows. Full colour, typography, micro-interactions, WCAG 2.1 AA accessibility compliance, and ethical AI transparency indicators built in at every visual generation point.</p>
-      <div class="grid-2" style="margin-bottom:1.25rem;">
-        <div class="artifact-zone" style="min-height:320px;">
-          <div class="artifact-icon">🎨</div>
-          <h4>Hi-Fi — Onboarding & Library</h4>
-          <p>Registration, welcome screen, reading mode entry, library view with search and history</p>
-          <span class="artifact-badge filled"><span class="dot"></span>Upload Hi-Fi Screens</span>
-        </div>
-        <div class="artifact-zone" style="min-height:320px;">
-          <div class="artifact-icon">🎨</div>
-          <h4>Hi-Fi — Core Reading & Visual Loop</h4>
-          <p>Read Mode → AI visual trigger → side-panel generation → dismiss/save → return to reading</p>
-          <span class="artifact-badge filled"><span class="dot"></span>Upload Hi-Fi Screens</span>
-        </div>
-      </div>
-      <div class="grid-3">
-        <div class="artifact-zone" style="min-height:240px;">
-          <div class="artifact-icon">🎨</div>
-          <h4>Hi-Fi — Visualise & Immersive Modes</h4>
-          <p>Visual slider control, style selection, AR/VR progressive entry, contextual prompt</p>
-          <span class="artifact-badge filled"><span class="dot"></span>Upload Hi-Fi Screens</span>
-        </div>
-        <div class="artifact-zone" style="min-height:240px;">
-          <div class="artifact-icon">🎨</div>
-          <h4>Hi-Fi — Settings & Accessibility</h4>
-          <p>Font scaling, contrast themes, AI transparency indicators, user preference controls</p>
-          <span class="artifact-badge filled"><span class="dot"></span>Upload Hi-Fi Screens</span>
-        </div>
-        <div class="artifact-zone" style="min-height:240px;">
-          <div class="artifact-icon">🎨</div>
-          <h4>Hi-Fi — Scan Text Feature</h4>
-          <p>Physical text digitisation via camera, feeding directly into the visual generation pipeline</p>
-          <span class="artifact-badge filled"><span class="dot"></span>Upload Hi-Fi Screens</span>
-        </div>
-      </div>
-      <div
-        style="margin-top:1.5rem;padding:1.25rem;background:white;border:1px solid
-        var(--border);border-radius:var(--radius);display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap;">
-        <span style="font-size:14px;color:var(--ink-mid);">View the interactive prototype in Figma →</span>
-        <a href="https://www.figma.com/proto/FUiwSOdjXdBgcrDTNjoepJ/Imagine-as-you-reasd?node-id=4-1357&t=XblD2iKXE9lO7PX1-0&scaling=scale-down&content-scaling=fixed&page-id=0%3A1"
-          target="_blank" class="hero-cta" style="margin-top:0;">Open Figma Prototype →</a>
-        <!----<a href="https://www.figma.com/design/FUiwSOdjXdBgcrDTNjoepJ/Imagine-as-you-reasd?t=XblD2iKXE9lO7PX1-0" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border:1px solid var(--border-mid);border-radius:6px;font-size:13px;color:var(--ink-mid);text-decoration:none;transition:background 0.15s;background:white;">View Editable File →</a> -->
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- TESTING -->
-<section id="testing">
-  <div class="page">
-    <div class="section-header">
-      <p class="section-num">06 — Usability Testing</p>
-      <h2>Validating With Real Users at Every Stage</h2>
-      <p>Usability testing was conducted across all three fidelity levels, with a structured quantitative scoring approach applied to the Hi-Fi prototype.</p>
-    </div>
-
-    <div class="grid-3" style="margin-bottom:2.5rem;">
-      <div class="card" style="text-align:center;">
-        <div style="font-family:var(--serif);font-size:2.4rem;color:var(--accent);margin-bottom:0.25rem;">3</div>
-        <div style="font-size:14px;color:var(--ink-mid);">Rounds of usability testing (Lo-Fi, Mid-Fi, Hi-Fi)</div>
-      </div>
-      <div class="card" style="text-align:center;">
-        <div style="font-family:var(--serif);font-size:2.4rem;color:var(--accent);margin-bottom:0.25rem;">4</div>
-        <div style="font-size:14px;color:var(--ink-mid);">Hi-Fi participants with structured scoring</div>
-      </div>
-      <div class="card" style="text-align:center;">
-        <div style="font-family:var(--serif);font-size:2.4rem;color:var(--accent);margin-bottom:0.25rem;">0.75</div>
-        <div style="font-size:14px;color:var(--ink-mid);">Task success threshold (weighted composite score)</div>
-      </div>
-    </div>
-
-    <div style="margin-bottom:2rem;">
-      <div class="card-label" style="margin-bottom:1rem;">Weighted Scoring Formula</div>
-      <div style="display:flex;gap:1rem;flex-wrap:wrap;">
-        <div style="flex:1;min-width:180px;background:white;border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;text-align:center;box-shadow:var(--shadow);">
-          <div style="font-family:var(--serif);font-size:1.8rem;color:var(--accent);">50%</div>
-          <div style="font-size:13px;color:var(--ink-mid);">Time efficiency weight</div>
-        </div>
-        <div style="flex:1;min-width:180px;background:white;border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;text-align:center;box-shadow:var(--shadow);">
-          <div style="font-family:var(--serif);font-size:1.8rem;color:var(--accent);">25%</div>
-          <div style="font-size:13px;color:var(--ink-mid);">Error count weight</div>
-        </div>
-        <div style="flex:1;min-width:180px;background:white;border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;text-align:center;box-shadow:var(--shadow);">
-          <div style="font-family:var(--serif);font-size:1.8rem;color:var(--accent);">25%</div>
-          <div style="font-size:13px;color:var(--ink-mid);">Assistance incidents weight</div>
-        </div>
-        <div style="flex:1;min-width:180px;background:white;border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;text-align:center;box-shadow:var(--shadow);">
-          <div style="font-family:var(--serif);font-size:1.8rem;color:var(--teal);">&lt;0.75</div>
-          <div style="font-size:13px;color:var(--ink-mid);">= Task passed</div>
-        </div>
-      </div>
-    </div>
-
-    <div style="background:white;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);margin-bottom:2rem;">
-      <table class="test-table">
-        <thead>
-          <tr>
-            <th>Participant</th>
-            <th>Task</th>
-            <th>Time</th>
-            <th>Errors</th>
-            <th>Assistance</th>
-            <th>Final Score</th>
-            <th>Result</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td style="font-weight:500;color:var(--ink);">P1</td>
-            <td>Enable Visual Mode</td>
-            <td>32s</td>
-            <td>0</td>
-            <td>0</td>
-            <td>
-              <div class="score-bar-wrap">
-                <div class="score-bar"><div class="score-fill green" style="width:43%;"></div></div>
-                <span class="score-val" style="color:#3b6d11;">0.32</span>
+            <div class="phase-timeline">
+              <div class="phase">
+                <div class="phase-label">Think</div>
+                <h4>Research</h4>
+                <ul><li>Lit review</li><li>User interviews (n=8)</li><li>Survey (n=66)</li></ul>
               </div>
-            </td>
-            <td><span class="pass-badge pass">✓ Pass</span></td>
-          </tr>
-          <tr>
-            <td style="font-weight:500;color:var(--ink);">P2</td>
-            <td>Enable Reading Mode</td>
-            <td>45s</td>
-            <td>1</td>
-            <td>0</td>
-            <td>
-              <div class="score-bar-wrap">
-                <div class="score-bar"><div class="score-fill amber" style="width:77%;"></div></div>
-                <span class="score-val" style="color:#854f0b;">0.575</span>
+              <div class="phase">
+                <div class="phase-label">Make</div>
+                <h4>Design</h4>
+                <ul><li>Card sorting / IA</li><li>Lo-Fi paper prototype</li><li>Hi-Fi Figma prototype</li></ul>
               </div>
-            </td>
-            <td><span class="pass-badge pass">✓ Pass</span></td>
-          </tr>
-          <tr>
-            <td style="font-weight:500;color:var(--ink);">P3</td>
-            <td>Scan Text Feature</td>
-            <td>40s</td>
-            <td>1</td>
-            <td>1</td>
-            <td>
-              <div class="score-bar-wrap">
-                <div class="score-bar"><div class="score-fill amber" style="width:87%;"></div></div>
-                <span class="score-val" style="color:#854f0b;">0.65</span>
+              <div class="phase">
+                <div class="phase-label">Check</div>
+                <h4>Test</h4>
+                <ul><li>Usability testing</li><li>Hypothesis validation</li><li>Weighted scoring</li></ul>
               </div>
-            </td>
-            <td><span class="pass-badge pass">✓ Pass</span></td>
-          </tr>
-          <tr>
-            <td style="font-weight:500;color:var(--ink);">P4</td>
-            <td>Immersive Mode Testing</td>
-            <td>55s</td>
-            <td>2</td>
-            <td>1</td>
-            <td>
-              <div class="score-bar-wrap">
-                <div class="score-bar"><div class="score-fill red" style="width:100%;"></div></div>
-                <span class="score-val" style="color:#a32d2d;">0.925</span>
+            </div>
+
+            <div class="yellow-callout">
+              <strong>💡 Crucial Design Decision</strong>
+              "The most important design decision was the one I didn't make — choosing not to make visual generation automatic, resisting the temptation to showcase AI capability. Research consistently said: give users control."
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ─────────── STEP 2: RESEARCH ─────────── -->
+    <section class="sec" id="research">
+      <div class="sec-inner reveal">
+        <article class="step">
+          <div class="step-header">
+            <div class="step-topline">
+              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg> Part 01 · Step 02</span>
+              <span class="step-number">02</span>
+            </div>
+            <h2 class="step-title">What the Data Revealed</h2>
+            <p>A mixed-methods approach grounded in real user behaviour.</p>
+          </div>
+          <div class="step-body">
+            <h3 class="section-title">📈 Research Metrics</h3>
+            <div class="stat-grid">
+              <div class="stat-block"><div class="stat-num">8</div><div class="stat-label">Interviews conducted</div></div>
+              <div class="stat-block"><div class="stat-num">66</div><div class="stat-label">Survey responses</div></div>
+              <div class="stat-block"><div class="stat-num">77%</div><div class="stat-label">Find visuals helpful</div></div>
+              <div class="stat-block"><div class="stat-num">50%</div><div class="stat-label">Prefer optional visuals</div></div>
+            </div>
+
+            <h3 class="section-title">🎯 Methodology</h3>
+            <ul class="activity-list">
+              <li><strong>Semi-Structured Interviews:</strong> Moved from surface reading habits to the precise moment a reader loses focus or hits cognitive friction.</li>
+              <li><strong>Quantitative Survey:</strong> Captured reading frequency, device usage, and openness to AI/AR features. Validated patterns at scale.</li>
+              <li><strong>Competitor Analysis:</strong> Mapped Wonderscope, Google Learn Your Way, Copilot, and Gemini against 8 dimensions.</li>
+            </ul>
+
+            <h3 class="section-title">🧩 Key Qualitative Findings</h3>
+            <div class="comp-grid" style="margin-bottom: 32px;">
+              <div class="comp-card">
+                <div class="comp-name">The Overwhelmed Student</div>
+                <div class="comp-text">Students hit a cognitive wall with text-heavy content — not from lack of ability, but from lack of visual scaffolding.</div>
               </div>
-            </td>
-            <td><span class="pass-badge fail">✗ Fail</span></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+              <div class="comp-card">
+                <div class="comp-name">The Disconnected Reader</div>
+                <div class="comp-text">Young adults lose their reading thread mid-chapter because digital environments fracture attention. The story isn't the problem — the context is.</div>
+              </div>
+              <div class="comp-card">
+                <div class="comp-name">Control Over Automation</div>
+                <div class="comp-text">Users are cautious about AI-assisted reading: "I don't want something interrupting my focus." User-triggered always outperforms automated.</div>
+              </div>
+            </div>
 
-    <!-- ARTIFACT: Testing session images -->
-    <div class="grid-2" style="margin-bottom:1.25rem;">
-      <div class="artifact-zone">
-        <div class="artifact-icon">📸</div>
-        <h4>Usability Testing Session Photos</h4>
-        <p>Participant interaction photos and screen recordings from Lo-Fi, Mid-Fi, and Hi-Fi testing rounds</p>
-        <span class="artifact-badge filled"><span class="dot"></span>Upload Testing Photos</span>
-      </div>
-      <div class="artifact-zone">
-        <div class="artifact-icon">📊</div>
-        <h4>Hypothesis Prioritisation Canvas</h4>
-        <p>Risk vs. value matrix used to determine which hypotheses to validate first during testing phases</p>
-        <span class="artifact-badge filled"><span class="dot"></span>Upload Hypothesis Canvas</span>
-      </div>
-    </div>
+            <div class="expandable-img">
+              <img src="session1.png" alt="Affinity mapping and research synthesis" loading="lazy">
+              <button class="expand-btn" title="Expand"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg></button>
+            </div>
 
-    <div class="grid-3">
-      <div class="card" style="border-top:3px solid #639922;">
-        <div class="card-label">Emotional Friction — Relief</div>
-        <p>Participants expressed unprompted relief when visual generation was confirmed as optional. Several noted they'd feared the app would "take over" their reading experience.</p>
-      </div>
-      <div class="card" style="border-top:3px solid #ef9f27;">
-        <div class="card-label">Emotional Friction — Control</div>
-        <p>The "dismiss visual" control was used enthusiastically across all participants — not because visuals were bad, but because users needed to know they held the override.</p>
-      </div>
-      <div class="card" style="border-top:3px solid #e24b4a;">
-        <div class="card-label">Emotional Friction — Literalness</div>
-        <p>One participant noted AI-generated imagery was occasionally "too literal." This signals a future need for visual style controls — realistic vs. abstract vs. symbolic interpretation.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ITERATIONS -->
-<section id="iterations">
-  <div class="page">
-    <div class="section-header">
-      <p class="section-num">07 — Design Iterations</p>
-      <h2>Before vs. After — Evidence-Driven Changes</h2>
-      <p>Every design revision traces directly from a specific friction point observed in testing. No change was made from opinion — only from observed user behaviour.</p>
-    </div>
-
-    <div class="iteration-block">
-      <div class="iteration-header">
-        <div class="iter-num">1</div>
-        <h3>Immersive Mode — Discoverability Failure</h3>
-      </div>
-      <div class="iteration-body">
-        <div class="iter-before">
-          <div class="iter-before-label"><span class="iter-dot red"></span>Before — The Problem</div>
-          <p>Immersive Mode was accessible via the mode switcher — equally weighted alongside Read and Visualise modes, with no contextual prompt. P4's task failure (score 0.925, exceeding the 0.75 threshold) revealed users didn't encounter it naturally. They had to actively hunt for it.</p>
-        </div>
-        <div class="iter-after">
-          <div class="iter-after-label"><span class="iter-dot green"></span>After — The Fix</div>
-          <p>Immersive Mode entry was repositioned as a <strong>progressive enhancement</strong> — surfaced after a user had generated at least one AI visual, with a gentle contextual prompt: "Want to step inside this scene?" This aligned the interaction with the natural user journey: text → visuals → immersion in sequence.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="iteration-block">
-      <div class="iteration-header">
-        <div class="iter-num">2</div>
-        <h3>Visual Intensity Controls — Granularity Gap</h3>
-      </div>
-      <div class="iteration-body">
-        <div class="iter-before">
-          <div class="iter-before-label"><span class="iter-dot red"></span>Before — The Problem</div>
-          <p>The initial three-state toggle (Off / Low / Medium) felt binary in practice. Mid-Fi testing revealed participants wanted to communicate <em>how much</em> visual support they needed — not just whether it was on or off. Most users either fully enabled or fully disabled it.</p>
-        </div>
-        <div class="iter-after">
-          <div class="iter-after-label"><span class="iter-dot green"></span>After — The Fix</div>
-          <p>Replaced with a <strong>continuous slider with labelled reference points</strong> (Off → Subtle → Moderate → Rich), supplemented by a preview thumbnail showing what the current intensity setting would look like before committing. This converted an abstract control into a concrete, previsualisable decision.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="iteration-block">
-      <div class="iteration-header">
-        <div class="iter-num">3</div>
-        <h3>Visual Dismissal — The Missing Escape</h3>
-      </div>
-      <div class="iteration-body">
-        <div class="iter-before">
-          <div class="iter-before-label"><span class="iter-dot red"></span>Before — The Problem</div>
-          <p>The Lo-Fi prototype had a "generate visual" trigger but no visible "dismiss" or "regenerate" control. These were in the backlog but not yet surfaced in the UI. Participants immediately and instinctively looked for a way to remove a visual they didn't like or that felt inaccurate — a behaviour that hadn't been explicitly designed for.</p>
-        </div>
-        <div class="iter-after">
-          <div class="iter-after-label"><span class="iter-dot green"></span>After — The Fix</div>
-          <p>A persistent <strong>two-action control bar</strong> — "Regenerate" and "Dismiss" — always visible beneath every generated visual. The "Save" option appeared only after a user had kept the visual for 5 seconds, preventing accidental saves while supporting intentional library-building. Trust is built through control.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- ARTIFACT: Lean UX Canvas -->
-    <div class="grid-2" style="margin-top:2rem;">
-      <div class="artifact-zone">
-        <div class="artifact-icon">🖼</div>
-        <h4>Lean UX Canvas — Iteration 1</h4>
-        <p>Early canvas showing initial assumptions, solutions, and business outcomes before hypothesis testing</p>
-        <span class="artifact-badge filled"><span class="dot"></span>Upload Canvas Image</span>
-      </div>
-      <div class="artifact-zone">
-        <div class="artifact-icon">🖼</div>
-        <h4>Lean UX Canvas — Iteration 2</h4>
-        <p>Refined canvas with validated hypotheses, updated solutions, and sharpened business outcomes</p>
-        <span class="artifact-badge filled"><span class="dot"></span>Upload Canvas Image</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- OUTCOMES -->
-<section id="outcomes">
-  <div class="page">
-    <div class="section-header">
-      <p class="section-num">08 — Outcomes & Reflections</p>
-      <h2>What the Project Proved — and Where It Goes Next</h2>
-      <p>Three of four usability tasks passed. One failed — and produced the most valuable insight of the entire project.</p>
-    </div>
-
-    <div class="outcome-grid" style="margin-bottom:2.5rem;">
-      <div class="outcome-card green">
-        <h4>Hypothesis H1 — Validated ✓</h4>
-        <p>Optional, user-triggered AI visuals improve perceived engagement without significantly raising cognitive load. Supported by three successful task completions and consistent qualitative feedback across all testing rounds.</p>
-      </div>
-      <div class="outcome-card amber">
-        <h4>Hypothesis H5 — Validated ✓</h4>
-        <p>User control over visual intensity and dismissal is essential for trust. Confirmed by how immediately and unprompted participants reached for dismissal controls in every single testing session.</p>
-      </div>
-      <div class="outcome-card blue">
-        <h4>Hypothesis H9 — Validated ✓</h4>
-        <p>A text-first, mode-based architecture supports diverse reading contexts. Validated by how naturally participants switched between Read and Visualise modes without confusion or instruction.</p>
-      </div>
-    </div>
-
-    <div class="grid-2" style="margin-bottom:2.5rem;align-items:start;">
-      <div>
-        <div class="card-label" style="margin-bottom:1rem;">Personal Takeaways</div>
-        <div style="display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">
-          <div style="background:white;padding:1.1rem 1.5rem;">
-            <div style="font-size:13px;font-weight:500;margin-bottom:4px;">The most important decision was the one I didn't make</div>
-            <p style="font-size:14px;color:var(--ink-mid);line-height:1.6;">Choosing not to make visual generation automatic — resisting the temptation to showcase AI capability — was the decision that made the product trustworthy. Research said give users control. Following that finding was the right call.</p>
+            <div class="yellow-callout">
+              <strong>💡 Competitor Insight</strong>
+              No competitor integrated real-time text interpretation, generative visualisation, and reading-focused UX in a single product. This was the gap to fill.
+            </div>
           </div>
-          <div style="background:white;padding:1.1rem 1.5rem;">
-            <div style="font-size:13px;font-weight:500;margin-bottom:4px;">Lean UX is only as good as your hypothesis discipline</div>
-            <p style="font-size:14px;color:var(--ink-mid);line-height:1.6;">The moments where the project was weakest were the moments where I was tempted to treat an assumption as a confirmed insight. The hypothesis-first structure of Lean UX provided the guard rail that kept design decisions honest.</p>
-          </div>
-          <div style="background:white;padding:1.1rem 1.5rem;">
-            <div style="font-size:13px;font-weight:500;margin-bottom:4px;">Low-fidelity testing is genuinely irreplaceable</div>
-            <p style="font-size:14px;color:var(--ink-mid);line-height:1.6;">The dismissal control that became a core feature of the Hi-Fi prototype was discovered during paper testing. If I had waited until digital wireframes, I would have built the wrong thing with significantly more effort.</p>
-          </div>
-        </div>
+        </article>
       </div>
-      <div>
-        <div class="card-label" style="margin-bottom:1rem;">Limitations Acknowledged</div>
-        <div style="background:white;border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;box-shadow:var(--shadow);">
-          <div style="display:flex;flex-direction:column;gap:1rem;">
-            <div style="display:flex;gap:10px;align-items:flex-start;">
-              <span style="font-size:18px;flex-shrink:0;">⚡</span>
+    </section>
+
+    <!-- ─────────── STEP 3: PERSONAS ─────────── -->
+    <section class="sec" id="personas">
+      <div class="sec-inner reveal">
+        <article class="step">
+          <div class="step-header">
+            <div class="step-topline">
+              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Part 01 · Step 03</span>
+              <span class="step-number">03</span>
+            </div>
+            <h2 class="step-title">Three Distinct Readers, One Shared Need</h2>
+            <p>Evidence-based archetypes built from real patterns observed in data.</p>
+          </div>
+          <div class="step-body">
+            <div class="grid-3">
+              <div class="persona-card">
+                <div class="persona-header">
+                  <div class="persona-avatar">V</div>
+                  <div><div class="persona-name">Vishnu</div><div class="persona-role">The Overwhelmed Reader</div></div>
+                </div>
+                <div class="persona-body">
+                  <div class="persona-quote">"I don't want reading to feel harder — I just want a bit of help imagining things."</div>
+                  <div class="persona-section-title">Goals</div>
+                  <ul class="persona-list"><li>Understand complex material quickly</li><li>Stay focused longer</li></ul>
+                  <div class="persona-section-title">Pain Points</div>
+                  <ul class="persona-list"><li>Struggles to visualise abstract concepts</li><li>Resents visuals that interrupt flow</li></ul>
+                </div>
+              </div>
+
+              <div class="persona-card">
+                <div class="persona-header">
+                  <div class="persona-avatar">J</div>
+                  <div><div class="persona-name">Josh</div><div class="persona-role">The Disconnected Reader</div></div>
+                </div>
+                <div class="persona-body">
+                  <div class="persona-quote">"I love stories, but digital reading just doesn't pull me in enough."</div>
+                  <div class="persona-section-title">Goals</div>
+                  <ul class="persona-list"><li>Re-establish reading habits</li><li>Visualise scenes vividly</li></ul>
+                  <div class="persona-section-title">Pain Points</div>
+                  <ul class="persona-list"><li>Digital text feels flat</li><li>Loses interest in long-form mid-way</li></ul>
+                </div>
+              </div>
+
+              <div class="persona-card">
+                <div class="persona-header">
+                  <div class="persona-avatar">E</div>
+                  <div><div class="persona-name">Emma</div><div class="persona-role">Anxious Visual Learner</div></div>
+                </div>
+                <div class="persona-body">
+                  <div class="persona-quote">"I understand things better when I can see them, not just read about them."</div>
+                  <div class="persona-section-title">Goals</div>
+                  <ul class="persona-list"><li>Feel confident tackling academics</li><li>Tools that reduce cognitive stress</li></ul>
+                  <div class="persona-section-title">Pain Points</div>
+                  <ul class="persona-list"><li>Dense content is difficult to retain</li><li>Boring apps actively discourage use</li></ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ─────────── STEP 4: DESIGN APPROACH ─────────── -->
+    <section class="sec" id="design">
+      <div class="sec-inner reveal">
+        <article class="step">
+          <div class="step-header">
+            <div class="step-topline">
+              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Part 02 · Step 04</span>
+              <span class="step-number">04</span>
+            </div>
+            <h2 class="step-title">From Insights to Architecture</h2>
+            <p>Every structural decision traces directly to a specific research finding.</p>
+          </div>
+          <div class="step-body">
+            <h3 class="section-title">🎯 Progressive Disclosure</h3>
+            <p class="purpose">Users should always feel in control of how deep they go. We separated the experience into clearly defined modes. Survey data showed 50% wanted "text with optional visuals." Burying visual features inside reading mode would have violated expectations.</p>
+            
+            <h3 class="section-title">🧩 MoSCoW Prioritisation</h3>
+            <ul class="activity-list">
+              <li><strong>Must Have:</strong> User-triggered visuals, Disable at any time, Side-panel display, Clean interface.</li>
+              <li><strong>Should Have:</strong> Intensity controls, Diagram visuals, Regenerate/dismiss.</li>
+              <li><strong>Won't Have:</strong> Always-on AR/VR, Auto visuals without consent, Gamification.</li>
+            </ul>
+
+            <h3 class="section-title">💡 Key Hypotheses</h3>
+            <div class="hypothesis-list" style="margin-bottom: 24px;">
+              <div class="hypothesis-item"><span class="hyp-num">H1</span><span class="hyp-text">We believe <strong>increased engagement</strong> will be achieved if students attain <strong>improved understanding</strong> with optional AI visuals.</span></div>
+              <div class="hypothesis-item"><span class="hyp-num">H2</span><span class="hyp-text">We believe <strong>longer session time</strong> will be achieved with user-controlled text-to-visual generation.</span></div>
+              <div class="hypothesis-item"><span class="hyp-num">H5</span><span class="hyp-text">We believe <strong>increased user trust</strong> will be achieved with visual intensity controls and dismiss/regenerate options.</span></div>
+            </div>
+
+            <div class="expandable-img">
+              <img src="newwebsite.png" alt="UX Information Architecture" loading="lazy">
+              <button class="expand-btn" title="Expand"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg></button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ─────────── STEP 5: PROTOTYPING ─────────── -->
+    <section class="sec" id="prototypes">
+      <div class="sec-inner reveal">
+        <article class="step">
+          <div class="step-header">
+            <div class="step-topline">
+              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg> Part 03 · Step 05</span>
+              <span class="step-number">05</span>
+            </div>
+            <h2 class="step-title">Three Fidelity Levels</h2>
+            <p>Each prototype level was designed to answer specific, bounded questions.</p>
+          </div>
+          <div class="step-body">
+            <div class="fidelity-strip">
+              <div class="fidelity-step"><div class="fidelity-step-num">Stage 1</div><div class="fidelity-step-name">Wireframes</div><div class="fidelity-step-desc">Concept sketches</div></div>
+              <div class="fidelity-step"><div class="fidelity-step-num">Stage 2</div><div class="fidelity-step-name">Lo-Fi Paper</div><div class="fidelity-step-desc">Interaction testing</div></div>
+              <div class="fidelity-step"><div class="fidelity-step-num">Stage 3</div><div class="fidelity-step-name">Mid-Fi Digital</div><div class="fidelity-step-desc">Flow validation</div></div>
+              <div class="fidelity-step active"><div class="fidelity-step-num">Stage 4</div><div class="fidelity-step-name">Hi-Fi Figma</div><div class="fidelity-step-desc">Full simulation</div></div>
+            </div>
+
+            <h3 class="section-title">✏️ Lo-Fi to Hi-Fi Journey</h3>
+            <p class="purpose">Paper prototypes created psychological safety — participants gave honest feedback because it was clearly unfinished. Grayscale digital layouts validated navigation flows. The final Figma prototype simulated full AI generation flows.</p>
+            
+            <div class="grid-2">
+              <div class="expandable-img">
+                <img src="mockup.jpg" alt="Lo-Fi sketches" loading="lazy">
+                <button class="expand-btn" title="Expand"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg></button>
+              </div>
+              <div class="expandable-img">
+                <img src="mockup.jpg" alt="Hi-Fi Screens" loading="lazy">
+                <button class="expand-btn" title="Expand"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg></button>
+              </div>
+            </div>
+            
+            <div class="yellow-callout" style="text-align: center;">
+              <a href="#" style="color: var(--accent-org); font-weight: 700; text-decoration: underline;">View the interactive prototype in Figma →</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ─────────── STEP 6: USABILITY TESTING ─────────── -->
+    <section class="sec" id="testing">
+      <div class="sec-inner reveal">
+        <article class="step">
+          <div class="step-header">
+            <div class="step-topline">
+              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg> Part 03 · Step 06</span>
+              <span class="step-number">06</span>
+            </div>
+            <h2 class="step-title">Validating With Real Users</h2>
+            <p>Usability testing across all fidelities with structured quantitative scoring.</p>
+          </div>
+          <div class="step-body">
+            
+            <table class="test-table" style="margin-bottom: 32px;">
+              <thead>
+                <tr><th>Participant</th><th>Task</th><th>Time</th><th>Errors</th><th>Assistance</th><th>Result</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>P1</td><td>Enable Visual Mode</td><td>32s</td><td>0</td><td>0</td><td><span class="pass-badge pass">✓ Pass</span></td></tr>
+                <tr><td>P2</td><td>Enable Reading Mode</td><td>45s</td><td>1</td><td>0</td><td><span class="pass-badge pass">✓ Pass</span></td></tr>
+                <tr><td>P3</td><td>Scan Text Feature</td><td>40s</td><td>1</td><td>1</td><td><span class="pass-badge pass">✓ Pass</span></td></tr>
+                <tr><td>P4</td><td>Immersive Mode Testing</td><td>55s</td><td>2</td><td>1</td><td><span class="pass-badge fail">✗ Fail</span></td></tr>
+              </tbody>
+            </table>
+
+            <h3 class="section-title">🎭 Emotional Friction Points</h3>
+            <div class="comp-grid">
+              <div class="comp-card">
+                <div class="comp-name">Relief</div>
+                <div class="comp-text">Participants expressed unprompted relief when visual generation was confirmed as optional.</div>
+              </div>
+              <div class="comp-card">
+                <div class="comp-name">Control</div>
+                <div class="comp-text">The "dismiss visual" control was used enthusiastically across all participants. Users needed the override.</div>
+              </div>
+            </div>
+            
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ─────────── STEP 7: ITERATIONS ─────────── -->
+    <section class="sec" id="iterations">
+      <div class="sec-inner reveal">
+        <article class="step">
+          <div class="step-header">
+            <div class="step-topline">
+              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg> Part 03 · Step 07</span>
+              <span class="step-number">07</span>
+            </div>
+            <h2 class="step-title">Evidence-Driven Iterations</h2>
+            <p>Every design revision traces directly from a specific friction point observed.</p>
+          </div>
+          <div class="step-body">
+            
+            <div class="iteration-block">
+              <div class="iteration-header">
+                <div class="iter-num">1</div>
+                <h3>Immersive Mode — Discoverability Failure</h3>
+              </div>
+              <div class="iteration-body">
+                <div class="iter-before">
+                  <div class="iter-before-label"><span class="iter-dot red"></span>Before — The Problem</div>
+                  <p>Immersive Mode was accessible via the mode switcher with no contextual prompt. P4's task failure revealed users didn't encounter it naturally.</p>
+                </div>
+                <div class="iter-after">
+                  <div class="iter-after-label"><span class="iter-dot green"></span>After — The Fix</div>
+                  <p>Immersive Mode entry was repositioned as a progressive enhancement — surfaced after a user generated at least one visual, with a gentle prompt.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="iteration-block">
+              <div class="iteration-header">
+                <div class="iter-num">2</div>
+                <h3>Visual Intensity Controls</h3>
+              </div>
+              <div class="iteration-body">
+                <div class="iter-before">
+                  <div class="iter-before-label"><span class="iter-dot red"></span>Before — The Problem</div>
+                  <p>The initial three-state toggle (Off / Low / Medium) felt binary. Participants wanted to communicate how much visual support they needed.</p>
+                </div>
+                <div class="iter-after">
+                  <div class="iter-after-label"><span class="iter-dot green"></span>After — The Fix</div>
+                  <p>Replaced with a continuous slider with labelled reference points (Off → Subtle → Moderate → Rich), supplemented by a preview thumbnail.</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ─────────── STEP 8: OUTCOMES ─────────── -->
+    <section class="sec" id="outcomes">
+      <div class="sec-inner reveal">
+        <article class="step">
+          <div class="step-header">
+            <div class="step-topline">
+              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> Part 04 · Step 08</span>
+              <span class="step-number">08</span>
+            </div>
+            <h2 class="step-title">Outcomes & Reflections</h2>
+            <p>What the project proved, and where it goes next.</p>
+          </div>
+          <div class="step-body">
+            <h3 class="section-title">🏆 Validated Hypotheses</h3>
+            <div class="outcome-grid" style="margin-bottom: 24px;">
+              <div class="outcome-card green">
+                <h4>H1 — Validated ✓</h4>
+                <p>Optional AI visuals improve perceived engagement without raising cognitive load.</p>
+              </div>
+              <div class="outcome-card amber">
+                <h4>H5 — Validated ✓</h4>
+                <p>User control over visual intensity and dismissal is essential for trust.</p>
+              </div>
+              <div class="outcome-card blue">
+                <h4>H9 — Validated ✓</h4>
+                <p>A text-first architecture supports diverse contexts smoothly.</p>
+              </div>
+            </div>
+            
+            <div class="yellow-callout">
+              <strong>💡 Closing Reflection</strong>
+              "Imagine As You Read is not a reading app that uses AI. It is a reading experience that uses AI <em>only when the reader asks it to</em> — and that distinction is everything."
+            </div>
+
+            <div style="margin-top: 40px; display:flex; align-items:center; gap:16px;">
+              <div style="width:52px; height:52px; border-radius:50%; background:linear-gradient(135deg,var(--accent-org),var(--accent-gold)); display:flex; align-items:center; justify-content:center; font-family:'Inter',sans-serif; font-size:18px; font-weight:700; color:#fff;">GJ</div>
               <div>
-                <div style="font-size:13px;font-weight:500;margin-bottom:3px;">Small Hi-Fi sample</div>
-                <p style="font-size:13px;color:var(--ink-mid);line-height:1.5;">4 participants is sufficient for hypothesis validation but insufficient for statistical confidence. Wider demographic testing — children, non-native readers — would strengthen findings substantially.</p>
-              </div>
-            </div>
-            <div style="display:flex;gap:10px;align-items:flex-start;">
-              <span style="font-size:18px;flex-shrink:0;">⚡</span>
-              <div>
-                <div style="font-size:13px;font-weight:500;margin-bottom:3px;">AR/VR at prototype level only</div>
-                <p style="font-size:13px;color:var(--ink-mid);line-height:1.5;">Real-world AR/VR performance, latency, and spatial accuracy introduce usability dimensions that prototyping cannot simulate. The Immersive Mode findings are directional, not conclusive.</p>
-              </div>
-            </div>
-            <div style="display:flex;gap:10px;align-items:flex-start;">
-              <span style="font-size:18px;flex-shrink:0;">⚡</span>
-              <div>
-                <div style="font-size:13px;font-weight:500;margin-bottom:3px;">Some assumptions not formally retested</div>
-                <p style="font-size:13px;color:var(--ink-mid);line-height:1.5;">Certain early-stage assumptions were not formally retested after mid-fi iterations — a gap in the validation cycle that future work should close with modular feature testing.</p>
+                <p style="font-family:'Inter',sans-serif; font-size:15px; font-weight:700; color:var(--text-primary); margin:0;">Ganesh Javhare</p>
+                <p style="font-size:13px; color:var(--text-secondary); margin:0;">UX Researcher & Designer · CI7801 Major Project</p>
               </div>
             </div>
           </div>
-        </div>
+        </article>
       </div>
-    </div>
+    </section>
 
-    <div class="card-label" style="margin-bottom:1.25rem;">Next Steps for the Product</div>
-    <div class="next-steps-grid">
-      <div class="next-step">
-        <span class="next-step-phase immediate">Immediate</span>
-        <h4>Next Sprint</h4>
-        <ul>
-          <li>Redesign Immersive Mode as contextual progressive prompt</li>
-          <li>Replace toggle with continuous slider + live preview</li>
-          <li>Full WCAG 2.1 AA accessibility audit</li>
-          <li>Expand Lo-Fi cycle with wider user group</li>
-        </ul>
-      </div>
-      <div class="next-step">
-        <span class="next-step-phase short">Short-Term</span>
-        <h4>Next Phase</h4>
-        <ul>
-          <li>Expand usability testing to 8–12 participants</li>
-          <li>Functional AI integration PoC (DALL-E or Stable Diffusion)</li>
-          <li>Vocabulary visualiser for second-language readers</li>
-          <li>Test with children (10–16) and non-native English readers</li>
-        </ul>
-      </div>
-      <div class="next-step">
-        <span class="next-step-phase long">Long-Term</span>
-        <h4>Vision</h4>
-        <ul>
-          <li>Full AR — contextual visual overlays in physical space</li>
-          <li>Adaptive AI — learns preferred visual style per user</li>
-          <li>Educational partnerships for longitudinal research</li>
-          <li>Measure real comprehension outcomes, not just preference</li>
-        </ul>
-      </div>
-    </div>
+    <!-- Footer -->
+    <footer style="padding:28px clamp(24px,5vw,72px);border-top:1px solid var(--border-subtle);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px; margin-top: 40px;">
+      <p style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--text-muted)">Imagine As You Read · Case Study by Ganesh Javhare</p>
+      <p style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--text-muted)">Kingston University London · CI7801</p>
+    </footer>
 
-    <div class="closing-quote">
-      <blockquote>"Imagine As You Read" is not a reading app that uses AI. It is a reading experience that uses AI <em>only when the reader asks it to</em> — and that distinction is everything.</blockquote>
-      <cite>Ganesh Suresh Javhare — CI7801 UX Major Project, Kingston University London, 2026</cite>
-    </div>
+  </main><!-- /main -->
+</div><!-- /layout -->
+
+<!-- ===== FULLSCREEN IMAGE MODAL (Proper Native Zoom & Scroll) ===== -->
+<div id="image-modal" class="img-modal">
+  
+  <div class="modal-close-wrapper">
+    <button class="modal-btn" id="modal-close" title="Close" style="background: rgba(255, 107, 53, 0.4); border-color: rgba(255, 107, 53, 0.8);">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
   </div>
-</section>
 
-<!-- Next Case Study -->
-<section id="next-case" class="reveal" style="text-align: center; padding: 60px 2rem 100px; border-top: none;">
-  <p style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 16px;">Up Next</p>
-  <h2 style="font-family: var(--serif); font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 700; color: var(--text); margin-bottom: 32px;">MahaRERA Portal</h2>
-  <a href="#" class="hero-cta">View Next Case Study →</a>
-</section>
+  <div class="modal-zoom-controls">
+    <button class="modal-btn" id="modal-zoom-out" title="Zoom Out">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+    </button>
+    <button class="modal-btn" id="modal-zoom-in" title="Zoom In">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+    </button>
+  </div>
+  
+  <div class="modal-content-wrapper" id="modal-wrapper">
+    <img id="modal-img" class="modal-img" src="" alt="Expanded View">
+  </div>
+</div>
 
-<!-- FOOTER -->
-<footer>
-  <p>Imagine As You Read — UX Case Study · Kingston University London · CI7801 · 2025–26</p>
-  <p>Student: Ganesh Suresh Javhare · <a href="https://www.figma.com/proto/FUiwSOdjXdBgcrDTNjoepJ/Imagine-as-you-reasd?node-id=4-1357&t=XblD2iKXE9lO7PX1-0&scaling=scale-down&content-scaling=fixed&page-id=0%3A1" target="_blank">View Figma Prototype →</a></p>
-</footer>
 <script>
-  /* ── Add Reveal Classes to elements ── */
-  document.querySelectorAll('section, .card, .meta-card, .artifact-zone, .iteration-block, .stat-block, .persona-card, .fidelity-strip, .test-table, .comp-card, .outcome-card, .next-step').forEach(el => {
-    el.classList.add('reveal');
-  });
+/* ── Theme Toggle ── */
+const themeToggleBtn = document.getElementById('theme-toggle');
+const sunIcon = document.querySelector('.sun-icon');
+const moonIcon = document.querySelector('.moon-icon');
 
-  /* ── Scroll Reveal Observer ── */
-  const revealObserver = new IntersectionObserver((entries) => {
+const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : 'dark';
+document.documentElement.setAttribute('data-theme', currentTheme);
+updateThemeIcons(currentTheme);
+
+themeToggleBtn.addEventListener('click', () => {
+    let theme = document.documentElement.getAttribute('data-theme');
+    let switchToTheme = theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', switchToTheme);
+    localStorage.setItem('theme', switchToTheme);
+    updateThemeIcons(switchToTheme);
+});
+
+function updateThemeIcons(theme) {
+    if (theme === 'light') {
+        sunIcon.style.display = 'none';
+        moonIcon.style.display = 'block';
+    } else {
+        sunIcon.style.display = 'block';
+        moonIcon.style.display = 'none';
+    }
+}
+
+/* ── Panel Toggles ── */
+const toggleLeftBtn = document.getElementById('toggle-left-side');
+const toggleRightBtn = document.getElementById('toggle-right-side');
+const bodyEl = document.body;
+const breadcrumbBar = document.getElementById('breadcrumb-bar');
+
+function updatePanelState() {
+    const isLeftHidden = bodyEl.classList.contains('sidebar-hidden');
+    const isRightHidden = bodyEl.classList.contains('right-panel-hidden');
+    
+    toggleLeftBtn.title = isLeftHidden ? "Open Left Panel" : "Hide Left Panel";
+    toggleRightBtn.title = isRightHidden ? "Open Right Panel" : "Hide Right Panel";
+
+    if (isLeftHidden) {
+        bodyEl.classList.add('breadcrumb-active');
+        breadcrumbBar.classList.add('visible');
+    } else {
+        bodyEl.classList.remove('breadcrumb-active');
+        breadcrumbBar.classList.remove('visible');
+    }
+
+    // Dynamically update the Top Nav Layout Icon based on which panels are visible
+    const layoutToggleSvg = document.querySelector('#panel-layout-toggle svg');
+    if (layoutToggleSvg) {
+        if (!isLeftHidden && !isRightHidden) {
+            // Both panels open: Show left and right vertical lines
+            layoutToggleSvg.innerHTML = '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line>';
+        } else if (isLeftHidden && isRightHidden) {
+            // Both hidden: Show just the empty box
+            layoutToggleSvg.innerHTML = '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>';
+        } else if (!isLeftHidden && isRightHidden) {
+            // Left panel only open: Show left vertical line only
+            layoutToggleSvg.innerHTML = '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line>';
+        } else {
+            // Right panel only open: Show right vertical line only
+            layoutToggleSvg.innerHTML = '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="15" y1="3" x2="15" y2="21"></line>';
+        }
+    }
+}
+
+toggleLeftBtn.addEventListener('click', () => {
+    bodyEl.classList.toggle('sidebar-hidden');
+    updatePanelState();
+});
+
+toggleRightBtn.addEventListener('click', () => {
+    bodyEl.classList.toggle('right-panel-hidden');
+    updatePanelState();
+});
+
+if (window.innerWidth < 1150) { bodyEl.classList.add('right-panel-hidden'); }
+if (window.innerWidth <= 900)  { bodyEl.classList.add('sidebar-hidden'); }
+updatePanelState();
+
+/* ── Top Nav Panel Layout Toggle Cycle ── */
+const panelLayoutToggleBtn = document.getElementById('panel-layout-toggle');
+if (panelLayoutToggleBtn) {
+    panelLayoutToggleBtn.addEventListener('click', () => {
+        const isLeftHidden = bodyEl.classList.contains('sidebar-hidden');
+        const isRightHidden = bodyEl.classList.contains('right-panel-hidden');
+
+        if (!isLeftHidden && !isRightHidden) {
+            // Both open -> Hide both
+            bodyEl.classList.add('sidebar-hidden');
+            bodyEl.classList.add('right-panel-hidden');
+        } else if (isLeftHidden && isRightHidden) {
+            // Both hidden -> Show Left only
+            bodyEl.classList.remove('sidebar-hidden');
+        } else if (!isLeftHidden && isRightHidden) {
+            // Left only -> Show Right only
+            bodyEl.classList.add('sidebar-hidden');
+            bodyEl.classList.remove('right-panel-hidden');
+        } else {
+            // Right only -> Show Both
+            bodyEl.classList.remove('sidebar-hidden');
+            bodyEl.classList.remove('right-panel-hidden');
+        }
+        updatePanelState();
+    });
+}
+
+/* ── Progress bar ── */
+const pbar = document.getElementById('pbar');
+window.addEventListener('scroll', () => {
+  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+  pbar.style.width = pct + '%';
+}, { passive: true });
+
+
+/* ── Dynamic Artifacts Data for IYR ── */
+const sectionData = {
+  'overview': {
+    artifacts: ['Project brief', 'Scope map', 'Timeline'],
+    questions: ['What was the core problem?', 'What was the solution?', 'What was the timeline?']
+  },
+  'research': {
+    artifacts: ['Survey data', 'Affinity diagram', 'Competitor matrix'],
+    questions: ['What do users struggle with?', 'Where is the market gap?', 'What were the numbers?']
+  },
+  'personas': {
+    artifacts: ['Proto-personas', 'User quotes'],
+    questions: ['Who are we designing for?', 'What are their main goals?', 'What are the pain points?']
+  },
+  'design': {
+    artifacts: ['Information Architecture', 'MoSCoW priorities', 'User flow'],
+    questions: ['How is the app structured?', 'What are the core principles?', 'What hypotheses are tested?']
+  },
+  'prototypes': {
+    artifacts: ['Wireframes', 'Lo-Fi Paper', 'Hi-Fi Figma'],
+    questions: ['How did fidelity evolve?', 'What did we learn at each stage?']
+  },
+  'testing': {
+    artifacts: ['Test plan', 'Scorecard', 'Session photos'],
+    questions: ['Did it pass usability?', 'Where was the emotional friction?']
+  },
+  'iterations': {
+    artifacts: ['Before/After', 'Iteration log'],
+    questions: ['What changed based on data?', 'Why was it improved?']
+  },
+  'outcomes': {
+    artifacts: ['Impact summary', 'Roadmap', 'Takeaways'],
+    questions: ['Were hypotheses validated?', 'What are the limitations?', 'What are the next steps?']
+  }
+};
+
+function updateDynamicPanel(sectionId) {
+   const data = sectionData[sectionId];
+   if (!data) return;
+   
+   const chipsHtml = data.artifacts.map(a => `<span class="dyn-chip">${a}</span>`).join('');
+   document.getElementById('dyn-artifacts').innerHTML = chipsHtml;
+   
+   const qHtml = data.questions.map(q => `<li><span class="tick">✓</span><span class="q-text">${q}</span></li>`).join('');
+   document.getElementById('dyn-questions').innerHTML = qHtml;
+}
+
+
+/* ── Active nav & Breadcrumbs ── */
+const sections  = document.querySelectorAll('section.sec');
+const navLinks  = document.querySelectorAll('.sidebar .nav-link');
+const bcChapterText = document.getElementById('bc-chapter');
+const bcSectionText = document.getElementById('bc-section');
+const bcSectionMenu = document.getElementById('bc-section-menu');
+
+const ioOptions = { rootMargin: '-30% 0px -60% 0px', threshold: 0 };
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const id = e.target.id;
+      let activeText = '';
+      let activeChapter = '';
+      
+      sections.forEach(s => s.classList.remove('active-sec'));
+      e.target.classList.add('active-sec');
+
+      navLinks.forEach(a => {
+        const match = a.getAttribute('href') === '#' + id;
+        a.classList.toggle('active', match);
+        
+        if(match) {
+           activeText = a.getAttribute('data-name');
+           let prev = a.previousElementSibling;
+           while(prev) {
+               if(prev.classList.contains('sb-chapter-label')) {
+                   activeChapter = prev.getAttribute('data-chapter');
+                   break;
+               }
+               prev = prev.previousElementSibling;
+           }
+        }
+      });
+      
+      if(activeText) bcSectionText.textContent = activeText;
+      if(activeChapter) {
+         bcChapterText.textContent = activeChapter;
+         updateSectionDropdown(activeChapter);
+      }
+
+      updateDynamicPanel(id);
+      window.dispatchEvent(new Event('scroll'));
+    }
+  });
+}, ioOptions);
+
+sections.forEach(s => observer.observe(s));
+
+function updateSectionDropdown(chapterName) {
+   bcSectionMenu.innerHTML = ''; 
+   let collect = false;
+   const sidebarNodes = document.querySelector('.sb-nav').children;
+   
+   for(let i=0; i<sidebarNodes.length; i++) {
+      let node = sidebarNodes[i];
+      if(node.classList.contains('sb-chapter-label')) {
+         collect = (node.getAttribute('data-chapter') === chapterName);
+      } else if (collect && node.tagName === 'A') {
+         let clone = document.createElement('a');
+         clone.href = node.getAttribute('href');
+         clone.textContent = node.getAttribute('data-name');
+         bcSectionMenu.appendChild(clone);
+      }
+   }
+}
+
+/* ── Hero Observer for Snapshot Card ── */
+const heroSection = document.getElementById('hero');
+const snapshotCard = document.getElementById('snapshot-card');
+
+if (heroSection && snapshotCard) {
+  const heroObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        revealObserver.unobserve(entry.target);
+        snapshotCard.classList.remove('hidden-snapshot');
+      } else {
+        snapshotCard.classList.add('hidden-snapshot');
       }
     });
-  }, { threshold: 0.1 });
+  }, { threshold: 0.1 }); 
+  heroObserver.observe(heroSection);
+}
 
-  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+/* ── Checkmark Turning Green on Scroll ── */
+window.addEventListener('scroll', () => {
+   const activeSec = document.querySelector('section.sec.active-sec');
+   if(!activeSec) return;
+   
+   const rect = activeSec.getBoundingClientRect();
+   const progress = Math.max(0, Math.min(1, -rect.top / (rect.height * 0.8)));
+   
+   const qItems = document.querySelectorAll('#dyn-questions li');
+   if(!qItems.length) return;
+   
+   const threshold = 1 / qItems.length;
+   qItems.forEach((li, index) => {
+      if (progress >= index * threshold) {
+         li.classList.add('active');
+      } else {
+         li.classList.remove('active');
+      }
+   });
+}, { passive: true });
 
-  /* ── Custom Cursor Logic ── */
-  const cursor = document.getElementById('cursor');
-  const ring = document.getElementById('cursor-ring');
-  let mx = 0, my = 0, rx = 0, ry = 0;
-  const mouse = { x: -9999, y: -9999, active: false };
+/* ── Image Modal ── */
+const imageModal = document.getElementById('image-modal');
+const modalImg = document.getElementById('modal-img');
+const btnClose = document.getElementById('modal-close');
+const btnZoomIn = document.getElementById('modal-zoom-in');
+const btnZoomOut = document.getElementById('modal-zoom-out');
+let currentZoom = 100;
 
-  document.addEventListener('mousemove', e => {
-    mx = e.clientX; my = e.clientY;
-    cursor.style.left = mx + 'px';
-    cursor.style.top = my + 'px';
-    mouse.active = true;
-    mouse.x = e.pageX; mouse.y = e.pageY;
+document.querySelectorAll('.expand-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    const imgWrapper = e.currentTarget.closest('.expandable-img');
+    const imgSrc = imgWrapper.querySelector('img').src;
+    
+    currentZoom = 100;
+    modalImg.src = imgSrc;
+    modalImg.style.maxWidth = '100%';
+    modalImg.style.width = 'auto';
+    
+    imageModal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
   });
+});
 
-  document.addEventListener("mouseleave", () => { 
-    mouse.active = false; mouse.x = -9999; mouse.y = -9999; 
+btnClose.addEventListener('click', () => {
+  imageModal.style.display = 'none';
+  document.body.style.overflow = '';
+});
+
+btnZoomIn.addEventListener('click', () => {
+  currentZoom = Math.min(currentZoom + 25, 500); 
+  modalImg.style.maxWidth = 'none';
+  modalImg.style.width = currentZoom + '%';
+});
+
+btnZoomOut.addEventListener('click', () => {
+  currentZoom = Math.max(currentZoom - 25, 10); 
+  modalImg.style.maxWidth = 'none'; 
+  modalImg.style.width = currentZoom + '%';
+});
+
+/* ── More Projects Toggle ── */
+const moreProjectsBtn = document.getElementById('more-projects-btn');
+const moreProjectsList = document.getElementById('more-projects-list');
+if (moreProjectsBtn && moreProjectsList) {
+  moreProjectsBtn.addEventListener('click', () => {
+    moreProjectsBtn.classList.toggle('open');
+    moreProjectsList.classList.toggle('open');
   });
+}
 
-  function animateRing() {
-    rx += (mx - rx) * 0.12;
-    ry += (my - ry) * 0.12;
-    ring.style.left = rx + 'px';
-    ring.style.top = ry + 'px';
-    requestAnimationFrame(animateRing);
-  }
-  animateRing();
+/* ── Mobile menu ── */
+const ham    = document.getElementById('ham');
+const mob    = document.getElementById('mob-menu');
+ham.addEventListener('click', () => {
+  const open = mob.classList.toggle('open');
+  ham.classList.toggle('open', open);
+  document.body.style.overflow = open ? 'hidden' : '';
+});
 
-  document.querySelectorAll('a, button, .card, .artifact-zone, .iteration-block, .persona-card, .hero-cta').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      cursor.style.width = '20px'; cursor.style.height = '20px'; cursor.style.background = 'var(--accent2)';
-      ring.style.width = '56px'; ring.style.height = '56px'; ring.style.borderColor = 'rgba(123,108,255,0.5)';
+/* ── Scroll reveal ── */
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (!prefersReducedMotion) {
+  const revealObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        revealObs.unobserve(e.target);
+      }
     });
-    el.addEventListener('mouseleave', () => {
-      cursor.style.width = '12px'; cursor.style.height = '12px'; cursor.style.background = 'var(--accent)';
-      ring.style.width = '36px'; ring.style.height = '36px'; ring.style.borderColor = 'rgba(200,240,96,0.4)';
-    });
-  });
+  }, { threshold: 0.08, rootMargin: '0px 0px -60px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+} else {
+  document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+}
 
-  /* ── Interactive Dots Canvas ── *
-  const canvas = document.getElementById("dots");
-  const ctx = canvas.getContext("2d");
-  let w = 0, h = 0, dpr = Math.max(1, window.devicePixelRatio || 1);
-  let points = [];
-  const spacing = 40;
-
-  function resize(){
-      w = window.innerWidth;
-      h = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight, window.innerHeight);
-      canvas.width = Math.floor(w * dpr);
-      canvas.height = Math.floor(h * dpr);
-      canvas.style.width = w + "px";
-      canvas.style.height = h + "px"; 
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-      points = [];
-      let cols = Math.ceil(w / spacing) + 1;
-      let rows = Math.ceil(h / spacing) + 1;
-
-      for (let y = 0; y < rows; y++){
-          for (let x = 0; x < cols; x++){
-              points.push({ ox: x * spacing, oy: y * spacing });
-          }
-      }
-  }*/
-
-  function draw(){
-      ctx.clearRect(0, 0, w, h);
-      const scrollY = window.scrollY || document.documentElement.scrollTop;
-      const viewportH = window.innerHeight;
-
-      for (let i = 0; i < points.length; i++){
-          const p = points[i];
-          if (p.oy < scrollY - 150 || p.oy > scrollY + viewportH + 150) continue; 
-          
-          let distToMouse = 9999; 
-          if (mouse.active){
-              const dx = p.ox - mouse.x; const dy = p.oy - mouse.y;
-              distToMouse = Math.hypot(dx, dy); 
-
-              if (distToMouse < 100) {
-                  ctx.beginPath(); ctx.moveTo(p.ox, p.oy); ctx.lineTo(mouse.x, mouse.y);
-                  const opacity = (1 - (distToMouse / 100)) * 0.15;
-                  ctx.strokeStyle = `rgba(200, 240, 96, ${opacity})`; ctx.lineWidth = 1; ctx.stroke();
-              }
-          }
-
-          ctx.beginPath();
-          if (mouse.active && distToMouse < 150) {
-              const intensity = 1 - (distToMouse / 150);
-              ctx.arc(p.ox, p.oy, 1.2 + (intensity * 1.5), 0, Math.PI * 2);
-              ctx.fillStyle = `rgba(200, 240, 96, ${Math.max(0.04, intensity * 0.4)})`; 
-          } else {
-              ctx.arc(p.ox, p.oy, 1.2, 0, Math.PI * 2);
-              ctx.fillStyle = `rgba(255, 255, 255, 0.03)`;
-          }
-          ctx.fill();
-      }
-      requestAnimationFrame(draw);
-  }
-
-  let resizeTimeout;
-  window.addEventListener("resize", () => {
-      clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(resize, 200);
-  });
-
-  window.addEventListener("load", resize);
-  resize(); draw();
-
-  /* ── Hero Background Image Handler ── */
-  const heroSection = document.getElementById('hero-section');
-  
-  // Function to set hero background image
-  window.setHeroBackground = function(imageUrl) {
-    if (imageUrl) {
-      heroSection.style.backgroundImage = `url('${imageUrl}')`;
-      heroSection.style.backgroundSize = 'cover';
-      heroSection.style.backgroundPosition = 'center';
-      heroSection.style.backgroundAttachment = 'scroll';
-      // Optional: Add an overlay to ensure text readability
-      if (!heroSection.style.backgroundBlendMode) {
-        heroSection.style.backgroundColor = 'rgba(10, 10, 15, 0.7)';
-        heroSection.style.backgroundBlendMode = 'darken';
-      }
-    }
-  };
-
-  // Optional: Add console hint for users
-  console.log('💡 To add a background image to the hero section, use: setHeroBackground("https://your-image-url.jpg")');
 </script>
 </body>
 </html>
