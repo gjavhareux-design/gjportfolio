@@ -6,12 +6,9 @@
   <title>Ganesh Javhare — UX Designer</title>
   
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
-  
-  <!-- Added Three.js for 3D Globe & AI Background -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  
-  <!-- Added Lenis for buttery smooth momentum scrolling -->
-  <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+  <!-- Three.js and Lenis are loaded just before the closing </body> tag so they never block the
+       first paint of the page. This keeps initial page-load smooth on slower connections and
+       on browsers that are slower to parse/execute large third-party scripts (e.g. Safari/iOS). -->
 
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -103,59 +100,91 @@
 
     html { overscroll-behavior: none; }
 
+    html { scroll-behavior: smooth; overflow-x: hidden; } /* native fallback in case JS smooth-scroll (Lenis) fails to load */
+
     body {
       font-family: 'DM Sans', sans-serif;
       background: var(--bg);
       color: var(--text);
       overflow-x: hidden;
-      cursor: none;
       transition: background-color 0.5s ease, color 0.5s ease;
     }
 
-    /* ── Custom Cursor ── */
-    #cursor {
-      position: fixed; top: 0; left: 0;
-      width: 12px; height: 12px;
-      background: var(--accent);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 9999;
-      transition: transform 0.15s ease, width 0.25s ease, height 0.25s ease, background 0.2s;
-      transform: translate(-50%, -50%);
+    /* ── Custom Cursor — only on devices with an actual mouse/trackpad.
+         Touchscreens never match this query, so they keep completely normal default
+         behavior and are never at risk of ending up with no visible cursor. ── */
+    @media (hover: hover) and (pointer: fine) {
+      body,
+      .theme-toggle-btn,
+      .project-card,
+      .card,
+      .form-btn,
+      .view-toggle button { cursor: none; }
+
+      #cursor {
+        position: fixed; top: 0; left: 0;
+        width: 12px; height: 12px;
+        background: var(--accent);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 9999;
+        opacity: 0;
+        transition: width 0.25s ease, height 0.25s ease, background 0.2s, opacity 0.2s ease;
+        transform: translate(-50%, -50%);
+      }
+      body:hover #cursor { opacity: 1; }
+
+      #cursor-ring {
+        position: fixed; top: 0; left: 0;
+        width: 36px; height: 36px;
+        border: 1.5px solid var(--accent);
+        opacity: 0.4;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 9998;
+        transform: translate(-50%, -50%);
+        transition: width 0.25s ease, height 0.25s ease, border-color 0.2s;
+      }
+      #cursor-text-ring {
+        position: fixed; top: 0; left: 0;
+        width: 120px; height: 120px;
+        pointer-events: none;
+        z-index: 9997;
+        transform: translate(-50%, -50%) scale(0);
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+        opacity: 0;
+      }
+      #cursor-text-ring svg {
+        width: 100%; height: 100%;
+        animation: spinText 12s linear infinite;
+      }
+      #cursor-text-ring text {
+        font-family: 'Syne', sans-serif;
+        font-size: 13.5px;
+        font-weight: 700;
+        fill: var(--accent);
+        letter-spacing: 2px;
+      }
+      @keyframes spinText { 100% { transform: rotate(360deg); } }
+
+      #cursor-center-text {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 700;
+        color: var(--accent); line-height: 1.1; text-transform: uppercase; letter-spacing: 1px;
+      }
     }
-    #cursor-ring {
-      position: fixed; top: 0; left: 0;
-      width: 36px; height: 36px;
-      border: 1.5px solid var(--accent);
-      opacity: 0.4;
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 9998;
-      transform: translate(-50%, -50%);
-      transition: transform 0.08s linear, width 0.25s ease, height 0.25s ease, border-color 0.2s;
+
+    /* ── Reduced motion: respect OS-level preference for fewer/no animations.
+         This also helps perceived smoothness for users on lower-powered devices. ── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+      }
     }
-    #cursor-text-ring {
-      position: fixed; top: 0; left: 0;
-      width: 120px; height: 120px;
-      pointer-events: none;
-      z-index: 9997;
-      transform: translate(-50%, -50%) scale(0);
-      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
-      opacity: 0;
-    }
-    #cursor-text-ring svg {
-      width: 100%; height: 100%;
-      animation: spinText 12s linear infinite;
-    }
-    #cursor-text-ring text {
-      font-family: 'Syne', sans-serif;
-      font-size: 13.5px;
-      font-weight: 700;
-      fill: var(--accent);
-      letter-spacing: 2px;
-    }
-    @keyframes spinText { 100% { transform: rotate(360deg); } }
-    body:hover #cursor { opacity: 1; }
 
     /* ── Noise Overlay ── */
     body::before {
@@ -204,7 +233,7 @@
     .nav-logo { 
       justify-self: start;
       font-family: 'Syne', sans-serif;
-      font-weight: 750; font-size: 1.2rem;
+      font-weight: 700; font-size: 1.2rem;
       letter-spacing: -0.02em;
       color: var(--text); 
       text-decoration: none;
@@ -252,7 +281,7 @@
       background: none; border: none; color: var(--text);
       width: 40px; height: 40px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      cursor: none; transition: background 0.3s, transform 0.3s;
+      cursor: pointer; transition: background 0.3s, transform 0.3s;
     }
     .theme-toggle-btn:hover { background: var(--border); transform: rotate(15deg); }
     .theme-toggle-btn svg { width: 20px; height: 20px; fill: currentColor; }
@@ -283,7 +312,7 @@
       -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);
       transition: background-image 0.5s ease;
     }
-    .hero-orb { position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none; }
+    .hero-orb { position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none; will-change: transform; }
     
     .orb1 {
       width: 200px; height: 600px;
@@ -321,8 +350,8 @@
 
     .hero-headline {
       font-family: 'Syne', sans-serif;
-      font-size: clamp(3.5rem, 3.5rem, 3.5rem);
-      font-weight: 800; line-height: 1.0;
+      font-size: clamp(2.1rem, 1.2rem + 4.2vw, 3.6rem);
+      font-weight: 800; line-height: 1.05;
       letter-spacing: -0.01em;
       margin-bottom: 32px;
     }
@@ -396,11 +425,12 @@
       position: relative; overflow: hidden;
     }
     .scroll-line::after {
-      content: ''; position: absolute; top: 0; left: -100%;
+      content: ''; position: absolute; top: 0; left: 0;
       width: 100%; height: 100%; background: var(--accent);
+      translate: -100% 0;
       animation: scrollSlide 2s ease-in-out infinite;
     }
-    @keyframes scrollSlide { 0%{left:-100%} 100%{left:100%} }
+    @keyframes scrollSlide { 0%{ translate: -100% 0; } 100%{ translate: 100% 0; } }
 
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(20px); }
@@ -415,14 +445,18 @@
     }
     .hero-visuals {
       perspective: 1200px;
-      width: 100%; max-width: 400px; height: 400px;
+      width: 100%; max-width: 400px; aspect-ratio: 1 / 1; height: auto;
       position: relative; margin: 0 auto; z-index: 5;
     }
     .floating-cards-group {
       position: relative; width: 100%; height: 80%;
       transform-style: preserve-3d;
       transform: rotateX(15deg) rotateY(-20deg) rotateZ(5deg);
-      transition: transform 0.4s ease-out;
+      /* No CSS transition here on purpose: a transition fighting a value that's
+         retargeted on every mousemove (60-120×/sec) is what caused the old
+         "snapping" feel. The smoothing is done frame-by-frame in JS instead
+         (see HERO 3D PARALLAX EFFECT below), which is the correct tool for a
+         continuously-updated target. */
     }
     .dc-card {
       position: absolute;
@@ -461,7 +495,7 @@
     .hero-visuals:hover .dc-right { transform: translateZ(70px) translateX(40px) translateY(20px); }
     .hero-visuals:hover .dc-blue { transform: translateZ(160px) translateY(30px); }
 
-    .float-anim { animation: floatLayer 6s ease-in-out infinite alternate; }
+    .float-anim { animation: floatLayer 6s ease-in-out infinite alternate; will-change: translate; }
     .dc-main { animation-delay: -1s; animation-duration: 5s;}
     .dc-cert-back { animation-delay: -3s; animation-duration: 5s;}
     .dc-cert-front { animation-delay: 0s; animation-duration: 6s;}
@@ -469,7 +503,10 @@
     .dc-right { animation-delay: -4s; animation-duration: 7.5s;}
     .dc-blue { animation-delay: -1.5s; animation-duration: 5.5s;}
 
-    @keyframes floatLayer { 0% { margin-top: 0px; } 100% { margin-top: -15px; } }
+    /* Uses the standalone CSS `translate` property (not `transform`) so this floating bob
+       animation composites independently of each card's transform: translateZ(...) depth offset
+       and the .hero-visuals:hover transform overrides below — no fighting, no layout thrash. */
+    @keyframes floatLayer { 0% { translate: 0 0; } 100% { translate: 0 -15px; } }
 
     /* ── Section Base ── */
     section { padding: 100px 60px; position: relative; }
@@ -515,7 +552,7 @@
       position: absolute; right: 60px; top: -60px;
       background: var(--surface); border: 1px solid var(--border); 
       border-radius: 16px; padding: 20px 25px; width: 200px;
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
     }
     .badge-title { font-size: 0.78rem; font-weight: 600; color: var(--muted); margin-bottom: 2px; }
     .badge-val { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 700; color: var(--text); }
@@ -543,7 +580,7 @@
 
     #card-backdrop {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(10, 10, 15, 0.85); backdrop-filter: blur(12px);
+      background: rgba(10, 10, 15, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
       z-index: 9990; opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
     }
     [data-theme="light"] #card-backdrop { background: rgba(255, 255, 255, 0.85); }
@@ -551,7 +588,7 @@
 
     .expand-btn {
       position: absolute; top: 20px; right: 20px; width: 44px; height: 44px;
-      background: var(--surface); backdrop-filter: blur(8px);
+      background: var(--surface); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
       border: 1px solid var(--border); border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
       color: var(--text); font-size: 1.4rem; z-index: 20; opacity: 0; transform: scale(0.9); transition: all 0.3s ease;
@@ -574,7 +611,7 @@
     .projects-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; }
     .project-card {
       border-radius: 20px; overflow: hidden; background: var(--card-bg); border: 1px solid var(--border);
-      position: relative; cursor: none; transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s, border-color 0.3s;
+      position: relative; cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s, border-color 0.3s;
     }
     .project-card:hover { transform: translateY(-6px); box-shadow: 0 24px 60px rgba(0,0,0,0.15); }
     .project-card:hover .project-overlay { opacity: 1; }
@@ -654,7 +691,7 @@
         position: relative; z-index: 1; padding: 60px 25px 30px 25px; 
         box-sizing: border-box; transform: skewX(-8deg);
         transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s, border-color 0.3s;
-        cursor: none;
+        cursor: pointer;
     }
     [data-theme="dark"] .card { box-shadow: -18px -8px 30px rgba(0,0,0,0.4); }
 
@@ -802,7 +839,7 @@
     .form-btn {
       width: 100%; padding: 15px; background: var(--accent); color: var(--btn-text);
       border: none; border-radius: 12px; font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700;
-      cursor: none; letter-spacing: 0.02em; transition: transform 0.2s, box-shadow 0.2s, background 0.3s, color 0.3s;
+      cursor: pointer; letter-spacing: 0.02em; transition: transform 0.2s, box-shadow 0.2s, background 0.3s, color 0.3s;
     }
     .form-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255, 95, 0, 0.3); }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -837,8 +874,16 @@
 
     /* ── Responsive ── */
     @media (max-width: 1024px) {
-      nav { padding: 20px 32px; } section { padding: 80px 32px; } #hero { padding: 120px 32px 80px; }
-      .hero-stats { right: 32px; } #about { grid-template-columns: 1fr; gap: 48px; }
+      nav { padding: 20px 32px; } section { padding: 80px 32px; } #hero { padding: 120px 32px 80px; min-height: auto; }
+      .hero-inner { flex-direction: column; gap: 56px; text-align: center; }
+      .hero-left { max-width: 100%; }
+      .hero-eyebrow { justify-content: center; }
+      .hero-actions { justify-content: center; flex-wrap: wrap; }
+      .hero-right { width: 100%; }
+      .hero-visuals { max-width: 360px; }
+      .scroll-indicator { left: 50%; transform: translateX(-50%); }
+      .hero-stats { right: auto; }
+      #about { grid-template-columns: 1fr; gap: 48px; }
       .about-visual { height: 360px; } .about-img-frame { width: 260px; height: 320px; }
       .about-badge2 { left: 120px; top: 180px; width: 200px; } #contact { grid-template-columns: 1fr; gap: 48px; }
       .process-grid { grid-template-columns: repeat(2, 1fr); } .testimonials-wrap { grid-template-columns: 1fr 1fr; }
@@ -848,11 +893,24 @@
     @media (max-width: 768px) {
       nav { padding: 18px 20px; grid-template-columns: 1fr auto; } .nav-links { display: none; } section { padding: 64px 20px; }
       #hero { padding: 100px 20px 80px; } .hero-stats { position: relative; flex-direction: row; margin-top: 30px; gap: 24px; flex-wrap: wrap; justify-content: center;}
+      .hero-visuals { max-width: 300px; }
+      .floating-cards-group { scale: 0.85; }
+      .hero-sub { margin-left: auto; margin-right: auto; }
       .projects-grid { grid-template-columns: 1fr; } .card-lg, .card-sm, .card-md, .card-full { grid-column: span 1; }
       .process-grid { grid-template-columns: 1fr 1fr; } .skills-layout { grid-template-columns: 1fr; gap: 40px; }
       .ai-features { grid-template-columns: 1fr; } .testimonials-wrap { grid-template-columns: 1fr; }
       .form-row { grid-template-columns: 1fr; } footer { padding: 30px 20px; }
       #about-globe-container { width: 400px; height: 400px; bottom: -260px; }
+    }
+    @media (max-width: 480px) {
+      #hero { padding: 96px 16px 64px; }
+      .hero-visuals { max-width: 230px; }
+      .floating-cards-group { scale: 0.65; }
+      .hero-eyebrow { font-size: 0.7rem; text-align: center; }
+      .hero-actions { gap: 12px; }
+      .btn-primary, .btn-secondary { font-size: 0.85rem; }
+      .hero-stats { gap: 16px; }
+      .stat-num { font-size: 2rem; }
     }
 
     /* List View Elements */
@@ -860,12 +918,11 @@
     .view-toggle button {
       background: transparent; border: 1px solid var(--border); color: var(--muted); 
       width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
-      cursor: none; transition: all 0.2s;
+      cursor: pointer; transition: all 0.2s;
     }
     .view-toggle button.active, .view-toggle button:hover { background: var(--card-bg); color: var(--accent); border-color: var(--accent); }
     .project-year { display: none; font-size: 0.9rem; color: var(--muted); font-weight: 700; font-family: 'DM Sans', sans-serif; }
     .explore-btn-list { display: none; }
-    #cursor-center-text { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 700; color: var(--accent); line-height: 1.1; text-transform: uppercase; letter-spacing: 1px; }
     .project-number { display: none; } .read-time-list { display: none; }
     .title-tags-wrap { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
     .projects-grid:not(.list-view) .project-name { font-size: 1.25rem; font-weight: 700; margin: 0; }
@@ -930,7 +987,7 @@
 </div>
 <div id="card-backdrop"></div>
 
-<!-- Cursor -->
+<!-- Custom cursor (only ever shown on mouse/trackpad devices — see CSS media query) -->
 <div id="cursor"></div>
 <div id="cursor-ring"></div>
 <div id="cursor-text-ring">
@@ -1662,6 +1719,11 @@
   </div>
 </footer>
 
+<!-- Three.js for the 3D Globe & AI Background, and Lenis for smooth momentum scrolling.
+     Loaded here (end of body) instead of <head> so they never block the page's first paint. -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+
 <script>
   
   // =====================================================================
@@ -1696,90 +1758,75 @@
   }
 
   // =====================================================================
-  // --- LENIS SMOOTH SCROLL INITIALIZATION ---
+  // --- SMOOTH SCROLL INITIALIZATION (Lenis, with native fallback) ---
   // =====================================================================
-  const lenis = new Lenis({
-    duration: 1.2,
-    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    direction: 'vertical',
-    gestureDirection: 'vertical',
-    smooth: true,
-    mouseMultiplier: 1,
-    smoothTouch: false,
-    touchMultiplier: 2,
-    infinite: false,
-  });
+  // Lenis is loaded from a CDN. If the request is blocked (ad-blocker, offline,
+  // flaky network, restrictive corporate network, etc.) `Lenis` won't exist —
+  // guarding this means the rest of the page's interactivity still works
+  // perfectly even when smooth scroll itself can't load.
+  let lenis = null;
+  try {
+    if (typeof Lenis !== 'undefined') {
+      lenis = new Lenis({
+        duration: 1.1,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        gestureDirection: 'vertical',
+        smoothWheel: true,
+        smoothTouch: false,
+        touchMultiplier: 2,
+      });
 
-  function rafLenis(time) {
-    lenis.raf(time);
-    requestAnimationFrame(rafLenis);
+      let lenisRafId = null;
+      function rafLenis(time) {
+        lenis.raf(time);
+        lenisRafId = requestAnimationFrame(rafLenis);
+      }
+      lenisRafId = requestAnimationFrame(rafLenis);
+
+      // Pause the Lenis raf loop while the tab isn't visible to save battery/CPU.
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          cancelAnimationFrame(lenisRafId);
+        } else {
+          lenisRafId = requestAnimationFrame(rafLenis);
+        }
+      });
+    }
+  } catch (err) {
+    lenis = null;
+    console.warn('Smooth scroll (Lenis) failed to initialize — using native scrolling instead.', err);
   }
-  requestAnimationFrame(rafLenis);
 
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
+      const targetSelector = this.getAttribute('href');
+      if (!targetSelector || targetSelector.length < 2) return;
+      const targetEl = document.querySelector(targetSelector);
+      if (!targetEl) return;
       e.preventDefault();
-      const target = this.getAttribute('href');
-      lenis.scrollTo(target, {
-        offset: 0,
-        duration: 1.5,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      });
+      if (lenis) {
+        lenis.scrollTo(targetSelector, {
+          offset: 0,
+          duration: 1.5,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        });
+      } else {
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     });
   });
 
-  /* ── Cursor ── */
-  const cursor = document.getElementById('cursor');
-  const ring = document.getElementById('cursor-ring');
-  let mx = 0, my = 0, rx = 0, ry = 0;
-
+  /* ── Pointer tracking (used by the canvas background's hover "snap lines") ── */
   const mouse = { x: -9999, y: -9999, active: false };
 
   document.addEventListener('mousemove', e => {
-    mx = e.clientX; my = e.clientY;
-    cursor.style.left = mx + 'px';
-    cursor.style.top = my + 'px';
     mouse.active = true;
-    mouse.x = e.pageX; 
+    mouse.x = e.pageX;
     mouse.y = e.pageY;
   });
 
-  document.addEventListener("mouseleave", () => { 
-    mouse.active = false; mouse.x = -9999; mouse.y = -9999; 
-  });
-
- const cursorTextRing = document.getElementById('cursor-text-ring');
-  
-  function animateRing() {
-    rx += (mx - rx) * 0.12;
-    ry += (my - ry) * 0.12;
-    ring.style.left = rx + 'px';
-    ring.style.top = ry + 'px';
-    if(cursorTextRing) {
-      cursorTextRing.style.left = rx + 'px';
-      cursorTextRing.style.top = ry + 'px';
-    }
-    requestAnimationFrame(animateRing);
-  }
-  animateRing();
-
-  document.querySelectorAll('a:not(.project-card), button, .tool-item, .contact-link').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      cursor.style.width = '20px';
-      cursor.style.height = '20px';
-      cursor.style.background = 'var(--accent2)';
-      ring.style.width = '56px';
-      ring.style.height = '56px';
-      ring.style.borderColor = 'rgba(123,108,255,0.5)';
-    });
-    el.addEventListener('mouseleave', () => {
-      cursor.style.width = '12px';
-      cursor.style.height = '12px';
-      cursor.style.background = 'var(--accent)';
-      ring.style.width = '36px';
-      ring.style.height = '36px';
-      ring.style.borderColor = 'rgba(200,240,96,0.4)';
-    });
+  document.addEventListener('mouseleave', () => {
+    mouse.active = false; mouse.x = -9999; mouse.y = -9999;
   });
 
   // --- LIST VIEW TOGGLE LOGIC ---
@@ -1810,55 +1857,42 @@
     }
   });
 
-  // --- DYNAMIC CIRCULAR TEXT HOVER LOGIC ---
-  document.querySelectorAll('.project-card').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      cursor.style.width = '6px';
-      cursor.style.height = '6px';
-      cursor.style.background = 'var(--accent)';
-      ring.style.width = '0px';
-      ring.style.height = '0px';
-      ring.style.borderColor = 'transparent';
-      cursorTextRing.style.transform = 'translate(-50%, -50%) scale(1)';
-      cursorTextRing.style.opacity = '1';
+  // =====================================================================
+  // --- CUSTOM CURSOR (mouse/trackpad devices only) ---
+  // =====================================================================
+  // Gated on the same media feature as the CSS, so we never attach extra
+  // mousemove listeners (or hide anything) on touchscreens.
+  const pointerFine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
-      const projectName = el.querySelector('.project-name').innerText;
-      const isProgress = el.querySelector('.p-tag.in-progress');
-      const textPath = document.getElementById('cursor-text-path');
-      const centerText = document.getElementById('cursor-center-text');
-      
-      const readTime = el.getAttribute('data-read-time') || '10';
-      centerText.innerHTML = `<span>${readTime} MIN</span><span>READ</span>`;
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  const cursorTextRing = document.getElementById('cursor-text-ring');
 
-      if (isProgress) {
-        let newText = `EXPLORE ${projectName.toUpperCase()} CASE STUDY • `;
-        if (newText.length < 50) newText += newText; 
-        textPath.textContent = newText;
-      } else {
-        textPath.textContent = `EXPLORE CASE STUDY • EXPLORE CASE STUDY • `;
-      }
+  if (pointerFine && cursor && ring) {
+    let mx = -9999, my = -9999, rx = -9999, ry = -9999;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      // Standalone `translate` (not `transform`) so it never fights the element's
+      // own `transform: translate(-50%, -50%)` centering offset set in CSS.
+      cursor.style.translate = `${mx}px ${my}px`;
     });
 
-    el.addEventListener('mouseleave', () => {
-      cursor.style.width = '12px';
-      cursor.style.height = '12px';
-      cursor.style.background = 'var(--accent)';
-      ring.style.width = '36px';
-      ring.style.height = '36px';
-      ring.style.borderColor = 'var(--accent)';
-      cursorTextRing.style.transform = 'translate(-50%, -50%) scale(0)';
-      cursorTextRing.style.opacity = '0';
-    });
+    // The dot tracks the pointer 1:1 (no lag). The ring/text-ring trail behind it
+    // with a gentle lerp each frame — that gap between the two is what reads as
+    // smooth rather than instant/robotic.
+    function animateRing() {
+      requestAnimationFrame(animateRing);
+      rx += (mx - rx) * 0.15;
+      ry += (my - ry) * 0.15;
+      ring.style.translate = `${rx}px ${ry}px`;
+      if (cursorTextRing) cursorTextRing.style.translate = `${rx}px ${ry}px`;
+    }
+    animateRing();
 
-    el.querySelectorAll('.expand-btn, .explore-btn-list').forEach(btn => {
-      btn.addEventListener('mouseenter', (e) => {
-        cursorTextRing.style.transform = 'translate(-50%, -50%) scale(0)';
-        cursorTextRing.style.opacity = '0';
-        const thumb = el.querySelector('.project-thumb');
-        if(thumb) {
-            thumb.style.opacity = '0';
-            thumb.style.transform = 'translate(-50%, -50%) scale(0.8)';
-        }
+    // Generic interactive elements: dot/ring grow and tint accent2.
+    document.querySelectorAll('a:not(.project-card), button, .tool-item, .contact-link').forEach(el => {
+      el.addEventListener('mouseenter', () => {
         cursor.style.width = '20px';
         cursor.style.height = '20px';
         cursor.style.background = 'var(--accent2)';
@@ -1866,24 +1900,125 @@
         ring.style.height = '56px';
         ring.style.borderColor = 'rgba(123,108,255,0.5)';
       });
-      
-      btn.addEventListener('mouseleave', (e) => {
-        cursorTextRing.style.transform = 'translate(-50%, -50%) scale(1)';
-        cursorTextRing.style.opacity = '1';
-        const thumb = el.querySelector('.project-thumb');
-        if(thumb) {
-            thumb.style.opacity = ''; 
-            thumb.style.transform = ''; 
-        }
+      el.addEventListener('mouseleave', () => {
+        cursor.style.width = '12px';
+        cursor.style.height = '12px';
+        cursor.style.background = 'var(--accent)';
+        ring.style.width = '36px';
+        ring.style.height = '36px';
+        ring.style.borderColor = 'rgba(200,240,96,0.4)';
+      });
+    });
+
+    // Project cards: shrink the dot, hide the ring, and spin up the
+    // "EXPLORE CASE STUDY" text ring around the reading-time label.
+    document.querySelectorAll('.project-card').forEach(el => {
+      el.addEventListener('mouseenter', () => {
         cursor.style.width = '6px';
         cursor.style.height = '6px';
         cursor.style.background = 'var(--accent)';
         ring.style.width = '0px';
         ring.style.height = '0px';
         ring.style.borderColor = 'transparent';
+        if (cursorTextRing) {
+          cursorTextRing.style.transform = 'translate(-50%, -50%) scale(1)';
+          cursorTextRing.style.opacity = '1';
+        }
+
+        const nameEl = el.querySelector('.project-name');
+        const projectName = nameEl ? nameEl.innerText : '';
+        const isProgress = el.querySelector('.p-tag.in-progress');
+        const textPath = document.getElementById('cursor-text-path');
+        const centerText = document.getElementById('cursor-center-text');
+
+        const readTime = el.getAttribute('data-read-time') || '10';
+        if (centerText) centerText.innerHTML = `<span>${readTime} MIN</span><span>READ</span>`;
+
+        if (textPath) {
+          if (isProgress) {
+            let newText = `EXPLORE ${projectName.toUpperCase()} CASE STUDY • `;
+            if (newText.length < 50) newText += newText;
+            textPath.textContent = newText;
+          } else {
+            textPath.textContent = `EXPLORE CASE STUDY • EXPLORE CASE STUDY • `;
+          }
+        }
+      });
+
+      el.addEventListener('mouseleave', () => {
+        cursor.style.width = '12px';
+        cursor.style.height = '12px';
+        cursor.style.background = 'var(--accent)';
+        ring.style.width = '36px';
+        ring.style.height = '36px';
+        ring.style.borderColor = 'var(--accent)';
+        if (cursorTextRing) {
+          cursorTextRing.style.transform = 'translate(-50%, -50%) scale(0)';
+          cursorTextRing.style.opacity = '0';
+        }
+      });
+
+      // Hovering the expand/explore buttons: hide the text ring and the floating
+      // thumbnail preview so they don't fight for the same space as the button.
+      el.querySelectorAll('.expand-btn, .explore-btn-list').forEach(btn => {
+        btn.addEventListener('mouseenter', () => {
+          if (cursorTextRing) {
+            cursorTextRing.style.transform = 'translate(-50%, -50%) scale(0)';
+            cursorTextRing.style.opacity = '0';
+          }
+          const thumb = el.querySelector('.project-thumb');
+          if (thumb) {
+            thumb.style.opacity = '0';
+            thumb.style.transform = 'translate(-50%, -50%) scale(0.8)';
+          }
+          cursor.style.width = '20px';
+          cursor.style.height = '20px';
+          cursor.style.background = 'var(--accent2)';
+          ring.style.width = '56px';
+          ring.style.height = '56px';
+          ring.style.borderColor = 'rgba(123,108,255,0.5)';
+        });
+        btn.addEventListener('mouseleave', () => {
+          if (cursorTextRing) {
+            cursorTextRing.style.transform = 'translate(-50%, -50%) scale(1)';
+            cursorTextRing.style.opacity = '1';
+          }
+          const thumb = el.querySelector('.project-thumb');
+          if (thumb) {
+            thumb.style.opacity = '';
+            thumb.style.transform = '';
+          }
+          cursor.style.width = '6px';
+          cursor.style.height = '6px';
+          cursor.style.background = 'var(--accent)';
+          ring.style.width = '0px';
+          ring.style.height = '0px';
+          ring.style.borderColor = 'transparent';
+        });
       });
     });
-  }); 
+  } else {
+    // Touch/coarse-pointer devices: no custom cursor, but the floating thumbnail
+    // preview on .expand-btn/.explore-btn-list still needs its show/hide behavior.
+    document.querySelectorAll('.project-card').forEach(el => {
+      el.querySelectorAll('.expand-btn, .explore-btn-list').forEach(btn => {
+        btn.addEventListener('mouseenter', () => {
+          const thumb = el.querySelector('.project-thumb');
+          if (thumb) {
+            thumb.style.opacity = '0';
+            thumb.style.transform = 'translate(-50%, -50%) scale(0.8)';
+          }
+        });
+        btn.addEventListener('mouseleave', () => {
+          const thumb = el.querySelector('.project-thumb');
+          if (thumb) {
+            thumb.style.opacity = '';
+            thumb.style.transform = '';
+          }
+        });
+      });
+    });
+  }
 
   /* ── Scroll Reveal ── */
   const revealObserver = new IntersectionObserver((entries) => {
@@ -1943,6 +2078,7 @@
   // =====================================================================
   const aiChipContainer = document.getElementById('ai-chip-canvas');
   if (aiChipContainer && typeof THREE !== 'undefined') {
+    try {
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(45, aiChipContainer.clientWidth / aiChipContainer.clientHeight, 0.1, 1000);
       camera.position.set(0, 90, 130);
@@ -2140,8 +2276,10 @@
       });
 
       let time = 0;
+      let aiSceneActive = true; // paused automatically when off-screen or the tab is hidden
       function animateAI() {
           requestAnimationFrame(animateAI);
+          if (!aiSceneActive) return;
           time += 0.01;
           scene.rotation.y = Math.sin(time * 0.5) * 0.1;
           scene.rotation.x = Math.cos(time * 0.3) * 0.05;
@@ -2171,12 +2309,27 @@
       }
       animateAI();
 
+      // Skip rendering work while this scene is scrolled out of view or the tab isn't
+      // visible — this is the single biggest win for smooth scrolling on the rest of
+      // the page, since a WebGL render call is otherwise made every frame regardless.
+      if ('IntersectionObserver' in window) {
+          new IntersectionObserver((entries) => {
+              aiSceneActive = entries[0].isIntersecting && !document.hidden;
+          }, { threshold: 0 }).observe(aiChipContainer);
+      }
+      document.addEventListener('visibilitychange', () => {
+          if (document.hidden) aiSceneActive = false;
+      });
+
       window.addEventListener('resize', () => {
           if(!aiChipContainer) return;
           camera.aspect = aiChipContainer.clientWidth / aiChipContainer.clientHeight;
           camera.updateProjectionMatrix();
           renderer.setSize(aiChipContainer.clientWidth, aiChipContainer.clientHeight);
       });
+    } catch (err) {
+      console.warn('AI chip 3D scene failed to initialize:', err);
+    }
   }
 
   // =====================================================================
@@ -2184,6 +2337,7 @@
   // =====================================================================
   const globeContainer = document.getElementById('about-globe-container');
   if (globeContainer && typeof THREE !== 'undefined') {
+    try {
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
       camera.position.z = 650;
@@ -2339,8 +2493,10 @@
       globe.rotation.y = -0.3; globe.rotation.x = 0.5; 
 
       let time = 0;
+      let globeSceneActive = true; // paused automatically when off-screen or the tab is hidden
       function animateGlobe() {
           requestAnimationFrame(animateGlobe);
+          if (!globeSceneActive) return;
           globe.rotation.y += 0.0012;
           time += 0.04;
           const scale = 1 + Math.sin(time) * 0.5;
@@ -2349,6 +2505,18 @@
           renderer.render(scene, camera);
       }
       animateGlobe();
+
+      if ('IntersectionObserver' in window) {
+          new IntersectionObserver((entries) => {
+              globeSceneActive = entries[0].isIntersecting && !document.hidden;
+          }, { threshold: 0 }).observe(globeContainer);
+      }
+      document.addEventListener('visibilitychange', () => {
+          if (document.hidden) globeSceneActive = false;
+      });
+    } catch (err) {
+      console.warn('3D globe scene failed to initialize:', err);
+    }
   }
 
   /* ── Nav scroll effect ── */
@@ -2371,17 +2539,48 @@
   // =====================================================================
   const heroVisuals = document.querySelector('.hero-visuals');
   const parallaxGroup = document.getElementById('parallax-group');
-  
+
   if (heroVisuals && parallaxGroup) {
+      const REST_X = 15, REST_Y = -20, REST_Z = 5; // resting tilt, matches the base CSS transform
+
+      let targetRotX = REST_X, targetRotY = REST_Y, targetRotZ = REST_Z;
+      let curRotX = REST_X, curRotY = REST_Y, curRotZ = REST_Z;
+      let parallaxNeedsUpdate = true; // keep lerping until we actually reach the target
+
       heroVisuals.addEventListener('mousemove', (e) => {
           const rect = heroVisuals.getBoundingClientRect();
           const x = (e.clientX - rect.left) / rect.width - 0.5;
           const y = (e.clientY - rect.top) / rect.height - 0.5;
-          parallaxGroup.style.transform = `rotateX(${y * -15}deg) rotateY(${x * 15}deg) rotateZ(0deg)`;
+          targetRotX = y * -15;
+          targetRotY = x * 15;
+          targetRotZ = 0;
+          parallaxNeedsUpdate = true;
       });
       heroVisuals.addEventListener('mouseleave', () => {
-          parallaxGroup.style.transform = `rotateX(15deg) rotateY(-20deg) rotateZ(5deg)`;
+          targetRotX = REST_X; targetRotY = REST_Y; targetRotZ = REST_Z;
+          parallaxNeedsUpdate = true;
       });
+
+      function animateParallax() {
+          requestAnimationFrame(animateParallax);
+          if (!parallaxNeedsUpdate) return;
+
+          // Ease a fraction of the remaining distance toward the target every frame —
+          // this is what makes both tracking the mouse AND springing back to rest feel
+          // smooth, instead of the transform snapping straight to a new value on every
+          // single mousemove event.
+          curRotX += (targetRotX - curRotX) * 0.1;
+          curRotY += (targetRotY - curRotY) * 0.1;
+          curRotZ += (targetRotZ - curRotZ) * 0.1;
+
+          parallaxGroup.style.transform = `rotateX(${curRotX.toFixed(2)}deg) rotateY(${curRotY.toFixed(2)}deg) rotateZ(${curRotZ.toFixed(2)}deg)`;
+
+          const closeEnough = Math.abs(targetRotX - curRotX) < 0.01
+              && Math.abs(targetRotY - curRotY) < 0.01
+              && Math.abs(targetRotZ - curRotZ) < 0.01;
+          if (closeEnough) parallaxNeedsUpdate = false;
+      }
+      animateParallax();
   }
 
   // =====================================================================
@@ -2581,6 +2780,7 @@
   }
 
   function draw(){
+      if (document.hidden) { requestAnimationFrame(draw); return; }
       ctx.clearRect(0, 0, w, h);
       updateWords(); 
       
@@ -2682,7 +2882,7 @@
       else {
         card.classList.add('is-expanded'); backdrop.classList.add('active');
         btn.innerHTML = '✕'; expandedCard = card;
-        if(typeof lenis !== 'undefined') lenis.stop();
+        if (lenis) lenis.stop();
       }
     });
   });
@@ -2701,7 +2901,7 @@
       expandedCard = null;
     }
     backdrop.classList.remove('active');
-    if(typeof lenis !== 'undefined') lenis.start(); 
+    if (lenis) lenis.start();
   }
 
   if (backdrop) { backdrop.addEventListener('click', closeCard); }
