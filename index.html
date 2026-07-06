@@ -8,10 +8,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
   
   <!-- Added Three.js for 3D Globe & AI Background -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  
+  <!-- defer: don't block HTML parsing/paint on this download; deferred scripts run in order, right before DOMContentLoaded -->
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
   <!-- Added Lenis for buttery smooth momentum scrolling -->
-  <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+  <script defer src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
 
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -1812,6 +1813,9 @@
 </footer>
 
 <script>
+// Three.js/Lenis are now `defer`red, so they aren't guaranteed to exist until DOMContentLoaded.
+// Wrapping this entire script in that event keeps every THREE.* / Lenis reference below safe.
+document.addEventListener('DOMContentLoaded', function() {
   // =====================================================================
   // --- THEME TOGGLE LOGIC ---
   // =====================================================================
@@ -1882,7 +1886,11 @@
   // =====================================================================
   // --- PRELOADER ANIMATION SEQUENCE ---
   // =====================================================================
-  window.addEventListener('load', () => {
+  // Runs off DOMContentLoaded (DOM parsed) instead of `load` (every image, font,
+  // and 3rd-party script fully downloaded). On a real deployment `load` can lag
+  // several seconds behind DOMContentLoaded, which was stalling the preloader
+  // before it even started its ~4.4s sequence.
+  function startPreloader() {
       const preloader = document.getElementById('preloader');
 
       // Step 1: Fade in "Ganesh Javhare" and "UX Designer", sliding in from the right line by line,
@@ -1930,7 +1938,10 @@
       }, 3600); // 0.6s after the fade-out starts, so the text is fully gone before the logo flies
       // Total preloader sequence: ~4.4s (draw 2.5s + hold + 0.6s fade-out + 0.8s fly)
 
-  });
+  }
+
+  // Already inside the DOMContentLoaded wrapper for this whole script, so just run it.
+  startPreloader();
 
   // =====================================================================
   // --- OBSERVERS (INITIALIZED AFTER PRELOADER) ---
@@ -2906,6 +2917,7 @@
   }
 
   if (backdrop) { backdrop.addEventListener('click', closeCard); }
+}); // end DOMContentLoaded wrapper
 </script>
 </body>
 </html>
