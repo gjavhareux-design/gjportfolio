@@ -45,6 +45,12 @@
         transition-duration: 0.001ms !important;
         scroll-behavior: auto !important;
       }
+      /* Exception: the preloader logo's one-time fly-to-nav/scale transform is
+         essential feedback (confirming *this* mark becomes *that* nav logo),
+         not decorative looping motion - killing its duration entirely made it
+         teleport instantly instead of visibly resolving into place. Give it a
+         short, reduced-motion-appropriate duration instead of none at all. */
+      #preloader-logo { transition-duration: 0.35s !important; }
     }
 
     /* Fallback: several elements set cursor:none to make way for the custom
