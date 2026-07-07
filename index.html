@@ -17,6 +17,45 @@
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
+    /* Visually hidden but available to assistive tech (WCAG 2.4.1, 1.1.1 helper text, etc.) */
+    .sr-only {
+      position: absolute; width: 1px; height: 1px;
+      padding: 0; margin: -1px; overflow: hidden;
+      clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+    }
+
+    /* Skip link (WCAG 2.4.1 Bypass Blocks) - hidden until keyboard-focused */
+    .skip-link {
+      position: absolute; top: -100px; left: 16px;
+      background: var(--accent); color: var(--btn-text);
+      padding: 12px 20px; border-radius: 8px;
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem;
+      text-decoration: none; z-index: 100000;
+      transition: top 0.2s ease;
+    }
+    .skip-link:focus { top: 16px; }
+
+    /* WCAG 2.3.3 / 2.2.2: respect the OS-level reduced-motion preference by
+       neutralizing all CSS animations/transitions (orb float, badge pulse,
+       cursor-ring spin, preloader motion, scroll-reveal slides, etc.) */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* Fallback: several elements set cursor:none to make way for the custom
+       JS-drawn cursor. If that script fails/is blocked/JS is disabled, force
+       the native cursor back on everywhere so users always have a visible pointer. */
+    html:not(.js-cursor-ready) *,
+    html:not(.js-cursor-ready) *::before,
+    html:not(.js-cursor-ready) *::after {
+      cursor: auto !important;
+    }
+
     :root {
       /* Default Dark Mode Theme */
       --bg: #0a0a0f;
@@ -29,6 +68,10 @@
       --accent3: #ff6b8a;
       --card-bg: #14141e;
       --btn-text: #0a0a0f;
+      /* Accent used as small/caption TEXT (not backgrounds) - needs its own
+         WCAG-AA-safe value since --accent itself can fail contrast as text
+         on some backgrounds/themes. 15:1 on --bg here, so reuse --accent. */
+      --accent-text: var(--accent);
       
       /* Navigation Background Variable */
       --nav-bg: rgba(10, 10, 15, 0.9);
@@ -71,7 +114,13 @@
       --accent2: #ff2a85;
       --accent3: #ffbd2e;
       --card-bg: #FFFFFF;
-      --btn-text: #ffffff;
+      /* WCAG fix: white text on --accent was 3.05:1 (fails 4.5:1 AA). Dark text
+         on --accent is 5.66:1 and matches the dark-theme's dark-on-accent look. */
+      --btn-text: #1a1a24;
+      /* WCAG fix: --accent used directly as small caption text (hero-eyebrow,
+         section-label) was 2.85:1 on --bg. This darker rust-orange keeps the
+         accent hue but reaches 5.56:1. */
+      --accent-text: #ad4100;
       
       --nav-bg: rgba(249, 247, 245, 0.9);
       
@@ -89,7 +138,8 @@
       --dc-box-bg2: rgba(0, 0, 0, 0.02);
       --dc-blue-bg: var(--accent);
       --dc-blue-shadow: rgba(255, 95, 0, 0.3);
-      --dc-blue-text: #ffffff;
+      /* WCAG fix: same white-on-accent contrast fail as --btn-text above */
+      --dc-blue-text: #1a1a24;
       
       /* Darker process colors for readability in light mode */
       --cyan: #009eb3;
@@ -379,6 +429,15 @@
     .theme-toggle-btn:hover { background: var(--border); transform: rotate(15deg); }
     .theme-toggle-btn svg { width: 20px; height: 20px; fill: currentColor; }
 
+    .nav-toggle-btn {
+      display: none;
+      background: none; border: none; color: var(--text);
+      width: 40px; height: 40px; border-radius: 50%;
+      align-items: center; justify-content: center;
+      cursor: none;
+    }
+    .nav-toggle-btn svg { width: 22px; height: 22px; }
+
     /* ── Hero ── */
     #hero {
       min-height: 100vh;
@@ -432,7 +491,7 @@
     .hero-eyebrow {
       display: inline-flex; align-items: center; gap: 10px;
       font-size: 0.78rem; font-weight: 500;
-      color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent-text); letter-spacing: 0.12em; text-transform: uppercase;
       margin-bottom: 28px;
       opacity: 0; 
     }
@@ -464,8 +523,10 @@
     
     @keyframes lineReveal { to { opacity: 1; transform: translateY(0); } }
 
-    .hero-headline .stroke { -webkit-text-stroke: 1px var(--text); color: transparent; }
-    .hero-headline .accent-word { color: var(--accent); }
+    /* Thicker stroke + faint fill so the hollow word stays legible for low-vision users
+       instead of relying on a 1px outline against a fully transparent fill */
+    .hero-headline .stroke { -webkit-text-stroke: 1.5px var(--text); color: rgba(126,126,142,0.08); }
+    .hero-headline .accent-word { color: var(--accent-text); }
 
     .hero-sub {
       font-size: 1.1rem; font-weight: 300; line-height: 1.7;
@@ -495,7 +556,7 @@
       padding-bottom: 2px;
       transition: color 0.2s, border-color 0.2s;
     }
-    .btn-secondary:hover { color: var(--accent); border-color: var(--accent); }
+    .btn-secondary:hover { color: var(--accent-text); border-color: var(--accent); }
 
     .hero-stats {
       position: relative;
@@ -512,7 +573,7 @@
       font-size: 2.4rem; font-weight: 700;
       color: var(--text); line-height: 1;
     }
-    .stat-num span { color: var(--accent); }
+    .stat-num span { color: var(--accent-text); }
     .stat-label { font-size: 0.75rem; color: var(--muted); margin-top: 4px; letter-spacing: 0.06em; font-weight: 600; }
 
     .scroll-indicator {
@@ -609,7 +670,7 @@
     section { padding: 100px 60px; position: relative; }
     .section-label {
       font-size: 0.72rem; font-weight: 700;
-      color: var(--accent); letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--accent-text); letter-spacing: 0.14em; text-transform: uppercase;
       margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
     }
     .section-label::before { content: ''; width: 24px; height: 2px; background: var(--accent); }
@@ -690,20 +751,101 @@
       display: flex; align-items: center; justify-content: center;
       color: var(--text); font-size: 1.4rem; z-index: 20; opacity: 0; transform: scale(0.9); transition: all 0.3s ease;
     }
-    .project-card:hover .expand-btn { opacity: 1; transform: scale(1); }
+    .project-card:hover .expand-btn,
+    .project-card:focus-within .expand-btn { opacity: 1; transform: scale(1); }
     .expand-btn:hover { background: var(--accent); color: var(--btn-text); border-color: var(--accent); }
+    .expand-btn:focus-visible { opacity: 1; transform: scale(1); outline: 2px solid var(--accent); outline-offset: 2px; }
 
     .project-card.is-expanded {
       position: fixed !important; top: 50% !important; left: 50% !important;
       transform: translate(-50%, -50%) !important;
       width: 80vw !important; height: 80vh !important;
       z-index: 9999 !important; margin: 0 !important;
-      display: flex; flex-direction: column;
+      /* !important needed: each card has an inline style="display:block" that
+         would otherwise win and silently break the layout below.
+         This outer box does NOT scroll itself - .expand-scroll (its only real
+         child) does. That split is what lets the close button below stay
+         pinned via position:fixed instead of scrolling away with the content. */
+      display: block !important; overflow: hidden !important;
       box-shadow: 0 40px 100px rgba(0,0,0,0.3); cursor: auto;
     }
-    .project-card.is-expanded .project-thumb { height: 80%; flex-shrink: 0; }
-    .project-card.is-expanded .project-thumb img { object-position: top center; }
-    .project-card.is-expanded .project-info { flex-grow: 1; overflow-y: auto; background: var(--card-bg); }
+    /* Wraps image + case-study text as the single element that actually scrolls.
+       In the normal (non-expanded) grid card, display:contents makes this wrapper
+       invisible to layout so it doesn't affect the existing card structure at all. */
+    .expand-scroll { display: contents; }
+    .project-card.is-expanded .expand-scroll {
+      display: block; height: 100%; overflow-y: auto; overflow-x: hidden;
+      overscroll-behavior: contain;
+    }
+    /* Full-size image at the expanded view's own width - no crop, no height cap.
+       It scrolls away with the rest of the content instead of staying pinned. */
+    .project-card.is-expanded .project-thumb {
+      width: 100%; height: auto; aspect-ratio: auto;
+      background: var(--bg); display: block;
+    }
+    .project-card.is-expanded .project-thumb img {
+      width: 100%; height: auto; object-fit: contain; object-position: center; display: block;
+    }
+    /* The decorative gradient/mockup fallback is only meaningful when there's no real image */
+    .project-card.is-expanded .project-thumb:has(img) .project-thumb-inner { display: none; }
+    /* Compact grid-card summary is replaced by the richer case-study content below */
+    .project-card.is-expanded .project-info { display: none; }
+    /* Close button stays pinned to the modal corner during scroll: it's now a sibling
+       of .expand-scroll (not a descendant), so the modal's own `transform` above
+       creates its containing block and it's unaffected by expand-scroll's internal scroll */
+    .project-card.is-expanded .expand-btn { position: fixed; top: 20px; right: 20px; }
+
+    /* Scroll-down hint: pinned to the modal (same technique as the close button
+       above) so it stays visible regardless of scroll position, and fades out
+       once the user actually starts scrolling or reaches the bottom. Purely a
+       sighted visual affordance - the content itself is already fully reachable
+       by assistive tech regardless of scroll, so this is aria-hidden. */
+    .cv-scroll-hint { display: none; }
+    .project-card.is-expanded .cv-scroll-hint {
+      display: flex; position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%);
+      flex-direction: column; align-items: center; gap: 2px;
+      padding: 8px 16px; border-radius: 100px;
+      background: var(--surface); backdrop-filter: blur(8px); border: 1px solid var(--border);
+      color: var(--muted); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+      pointer-events: none; opacity: 1; transition: opacity 0.3s ease;
+    }
+    .project-card.is-expanded.cv-scrolled .cv-scroll-hint { opacity: 0; }
+    .cv-scroll-hint svg { width: 14px; height: 14px; animation: cvScrollBounce 1.4s ease-in-out infinite; }
+    @keyframes cvScrollBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
+
+    /* ── Expanded case-study content ── */
+    .project-caseview { display: none; }
+    .project-card.is-expanded .project-caseview {
+      display: block; background: var(--card-bg); padding: 24px 32px 40px; cursor: auto;
+    }
+    .cv-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+    .cv-title { font-family: 'Syne', sans-serif; font-size: 1.7rem; font-weight: 800; color: var(--text); margin-bottom: 12px; }
+    .cv-short-desc { font-size: 0.95rem; color: var(--muted); line-height: 1.75; margin-bottom: 24px; }
+    .cv-meta {
+      display: flex; gap: 32px; flex-wrap: wrap; margin-bottom: 32px;
+      padding: 18px 22px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    }
+    .cv-meta-item { display: flex; flex-direction: column; gap: 4px; }
+    .cv-meta-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+    .cv-meta-value { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+    .cv-section { margin-bottom: 28px; }
+    .cv-heading { font-family: 'Syne', sans-serif; font-size: 1.05rem; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+    .cv-text { font-size: 0.9rem; color: var(--muted); line-height: 1.8; }
+    .cv-diagram-holder {
+      width: 100%; aspect-ratio: 16/9; border-radius: 12px; margin-top: 10px;
+      border: 1px dashed var(--border); background: var(--surface);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); font-size: 0.8rem; text-align: center; padding: 16px;
+    }
+    .cv-prototype-link {
+      display: inline-flex; align-items: center; gap: 8px; margin-top: 8px;
+      padding: 14px 30px; background: var(--accent); color: var(--btn-text);
+      border-radius: 100px; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem;
+      text-decoration: none; cursor: none;
+    }
+    .cv-prototype-link:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
+    .cv-prototype-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
     .work-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 64px; }
     .projects-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; }
     .project-card {
@@ -711,7 +853,6 @@
       position: relative; cursor: none; transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s, border-color 0.3s;
     }
     .project-card:hover { transform: translateY(-6px); box-shadow: 0 24px 60px rgba(0,0,0,0.15); }
-    .project-card:hover .project-overlay { opacity: 1; }
     .project-card:hover .project-thumb { transform: scale(1.04); }
 
     .card-lg { grid-column: span 7; } .card-sm { grid-column: span 5; } .card-md { grid-column: span 6; } .card-full { grid-column: span 12; }
@@ -740,17 +881,10 @@
     .mockup-lines div { height: 5px; border-radius: 3px; background: rgba(255,255,255,0.1); margin-bottom: 4px; }
     .mockup-lines div:nth-child(1){width:60%} .mockup-lines div:nth-child(2){width:85%} .mockup-lines div:nth-child(3){width:40%} .mockup-lines div:nth-child(4){width:70%}
 
-    .project-overlay {
-      position: absolute; inset: 0; background: rgba(10,10,15,0.7);
-      display: flex; align-items: center; justify-content: center;
-      opacity: 0; transition: opacity 0.3s;
-    }
-    .overlay-link {
-      padding: 14px 28px; background: var(--accent); border-radius: 100px;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      color: var(--btn-text); font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700;
-      text-decoration: none; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    }
+    /* Removed: .project-overlay used to dim the thumbnail on hover, but the div
+       was always empty (no revealed content/link), so it had no functional or
+       accessibility purpose - just an unnecessary visual obstruction while a
+       user was hovering toward the expand button. */
 
     .project-info { padding: 24px; }
     .project-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
@@ -838,7 +972,7 @@
       border-radius: 12px; font-size: 0.85rem; font-weight: 600;
       transition: all 0.2s; color: var(--text);
     }
-    .tool-item:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .tool-item:hover { border-color: var(--accent); color: var(--accent-text); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
     .tool-icon { font-size: 1.2rem; }
 
     /* ── AI Vibe Coding Section ── */
@@ -854,7 +988,7 @@
     .ai-badge {
       display: inline-flex; align-items: center; gap: 15px; padding: 8px 16px;
       background: var(--surface); border: 2px solid var(--border); border-radius: 100px;
-      color: var(--accent); font-size: 0.85rem; font-weight: 700; margin: 0 auto 24px auto; letter-spacing: 0.05em;
+      color: var(--accent-text); font-size: 0.85rem; font-weight: 700; margin: 0 auto 24px auto; letter-spacing: 0.05em;
     }
     .ai-badge span {
       display: block; width: 8px; height: 8px; background: var(--accent); border-radius: 50%;
@@ -874,9 +1008,9 @@
     .ai-f-icon {
       width: 46px; height: 46px; border-radius: 12px;
       background: var(--surface); border: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: var(--accent); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: var(--accent-text); flex-shrink: 0;
     }
-    .ai-f-text h4 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+    .ai-f-text h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; color: var(--text); }
     .ai-f-text p { font-size: 0.9rem; font-weight: 500; color: var(--muted); line-height: 1.6; }
 
     /* ── Testimonials ── */
@@ -887,11 +1021,11 @@
       transition: transform 0.3s, border-color 0.3s, background 0.3s;
     }
     .testimonial-card:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-    .test-quote { font-size: 2rem; color: var(--accent); font-family: 'Syne', sans-serif; line-height: 1; margin-bottom: 16px; }
+    .test-quote { font-size: 2rem; color: var(--accent-text); font-family: 'Syne', sans-serif; line-height: 1; margin-bottom: 16px; }
     .test-text { font-size: 0.95rem; font-weight: 500; color: var(--muted); line-height: 1.75; margin-bottom: 24px; font-style: italic; }
     .test-person { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; cursor: pointer; }
-    .test-person:hover .test-name { color: var(--accent); }
-    .test-person:hover .link-arrow { transform: translate(2px, -2px); color: var(--accent); }
+    .test-person:hover .test-name { color: var(--accent-text); }
+    .test-person:hover .link-arrow { transform: translate(2px, -2px); color: var(--accent-text); }
     
     .test-avatar {
       width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
@@ -926,6 +1060,7 @@
 
     .form-group { margin-bottom: 20px; }
     .form-label { display: block; font-size: 0.75rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+    .form-label span { color: var(--accent-text); }
     .form-input, .form-textarea {
       width: 100%; padding: 14px 18px; background: var(--card-bg); border: 1px solid var(--border);
       border-radius: 12px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500;
@@ -947,7 +1082,7 @@
       background: var(--bg); position: relative; z-index: 20; transition: background 0.5s;
     }
     .footer-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--text); }
-    .footer-logo span { color: var(--accent); }
+    .footer-logo span { color: var(--accent-text); }
     .footer-text { font-size: 0.85rem; font-weight: 500; color: var(--muted); }
     .footer-socials { display: flex; gap: 12px; }
     .social-btn {
@@ -955,7 +1090,7 @@
       border-radius: 8px; display: flex; align-items: center; justify-content: center;
       color: var(--muted); text-decoration: none; font-size: 0.95rem; font-weight: 600; transition: all 0.2s;
     }
-    .social-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .social-btn:hover { border-color: var(--accent); color: var(--accent-text); }
 
     /* ── Reveal animations ── */
     .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
@@ -980,7 +1115,17 @@
       #about-globe-container { width: 500px; height: 500px; bottom: -330px; }
     }
     @media (max-width: 768px) {
-      nav { padding: 18px 20px; grid-template-columns: 1fr auto; } .nav-links { display: none; } section { padding: 64px 20px; }
+      nav { padding: 18px 20px; grid-template-columns: 1fr auto; } section { padding: 64px 20px; }
+      .nav-toggle-btn { display: flex; }
+      .nav-links {
+        position: fixed; top: 0; right: 0; height: 100vh; width: min(280px, 80vw);
+        background: var(--card-bg); border-left: 1px solid var(--border);
+        flex-direction: column; align-items: flex-start; justify-content: flex-start;
+        gap: 8px; padding: 100px 32px 32px; z-index: 1002;
+        transform: translateX(100%); transition: transform 0.3s ease;
+      }
+      nav.nav-open .nav-links { transform: translateX(0); }
+      .nav-links a { font-size: 1rem; padding: 12px 0; width: 100%; }
       #hero { padding: 100px 20px 80px; } .hero-stats { position: relative; flex-direction: row; margin-top: 30px; gap: 24px; flex-wrap: wrap; justify-content: center;}
       .projects-grid { grid-template-columns: 1fr; } .card-lg, .card-sm, .card-md, .card-full { grid-column: span 1; }
       .process-grid { grid-template-columns: 1fr 1fr; } .skills-layout { grid-template-columns: 1fr; gap: 40px; }
@@ -996,10 +1141,10 @@
       width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
       cursor: none; transition: all 0.2s;
     }
-    .view-toggle button.active, .view-toggle button:hover { background: var(--card-bg); color: var(--accent); border-color: var(--accent); }
+    .view-toggle button.active, .view-toggle button:hover { background: var(--card-bg); color: var(--accent-text); border-color: var(--accent); }
     .project-year { display: none; font-size: 0.9rem; color: var(--muted); font-weight: 700; font-family: 'DM Sans', sans-serif; }
     .explore-btn-list { display: none; }
-    #cursor-center-text { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 700; color: var(--accent); line-height: 1.1; text-transform: uppercase; letter-spacing: 1px; }
+    #cursor-center-text { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 700; color: var(--accent-text); line-height: 1.1; text-transform: uppercase; letter-spacing: 1px; }
     .project-number { display: none; } .read-time-list { display: none; }
     .title-tags-wrap { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
     .projects-grid:not(.list-view) .project-name { font-size: 1.25rem; font-weight: 700; margin: 0; }
@@ -1018,8 +1163,6 @@
     .projects-grid.list-view .project-card:hover .project-thumb { 
       opacity: 1; transform: translate(15px, 15px) scale(1); 
     }
-    
-    .projects-grid.list-view .project-overlay { display: none; }
     
     .projects-grid.list-view .project-number { 
       display: flex; align-items: center; justify-content: center; width: 70px; height: 70px; background: var(--border); border-radius: 50%; flex-shrink: 0; overflow: hidden; 
@@ -1043,21 +1186,23 @@
     .projects-grid.list-view .explore-btn-list:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255, 95, 0, 0.3); background: var(--accent); }
     .projects-grid.list-view .project-card:not(.is-expanded) .expand-btn { position: static; opacity: 1; transform: scale(1); background: transparent; border: none; color: var(--text); font-size: 1.2rem; }
     .projects-grid.list-view .project-card.is-expanded {
-      display: flex !important; flex-direction: column !important; padding: 0 !important; background: var(--card-bg) !important; border-radius: 20px !important;
+      display: block !important; overflow: hidden !important;
+      padding: 0 !important; background: var(--card-bg) !important; border-radius: 20px !important;
       position: fixed !important; top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important; width: 80vw !important; height: 80vh !important; z-index: 9999 !important; cursor: auto !important;
     }
-    .projects-grid.list-view .project-card.is-expanded .project-thumb { position: relative !important; width: 100% !important; height: 80% !important; opacity: 1 !important; transform: none !important; pointer-events: auto !important; border-radius: 20px 20px 0 0 !important; left: auto !important; top: auto !important; box-shadow: none !important; }
-    .projects-grid.list-view .project-card.is-expanded .project-info { display: block !important; padding: 24px !important; }
-    .projects-grid.list-view .project-card.is-expanded .project-desc { -webkit-line-clamp: unset !important; }
+    /* Unified with the grid-view expanded layout: full image on top, case-study content below */
+    .projects-grid.list-view .project-card.is-expanded .project-thumb { position: relative !important; width: 100% !important; opacity: 1 !important; transform: none !important; pointer-events: auto !important; border-radius: 20px 20px 0 0 !important; left: auto !important; top: auto !important; box-shadow: none !important; }
+    .projects-grid.list-view .project-card.is-expanded .project-info { display: none !important; }
     .projects-grid.list-view .project-card.is-expanded .project-number, .projects-grid.list-view .project-card.is-expanded .read-time-list, .projects-grid.list-view .project-card.is-expanded .explore-btn-list, .projects-grid.list-view .project-card.is-expanded .project-year { display: none !important; }
-    .projects-grid.list-view .project-card.is-expanded .title-tags-wrap { margin-bottom: 12px; }
     @media (max-width: 1024px) { .view-toggle { display: none !important; } .projects-grid.list-view .project-card { display: flex !important; flex-direction: column !important; border-radius: 20px; padding: 24px; background: var(--card-bg); } .projects-grid.list-view .project-number { display: none; } }
   </style>
 </head>
 <body class="loading">
 
-<!-- Preloader Overlay -->
-<div id="preloader">
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<!-- Preloader Overlay (decorative animation only - hidden from assistive tech) -->
+<div id="preloader" aria-hidden="true">
   <div class="preloader-grid-bg"></div>
   <div class="preloader-content">
     <div class="preloader-logo-wrap">
@@ -1076,11 +1221,11 @@
   </div>
 </div>
 
-<!-- Dots Layer -->
-<div class="dot-layer">
+<!-- Dots Layer (decorative) -->
+<div class="dot-layer" aria-hidden="true">
   <canvas id="dots"></canvas>
 </div>
-<div id="card-backdrop"></div>
+<div id="card-backdrop" aria-hidden="true"></div>
 
 <!-- Cursor -->
 <div id="cursor"></div>
@@ -1110,33 +1255,38 @@
     </div>
   </a>
   
-  <ul class="nav-links">
+  <ul class="nav-links" id="nav-links">
     <li><a href="#about">About</a></li>
     <li><a href="#work">Work</a></li>
     <li><a href="#work">Gallery</a></li>
   </ul>
-  
+
   <div class="nav-right-group">
     <!-- Theme Toggle Button -->
-    <button id="theme-toggle" class="theme-toggle-btn" title="Toggle Light/Dark Mode">
+    <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle light/dark mode" aria-pressed="false" title="Toggle Light/Dark Mode">
       <!-- Icon will be set by JS -->
-      <svg id="theme-icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+      <svg id="theme-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
     </button>
-    
+
+    <button id="nav-toggle" class="nav-toggle-btn" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+
     <a href="#contact" class="nav-cta">Let's Talk →</a>
   </div>
 </nav>
 
+<main id="main-content">
 <!-- Hero -->
 <section id="hero">
-  <div class="hero-grid-bg"></div>
-  <div class="hero-orb orb1"></div>
-  <div class="hero-orb orb2"></div>
+  <div class="hero-grid-bg" aria-hidden="true"></div>
+  <div class="hero-orb orb1" aria-hidden="true"></div>
+  <div class="hero-orb orb2" aria-hidden="true"></div>
 
   <div class="hero-inner">
     <div class="hero-left">
       <div class="hero-eyebrow">
-        <span class="hero-eyebrow-dot"></span>
+        <span class="hero-eyebrow-dot" aria-hidden="true"></span>
         Available for freelance · London, UK
       </div>
 
@@ -1157,24 +1307,24 @@
     
     <div class="hero-right reveal">
       <div class="hero-visuals">
-        <div class="floating-cards-group" id="parallax-group">
+        <div class="floating-cards-group" id="parallax-group" aria-hidden="true">
             
             <div class="dc-card dc-cert-back float-anim" style="padding: 20px;">
-                <h4 style="font-size: 12px; font-weight: bold; margin-top:2px; margin-bottom: 6px;">Project 3 : Zensphere</h4>
+                <div style="font-size: 12px; font-weight: bold; margin-top:2px; margin-bottom: 6px;">Project 3 : Zensphere</div>
                 <p style="color: rgba(255,255,255,0.8); font-size: 10px; margin-bottom: 15px;">Mobile APP</p>
                 <div style="width: 60%; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; margin-bottom: 6px;"></div>
                 <div style="width: 40%; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px;"></div>
             </div>
 
             <div class="dc-card dc-cert-front float-anim" style="padding: 20px;">
-                <h4 style="font-size: 12px; font-weight: bold; margin-top:2px; margin-bottom: 6px;">Project 2 : IYR</h4>
+                <div style="font-size: 12px; font-weight: bold; margin-top:2px; margin-bottom: 6px;">Project 2 : IYR</div>
                 <p style="color: rgba(255,255,255,0.8); font-size: 10px; margin-bottom: 15px;">Virtual Reality App</p>
                 <div style="width: 60%; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; margin-bottom: 6px;"></div>
                 <div style="width: 40%; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px;"></div>
             </div>
 
             <div class="dc-card dc-main float-anim">
-                 <h4 style="font-size: 12px; font-weight: bold; margin-top:2px; margin-bottom: 6px; margin-left: 14px;">Project 1 : MahaRERA Portal<br></h4>
+                 <div style="font-size: 12px; font-weight: bold; margin-top:2px; margin-bottom: 6px; margin-left: 14px;">Project 1 : MahaRERA Portal<br></div>
                 <div style="height: 30px; background: var(--dc-box-bg); display: flex; gap: 8px; align-items: center; padding: 0 16px;">
                     <span style="width:12px; height:12px; border-radius:50%; background:#ff5f56;"></span>
                     <span style="width:12px; height:12px; border-radius:50%; background:#ffbd2e;"></span>
@@ -1196,7 +1346,7 @@
             </div>
 
             <div class="dc-card dc-left float-anim" style="padding: 25px;">
-               <h4 style="font-size: 14px; font-weight: bold; margin-bottom: 4px; margin-left: 14px;">Product Design<br></h4>
+               <div style="font-size: 14px; font-weight: bold; margin-bottom: 4px; margin-left: 14px;">Product Design<br></div>
                 <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px;">
                     <div style="width: 30px; height: 30px; border-radius: 50%; background: #ff2a85; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold;">1</div>
                     <div style="flex: 1;">
@@ -1214,7 +1364,7 @@
             </div>
 
             <div class="dc-card dc-right float-anim" style="padding: 30px;">
-                 <h4 style="font-size: 14px; font-weight: bold; margin-bottom: 4px; margin-left: 14px;">Service Design<br></h4>
+                 <div style="font-size: 14px; font-weight: bold; margin-bottom: 4px; margin-left: 14px;">Service Design<br></div>
                 <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 30px;">
                     <div style="width: 30px; height: 30px; border-radius: 50%; background: var(--dc-line-3); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: var(--dc-text);">1</div>
                     <div style="flex: 1;">
@@ -1232,7 +1382,7 @@
             </div>
 
             <div class="dc-card dc-blue float-anim" style="padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                 <h4 style="font-size: 14px; font-weight: bold; margin-bottom: 4px; margin-left: 14px;color: #261f45;">UX Design<br></h4>
+                 <div style="font-size: 14px; font-weight: bold; margin-bottom: 4px; margin-left: 14px;color: #261f45;">UX Design<br></div>
                 <div style="width: 100%; height: 100px; background: rgba(255,255,255,0.2); border-radius: 10px; margin-bottom: 20px;"></div>
                 <div style="width: 80%; height: 10px; background: rgba(255,255,255,0.3); border-radius: 5px; margin-bottom: 10px;"></div>
                 <div style="width: 60%; height: 10px; background: rgba(255,255,255,0.3); border-radius: 5px; margin-bottom: 30px;"></div>
@@ -1271,7 +1421,7 @@
 <!-- About -->
 <section id="about">
   <!-- 3D Globe Background Layer -->
-  <div id="about-globe-container"></div>
+  <div id="about-globe-container" aria-hidden="true"></div>
 
   <div class="about-visual reveal">
     <div class="about-img-frame">
@@ -1307,7 +1457,7 @@
       <br/><br/>
       Previously at government authorities and a handful of early-stage startups, I've designed products used by over 6M+ users. I bring a research-led, systems-thinking approach to every project.
     </p>
-    <a href="resume.pdf" target="_blank" class="btn-primary reveal reveal-delay-3" style="display:inline-flex;">Download Resume ↓</a>
+    <a href="resume.pdf" target="_blank" class="btn-primary reveal reveal-delay-3" style="display:inline-flex;">Download Resume ↓<span class="sr-only"> (opens in new tab)</span></a>
   </div>
 </section>
 
@@ -1320,29 +1470,29 @@
       <p class="section-sub" style="max-width:320px; margin-top: 10px;">A curated selection of projects spanning product, brand, and design systems.</p>
     </div>
     <div class="view-toggle">
-      <button id="btn-grid" class="active" title="Grid View">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+      <button id="btn-grid" class="active" aria-label="Grid view" aria-pressed="true" title="Grid View">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
       </button>
-      <button id="btn-list" title="List View">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+      <button id="btn-list" aria-label="List view" aria-pressed="false" title="List View">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
       </button>
     </div>
   </div>
 
   <div class="projects-grid">
-    <a href="Projects/Case1/maharera.html" target="_blank" class="project-card card-lg reveal reveal-left" style="display: block; text-decoration: none; color: inherit;" data-read-time="15">
+    <a href="Projects/Case1/maharera.html" target="_blank" class="project-card card-lg reveal reveal-left" style="display: block; text-decoration: none; color: inherit;" data-read-time="15" data-lenis-prevent>
       <div class="project-number">
         <img src="mreralogo.jpg" alt="MahaRERA Logo">
-      </div> 
+      </div>
+      <div class="expand-scroll">
       <div class="project-thumb">
-        <Img src="mockup.jpg" alt="MahaRERA_Case_Study"></Img>
+        <Img src="mockup.jpg" alt="MahaRERA Portal app mockup"></Img>
         <div class="project-thumb-inner thumb-p1">
           <div class="thumb-mockup">
             <div class="mockup-bar"><span></span><span></span><span></span></div>
             <div class="mockup-lines"><div></div><div></div><div></div><div></div></div>
           </div>
         </div>
-        <div class="project-overlay"></div>
       </div>
       <div class="project-info">
         <div class="title-tags-wrap">
@@ -1353,23 +1503,53 @@
         <div class="project-desc">Led the end-to-end UX redesign of the Maharashtra Real Estate Regulatory Authority's digital ecosystem. Transforming a complex, fragmented government template into a unified, accessible, and citizen-first transparency platform.</div>
         <div class="read-time-list">15 min<br>Read</div>
       </div>
+      <div class="project-caseview">
+        <div class="cv-tags"><span class="p-tag">Gov. Tech</span><span class="p-tag">Website Design</span></div>
+        <h3 class="cv-title">MahaRERA Portal</h3>
+        <p class="cv-short-desc">A ground-up redesign of Maharashtra's real estate regulatory portal — turning a dense, fragmented government platform into a clear, citizen-first experience used by homebuyers, developers, and agents across the state.</p>
+        <div class="cv-meta">
+          <div class="cv-meta-item"><span class="cv-meta-label">My Role</span><span class="cv-meta-value">[Add your role]</span></div>
+          <div class="cv-meta-item"><span class="cv-meta-label">Timeline</span><span class="cv-meta-value">[Add timeline]</span></div>
+          <div class="cv-meta-item"><span class="cv-meta-label">Completed</span><span class="cv-meta-value">2024</span></div>
+        </div>
+        <div class="cv-section">
+          <h4 class="cv-heading">Problem Statement</h4>
+          <p class="cv-text">[Describe the core problem — e.g. the legacy portal buried critical filings and complaint workflows behind unclear navigation, forcing citizens to rely on intermediaries just to complete basic regulatory tasks.]</p>
+        </div>
+        <div class="cv-section">
+          <h4 class="cv-heading">Design Process</h4>
+          <div class="cv-diagram-holder">[Add a process diagram / flowchart image here]</div>
+        </div>
+        <div class="cv-section">
+          <h4 class="cv-heading">How We Addressed &amp; Designed</h4>
+          <p class="cv-text">[Describe the approach — e.g. restructured the IA around user goals, introduced a unified design system, and simplified multi-step filings into guided flows.]</p>
+        </div>
+        <div class="cv-section">
+          <h4 class="cv-heading">Outcome</h4>
+          <p class="cv-text">[Describe the impact — e.g. faster task completion, fewer support queries, positive feedback from department stakeholders.]</p>
+        </div>
+        <div class="cv-prototype-link" role="link" tabindex="0" data-href="#" aria-label="View MahaRERA Portal prototype (opens in new tab)">View Prototype ↗</div>
+      </div>
+      </div>
+      <div class="cv-scroll-hint" aria-hidden="true"><span>Scroll</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
       <span class="explore-btn-list">Explore Project ↗</span>
-      <div class="expand-btn" title="Expand View">⤢</div>
+      <span class="sr-only"> (opens in new tab)</span>
+      <div class="expand-btn" role="button" tabindex="0" aria-label="Expand MahaRERA Portal preview" aria-expanded="false" title="Expand View"><span aria-hidden="true">⤢</span></div>
     </a>
 
-    <a href="iyr_P2.html" target="_blank" class="project-card card-sm reveal reveal-right reveal-delay-1" style="display: block; text-decoration: none; color: inherit;" data-read-time="8">
+    <a href="iyr_P2.html" target="_blank" class="project-card card-sm reveal reveal-right reveal-delay-1" style="display: block; text-decoration: none; color: inherit;" data-read-time="8" data-lenis-prevent>
       <div class="project-number">
         <img src="iyrlogo.jpg" alt="IYR Logo">
-      </div> 
+      </div>
+      <div class="expand-scroll">
       <div class="project-thumb">
-        <Img src="MockupIYR.png" alt="MahaRERA_Case_Study"></Img>
+        <Img src="MockupIYR.png" alt="Imagine As You Read app mockup"></Img>
         <div class="project-thumb-inner thumb-p2">
           <div class="thumb-mockup">
             <div class="mockup-bar"><span></span><span></span><span></span></div>
             <div class="mockup-lines"><div></div><div></div><div></div></div>
           </div>
         </div>
-        <div class="project-overlay"></div>
       </div>
       <div class="project-info">
         <div class="title-tags-wrap">
@@ -1380,23 +1560,53 @@
         <div class="project-desc">A research-led exploration of changing reading habits and experiences in the modern digital era, integrating AI for immersive storytelling.</div>
         <div class="read-time-list">8 min<br>Read</div>
       </div>
+      <div class="project-caseview">
+        <div class="cv-tags"><span class="p-tag">UX Research</span><span class="p-tag">Mobile App</span></div>
+        <h3 class="cv-title">Imagine As You Read</h3>
+        <p class="cv-short-desc">An exploration of how AI can turn reading from a passive activity into an immersive, visual one — generating scenes, imagery, and mood in real time as a reader moves through a book.</p>
+        <div class="cv-meta">
+          <div class="cv-meta-item"><span class="cv-meta-label">My Role</span><span class="cv-meta-value">[Add your role]</span></div>
+          <div class="cv-meta-item"><span class="cv-meta-label">Timeline</span><span class="cv-meta-value">[Add timeline]</span></div>
+          <div class="cv-meta-item"><span class="cv-meta-label">Completed</span><span class="cv-meta-value">2026</span></div>
+        </div>
+        <div class="cv-section">
+          <h4 class="cv-heading">Problem Statement</h4>
+          <p class="cv-text">[Describe the core problem — e.g. reading habits are declining as attention shifts to high-stimulation media, and existing e-reading apps do little to make long-form text more engaging.]</p>
+        </div>
+        <div class="cv-section">
+          <h4 class="cv-heading">Design Process</h4>
+          <div class="cv-diagram-holder">[Add a process diagram / flowchart image here]</div>
+        </div>
+        <div class="cv-section">
+          <h4 class="cv-heading">How We Addressed &amp; Designed</h4>
+          <p class="cv-text">[Describe the approach — e.g. prototyped an AI visual-mode that generates scene imagery per chapter, paired with a distraction-free reading UI validated through user research.]</p>
+        </div>
+        <div class="cv-section">
+          <h4 class="cv-heading">Outcome</h4>
+          <p class="cv-text">[Describe the impact — e.g. validated concept with test readers, positive reception of the visual mode, insights that shaped the product roadmap.]</p>
+        </div>
+        <div class="cv-prototype-link" role="link" tabindex="0" data-href="#" aria-label="View Imagine As You Read prototype (opens in new tab)">View Prototype ↗</div>
+      </div>
+      </div>
+      <div class="cv-scroll-hint" aria-hidden="true"><span>Scroll</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
       <span class="explore-btn-list">Explore Project ↗</span>
-      <div class="expand-btn" title="Expand View">⤢</div>
+      <span class="sr-only"> (opens in new tab)</span>
+      <div class="expand-btn" role="button" tabindex="0" aria-label="Expand Imagine As You Read preview" aria-expanded="false" title="Expand View"><span aria-hidden="true">⤢</span></div>
     </a>
 
-    <a href="focusxr.html" target="_blank" class="project-card card-md reveal reveal-left reveal-delay-1" style="display: block; text-decoration: none; color: inherit;" data-read-time="12">
+    <a href="focusxr.html" target="_blank" class="project-card card-md reveal reveal-left reveal-delay-1" style="display: block; text-decoration: none; color: inherit;" data-read-time="12" data-lenis-prevent>
       <div class="project-number">
         <img src="foucslogo.jpg" alt="FocusXR Logo">
-      </div> 
+      </div>
+      <div class="expand-scroll">
       <div class="project-thumb">
         <div class="project-thumb-inner thumb-p3">
-          <Img src="focus.gif" alt="MahaRERA_Case_Study"></Img>
+          <Img src="focus.gif" alt="FocusXR app mockup"></Img>
           <div class="thumb-mockup">
             <div class="mockup-bar"><span></span><span></span><span></span></div>
             <div class="mockup-lines"><div></div><div></div><div></div><div></div></div>
           </div>
         </div>
-        <div class="project-overlay"></div>
       </div>
       <div class="project-info">
         <div class="title-tags-wrap">
@@ -1407,14 +1617,45 @@
         <div class="project-desc">An immersive XR learning platform designed to transform reading into interactive visual experiences, helping users understand and retain information through spatial storytelling.</div>
         <div class="read-time-list">12 min<br>Read</div>
       </div>
+      <div class="project-caseview">
+        <div class="cv-tags"><span class="p-tag">Ed. Tech</span><span class="p-tag">AR & VR</span></div>
+        <h3 class="cv-title">FocusXR</h3>
+        <p class="cv-short-desc">An immersive XR learning platform that turns flat educational text into spatial, interactive scenes — helping students understand and retain complex information through spatial storytelling.</p>
+        <div class="cv-meta">
+          <div class="cv-meta-item"><span class="cv-meta-label">My Role</span><span class="cv-meta-value">[Add your role]</span></div>
+          <div class="cv-meta-item"><span class="cv-meta-label">Timeline</span><span class="cv-meta-value">[Add timeline]</span></div>
+          <div class="cv-meta-item"><span class="cv-meta-label">Completed</span><span class="cv-meta-value">2023</span></div>
+        </div>
+        <div class="cv-section">
+          <h4 class="cv-heading">Problem Statement</h4>
+          <p class="cv-text">[Describe the core problem — e.g. students struggle to retain abstract concepts from static textbook content, and existing AR/VR learning tools are too complex or expensive for everyday classroom use.]</p>
+        </div>
+        <div class="cv-section">
+          <h4 class="cv-heading">Design Process</h4>
+          <div class="cv-diagram-holder">[Add a process diagram / flowchart image here]</div>
+        </div>
+        <div class="cv-section">
+          <h4 class="cv-heading">How We Addressed &amp; Designed</h4>
+          <p class="cv-text">[Describe the approach — e.g. designed spatial scenes that map textbook chapters to 3D environments, with an interaction model tested for accessibility on both AR and VR devices.]</p>
+        </div>
+        <div class="cv-section">
+          <h4 class="cv-heading">Outcome</h4>
+          <p class="cv-text">[Describe the impact — e.g. improved comprehension in test sessions, positive feedback from educators, groundwork for a pilot rollout.]</p>
+        </div>
+        <div class="cv-prototype-link" role="link" tabindex="0" data-href="#" aria-label="View FocusXR prototype (opens in new tab)">View Prototype ↗</div>
+      </div>
+      </div>
+      <div class="cv-scroll-hint" aria-hidden="true"><span>Scroll</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
       <span class="explore-btn-list">Explore Project ↗</span>
-      <div class="expand-btn" title="Expand View">⤢</div>
+      <span class="sr-only"> (opens in new tab)</span>
+      <div class="expand-btn" role="button" tabindex="0" aria-label="Expand FocusXR preview" aria-expanded="false" title="Expand View"><span aria-hidden="true">⤢</span></div>
     </a>
 
-    <a href="Projects/Case1/maharera.html" target="_blank" class="project-card card-md reveal reveal-right reveal-delay-2" style="display: block; text-decoration: none; color: inherit;" data-read-time="5">
+    <a href="Projects/Case1/maharera.html" target="_blank" class="project-card card-md reveal reveal-right reveal-delay-2" style="display: block; text-decoration: none; color: inherit;" data-read-time="5" data-lenis-prevent>
       <div class="project-number">
         <img src="zplogo.jpg" alt="ZenSphere Logo">
-      </div> 
+      </div>
+      <div class="expand-scroll">
       <div class="project-thumb">
         <div class="project-thumb-inner thumb-p4">
           <div class="thumb-mockup">
@@ -1422,7 +1663,6 @@
             <div class="mockup-lines"><div></div><div></div><div></div></div>
           </div>
         </div>
-        <div class="project-overlay"></div>
       </div>
       <div class="project-info">
         <div class="title-tags-wrap">
@@ -1433,9 +1673,39 @@
         <div class="project-desc">A mindful wellbeing platform designed to create personalised meditation and focus experiences through calm, distraction-free digital interactions.</div>
         <div class="read-time-list">10 min<br>Read</div>
       </div>
+      <div class="project-caseview">
+        <div class="cv-tags"><span class="p-tag">Mobile App</span><span class="p-tag">Wellness</span></div>
+        <h3 class="cv-title">ZenSphere</h3>
+        <p class="cv-short-desc">A mindful wellbeing app that creates personalised meditation and focus experiences, designed around calm, distraction-free interactions rather than the engagement-driven patterns typical of most apps.</p>
+        <div class="cv-meta">
+          <div class="cv-meta-item"><span class="cv-meta-label">My Role</span><span class="cv-meta-value">[Add your role]</span></div>
+          <div class="cv-meta-item"><span class="cv-meta-label">Timeline</span><span class="cv-meta-value">[Add timeline]</span></div>
+          <div class="cv-meta-item"><span class="cv-meta-label">Completed</span><span class="cv-meta-value">2023</span></div>
+        </div>
+        <div class="cv-section">
+          <h4 class="cv-heading">Problem Statement</h4>
+          <p class="cv-text">[Describe the core problem — e.g. most wellness apps rely on the same notification-heavy, engagement-maximising patterns as social media, undermining the calm they're meant to promote.]</p>
+        </div>
+        <div class="cv-section">
+          <h4 class="cv-heading">Design Process</h4>
+          <div class="cv-diagram-holder">[Add a process diagram / flowchart image here]</div>
+        </div>
+        <div class="cv-section">
+          <h4 class="cv-heading">How We Addressed &amp; Designed</h4>
+          <p class="cv-text">[Describe the approach — e.g. designed a personalised session model with minimal, non-intrusive prompts, and a calm visual language tested with a small wellness-focused user group.]</p>
+        </div>
+        <div class="cv-section">
+          <h4 class="cv-heading">Outcome</h4>
+          <p class="cv-text">[Describe the impact — e.g. positive qualitative feedback on the calmer interaction model, higher completion rate for meditation sessions vs. earlier concepts.]</p>
+        </div>
+        <div class="cv-prototype-link" role="link" tabindex="0" data-href="#" aria-label="View ZenSphere prototype (opens in new tab)">View Prototype ↗</div>
+      </div>
+      </div>
+      <div class="cv-scroll-hint" aria-hidden="true"><span>Scroll</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
       <span class="explore-btn-list">Explore Project ↗</span>
-      <div class="expand-btn" title="Expand View">⤢</div>
-    </a> 
+      <span class="sr-only"> (opens in new tab)</span>
+      <div class="expand-btn" role="button" tabindex="0" aria-label="Expand ZenSphere preview" aria-expanded="false" title="Expand View"><span aria-hidden="true">⤢</span></div>
+    </a>
   </div>
 </section>
 
@@ -1522,10 +1792,10 @@
 
 <!-- AI & Vibe Coding Section -->
 <section id="ai-vibe">
-  <div id="ai-chip-canvas"></div>
+  <div id="ai-chip-canvas" aria-hidden="true"></div>
 
   <div class="ai-content reveal">
-    <div class="ai-badge"><span></span> AI-Augmented Workflow</div>
+    <div class="ai-badge"><span aria-hidden="true"></span> AI-Augmented Workflow</div>
     <h2 class="section-title">Designing with AI at the speed of thought.</h2>
     <p class="section-sub" style="margin: 0 auto 48px auto;">
       I leverage advanced AI models and "vibe coding" methodologies to rapidly prototype ideas, iterate on logic, and bridge the gap between static design and functional reality.
@@ -1533,23 +1803,23 @@
     
     <div class="ai-features">
       <div class="ai-feature reveal reveal-delay-1">
-        <div class="ai-f-icon">🧠</div>
+        <div class="ai-f-icon" aria-hidden="true">🧠</div>
         <div class="ai-f-text">
-          <h4>Collaborative Ideation</h4>
+          <h3>Collaborative Ideation</h3>
           <p>Using LLMs as sparring partners to explore edge cases, generate copy, and structure complex information architectures.</p>
         </div>
       </div>
       <div class="ai-feature reveal reveal-delay-2">
-        <div class="ai-f-icon">⚡</div>
+        <div class="ai-f-icon" aria-hidden="true">⚡</div>
         <div class="ai-f-text">
-          <h4>Vibe Coding Prototypes</h4>
+          <h3>Vibe Coding Prototypes</h3>
           <p>Translating UX concepts into interactive, code-based prototypes using AI assistants to test real interactions instantly.</p>
         </div>
       </div>
       <div class="ai-feature reveal reveal-delay-3">
-        <div class="ai-f-icon">🔍</div>
+        <div class="ai-f-icon" aria-hidden="true">🔍</div>
         <div class="ai-f-text">
-          <h4>Data-Driven Empathy</h4>
+          <h3>Data-Driven Empathy</h3>
           <p>Synthesizing massive amounts of user research and qualitative feedback rapidly to extract actionable UX insights.</p>
         </div>
       </div>
@@ -1682,9 +1952,10 @@
       <a href="https://www.linkedin.com/in/gjuxdesigner/overlay/Certifications/560312584/treasury/?profileId=ACoAABcRq6wBhHBK8GPHH-6qrfjkNpp67T5ep6g" target="_blank" class="test-person">
         <div class="test-avatar av1">VP</div>
         <div>
-          <div class="test-name">Vasant Prabhu <span class="link-arrow">↗</span></div>
+          <div class="test-name">Vasant Prabhu <span class="link-arrow" aria-hidden="true">↗</span></div>
           <div class="test-role">Former Secretary, MahaRERA</div>
         </div>
+        <span class="sr-only"> (opens in new tab)</span>
       </a>
     </div>
     
@@ -1694,9 +1965,10 @@
       <a href="https://www.linkedin.com/in/dnyaneshvar-hadadare-2042883b/" target="_blank" class="test-person">
         <div class="test-avatar av2">DH</div>
         <div>
-          <div class="test-name">Dyaneshwar Hadadare <span class="link-arrow">↗</span></div>
+          <div class="test-name">Dyaneshwar Hadadare <span class="link-arrow" aria-hidden="true">↗</span></div>
           <div class="test-role">Former Technical Dep. Head, MahaRERA</div>
         </div>
+        <span class="sr-only"> (opens in new tab)</span>
       </a>
     </div>
     
@@ -1706,9 +1978,10 @@
       <a href="https://www.linkedin.com/in/akc-rising/" target="_blank" class="test-person">
         <div class="test-avatar av2">AC</div>
         <div>
-          <div class="test-name">Akkashh Chauhaan<span class="link-arrow">↗</span></div>
+          <div class="test-name">Akkashh Chauhaan<span class="link-arrow" aria-hidden="true">↗</span></div>
           <div class="test-role">Former Sr. Technical Advisor, MahaRERA</div>
         </div>
+        <span class="sr-only"> (opens in new tab)</span>
       </a>
     </div>
 
@@ -1718,9 +1991,10 @@
       <a href="https://www.linkedin.com/in/sukhbir-singh-36a4a1137/" target="_blank" class="test-person">
         <div class="test-avatar av2">SS</div>
         <div>
-          <div class="test-name">Sukhabir Sing <span class="link-arrow">↗</span></div>
+          <div class="test-name">Sukhabir Sing <span class="link-arrow" aria-hidden="true">↗</span></div>
           <div class="test-role">Design Manager, PeepalDesign</div>
         </div>
+        <span class="sr-only"> (opens in new tab)</span>
       </a>
     </div>
    
@@ -1753,7 +2027,7 @@
           <div class="cl-label">Email</div>
           <div class="cl-val">gjavhare.ux@gmail.com</div>
         </div>
-        <span class="cl-arrow">→</span>
+        <span class="cl-arrow" aria-hidden="true">→</span>
       </a>
       <a href="https://www.linkedin.com/in/gjuxdesigner" target="_blank" class="contact-link">
         <div class="cl-icon">in</div>
@@ -1761,7 +2035,8 @@
           <div class="cl-label">LinkedIn</div>
           <div class="cl-val">www.linkedin.com/in/gjuxdesigner</div>
         </div>
-        <span class="cl-arrow">→</span>
+        <span class="cl-arrow" aria-hidden="true">→</span>
+        <span class="sr-only"> (opens in new tab)</span>
       </a>
       <a href="https://www.behance.net/ganeshjavhare" target="_blank" class="contact-link">
         <div class="cl-icon">Bé</div>
@@ -1769,46 +2044,49 @@
           <div class="cl-label">Behance</div>
           <div class="cl-val">https://www.behance.net/ganeshjavhare</div>
         </div>
-        <span class="cl-arrow">→</span>
+        <span class="cl-arrow" aria-hidden="true">→</span>
+        <span class="sr-only"> (opens in new tab)</span>
       </a>
     </div>
   </div>
 
  <form action="https://formspree.io/f/xojbgavr" method="POST" class="contact-form reveal reveal-delay-1" id="portfolio-form">
+    <p class="sr-only" id="required-note">Fields marked with an asterisk are required.</p>
     <div class="form-row">
       <div class="form-group">
-        <label class="form-label">First Name</label>
-        <input type="text" name="firstName" class="form-input" placeholder="John" required />
+        <label class="form-label" for="field-first-name">First Name <span aria-hidden="true">*</span></label>
+        <input type="text" id="field-first-name" name="firstName" class="form-input" placeholder="John" required aria-describedby="required-note" />
       </div>
       <div class="form-group">
-        <label class="form-label">Last Name</label>
-        <input type="text" name="lastName" class="form-input" placeholder="Doe" required />
+        <label class="form-label" for="field-last-name">Last Name <span aria-hidden="true">*</span></label>
+        <input type="text" id="field-last-name" name="lastName" class="form-input" placeholder="Doe" required aria-describedby="required-note" />
       </div>
     </div>
     <div class="form-group">
-      <label class="form-label">Email</label>
-      <input type="email" name="email" class="form-input" placeholder="john@company.com" required />
+      <label class="form-label" for="field-email">Email <span aria-hidden="true">*</span></label>
+      <input type="email" id="field-email" name="email" class="form-input" placeholder="john@company.com" required aria-describedby="required-note" />
     </div>
     <div class="form-group">
-      <label class="form-label">Project Type</label>
-      <input type="text" name="projectType" class="form-input" placeholder="Product Design / UX Audit / Design System…" />
+      <label class="form-label" for="field-project-type">Project Type</label>
+      <input type="text" id="field-project-type" name="projectType" class="form-input" placeholder="Product Design / UX Audit / Design System…" />
     </div>
     <div class="form-group">
-      <label class="form-label">Message</label>
-      <textarea name="message" class="form-textarea" placeholder="Tell me about your project…" required></textarea>
+      <label class="form-label" for="field-message">Message <span aria-hidden="true">*</span></label>
+      <textarea id="field-message" name="message" class="form-textarea" placeholder="Tell me about your project…" required aria-describedby="required-note"></textarea>
     </div>
     <button type="submit" class="form-btn" id="form-submit-btn">Send Message →</button>
   </form>
 </section>
+</main>
 
 <!-- Footer -->
 <footer>
   <div class="footer-logo">Ganesh Javhare<span>.</span></div>
   <div class="footer-text">© 2026 Ganesh Javhare · Crafted with care in London</div>
   <div class="footer-socials">
-    <a href="https://www.linkedin.com/in/gjuxdesigner" target="_blank" class="social-btn" title="LinkedIn">in</a>
-    <a href="https://github.com/gjavhareux-design" target="_blank" class="social-btn" title="Github">Git</a>
-    <a href="https://www.behance.net/ganeshjavhare" target="_blank" class="social-btn" title="Behance">Bé</a>
+    <a href="https://www.linkedin.com/in/gjuxdesigner" target="_blank" class="social-btn" aria-label="LinkedIn (opens in new tab)" title="LinkedIn">in</a>
+    <a href="https://github.com/gjavhareux-design" target="_blank" class="social-btn" aria-label="GitHub (opens in new tab)" title="Github">Git</a>
+    <a href="https://www.behance.net/ganeshjavhare" target="_blank" class="social-btn" aria-label="Behance (opens in new tab)" title="Behance">Bé</a>
   </div>
 </footer>
 
@@ -1838,24 +2116,61 @@ document.addEventListener('DOMContentLoaded', function() {
   function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
     // Switch the SVG icon paths
-    themeIcon.innerHTML = theme === 'dark' 
-      ? `<path d="${moonIconPath}"></path>` 
+    themeIcon.innerHTML = theme === 'dark'
+      ? `<path d="${moonIconPath}"></path>`
       : `<path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="${sunIconPath}"></path>`;
-      
+
+    // Expose current state to assistive tech (WCAG 4.1.2 Name, Role, Value)
+    themeToggleBtn.setAttribute('aria-pressed', theme === 'light' ? 'true' : 'false');
+    themeToggleBtn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+
     // Dispatch a custom event to notify all 3D/Canvas elements to re-render
     const themeEvent = new CustomEvent('theme-changed', { detail: theme });
     document.documentElement.dispatchEvent(themeEvent);
   }
 
   // =====================================================================
+  // --- MOBILE NAV TOGGLE ---
+  // =====================================================================
+  const navToggleBtn = document.getElementById('nav-toggle');
+  const navEl = document.querySelector('nav');
+  const navLinksEl = document.getElementById('nav-links');
+
+  function closeMobileNav() {
+    navEl.classList.remove('nav-open');
+    navToggleBtn.setAttribute('aria-expanded', 'false');
+    navToggleBtn.setAttribute('aria-label', 'Open menu');
+  }
+
+  navToggleBtn.addEventListener('click', () => {
+    const isOpen = navEl.classList.toggle('nav-open');
+    navToggleBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    navToggleBtn.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
+    if (isOpen) navLinksEl.querySelector('a').focus();
+  });
+
+  navLinksEl.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', closeMobileNav);
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && navEl.classList.contains('nav-open')) {
+      closeMobileNav();
+      navToggleBtn.focus();
+    }
+  });
+
+  // =====================================================================
   // --- LENIS SMOOTH SCROLL INITIALIZATION ---
   // =====================================================================
+  // WCAG 2.3.3: skip momentum/smooth-scroll easing for users who prefer reduced motion
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const lenis = new Lenis({
-    duration: 1.2,
+    duration: prefersReducedMotion ? 0 : 1.2,
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     direction: 'vertical',
     gestureDirection: 'vertical',
-    smooth: true,
+    smooth: !prefersReducedMotion,
     mouseMultiplier: 1,
     smoothTouch: false,
     touchMultiplier: 2,
@@ -2001,6 +2316,10 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   /* ── Cursor ── */
+  // Only hide the native OS cursor once we've confirmed the custom cursor script
+  // is actually running - otherwise (JS error/disabled/blocked) the native
+  // pointer stays visible instead of the user having no visible cursor at all.
+  document.documentElement.classList.add('js-cursor-ready');
   const cursor = document.getElementById('cursor');
   const ring = document.getElementById('cursor-ring');
   let mx = 0, my = 0, rx = 0, ry = 0;
@@ -2064,12 +2383,16 @@ document.addEventListener('DOMContentLoaded', function() {
       gridContainer.classList.remove('list-view');
       btnGrid.classList.add('active');
       btnList.classList.remove('active');
+      btnGrid.setAttribute('aria-pressed', 'true');
+      btnList.setAttribute('aria-pressed', 'false');
       document.querySelectorAll('.project-thumb').forEach(t => { t.style.left = ''; t.style.top = ''; });
     });
     btnList.addEventListener('click', () => {
       gridContainer.classList.add('list-view');
       btnList.classList.add('active');
       btnGrid.classList.remove('active');
+      btnList.setAttribute('aria-pressed', 'true');
+      btnGrid.setAttribute('aria-pressed', 'false');
     });
   }
 
@@ -2126,11 +2449,10 @@ document.addEventListener('DOMContentLoaded', function() {
       btn.addEventListener('mouseenter', (e) => {
         cursorTextRing.style.transform = 'translate(-50%, -50%) scale(0)';
         cursorTextRing.style.opacity = '0';
-        const thumb = el.querySelector('.project-thumb');
-        if(thumb) {
-            thumb.style.opacity = '0';
-            thumb.style.transform = 'translate(-50%, -50%) scale(0.8)';
-        }
+        // NOTE: this used to also fade .project-thumb to opacity:0 here, meant to
+        // reveal the (now-removed, previously always-empty) .project-overlay
+        // underneath. With that overlay gone, that just blanked the whole image
+        // for no reason - removed so the thumbnail stays visible on hover.
         cursor.style.width = '20px';
         cursor.style.height = '20px';
         cursor.style.background = 'var(--accent2)';
@@ -2138,15 +2460,10 @@ document.addEventListener('DOMContentLoaded', function() {
         ring.style.height = '56px';
         ring.style.borderColor = 'rgba(123,108,255,0.5)';
       });
-      
+
       btn.addEventListener('mouseleave', (e) => {
         cursorTextRing.style.transform = 'translate(-50%, -50%) scale(1)';
         cursorTextRing.style.opacity = '1';
-        const thumb = el.querySelector('.project-thumb');
-        if(thumb) {
-            thumb.style.opacity = ''; 
-            thumb.style.transform = ''; 
-        }
         cursor.style.width = '6px';
         cursor.style.height = '6px';
         cursor.style.background = 'var(--accent)';
@@ -2885,36 +3202,117 @@ document.addEventListener('DOMContentLoaded', function() {
   // =====================================================================
   const backdrop = document.getElementById('card-backdrop');
   let expandedCard = null;
+  let expandTriggerBtn = null;
 
-  document.querySelectorAll('.expand-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault(); e.stopPropagation(); 
-      const card = btn.closest('.project-card');
-      if (card.classList.contains('is-expanded')) { closeCard(); } 
-      else {
-        card.classList.add('is-expanded'); backdrop.classList.add('active');
-        btn.innerHTML = '✕'; expandedCard = card;
-        if(typeof lenis !== 'undefined') lenis.stop();
-      }
-    });
-  });
+  function expandBtnName(btn) {
+    return (btn.getAttribute('aria-label') || 'project').replace(/^(Expand|Close) /, '').replace(/ preview$/, '');
+  }
 
-  document.querySelectorAll('.project-info').forEach(info => {
-    info.addEventListener('click', (e) => {
-      const card = info.closest('.project-card');
-      if (card && card.classList.contains('is-expanded')) { e.preventDefault(); e.stopPropagation(); }
-    });
-  });
+  function setExpandBtnState(btn, isOpen) {
+    const icon = btn.querySelector('span');
+    if (icon) icon.textContent = isOpen ? '✕' : '⤢';
+    btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    btn.setAttribute('aria-label', (isOpen ? 'Close ' : 'Expand ') + expandBtnName(btn) + ' preview');
+  }
+
+  function openCard(card, btn) {
+    card.classList.add('is-expanded');
+    // WCAG 4.1.2: expose the expanded card as a dialog to assistive tech
+    card.setAttribute('role', 'dialog');
+    card.setAttribute('aria-modal', 'true');
+    const nameEl = card.querySelector('.project-name');
+    card.setAttribute('aria-label', (nameEl ? nameEl.textContent : 'Project') + ' case study preview');
+    backdrop.classList.add('active');
+    setExpandBtnState(btn, true);
+    expandedCard = card;
+    expandTriggerBtn = btn;
+    const scrollArea = card.querySelector('.expand-scroll');
+    if (scrollArea) {
+      scrollArea.scrollTop = 0; // always open scrolled to the top
+      // Don't show "scroll for more" if there's nothing to scroll to in the first place
+      const hasOverflow = scrollArea.scrollHeight > scrollArea.clientHeight + 4;
+      card.classList.toggle('cv-scrolled', !hasOverflow);
+      scrollArea.addEventListener('scroll', handleCaseviewScroll);
+    }
+    if (typeof lenis !== 'undefined') lenis.stop();
+    document.addEventListener('keydown', handleModalKeydown);
+    btn.focus(); // move focus into the dialog (WCAG 2.4.3 Focus Order)
+  }
+
+  // Fades the scroll-down hint out once the user has actually started scrolling
+  // (or there's nothing left to scroll to), and back in if they scroll to the top.
+  function handleCaseviewScroll(e) {
+    const el = e.target;
+    const nearBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 4;
+    const hasScrolled = el.scrollTop > 24;
+    el.closest('.project-card').classList.toggle('cv-scrolled', hasScrolled || nearBottom);
+  }
 
   function closeCard() {
     if (expandedCard) {
-      expandedCard.classList.remove('is-expanded');
-      expandedCard.querySelector('.expand-btn').innerHTML = '⤢';
+      const scrollArea = expandedCard.querySelector('.expand-scroll');
+      if (scrollArea) scrollArea.removeEventListener('scroll', handleCaseviewScroll);
+      expandedCard.classList.remove('is-expanded', 'cv-scrolled');
+      expandedCard.removeAttribute('role');
+      expandedCard.removeAttribute('aria-modal');
+      expandedCard.removeAttribute('aria-label');
+      const btn = expandedCard.querySelector('.expand-btn');
+      if (btn) setExpandBtnState(btn, false);
       expandedCard = null;
     }
     backdrop.classList.remove('active');
-    if(typeof lenis !== 'undefined') lenis.start(); 
+    if(typeof lenis !== 'undefined') lenis.start();
+    document.removeEventListener('keydown', handleModalKeydown);
+    if (expandTriggerBtn) { expandTriggerBtn.focus(); expandTriggerBtn = null; } // WCAG 2.4.3: return focus to trigger
   }
+
+  // Escape-to-close + basic focus trap while a card is expanded (WCAG 2.1.1, 2.1.2, 2.4.3)
+  function handleModalKeydown(e) {
+    if (e.key === 'Escape') { closeCard(); return; }
+    if (e.key !== 'Tab' || !expandedCard) return;
+    const focusables = expandedCard.querySelectorAll('a[href], button, [tabindex]:not([tabindex="-1"])');
+    if (!focusables.length) return;
+    const first = focusables[0], last = focusables[focusables.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
+
+  document.querySelectorAll('.expand-btn').forEach(btn => {
+    function toggle(e) {
+      e.preventDefault(); e.stopPropagation();
+      const card = btn.closest('.project-card');
+      if (card.classList.contains('is-expanded')) { closeCard(); }
+      else { openCard(card, btn); }
+    }
+    btn.addEventListener('click', toggle);
+    // Div-based control (role="button") needs manual Enter/Space activation (WCAG 2.1.1 Keyboard)
+    btn.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') { toggle(e); }
+    });
+  });
+
+  // Let users click/select text inside the expanded case-study content without
+  // triggering the outer card's navigation (mirrors the .project-info guard below)
+  document.querySelectorAll('.project-info, .project-caseview').forEach(info => {
+    info.addEventListener('click', (e) => {
+      const card = info.closest('.project-card');
+      if (card && card.classList.contains('is-expanded')) { e.stopPropagation(); }
+    });
+  });
+
+  // "View Prototype" is a div[role="link"] (not a real <a>) because a nested <a>
+  // inside the card's own <a> would be invalid HTML - open it manually instead.
+  document.querySelectorAll('.cv-prototype-link').forEach(link => {
+    function openPrototype(e) {
+      e.preventDefault(); e.stopPropagation();
+      const href = link.getAttribute('data-href');
+      if (href && href !== '#') window.open(href, '_blank', 'noopener');
+    }
+    link.addEventListener('click', openPrototype);
+    link.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') { openPrototype(e); }
+    });
+  });
 
   if (backdrop) { backdrop.addEventListener('click', closeCard); }
 }); // end DOMContentLoaded wrapper
