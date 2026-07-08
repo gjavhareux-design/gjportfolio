@@ -779,7 +779,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* --- DESIGNCODE 3D SCENE --- */
+     /* --- DESIGNCODE 3D SCENE --- */
     .hero-right {
       position: relative; z-index: 2;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -794,7 +794,13 @@
       position: relative; width: 100%; height: 80%;
       transform-style: preserve-3d;
       transform: rotateX(15deg) rotateY(-20deg) rotateZ(5deg);
-      transition: transform 0.4s ease-out;
+      /* !important protects the smoothness from the reduced-motion block */
+      transition: transform 0.4s ease-out !important; 
+    }
+
+    /* Pauses the idle floating animation when hovered so cards perfectly follow the cursor plane */
+    .hero-visuals:hover .float-anim {
+      animation-play-state: paused !important;
     }
     .dc-card {
       position: absolute;
@@ -803,7 +809,8 @@
       border: 1px solid var(--dc-border);
       border-radius: 14px;
       box-shadow: 0 30px 60px var(--dc-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-      transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.3s, box-shadow 0.3s, border-color 0.3s;
+      /* !important protects the pop-out hover smoothness */
+      transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
       overflow: hidden;
     }
     .dc-card h4 {
@@ -833,13 +840,14 @@
     .hero-visuals:hover .dc-right { transform: translateZ(70px) translateX(40px) translateY(20px); }
     .hero-visuals:hover .dc-blue { transform: translateZ(160px) translateY(30px); }
 
-    .float-anim { animation: floatLayer 6s ease-in-out infinite alternate; }
-    .dc-main { animation-delay: -1s; animation-duration: 5s;}
-    .dc-cert-back { animation-delay: -3s; animation-duration: 5s;}
-    .dc-cert-front { animation-delay: 0s; animation-duration: 6s;}
-    .dc-left { animation-delay: -2s; animation-duration: 6.5s;}
-    .dc-right { animation-delay: -4s; animation-duration: 7.5s;}
-    .dc-blue { animation-delay: -1.5s; animation-duration: 5.5s;}
+    /* !important ensures the cards always bob independently, overriding any OS motion blocks */
+    .float-anim { animation: floatLayer 6s ease-in-out infinite alternate !important; }
+    .dc-main { animation-delay: -1s !important; animation-duration: 5s !important; }
+    .dc-cert-back { animation-delay: -3s !important; animation-duration: 5s !important; }
+    .dc-cert-front { animation-delay: 0s !important; animation-duration: 6s !important; }
+    .dc-left { animation-delay: -2s !important; animation-duration: 6.5s !important; }
+    .dc-right { animation-delay: -4s !important; animation-duration: 7.5s !important; }
+    .dc-blue { animation-delay: -1.5s !important; animation-duration: 5.5s !important; }
 
     @keyframes floatLayer { 0% { margin-top: 0px; } 100% { margin-top: -15px; } }
 
@@ -1644,7 +1652,7 @@
     <div class="hero-left">
       <div class="hero-eyebrow">
         <span class="hero-eyebrow-dot" aria-hidden="true"></span>
-        Available for freelance · London, UK
+        Open to full-time opportunities | 🌐London, UK
       </div>
 
       <h1 class="hero-headline">
@@ -1664,24 +1672,24 @@
     
     <div class="hero-right reveal">
       <div class="hero-visuals">
-        <div class="floating-cards-group" id="parallax-group" aria-hidden="true">
+        <div class="floating-cards-group" id="parallax-group">
             
             <div class="dc-card dc-cert-back float-anim" style="padding: 20px;">
-                <div style="font-size: 12px; font-weight: bold; margin-top:2px; margin-bottom: 6px;">Project 3 : Zensphere</div>
+                <h4 style="font-size: 12px; font-weight: bold; margin-top:2px; margin-bottom: 6px;">Project 3 : Zensphere</h4>
                 <p style="color: rgba(255,255,255,0.8); font-size: 10px; margin-bottom: 15px;">Mobile APP</p>
                 <div style="width: 60%; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; margin-bottom: 6px;"></div>
                 <div style="width: 40%; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px;"></div>
             </div>
 
             <div class="dc-card dc-cert-front float-anim" style="padding: 20px;">
-                <div style="font-size: 12px; font-weight: bold; margin-top:2px; margin-bottom: 6px;">Project 2 : IYR</div>
+                <h4 style="font-size: 12px; font-weight: bold; margin-top:2px; margin-bottom: 6px;">Project 2 : IYR</h4>
                 <p style="color: rgba(255,255,255,0.8); font-size: 10px; margin-bottom: 15px;">Virtual Reality App</p>
                 <div style="width: 60%; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; margin-bottom: 6px;"></div>
                 <div style="width: 40%; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px;"></div>
             </div>
 
             <div class="dc-card dc-main float-anim">
-                 <div style="font-size: 12px; font-weight: bold; margin-top:2px; margin-bottom: 6px; margin-left: 14px;">Project 1 : MahaRERA Portal<br></div>
+                 <h4 style="font-size: 12px; font-weight: bold; margin-top:2px; margin-bottom: 6px; margin-left: 14px;">Project 1 : MahaRERA Portal<br></h4>
                 <div style="height: 30px; background: var(--dc-box-bg); display: flex; gap: 8px; align-items: center; padding: 0 16px;">
                     <span style="width:12px; height:12px; border-radius:50%; background:#ff5f56;"></span>
                     <span style="width:12px; height:12px; border-radius:50%; background:#ffbd2e;"></span>
@@ -1703,7 +1711,7 @@
             </div>
 
             <div class="dc-card dc-left float-anim" style="padding: 25px;">
-               <div style="font-size: 14px; font-weight: bold; margin-bottom: 4px; margin-left: 14px;">Product Design<br></div>
+               <h4 style="font-size: 14px; font-weight: bold; margin-bottom: 4px; margin-left: 14px;">Product Design<br></h4>
                 <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px;">
                     <div style="width: 30px; height: 30px; border-radius: 50%; background: #ff2a85; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold;">1</div>
                     <div style="flex: 1;">
@@ -1721,7 +1729,7 @@
             </div>
 
             <div class="dc-card dc-right float-anim" style="padding: 30px;">
-                 <div style="font-size: 14px; font-weight: bold; margin-bottom: 4px; margin-left: 14px;">Service Design<br></div>
+                 <h4 style="font-size: 14px; font-weight: bold; margin-bottom: 4px; margin-left: 14px;">Service Design<br></h4>
                 <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 30px;">
                     <div style="width: 30px; height: 30px; border-radius: 50%; background: var(--dc-line-3); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: var(--dc-text);">1</div>
                     <div style="flex: 1;">
@@ -1739,7 +1747,7 @@
             </div>
 
             <div class="dc-card dc-blue float-anim" style="padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                 <div style="font-size: 14px; font-weight: bold; margin-bottom: 4px; margin-left: 14px;color: #261f45;">UX Design<br></div>
+                 <h4 style="font-size: 14px; font-weight: bold; margin-bottom: 4px; margin-left: 14px;color: #261f45;">UX Design<br></h4>
                 <div style="width: 100%; height: 100px; background: rgba(255,255,255,0.2); border-radius: 10px; margin-bottom: 20px;"></div>
                 <div style="width: 80%; height: 10px; background: rgba(255,255,255,0.3); border-radius: 5px; margin-bottom: 10px;"></div>
                 <div style="width: 60%; height: 10px; background: rgba(255,255,255,0.3); border-radius: 5px; margin-bottom: 30px;"></div>
@@ -1851,7 +1859,7 @@
       <div class="project-number">
         <img src="mreralogo.jpg" alt="MahaRERA Logo">
       </div>
-      <div class="expand-scroll" data-lenis-prevent>
+      <div class="expand-scroll">
       <div class="project-thumb">
         <Img src="mockup.jpg" alt="MahaRERA Portal app mockup"></Img>
         <div class="project-thumb-inner thumb-p1">
@@ -1908,7 +1916,7 @@
       <div class="project-number">
         <img src="iyrlogo.jpg" alt="IYR Logo">
       </div>
-      <div class="expand-scroll" data-lenis-prevent>
+      <div class="expand-scroll">
       <div class="project-thumb">
         <Img src="MockupIYR.png" alt="Imagine As You Read app mockup"></Img>
         <div class="project-thumb-inner thumb-p2">
@@ -1965,7 +1973,7 @@
       <div class="project-number">
         <img src="foucslogo.jpg" alt="FocusXR Logo">
       </div>
-      <div class="expand-scroll" data-lenis-prevent>
+      <div class="expand-scroll">
       <div class="project-thumb">
         <div class="project-thumb-inner thumb-p3">
           <Img src="focus.gif" alt="FocusXR app mockup"></Img>
@@ -2022,7 +2030,7 @@
       <div class="project-number">
         <img src="zplogo.jpg" alt="ZenSphere Logo">
       </div>
-      <div class="expand-scroll" data-lenis-prevent>
+      <div class="expand-scroll">
       <div class="project-thumb">
         <div class="project-thumb-inner thumb-p4">
           <div class="thumb-mockup">
@@ -2462,7 +2470,7 @@
 <nav aria-label="Sitemap" style="padding: 40px 60px 20px; background: var(--bg); display: flex; flex-direction: column; align-items: center; gap: 16px; border-top: 1px solid var(--border); position: relative; z-index: 20;">
   <h2 style="font-family: 'Syne', sans-serif; font-size: 1.1rem; color: var(--text); margin: 0;">Sitemap</h2>
   <div style="display: flex; gap: 24px; flex-wrap: wrap; justify-content: center;">
-    <a href="index.html" style="color: var(--muted); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: color 0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">Home</a>
+    <a href="https://www.gjuxdesign.in/" style="color: var(--muted); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: color 0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">Home</a>
     <a href="about.html" style="color: var(--muted); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: color 0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">About</a>
     <a href="gallery.html" style="color: var(--muted); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: color 0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">Gallery</a>
     <a href="projects.html" style="color: var(--muted); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: color 0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">Projects</a>
@@ -3808,6 +3816,11 @@ document.addEventListener('DOMContentLoaded', function() {
       const hasOverflow = scrollArea.scrollHeight > scrollArea.clientHeight + 4;
       card.classList.toggle('cv-scrolled', !hasOverflow);
       scrollArea.addEventListener('scroll', handleCaseviewScroll);
+      // Only exempt this panel from Lenis while it's actually the open modal -
+      // if left on permanently it also covers the collapsed grid card (since
+      // .expand-scroll wraps its whole contents there), which silently kills
+      // smooth scrolling for the entire Work section.
+      scrollArea.setAttribute('data-lenis-prevent', '');
     }
     if (typeof lenis !== 'undefined') lenis.stop();
     document.addEventListener('keydown', handleModalKeydown);
@@ -3826,7 +3839,10 @@ document.addEventListener('DOMContentLoaded', function() {
   function closeCard() {
     if (expandedCard) {
       const scrollArea = expandedCard.querySelector('.expand-scroll');
-      if (scrollArea) scrollArea.removeEventListener('scroll', handleCaseviewScroll);
+      if (scrollArea) {
+        scrollArea.removeEventListener('scroll', handleCaseviewScroll);
+        scrollArea.removeAttribute('data-lenis-prevent');
+      }
       expandedCard.classList.remove('is-expanded', 'cv-scrolled');
       expandedCard.removeAttribute('role');
       expandedCard.removeAttribute('aria-modal');
