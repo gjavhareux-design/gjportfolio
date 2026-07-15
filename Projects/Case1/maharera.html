@@ -67,7 +67,7 @@
 
 /* ========== RESET ========== */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;font-size:16px}
+html{scroll-behavior:smooth;font-size:16px;scroll-padding-top:calc(var(--topbar-h) + 52px)}
 body{background:var(--bg-deep);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.7;overflow-x:hidden; transition: background 0.3s ease, color 0.3s ease, padding-top 0.3s var(--ease);}
 img{max-width:100%;height:auto;display:block}
 a{color:var(--accent-org);text-decoration:none}
@@ -176,14 +176,30 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent-org); ou
 .side-toggle {
   position: fixed; top: 50%; transform: translateY(-50%);
   width: 24px; height: 64px;
-  background: var(--bg-card); border: 1px solid var(--border-subtle);
-  color: var(--text-muted); z-index: 1001;
+  background: var(--bg-card); border: 1px solid var(--border-highlight);
+  box-shadow: var(--shadow-soft);
+  color: var(--text-secondary); z-index: 1001;
   display: flex; align-items: center; justify-content: center;
-  cursor: pointer; opacity: 0.3; transition: all 0.3s ease;
+  cursor: pointer; opacity: 0.6; transition: all 0.3s ease;
 }
 .side-toggle:hover { opacity: 1; background: var(--bg-hover); color: var(--accent-org); }
 .left-toggle { left: var(--sidebar-w); border-left: none; border-radius: 0 8px 8px 0; }
 .right-toggle { right: var(--right-panel-w); border-right: none; border-radius: 8px 0 0 8px; }
+
+/* ========== RESIZE HANDLES ========== */
+.resize-handle {
+  position: fixed; top: var(--topbar-h); width: 6px; height: calc(100vh - var(--topbar-h));
+  cursor: col-resize; z-index: 102; background: transparent; transition: background 0.2s;
+}
+.resize-handle:hover, .resize-handle.dragging { background: var(--accent-org-dim); }
+.resize-handle::after {
+  content: ''; position: absolute; top: 0; bottom: 0; left: 50%; width: 1px;
+  background: var(--border-default); transform: translateX(-50%);
+}
+.resize-handle-left { left: calc(var(--sidebar-w) - 3px); }
+.resize-handle-right { right: calc(var(--right-panel-w) - 3px); }
+body.sidebar-hidden .resize-handle-left, body.right-panel-hidden .resize-handle-right { display: none; }
+@media(max-width:900px){ .resize-handle { display: none !important; } }
 
 body.sidebar-hidden .left-toggle { left: 0; }
 body.sidebar-hidden .left-toggle svg { transform: rotate(180deg); }
@@ -481,6 +497,7 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
   position: relative; border-radius: 12px; overflow: hidden;
   border: 1px solid var(--border-subtle); margin-bottom: 24px; background: var(--bg-primary);
 }
+.expandable-img > svg { cursor: pointer; }
 .expandable-img img {
   width: 100%; height: auto; max-height: 400px;
   object-fit: cover; object-position: top;
@@ -506,6 +523,8 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
 .metric-label{font-size:13px;color:var(--text-secondary);line-height:1.5}
 
 .img-pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+.expandable-img.vertical-fit { aspect-ratio: 9 / 16; background: var(--bg-primary); }
+.expandable-img.vertical-fit img { width: 100%; height: 100%; max-height: none; object-fit: contain; object-position: center; }
 
 /* ========== MODAL FOR FULLSCREEN IMAGE VIEWING ========== */
 .img-modal {
@@ -526,11 +545,124 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
 
 .modal-content-wrapper {
   flex: 1; display: flex; align-items: flex-start; justify-content: center;
-  overflow: auto; padding: 60px 40px; 
+  overflow: auto; padding: 96px 40px 40px;
 }
 .modal-img {
-  width: 100%; max-width: 100%; height: auto; transition: width 0.2s ease, max-width 0.2s ease; object-fit: contain;
+  max-height: calc(100vh - 136px); max-width: 100%; width: auto; height: auto;
+  object-fit: contain; transition: transform 0.2s ease; transform-origin: top center; display: block;
 }
+.modal-svg-wrap {
+  width: min(90vw, 900px); max-height: calc(100vh - 136px);
+  transition: transform 0.2s ease; transform-origin: top center;
+}
+.modal-svg-wrap svg { width: 100%; height: auto; max-height: calc(100vh - 136px); display: block; }
+
+/* ========== IMAGE PLACEHOLDER ========== */
+.img-placeholder {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+  min-height: 220px; padding: 24px; margin-bottom: 24px;
+  border: 1.5px dashed var(--border-highlight); border-radius: 12px;
+  background: var(--bg-primary); color: var(--text-muted); text-align: center;
+}
+.img-placeholder svg { opacity: 0.5; }
+.img-placeholder strong { color: var(--text-secondary); font-size: 13.5px; font-weight: 700; font-family: 'Inter', sans-serif; }
+.img-placeholder span { font-size: 12px; max-width: 380px; line-height: 1.5; }
+.img-placeholder-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.img-placeholder-row .img-placeholder { margin-bottom: 0; }
+
+/* ========== DATA TABLE ========== */
+.data-table-wrap { overflow-x: auto; margin-bottom: 24px; border: 1px solid var(--border-subtle); border-radius: 12px; }
+.data-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 480px; }
+.data-table th, .data-table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border-subtle); color: var(--text-secondary); }
+.data-table th { background: var(--bg-elevated); color: var(--text-primary); font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 11.5px; text-transform: uppercase; letter-spacing: .04em; }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table td strong { color: var(--text-primary); }
+.status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+.status-pill.ok { background: rgba(16,185,129,.12); color: #10b981; }
+.status-pill.warn { background: var(--accent-gold-dim); color: var(--accent-gold); }
+.status-pill.info { background: var(--accent-blue-dim); color: var(--accent-blue); }
+
+/* ========== PERSONA CARDS ========== */
+.persona-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.persona-card { background: var(--bg-primary); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 22px; }
+.persona-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.persona-avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 15px; color: #fff; flex-shrink: 0; }
+.persona-name { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; color: var(--text-primary); }
+.persona-role { font-size: 11.5px; color: var(--text-muted); }
+.persona-card h4 { font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); margin: 14px 0 6px; font-weight: 700; }
+.persona-card ul { margin: 0; padding-left: 18px; font-size: 12.5px; color: var(--text-secondary); line-height: 1.6; }
+.persona-quote { margin-top: 14px; padding: 12px 14px; background: var(--bg-elevated); border-left: 3px solid var(--accent-org); border-radius: 0 8px 8px 0; font-size: 12.5px; font-style: italic; color: var(--text-secondary); }
+
+/* ========== CHAPTER BANNER (DIVIDER, NOT SCROLL-SPY TRACKED) ========== */
+.chapter-banner {
+  padding: 64px clamp(20px, 4vw, 50px); text-align: center; position: relative;
+}
+.chapter-banner-inner { max-width: 700px; margin: 0 auto; }
+.chapter-banner-line { height: 1px; background: linear-gradient(90deg, transparent, var(--border-highlight), transparent); margin-bottom: 24px; }
+.chapter-banner-chip {
+  display: inline-flex; align-items: center; gap: 8px; background: var(--accent-org-dim); border: 1px solid var(--accent-org-border);
+  border-radius: 100px; padding: 6px 14px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent-org);
+  letter-spacing: .08em; text-transform: uppercase; margin-bottom: 18px;
+}
+.chapter-banner h2 { font-family: 'Space Grotesk', sans-serif; font-size: clamp(26px, 4vw, 40px); font-weight: 700; color: var(--text-primary); letter-spacing: -.02em; margin-bottom: 12px; }
+.chapter-banner p { color: var(--text-secondary); font-size: 15px; max-width: 560px; margin: 0 auto; }
+
+/* ========== MOSCOW GRID ========== */
+.moscow-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 24px; }
+.moscow-cell { border-radius: 12px; padding: 18px 20px; border: 1px solid var(--border-subtle); background: var(--bg-primary); }
+.moscow-cell h4 { display: flex; align-items: center; gap: 8px; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 700; margin-bottom: 10px; }
+.moscow-cell h4 .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.moscow-cell ul { margin: 0; padding-left: 18px; font-size: 12.5px; color: var(--text-secondary); line-height: 1.7; }
+.moscow-must .dot { background: #ef4444; } .moscow-must h4 { color: #ef4444; }
+.moscow-should .dot { background: var(--accent-gold); } .moscow-should h4 { color: var(--accent-gold); }
+.moscow-could .dot { background: var(--accent-blue); } .moscow-could h4 { color: var(--accent-blue); }
+.moscow-wont .dot { background: var(--text-muted); } .moscow-wont h4 { color: var(--text-muted); }
+@media(max-width:600px){ .moscow-grid { grid-template-columns: 1fr; } }
+
+/* ========== CTA ROW (OVERVIEW) ========== */
+.cta-row { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 8px; }
+.cta-primary {
+  display: inline-flex; align-items: center; gap: 8px; background: var(--accent-org); color: #fff;
+  padding: 13px 24px; border-radius: 100px; font-size: 13.5px; font-weight: 700; transition: transform 0.2s, box-shadow 0.2s;
+}
+.cta-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(255,107,53,0.3); }
+.cta-secondary {
+  display: inline-flex; align-items: center; gap: 8px; background: var(--bg-elevated); color: var(--text-primary);
+  border: 1px solid var(--border-default); padding: 13px 24px; border-radius: 100px; font-size: 13.5px; font-weight: 700; transition: all 0.2s;
+}
+.cta-secondary:hover { border-color: var(--accent-org); color: var(--accent-org); }
+
+/* ========== TWO PROBLEMS BLOCK ========== */
+.problem-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; margin-bottom: 24px; }
+.problem-card { background: var(--bg-primary); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 22px; }
+.problem-card-num { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background: var(--bg-elevated); color: var(--accent-org); font-size: 11px; font-weight: 700; margin-right: 8px; }
+.problem-card h4 { display: inline-flex; align-items: center; font-family: 'Space Grotesk', sans-serif; font-size: 14.5px; font-weight: 700; color: var(--text-primary); margin-bottom: 14px; }
+.problem-card ul { margin: 0 0 14px; padding-left: 18px; font-size: 12.5px; color: var(--text-secondary); line-height: 1.7; }
+.problem-statement { padding: 14px 16px; background: var(--accent-org-dim); border-left: 3px solid var(--accent-org); border-radius: 0 8px 8px 0; font-size: 12.5px; font-style: italic; color: var(--text-secondary); }
+.problem-statement strong { display: block; font-style: normal; font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--accent-org); margin-bottom: 6px; }
+
+/* ========== GUIDED TOUR OVERLAY ========== */
+.tour-overlay { position: fixed; inset: 0; z-index: 5000; display: none; }
+.tour-overlay.active { display: block; }
+.tour-backdrop { position: absolute; inset: 0; background: rgba(6,10,18,0.7); transition: clip-path 0.35s var(--ease); }
+.tour-spotlight { position: absolute; border-radius: 12px; box-shadow: 0 0 0 4000px rgba(6,10,18,0.72); border: 2px solid var(--accent-org); transition: all 0.35s var(--ease); pointer-events: none; }
+.tour-card {
+  position: absolute; max-width: 300px; background: var(--bg-card); border: 1px solid var(--border-highlight);
+  border-radius: 14px; padding: 20px; box-shadow: var(--shadow-soft); transition: all 0.35s var(--ease);
+}
+.tour-card-step { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent-org); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px; }
+.tour-card h4 { font-family: 'Space Grotesk', sans-serif; font-size: 15px; color: var(--text-primary); margin-bottom: 8px; }
+.tour-card p { font-size: 12.5px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 16px; }
+.tour-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.tour-dots { display: flex; gap: 5px; }
+.tour-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border-highlight); transition: all 0.2s; }
+.tour-dot.active { background: var(--accent-org); width: 16px; border-radius: 3px; }
+.tour-btns { display: flex; gap: 8px; }
+.tour-skip { font-size: 11.5px; color: var(--text-muted); padding: 8px 10px; }
+.tour-skip:hover { color: var(--text-secondary); }
+.tour-next { font-size: 11.5px; font-weight: 700; color: #fff; background: var(--accent-org); padding: 8px 16px; border-radius: 8px; }
+.tour-next:hover { opacity: 0.9; }
+.tour-help-btn { position: relative; }
 
 /* ========== RESPONSIVE ========== */
 @media(max-width:1150px){
@@ -547,6 +679,9 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
   .img-pair{grid-template-columns:1fr}
   .metric-row{grid-template-columns:1fr 1fr}
   .side-toggle { display: none !important; }
+  .persona-grid, .problem-grid { grid-template-columns: 1fr; }
+  .cta-row { flex-direction: column; }
+  .cta-primary, .cta-secondary { justify-content: center; }
 }
 @media(max-width:480px){
   .nav-title{display:none;}
@@ -570,7 +705,7 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
     Ganesh J.
   </a>
   
-  <div class="nav-title">MahaRERA Portal Redesign</div>
+  <div class="nav-title">MahaRERA Website Redesign</div>
 
   <div class="nav-right">
     <!-- Panel Layout Toggle -->
@@ -580,6 +715,11 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
             <line x1="9" y1="3" x2="9" y2="21"></line>
             <line x1="15" y1="3" x2="15" y2="21"></line>
         </svg>
+    </button>
+
+    <!-- Guided Tour Replay -->
+    <button class="icon-btn tour-help-btn" id="tour-replay-btn" title="Show guided tour">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
     </button>
 
     <!-- Light/Dark Mode Toggle -->
@@ -604,20 +744,28 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
 <!-- ===== DYNAMIC BREADCRUMB BAR (With Dropdowns) ===== -->
 <div id="breadcrumb-bar" class="breadcrumb-bar">
   <div class="bc-dropdown">
-    <span style="color: var(--text-primary);">MahaRERA Portal Redesign</span>
+    <span style="color: var(--text-primary);">MahaRERA Website Redesign</span>
     <div class="bc-dropdown-menu">
-      <a href="imagine-as-you-read.html">MahaRERA Portal Redesign</a>
+      <a href="#">MahaRERA Application Portal</a>
+      <a href="imagine-as-you-read.html">Imagine as You Read</a>
       <a href="focusxr.html">FocusXR</a>
-      <a href="zensphere.html">Zensphere</a>
+      <a href="zensphere.html">ZenSphere</a>
     </div>
   </div>
   <span style="margin:0 4px; color:var(--text-muted); font-weight:normal;">/</span>
-  
+
   <div class="bc-dropdown">
-    <span id="bc-chapter">Part 01 — Problem Space</span>
+    <span id="bc-chapter">Introduction</span>
     <div class="bc-dropdown-menu">
-      <a href="#overview">Part 01 — Problem Space</a>
-      <a href="#hypothesis">Part 02 — Solution Space</a>
+      <a href="#overview">Introduction</a>
+      <a href="#discovery-research">Chapter 1 — Discovery</a>
+      <a href="#define-strategy">Chapter 2 — Define</a>
+      <a href="#design-system">Chapter 3 — Design</a>
+      <a href="#prototype-process">Chapter 4 — Prototyping</a>
+      <a href="#testing-prototype">Chapter 5 — Testing</a>
+      <a href="#development">Chapter 6 — Development</a>
+      <a href="#usability-deployment">Chapter 7 — Usability & Deployment</a>
+      <a href="#outcomes-future">Chapter 8 — Outcomes & Future Work</a>
     </div>
   </div>
   
@@ -639,6 +787,10 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
 </button>
 
+<!-- ===== PANEL RESIZE HANDLES ===== -->
+<div class="resize-handle resize-handle-left" id="resize-left" title="Drag to resize sidebar"></div>
+<div class="resize-handle resize-handle-right" id="resize-right" title="Drag to resize right panel"></div>
+
 <!-- ===== LAYOUT ===== -->
 <div class="layout">
 
@@ -649,8 +801,8 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
         <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" fill="#FF6B35"/><circle cx="5" cy="5" r="2" fill="white" opacity=".4"/></svg>
         <span>Case Study</span>
       </div>
-      <div class="sb-title">MahaRERA Portal Redesign</div>
-      <div class="sb-sub">by Ganesh Javhare · 10 min read</div>
+      <div class="sb-title">MahaRERA Website Redesign</div>
+      <div class="sb-sub">by Ganesh Javhare · 14 min read</div>
       
       <!-- EXPANDABLE PROJECTS MENU -->
       <div class="sb-more-projects">
@@ -659,8 +811,9 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
           <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
         </button>
         <div class="more-projects-list" id="more-projects-list">
-          <a href="imagine-as-you-read.html" class="more-project-link">imagine as you read</a>
-          <a href="focusxr.html" class="more-project-link">Focus XR</a>
+          <a href="#" class="more-project-link">MahaRERA Application Portal</a>
+          <a href="imagine-as-you-read.html" class="more-project-link">Imagine as You Read</a>
+          <a href="focusxr.html" class="more-project-link">FocusXR</a>
           <a href="zensphere.html" class="more-project-link">ZenSphere</a>
         </div>
       </div>
@@ -668,17 +821,34 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
 
     <div class="sb-scrollable">
         <nav class="sb-nav">
-          <div class="sb-chapter-label" data-chapter="Part 01 — Problem Space">Part 01 — Problem Space</div>
+          <div class="sb-chapter-label" data-chapter="Introduction">Introduction</div>
           <a class="nav-link active" href="#overview" data-name="Overview"><span class="dot"></span>Overview</a>
-          <a class="nav-link" href="#role" data-name="Role & Responsibilities"><span class="dot"></span>Role & Responsibilities</a>
-          <a class="nav-link" href="#impact" data-name="Impact"><span class="dot"></span>Impact</a>
-          <a class="nav-link" href="#problems" data-name="Existing Problems"><span class="dot"></span>Existing Problems</a>
-          <a class="nav-link" href="#research" data-name="Research"><span class="dot"></span>Research</a>
 
-          <div class="sb-chapter-label" data-chapter="Part 02 — Solution Space">Part 02 — Solution Space</div>
-          <a class="nav-link" href="#hypothesis" data-name="Hypothesis & Goals"><span class="dot"></span>Hypothesis & Goals</a>
-          <a class="nav-link" href="#principles" data-name="Guiding Principles"><span class="dot"></span>Guiding Principles</a>
-          <a class="nav-link" href="#outcome" data-name="Outcome"><span class="dot"></span>Outcome</a>
+          <div class="sb-chapter-label" data-chapter="Chapter 1 — Discovery">Chapter 1 — Discovery</div>
+          <a class="nav-link" href="#discovery-research" data-name="Problem & Research"><span class="dot"></span>Problem & Research</a>
+          <a class="nav-link" href="#discovery-personas" data-name="Personas & Findings"><span class="dot"></span>Personas & Findings</a>
+
+          <div class="sb-chapter-label" data-chapter="Chapter 2 — Define">Chapter 2 — Define</div>
+          <a class="nav-link" href="#define-strategy" data-name="Strategy & Planning"><span class="dot"></span>Strategy & Planning</a>
+
+          <div class="sb-chapter-label" data-chapter="Chapter 3 — Design">Chapter 3 — Design</div>
+          <a class="nav-link" href="#design-system" data-name="Flow & Design System"><span class="dot"></span>Flow & Design System</a>
+
+          <div class="sb-chapter-label" data-chapter="Chapter 4 — Prototyping">Chapter 4 — Prototyping</div>
+          <a class="nav-link" href="#prototype-process" data-name="Sketches to Hi-Fi"><span class="dot"></span>Sketches to Hi-Fi</a>
+          <a class="nav-link" href="#prototype-features" data-name="Hi-Fi Feature Walkthrough"><span class="dot"></span>Hi-Fi Feature Walkthrough</a>
+
+          <div class="sb-chapter-label" data-chapter="Chapter 5 — Testing">Chapter 5 — Testing</div>
+          <a class="nav-link" href="#testing-prototype" data-name="Testing the Prototype"><span class="dot"></span>Testing the Prototype</a>
+
+          <div class="sb-chapter-label" data-chapter="Chapter 6 — Development">Chapter 6 — Development</div>
+          <a class="nav-link" href="#development" data-name="Build & Integration"><span class="dot"></span>Build & Integration</a>
+
+          <div class="sb-chapter-label" data-chapter="Chapter 7 — Usability & Deployment">Chapter 7 — Usability & Deployment</div>
+          <a class="nav-link" href="#usability-deployment" data-name="Launch & Optimisation"><span class="dot"></span>Launch & Optimisation</a>
+
+          <div class="sb-chapter-label" data-chapter="Chapter 8 — Outcomes & Future Work">Chapter 8 — Outcomes & Future Work</div>
+          <a class="nav-link" href="#outcomes-future" data-name="Outcomes & Roadmap"><span class="dot"></span>Outcomes & Roadmap</a>
         </nav>
     </div>
   </aside>
@@ -692,9 +862,9 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
 
     <div class="artifact-card" id="snapshot-card">
       <h3>Case Study Snapshot</h3>
-      <div class="artifact-row"><span>Product:</span> <strong>MahaRERA Portal</strong></div>
+      <div class="artifact-row"><span>Product:</span> <strong>MahaRERA Website</strong></div>
       <div class="artifact-row"><span>My Role:</span> <strong>Lead UX Designer</strong></div>
-      <div class="artifact-row"><span>Timeline:</span> <strong>12 Weeks</strong></div>
+      <div class="artifact-row"><span>Timeline:</span> <strong>~6 Months</strong></div>
       <div class="artifact-row"><span>Key Goal:</span> <strong>Accessibility & Trust</strong></div>
     </div>
 
@@ -715,7 +885,7 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
     </div>
 
     <!-- MahaRERA Application Portal (Part 2 of this project) -->
-    <div style="margin-bottom: 24px;">
+    <div id="tour-target-part2" style="margin-bottom: 24px;">
        <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 700; color: var(--text-primary); margin: 0 0 10px 0;">Part 2 of this project</h3>
        <a href="#" style="display: flex; align-items: center; justify-content: space-between; background: var(--bg-elevated); border: 1px solid var(--accent-org-border); border-radius: 12px; padding: 14px 16px; color: var(--text-primary); text-decoration: none; transition: all 0.2s; box-shadow: 0 4px 12px rgba(255,107,53,0.05);" onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor='var(--accent-org)';" onmouseout="this.style.transform='none'; this.style.borderColor='var(--accent-org-border)';">
           <span style="font-size: 13px; font-weight: 600;">MahaRERA Application Portal</span>
@@ -726,10 +896,10 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
     <!-- Next Case Study Footer -->
     <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: var(--shadow-soft);">
         <p style="margin:0; font-size: 10px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; text-transform: uppercase; font-weight: 500; letter-spacing: 0.05em;">Next Case Study</p>
-        <img src="mockup.jpg" style="width: 100%; height: 110px; border-radius: 8px; object-fit: cover;" alt="Next Case Study Thumbnail">
+        <img src="MockupIYR.png" style="width: 100%; height: 110px; border-radius: 8px; object-fit: cover;" alt="Next Case Study Thumbnail">
         <div>
-           <h3 style="margin: 0 0 10px; font-size: 14px; font-family: 'Space Grotesk', sans-serif; color: var(--text-primary);">Pune Metro Transit App</h3>
-           <a href="#" class="nav-cta" style="margin:0; font-size: 11px; padding: 8px 16px; display: inline-flex; align-items: center; gap: 6px; width: 100%; justify-content: center;">
+           <h3 style="margin: 0 0 10px; font-size: 14px; font-family: 'Space Grotesk', sans-serif; color: var(--text-primary);">Imagine as You Read</h3>
+           <a href="imagine-as-you-read.html" class="nav-cta" style="margin:0; font-size: 11px; padding: 8px 16px; display: inline-flex; align-items: center; gap: 6px; width: 100%; justify-content: center;">
               View Case Study
            </a>
         </div>
@@ -800,334 +970,709 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
         <article class="step">
           <div class="step-header">
             <div class="step-topline">
-              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg> Lean UX Step 01</span>
+              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg> Project Overview</span>
               <span class="step-number">01</span>
             </div>
-            <h2 class="step-title">Project Context & Case Study Setup</h2>
-            <p>Define the product story before showing the process.</p>
+            <h2 class="step-title">Overview of the Project</h2>
+            <p>Two government systems, one regulator — understanding MahaRERA before designing for it.</p>
           </div>
           <div class="step-body">
-            <h3 class="section-title">🎯 Purpose</h3>
-            <p class="purpose">A UX case study needs a clear frame: what problem existed, who was affected, what your role was, what constraints shaped the work, and what outcome the team pursued.</p>
-            
-            <h3 class="section-title">🧩 Step-by-step activities</h3>
-            <ul class="activity-list">
-              <li>Write a short product overview: product name, domain, platform, audience, and business context.</li>
-              <li>State the challenge in one concise paragraph without jumping to a solution.</li>
-            </ul>
+            <h3 class="section-title">🏛️ About MahaRERA</h3>
+            <p class="purpose">The Maharashtra Real Estate Regulatory Authority (MahaRERA) is the statutory state body that regulates the real estate sector in Maharashtra under the RERA Act, 2016. It maintains the official public record of every registered housing project in the state, tracks promoter (builder) compliance, and gives citizens an independent way to verify a project before they commit their life savings to it. No promoter can legally advertise, market, or sell a housing unit in Maharashtra without first registering the project with MahaRERA.</p>
 
             <div class="expandable-img">
               <img src="postermhr.png" alt="Government civic infrastructure building representing MahaRERA context" loading="lazy">
-              <!-- Expand Button SVG -->
               <button class="expand-btn" title="Expand">
                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
               </button>
             </div>
 
+            <h3 class="section-title">👥 Who uses it, and why</h3>
+            <ul class="activity-list">
+              <li><strong>Citizens & Homebuyers</strong> — use MahaRERA to verify a project's registration status, promoter credibility, and construction timeline before booking a flat. For most first-time buyers, it is the only independent, government-backed check available to them.</li>
+              <li><strong>Promoters & Builders</strong> — register new projects, file mandatory quarterly progress updates, upload legal and financial disclosures, and respond to homebuyer complaints through the platform.</li>
+              <li><strong>Real Estate Agents</strong> — register as authorised agents, look up project credentials before recommending a property, and renew their own agent certification each year.</li>
+            </ul>
+
+            <h3 class="section-title">🧩 Two Major Problems</h3>
+            <p class="purpose">MahaRERA is really two separate digital products serving two very different audiences — a public-facing <strong>Website</strong> for verification and trust, and an internal-facing <strong>Application Portal</strong> for compliance and filing. Both had accumulated years of usability debt.</p>
+
+            <div class="problem-grid">
+              <div class="problem-card">
+                <h4><span class="problem-card-num">1</span>MahaRERA Website</h4>
+                <ul>
+                  <li>Project search required knowing exact registration numbers — unusable for a first-time buyer.</li>
+                  <li>Data was dumped as raw PDFs and dense tables with no visual hierarchy.</li>
+                  <li>No way to see a project's real-time status (on-track, delayed, complaint filed) at a glance.</li>
+                  <li>No accessibility support — ignored GIGW and WCAG guidelines mandated for government sites.</li>
+                </ul>
+                <div class="problem-statement">
+                  <strong>Problem Statement</strong>
+                  "Homebuyers in Maharashtra cannot quickly and confidently verify whether a real estate project is legitimate and on schedule, because the website presents registration data in a technical, disconnected format that assumes users already know what they're looking for."
+                </div>
+              </div>
+              <div class="problem-card">
+                <h4><span class="problem-card-num">2</span>MahaRERA Application Portal</h4>
+                <ul>
+                  <li>Multi-step registration and filing forms lost data on session timeout, forcing promoters to redo hours of work.</li>
+                  <li>No visible status tracker for applications under review — leading to repeated calls to MahaRERA staff.</li>
+                  <li>Document upload rules weren't validated until final submission, causing late-stage rejections.</li>
+                  <li>Promoter and agent workflows were merged into one confusing form set with no role-based guidance.</li>
+                </ul>
+                <div class="problem-statement">
+                  <strong>Problem Statement</strong>
+                  "Promoters and agents lose significant time and project momentum navigating an application portal that was not designed around their actual filing workflow, resulting in abandoned sessions, duplicate submissions, and avoidable back-and-forth with regulators."
+                </div>
+              </div>
+            </div>
+
             <div class="yellow-callout">
-              <strong>💡 What to explain</strong>
-              Explain why the project mattered, why the problem was worth solving, what you owned personally, and what limitations shaped the process.
+              <strong>💡 About this case study</strong>
+              This case study is presented in two parts. Part 1, below, covers the redesign of the <strong>MahaRERA Website</strong> — the public verification and trust layer. Part 2 covers the <strong>MahaRERA Application Portal</strong> — the promoter and agent compliance layer that the website's search results pull live data from.
+            </div>
+
+            <div class="cta-row">
+              <a href="#" class="cta-primary">
+                Explore Part 2 — Application Portal Design
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </a>
+              <a href="#discovery-research" class="cta-secondary">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+                Continue reading — Website Design
+              </a>
             </div>
           </div>
         </article>
       </div>
     </section>
 
-    <!-- ─────────── ROLE CARD ─────────── -->
-    <section class="sec" id="role">
+    <!-- ─────────── CHAPTER BANNER: WEBSITE REDESIGN ─────────── -->
+    <div class="chapter-banner">
+      <div class="chapter-banner-inner reveal">
+        <div class="chapter-banner-line"></div>
+        <div class="chapter-banner-chip">
+          <svg width="8" height="8" viewBox="0 0 8 8" aria-hidden="true"><circle cx="4" cy="4" r="3" fill="#FF6B35"/></svg>
+          Part 01 of 02
+        </div>
+        <h2>MahaRERA Website Redesign</h2>
+        <p>From here on, this case study walks through the end-to-end design process for the public-facing MahaRERA website — from discovery research to deployment and future roadmap.</p>
+      </div>
+    </div>
+
+    <!-- ─────────── CH.1 DISCOVERY — RESEARCH CARD ─────────── -->
+    <section class="sec" id="discovery-research">
       <div class="sec-inner reveal">
         <article class="step">
           <div class="step-header">
             <div class="step-topline">
-              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Lean UX Step 02</span>
+              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg> Chapter 01 — Discovery</span>
               <span class="step-number">02</span>
             </div>
-            <h2 class="step-title">Role & Responsibilities</h2>
-            <p>Leading design end-to-end across a government-scale product.</p>
+            <h2 class="step-title">Problem &amp; Research</h2>
+            <p>Learning who was struggling, how, and by how much — before proposing anything.</p>
           </div>
           <div class="step-body">
-            <h3 class="section-title">🎯 Purpose</h3>
-            <p class="purpose">Balancing creative vision with regulatory accuracy and cross-functional partnership.</p>
-            
-            <h3 class="section-title">🧩 Step-by-step activities</h3>
-            <ul class="activity-list">
-              <li><strong>Lead UX Designer:</strong> Led design sprints, collaborated with government stakeholders, facilitated user workshops.</li>
-              <li><strong>End-to-End Design:</strong> Crafted the information architecture, user experiences, wireframes, prototypes, and visual design components.</li>
-              <li><strong>Collaboration:</strong> Partnered with engineering, data teams, and policy makers to simplify complexities without losing legal accuracy.</li>
-            </ul>
+            <h3 class="section-title">🎯 Problem Statement</h3>
+            <p class="purpose">"Homebuyers in Maharashtra cannot quickly and confidently verify whether a real estate project is legitimate and on schedule, because the website presents registration data in a technical, disconnected format that assumes users already know what they're looking for."</p>
 
-            <div class="yellow-callout">
-              <strong>💡 What to explain</strong>
-              Explain what you owned personally, and how you interacted with constraints like timeline, accessibility, and legal boundaries.
-            </div>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <!-- ─────────── IMPACT CARD ─────────── -->
-    <section class="sec" id="impact">
-      <div class="sec-inner reveal">
-        <article class="step">
-          <div class="step-header">
-            <div class="step-topline">
-              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg> Lean UX Step 03</span>
-              <span class="step-number">03</span>
-            </div>
-            <h2 class="step-title">Results at a Glance</h2>
-            <p>Shift from output thinking to outcome thinking.</p>
-          </div>
-          <div class="step-body">
-            <h3 class="section-title">🎯 Purpose</h3>
-            <p class="purpose">The redesign touched every layer of the public service — from rural homebuyers checking property registration to urban developers filing complaints.</p>
-            
-            <h3 class="section-title">📈 Metric Impact</h3>
-            <div class="metric-row">
-              <div class="metric">
-                <div class="metric-num" data-target="6">0</div>
-                <div class="metric-label">Million+ users served seamlessly across the platform</div>
-              </div>
-              <div class="metric">
-                <div class="metric-num" data-target="100" data-suffix="%">0%</div>
-                <div class="metric-label">Mobile & desktop responsive across demographics</div>
-              </div>
-              <div class="metric">
-                <div class="metric-num" data-target="3" data-suffix="×">0×</div>
-                <div class="metric-label">Faster design iterations via new component library</div>
-              </div>
-            </div>
-
-            <div class="expandable-img" style="padding: 24px; text-align:center;">
-                <svg viewBox="0 0 700 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;overflow:visible" aria-hidden="true">
-                  <line x1="60" y1="90" x2="640" y2="90" stroke="var(--border-subtle)" stroke-width="2"/>
-                  <g><circle cx="110" cy="90" r="28" fill="var(--bg-elevated)" stroke="#FF6B35" stroke-width="1.5"/><text x="110" y="86" text-anchor="middle" fill="#FF6B35" font-family="Inter,sans-serif" font-size="14" font-weight="700">6M+</text><text x="110" y="100" text-anchor="middle" fill="var(--text-secondary)" font-family="Inter,sans-serif" font-size="8">Users</text></g>
-                  <g><circle cx="270" cy="90" r="28" fill="var(--bg-elevated)" stroke="#4FACFE" stroke-width="1.5"/><text x="270" y="86" text-anchor="middle" fill="#4FACFE" font-family="Inter,sans-serif" font-size="11" font-weight="700">WCAG</text><text x="270" y="100" text-anchor="middle" fill="var(--text-secondary)" font-family="Inter,sans-serif" font-size="8">Compliant</text></g>
-                  <g><circle cx="430" cy="90" r="28" fill="var(--bg-elevated)" stroke="#F5A623" stroke-width="1.5"/><text x="430" y="86" text-anchor="middle" fill="#F5A623" font-family="Inter,sans-serif" font-size="14" font-weight="700">3×</text><text x="430" y="100" text-anchor="middle" fill="var(--text-secondary)" font-family="Inter,sans-serif" font-size="8">Velocity</text></g>
-                  <g><circle cx="590" cy="90" r="28" fill="var(--bg-elevated)" stroke="#2ECCC9" stroke-width="1.5"/><text x="590" y="86" text-anchor="middle" fill="#2ECCC9" font-family="Inter,sans-serif" font-size="11" font-weight="700">Trust</text><text x="590" y="100" text-anchor="middle" fill="var(--text-secondary)" font-family="Inter,sans-serif" font-size="8">Built</text></g>
-                  <path d="M138 90 L242 90" stroke="var(--border-highlight)" stroke-width="1.5" stroke-dasharray="4 3"/>
-                  <path d="M298 90 L402 90" stroke="var(--border-highlight)" stroke-width="1.5" stroke-dasharray="4 3"/>
-                  <path d="M458 90 L562 90" stroke="var(--border-highlight)" stroke-width="1.5" stroke-dasharray="4 3"/>
-                </svg>
-                <button class="expand-btn" title="Expand">
-                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-                </button>
-            </div>
-
-            <div class="yellow-callout">
-              <strong>💡 What to explain</strong>
-              Clarify what success meant before you designed. Show the relationship between user benefit and business value.
-            </div>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <!-- ─────────── PROBLEMS CARD ─────────── -->
-    <section class="sec" id="problems">
-      <div class="sec-inner reveal">
-        <article class="step">
-          <div class="step-header">
-            <div class="step-topline">
-              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg> Lean UX Step 04</span>
-              <span class="step-number">04</span>
-            </div>
-            <h2 class="step-title">Existing UX & Problems</h2>
-            <p>The hurdles preventing citizens from confidently using the platform.</p>
-          </div>
-          <div class="step-body">
-            <h3 class="section-title">🎯 Purpose</h3>
-            <p class="purpose">Four systemic issues emerged clearly that made the existing user journeys difficult for non-tech-savvy home buyers to navigate with confidence.</p>
-            
-            <h3 class="section-title">🧩 Identified Issues</h3>
-            <ul class="activity-list">
-              <li><strong>Unclear & Complex:</strong> Regulatory portals are often overwhelming. Journeys were difficult for non-tech-savvy users.</li>
-              <li><strong>Noisy & Dated:</strong> The legacy system was riddled with inconsistent patterns and cluttered data presentation.</li>
-              <li><strong>Bureaucratic Tone:</strong> Users felt intimidated by the dense, impersonal bureaucratic interface.</li>
-            </ul>
-
+            <h3 class="section-title">😤 User Frustrations</h3>
             <div class="expandable-img">
-              <img src="oldwebsite.png" alt="Legacy dashboard with cluttered data presentation" loading="lazy">
+              <img src="User Frustration.png" alt="Diagram of common user frustrations reported by MahaRERA website users" loading="lazy">
               <button class="expand-btn" title="Expand">
                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
               </button>
             </div>
 
-            <div class="yellow-callout">
-              <strong>💡 What to explain</strong>
-              Explain why this was the right problem to solve now and what you intentionally chose not to solve.
+            <div class="img-placeholder">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg>
+              <strong>Add image</strong>
+              <span>Screen recording stills or annotated screenshots of real user frustration moments from usability sessions.</span>
             </div>
-          </div>
-        </article>
-      </div>
-    </section>
 
-    <!-- ─────────── RESEARCH CARD ─────────── -->
-    <section class="sec" id="research">
-      <div class="sec-inner reveal">
-        <article class="step">
-          <div class="step-header">
-            <div class="step-topline">
-              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> Lean UX Step 05</span>
-              <span class="step-number">05</span>
-            </div>
-            <h2 class="step-title">Qual & Quant Research</h2>
-            <p>Learn enough to reduce uncertainty, not everything possible.</p>
-          </div>
-          <div class="step-body">
-            <h3 class="section-title">🎯 Purpose</h3>
-            <p class="purpose">A mixed-methods research approach helped surface both the emotional reality of users and the data patterns driving abandonment across key flows.</p>
-            
-            <h3 class="section-title">🧩 Step-by-step activities</h3>
+            <h3 class="section-title">🔬 Research Approach</h3>
+            <p class="purpose">A mixed-methods approach was chosen so that quantitative data could reveal the scale of each problem, while qualitative data explained the "why" behind it.</p>
             <ul class="activity-list">
-              <li><strong>User Interviews:</strong> Generative sessions with homebuyers & developers to understand behaviors.</li>
-              <li><strong>Systems Audit:</strong> UI standards review against WCAG guidelines.</li>
-              <li><strong>Data Analysis:</strong> Reviewing drop-off rates on registration flows.</li>
+              <li><strong>Quantitative:</strong> Analysed 90 days of website analytics — search abandonment, page drop-off, session duration. Chosen because it surfaced the scale of each problem across all 6M+ users without needing to interview each one individually.</li>
+              <li><strong>Qualitative:</strong> Ran 18 moderated interviews and 6 contextual inquiries with homebuyers, promoters, and agents across urban and rural Maharashtra. Chosen because analytics could show <em>where</em> users dropped off, but not <em>why</em> — especially for lower digital-literacy users.</li>
+              <li><strong>Competitive / heuristic audit:</strong> Benchmarked against two other state RERA portals and a private real-estate marketplace to see what strong project search and trust-signalling looked like outside typical government UX.</li>
             </ul>
 
-            <div class="img-pair">
-              <div class="expandable-img" style="margin:0;">
-                <img src="session.png" alt="UX researcher conducting user interview session" loading="lazy" style="height: 200px;">
-                <button class="expand-btn" title="Expand">
-                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-                </button>
-              </div>
-              <div class="expandable-img" style="margin:0;">
-                <img src="session1.png" alt="UX affinity mapping and research synthesis on whiteboard" loading="lazy" style="height: 200px;">
-                <button class="expand-btn" title="Expand">
-                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-                </button>
-              </div>
+            <h3 class="section-title">📊 Competitor Analysis</h3>
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead><tr><th>Criteria</th><th>MahaRERA (Before)</th><th>Other State RERA Portal</th><th>Private Marketplace</th></tr></thead>
+                <tbody>
+                  <tr><td>Search by name / locality</td><td><span class="status-pill warn">Limited</span></td><td><span class="status-pill warn">Limited</span></td><td><span class="status-pill ok">Yes</span></td></tr>
+                  <tr><td>Visual trust badges</td><td><span class="status-pill warn">None</span></td><td><span class="status-pill info">Partial</span></td><td><span class="status-pill ok">Yes</span></td></tr>
+                  <tr><td>Mobile responsive</td><td><span class="status-pill warn">Partial</span></td><td><span class="status-pill warn">Partial</span></td><td><span class="status-pill ok">Yes</span></td></tr>
+                  <tr><td>Document preview</td><td><span class="status-pill warn">Download only</span></td><td><span class="status-pill info">Partial</span></td><td><span class="status-pill ok">Yes</span></td></tr>
+                  <tr><td>Avg. page load</td><td><strong>5.8s</strong></td><td><strong>4.1s</strong></td><td><strong>1.6s</strong></td></tr>
+                </tbody>
+              </table>
             </div>
-            
-            <div class="yellow-callout">
-              <strong>💡 What to explain</strong>
-              Do not only say “we interviewed users.” Explain who you spoke to, why, what you learned, and how it changed the direction.
-            </div>
-          </div>
-        </article>
-      </div>
-    </section>
+            <p class="purpose" style="font-size:12px;color:var(--text-muted);margin-bottom:24px;">Illustrative benchmark data compiled for internal reference — not official published figures.</p>
 
-    <!-- ─────────── HYPOTHESIS CARD ─────────── -->
-    <section class="sec" id="hypothesis">
-      <div class="sec-inner reveal">
-        <article class="step">
-          <div class="step-header">
-            <div class="step-topline">
-              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Lean UX Step 06</span>
-              <span class="step-number">06</span>
-            </div>
-            <h2 class="step-title">Hypothesis & Goals</h2>
-            <p>Convert ideas into testable learning loops.</p>
-          </div>
-          <div class="step-body">
-            <h3 class="section-title">🎯 Purpose</h3>
-            <p class="purpose">Through comprehensive user journeys and responsive design, develop a simplified, inclusive, and scalable experience that helps citizens navigate complex real estate data with confidence.</p>
-            
-            <h3 class="section-title">🧩 Strategic Direction</h3>
-            <div class="expandable-img" style="padding: 24px; text-align: center; background: var(--bg-card);">
-               <svg viewBox="0 0 680 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto" aria-hidden="true">
-                <line x1="60" y1="60" x2="620" y2="60" stroke="var(--border-subtle)" stroke-width="1.5"/>
-                <rect x="0" y="36" width="120" height="48" rx="8" fill="var(--bg-elevated)" stroke="#FF6B35" stroke-width="1"/>
-                <text x="60" y="57" text-anchor="middle" fill="#FF6B35" font-family="Inter,sans-serif" font-weight="700" font-size="9" letter-spacing="1">IF</text>
-                <text x="60" y="72" text-anchor="middle" fill="var(--text-secondary)" font-family="Inter,sans-serif" font-size="9">Research + Empathy</text>
-                
-                <rect x="160" y="36" width="140" height="48" rx="8" fill="var(--bg-elevated)" stroke="#4FACFE" stroke-width="1"/>
-                <text x="230" y="57" text-anchor="middle" fill="#4FACFE" font-family="Inter,sans-serif" font-weight="700" font-size="9" letter-spacing="1">THEN</text>
-                <text x="230" y="72" text-anchor="middle" fill="var(--text-secondary)" font-family="Inter,sans-serif" font-size="9">Simplified UX</text>
-                
-                <rect x="340" y="36" width="160" height="48" rx="8" fill="var(--bg-elevated)" stroke="#F5A623" stroke-width="1"/>
-                <text x="420" y="57" text-anchor="middle" fill="#F5A623" font-family="Inter,sans-serif" font-weight="700" font-size="9" letter-spacing="1">RESULT</text>
-                <text x="420" y="72" text-anchor="middle" fill="var(--text-secondary)" font-family="Inter,sans-serif" font-size="9">Citizens empowered</text>
-                
-                <rect x="540" y="36" width="140" height="48" rx="8" fill="var(--bg-elevated)" stroke="#2ECCC9" stroke-width="1"/>
-                <text x="610" y="57" text-anchor="middle" fill="#2ECCC9" font-family="Inter,sans-serif" font-weight="700" font-size="9" letter-spacing="1">GOAL</text>
-                <text x="610" y="72" text-anchor="middle" fill="var(--text-secondary)" font-family="Inter,sans-serif" font-size="9">Scalable System</text>
+            <h3 class="section-title">📈 What the Data Revealed</h3>
+            <div class="expandable-img" style="padding: 24px;">
+              <svg viewBox="0 0 640 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto" aria-hidden="true">
+                <text x="0" y="18" fill="var(--text-secondary)" font-family="Inter,sans-serif" font-size="11">Search sessions ending without finding a project</text>
+                <rect x="0" y="26" width="435" height="14" rx="4" fill="#FF6B35"/><rect x="0" y="26" width="640" height="14" rx="4" fill="var(--border-subtle)" style="mix-blend-mode:multiply"/><text x="445" y="37" fill="var(--text-primary)" font-family="Inter,sans-serif" font-size="12" font-weight="700">68%</text>
+                <text x="0" y="68" fill="var(--text-secondary)" font-family="Inter,sans-serif" font-size="11">Drop-off at registration lookup step</text>
+                <rect x="0" y="76" width="269" height="14" rx="4" fill="#4FACFE"/><text x="279" y="87" fill="var(--text-primary)" font-family="Inter,sans-serif" font-size="12" font-weight="700">42%</text>
+                <text x="0" y="118" fill="var(--text-secondary)" font-family="Inter,sans-serif" font-size="11">Users who found the site "hard to trust"</text>
+                <rect x="0" y="126" width="518" height="14" rx="4" fill="#F5A623"/><text x="528" y="137" fill="var(--text-primary)" font-family="Inter,sans-serif" font-size="12" font-weight="700">81%</text>
+                <text x="0" y="168" fill="var(--text-secondary)" font-family="Inter,sans-serif" font-size="11">Avg. task completion time (target: 1m 50s)</text>
+                <rect x="0" y="176" width="330" height="14" rx="4" fill="#2ECCC9"/><text x="340" y="187" fill="var(--text-primary)" font-family="Inter,sans-serif" font-size="12" font-weight="700">6m 40s</text>
               </svg>
               <button class="expand-btn" title="Expand">
                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
               </button>
             </div>
+            <p class="purpose" style="font-size:12px;color:var(--text-muted);">Representative figures synthesised from analytics review + interview sessions for this case study.</p>
+          </div>
+        </article>
+      </div>
+    </section>
 
-            <div class="expandable-img">
-              <img src="newwebsite.png" alt="UX affinity mapping and research synthesis on whiteboard" loading="lazy">
+    <!-- ─────────── CH.1 DISCOVERY — PERSONAS CARD ─────────── -->
+    <section class="sec" id="discovery-personas">
+      <div class="sec-inner reveal">
+        <article class="step">
+          <div class="step-header">
+            <div class="step-topline">
+              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> Chapter 01 — Discovery</span>
+              <span class="step-number">03</span>
+            </div>
+            <h2 class="step-title">User Personas &amp; Findings</h2>
+            <p>Three very different people, one platform.</p>
+          </div>
+          <div class="step-body">
+            <h3 class="section-title">🧑‍🤝‍🧑 User Personas</h3>
+            <div class="persona-grid">
+              <div class="persona-card">
+                <div class="persona-head">
+                  <div class="persona-avatar" style="background:linear-gradient(135deg,#FF6B35,#F5A623);">RP</div>
+                  <div><div class="persona-name">Ramesh Patil</div><div class="persona-role">34 · Citizen / First-time Homebuyer, Pune</div></div>
+                </div>
+                <h4>Goals</h4>
+                <ul><li>Verify a project is legally registered before booking</li><li>Check the builder's track record and past delays</li><li>Understand construction status without legal jargon</li></ul>
+                <h4>Frustrations</h4>
+                <ul><li>Doesn't know the registration number</li><li>Gets lost in dense, unlabelled tables</li><li>Can't tell if information is current</li></ul>
+                <div class="persona-quote">"I just want to know — is this project real, and will it actually finish on time?"</div>
+              </div>
+              <div class="persona-card">
+                <div class="persona-head">
+                  <div class="persona-avatar" style="background:linear-gradient(135deg,#4FACFE,#2ECCC9);">SD</div>
+                  <div><div class="persona-name">Sunita Deshmukh</div><div class="persona-role">45 · Promoter / Builder, Nagpur</div></div>
+                </div>
+                <h4>Goals</h4>
+                <ul><li>File quarterly updates without redoing lost data</li><li>Track application status without calling the office</li><li>Know exactly what documents are required upfront</li></ul>
+                <h4>Frustrations</h4>
+                <ul><li>Portal times out mid-form and erases work</li><li>No visibility into review status</li><li>Finds document errors only at final submission</li></ul>
+                <div class="persona-quote">"Every quarter I lose an afternoon just re-entering data the portal deleted."</div>
+              </div>
+              <div class="persona-card">
+                <div class="persona-head">
+                  <div class="persona-avatar" style="background:linear-gradient(135deg,#F5A623,#FF6B35);">IS</div>
+                  <div><div class="persona-name">Imran Shaikh</div><div class="persona-role">29 · Registered Agent, Thane</div></div>
+                </div>
+                <h4>Goals</h4>
+                <ul><li>Verify a project in under a minute before recommending it</li><li>Renew agent registration without friction</li><li>Cross-check promoter credibility across projects</li></ul>
+                <h4>Frustrations</h4>
+                <ul><li>Search doesn't support locality/builder lookup well</li><li>No agent-specific view of the data</li><li>Has to dig through citizen-facing pages</li></ul>
+                <div class="persona-quote">"My clients trust me to know if a project is legitimate — that should be a 30-second check."</div>
+              </div>
+            </div>
+
+            <h3 class="section-title">🔑 Key Findings</h3>
+            <ul class="activity-list">
+              <li>Search is the single biggest point of failure across all three personas — each expects to search differently (by name, locality, or registration number) but the old site supported only one.</li>
+              <li>Trust is established visually before it's established textually — users scanned for badges, certificates, and status colour before reading any copy.</li>
+              <li>The bureaucratic tone read as "hiding something" — plain language and clear status indicators measurably increased perceived legitimacy in sessions.</li>
+              <li>Promoters and agents need a different information density than citizens entirely — one dashboard could not serve all three well.</li>
+            </ul>
+
+            <div class="img-placeholder-row">
+              <div class="img-placeholder">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect></svg>
+                <strong>Project Canvas</strong>
+                <span>Add the completed project canvas covering vision, users, risks, and constraints.</span>
+              </div>
+              <div class="img-placeholder">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"></circle><path d="M4 21v-1a8 8 0 0 1 16 0v1"></path></svg>
+                <strong>Empathy Map</strong>
+                <span>Add the Says / Thinks / Does / Feels map synthesised from the interview sessions.</span>
+              </div>
+              <div class="img-placeholder">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12h4l3 8 4-16 3 8h4"></path></svg>
+                <strong>Journey Map</strong>
+                <span>Add the end-to-end journey map from "hears about a project" to "makes a decision".</span>
+              </div>
+            </div>
+
+            <div class="yellow-callout">
+              <strong>💡 Strategy</strong>
+              These findings directly shaped the guiding design principles and the three role-based "corners" — Citizen, Promoter, and Agent — that became core to the redesigned information architecture, covered in Chapter 3.
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ─────────── CH.2 DEFINE CARD ─────────── -->
+    <section class="sec" id="define-strategy">
+      <div class="sec-inner reveal">
+        <article class="step">
+          <div class="step-header">
+            <div class="step-topline">
+              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg> Chapter 02 — Define</span>
+              <span class="step-number">04</span>
+            </div>
+            <h2 class="step-title">Strategy &amp; Planning</h2>
+            <p>Turning research findings into scope, success criteria, and a realistic delivery plan.</p>
+          </div>
+          <div class="step-body">
+            <h3 class="section-title">🎯 Strategy</h3>
+            <p class="purpose">Redesign the MahaRERA website around three role-based journeys — Citizen, Promoter, Agent — replacing a single one-size-fits-all interface with role-aware information density, plain-language content, and visible trust signals, while remaining fully compliant with government accessibility and security mandates.</p>
+
+            <h3 class="section-title">📐 Scope of Work</h3>
+            <ul class="activity-list">
+              <li><strong>In scope:</strong> Public website redesign — project search, search results, project detail pages, QR verification, homebuyer guidance, and the three role-based corners.</li>
+              <li><strong>Out of scope (this phase):</strong> The Application Portal's internal filing forms (Part 2), payment gateway redesign, and the mobile native app.</li>
+            </ul>
+
+            <h3 class="section-title">✅ Success Criteria</h3>
+            <ul class="activity-list">
+              <li>Reduce average project-search task time from 6m 40s to under 2 minutes.</li>
+              <li>Meet WCAG 2.1 AA and GIGW accessibility compliance at launch.</li>
+              <li>Cut "site feels untrustworthy" survey responses from 81% to under 25%.</li>
+              <li>Zero data loss on government security and penetration audit.</li>
+            </ul>
+
+            <h3 class="section-title">🗺️ Planning — Project Phases</h3>
+            <ul class="activity-list">
+              <li><strong>1. Research</strong> — discovery interviews, analytics review, competitor audit.</li>
+              <li><strong>2. User Stories</strong> — role-based stories written and prioritised with stakeholders.</li>
+              <li><strong>3. Design</strong> — full design system + ~25-page screen layout across all three corners.</li>
+              <li><strong>4. Development</strong> — front-end build in parallel with backend API work.</li>
+              <li><strong>5. Review</strong> — stakeholder, technical, feasibility, and accessibility review rounds.</li>
+              <li><strong>6. Iteration</strong> — refine flows and content based on review feedback.</li>
+              <li><strong>7. Integration</strong> — connect to live backend data from the Application Portal via API.</li>
+              <li><strong>8. Testing</strong> — usability testing, QA, and security audit.</li>
+              <li><strong>9. Deploy</strong> — domain approval from Government IT cell, hosting on the government server (NIC), publish.</li>
+            </ul>
+
+            <h3 class="section-title">⏱️ Estimated Timeline</h3>
+            <div class="metric-row">
+              <div class="metric">
+                <div class="metric-num" data-target="6">0</div>
+                <div class="metric-label">Months estimated, discovery to publish</div>
+              </div>
+              <div class="metric">
+                <div class="metric-num" data-target="25">0</div>
+                <div class="metric-label">Screen layouts designed across all corners</div>
+              </div>
+              <div class="metric">
+                <div class="metric-num" data-target="9">0</div>
+                <div class="metric-label">Distinct delivery phases planned</div>
+              </div>
+            </div>
+
+            <div class="yellow-callout">
+              <strong>💡 Why 6 months?</strong>
+              Government platforms carry legal and technical complexity that consumer products don't: mandatory <strong>GIGW guideline</strong> compliance, formal <strong>accessibility standards</strong> sign-off, an external <strong>security audit</strong>, required <strong>certifications</strong>, and a <strong>domain approval</strong> process through the state IT department — each with its own review queue. None of these can be meaningfully compressed without risking a failed audit and a full re-review cycle.
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ─────────── CH.3 DESIGN CARD ─────────── -->
+    <section class="sec" id="design-system">
+      <div class="sec-inner reveal">
+        <article class="step">
+          <div class="step-header">
+            <div class="step-topline">
+              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg> Chapter 03 — Design</span>
+              <span class="step-number">05</span>
+            </div>
+            <h2 class="step-title">Flow, Features &amp; Design System</h2>
+            <p>Deciding what to build, in what order, and under one consistent visual language.</p>
+          </div>
+          <div class="step-body">
+            <h3 class="section-title">🧭 Determine Flow</h3>
+            <p class="purpose">Every user flow was mapped back to the three personas before any screen was drawn — search flow, verification flow, and role-corner navigation.</p>
+            <div class="expandable-img" style="padding:20px; background:var(--bg-card);">
+              <img src="flow.svg" alt="User flow diagram for search and verification journeys" loading="lazy" style="max-height:320px;object-fit:contain;">
               <button class="expand-btn" title="Expand">
                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
               </button>
             </div>
-            
+
+            <h3 class="section-title">📋 Feature Prioritisation — MoSCoW</h3>
+            <div class="moscow-grid">
+              <div class="moscow-cell moscow-must">
+                <h4><span class="dot"></span>Must Have</h4>
+                <ul><li>Multi-filter project search</li><li>Search results with status &amp; certificates</li><li>QR authenticity verification</li><li>Citizen / Promoter / Agent corners</li></ul>
+              </div>
+              <div class="moscow-cell moscow-should">
+                <h4><span class="dot"></span>Should Have</h4>
+                <ul><li>Building data visualisation (units sold/unsold/mortgaged)</li><li>Step-by-step homebuyer guidance</li><li>Document preview without download</li></ul>
+              </div>
+              <div class="moscow-cell moscow-could">
+                <h4><span class="dot"></span>Could Have</h4>
+                <ul><li>Saved / bookmarked project list</li><li>Locality-based project comparison</li></ul>
+              </div>
+              <div class="moscow-cell moscow-wont">
+                <h4><span class="dot"></span>Won't Have (this phase)</h4>
+                <ul><li>In-app complaint filing</li><li>Native mobile app</li></ul>
+              </div>
+            </div>
+
+            <h3 class="section-title">🎨 Design System &amp; Branding</h3>
+            <ul class="activity-list">
+              <li><strong>Colour & Typography:</strong> Government-appropriate but modern palette; high-contrast type scale meeting WCAG AA at every size.</li>
+              <li><strong>Atomic components:</strong> Buttons, status badges, cards, and tables built once as reusable tokens across all 25 page layouts for consistency and dev handoff speed.</li>
+              <li><strong>Branding:</strong> Retained the official MahaRERA identity while modernising iconography and removing dense bureaucratic visual noise.</li>
+            </ul>
+
+            <h3 class="section-title">🗺️ Journey Mapping</h3>
+            <div class="img-placeholder">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12h4l3 8 4-16 3 8h4"></path></svg>
+              <strong>Add Journey Map</strong>
+              <span>Add the finalised journey map showing touchpoints, emotions, and redesigned moments across the search-to-decision flow.</span>
+            </div>
+
             <div class="yellow-callout">
-              <strong>💡 What to explain</strong>
-              Describe what result would change your mind. This shows maturity and avoids confirmation bias.
+              <strong>💡 Note</strong>
+              Every feature on the MoSCoW list was traced back to a specific finding from Chapter 1 — nothing was added on assumption alone.
             </div>
           </div>
         </article>
       </div>
     </section>
 
-    <!-- ─────────── PRINCIPLES CARD ─────────── -->
-    <section class="sec" id="principles">
+    <!-- ─────────── CH.4 PROTOTYPING — PROCESS CARD ─────────── -->
+    <section class="sec" id="prototype-process">
       <div class="sec-inner reveal">
         <article class="step">
           <div class="step-header">
             <div class="step-topline">
-              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg> Lean UX Step 07</span>
-              <span class="step-number">07</span>
+              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Chapter 04 — Prototyping</span>
+              <span class="step-number">06</span>
             </div>
-            <h2 class="step-title">Guiding Principles</h2>
-            <p>Design foundation that builds trust and inclusivity.</p>
+            <h2 class="step-title">From Paper Sketches to Hi-Fi</h2>
+            <p>Three fidelity passes, each earning the right to move forward.</p>
           </div>
           <div class="step-body">
-            <h3 class="section-title">🎯 Purpose</h3>
-            <p class="purpose">To define a consistent, human-centered approach across all new UI components.</p>
-            
-            <h3 class="section-title">🧩 Core Principles</h3>
+            <h3 class="section-title">🧩 Prototyping Process</h3>
             <ul class="activity-list">
-              <li><strong>Humanized:</strong> Shift away from a cold, bureaucratic feel using clearer messaging and readable typography.</li>
-              <li><strong>Clear & Simple:</strong> Create a clean, intuitive interface that minimizes cognitive load and reduces steps.</li>
-              <li><strong>Inclusive:</strong> Ensure the platform is accessible to all users regardless of digital literacy.</li>
-              <li><strong>Scalable:</strong> Test and iterate on cross-functional components using atomic design principles.</li>
+              <li><strong>Low-fi:</strong> Paper sketches of every core screen — fast, disposable, easy to argue with in a room full of stakeholders.</li>
+              <li><strong>Review & Iteration:</strong> Sketches reviewed with the research team and revised where flows didn't match persona goals.</li>
+              <li><strong>Mid-fi:</strong> Grayscale block prototypes to lock information architecture and layout before any visual design was applied.</li>
+              <li><strong>Hi-fi:</strong> Fully styled, interactive prototypes matching the new design system, built for stakeholder walkthroughs and usability testing.</li>
+            </ul>
+
+            <div class="img-placeholder-row">
+              <div class="img-placeholder">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3h18v18H3z"></path><path d="M3 9h18"></path><path d="M9 21V9"></path></svg>
+                <strong>Low-fi sketches</strong>
+                <span>Add photos of the paper sketch sessions.</span>
+              </div>
+              <div class="img-placeholder">
+                <img src="wf.svg" alt="Mid-fidelity wireframe blocks" loading="lazy" style="max-height:120px;object-fit:contain;">
+                <strong>Mid-fi wireframes</strong>
+                <span>Block-level layout prototypes.</span>
+              </div>
+              <div class="img-placeholder">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="9" y1="18" x2="15" y2="18"></line></svg>
+                <strong>Hi-fi prototype</strong>
+                <span>Add final styled interactive prototype screens.</span>
+              </div>
+            </div>
+
+            <div class="yellow-callout">
+              <strong>🎉 Fun fact</strong>
+              When the mid-fi block prototypes were first presented to government officers and other stakeholders, most struggled to visualise the outcome from grayscale wireframes alone. We ended up jumping straight to hi-fi prototypes for every stakeholder review after that — purely so non-designers in the room could actually picture the finished product.
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ─────────── CH.4 PROTOTYPING — HI-FI FEATURES CARD ─────────── -->
+    <section class="sec" id="prototype-features">
+      <div class="sec-inner reveal">
+        <article class="step">
+          <div class="step-header">
+            <div class="step-topline">
+              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="9" y1="18" x2="15" y2="18"></line></svg> Chapter 04 — Prototyping</span>
+              <span class="step-number">07</span>
+            </div>
+            <h2 class="step-title">Hi-Fi Feature Walkthrough</h2>
+            <p>What the redesigned MahaRERA website actually does.</p>
+          </div>
+          <div class="step-body">
+            <h3 class="section-title">🔎 Search Project</h3>
+            <div class="expandable-img">
+              <img src="newwebsite.png" alt="Redesigned project search interface with filters" loading="lazy">
+              <button class="expand-btn" title="Expand">
+                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+              </button>
+            </div>
+            <p class="purpose">Inspired by professional, corporate real-estate search experiences rather than typical government form patterns. Search now supports name, locality, promoter, and registration-number filters at once. <strong>Problem solved:</strong> a first-time buyer no longer needs to know a registration number to find their project.</p>
+
+            <h3 class="section-title">📄 Search Result Page</h3>
+            <p class="purpose">Every result surfaces the information a buyer actually decides on, at a glance:</p>
+            <ul class="activity-list">
+              <li>Project name &amp; promoter name</li>
+              <li>Location</li>
+              <li>Registration certificates</li>
+              <li>Last updated date &amp; expected completion date</li>
+              <li>View application details / view documents</li>
+            </ul>
+
+            <h3 class="section-title">📱 QR Code Verification</h3>
+            <p class="purpose">Every registered project now gets a scannable QR code for use on physical advertisements and hoardings — a buyer scans it on-site to instantly confirm the project's registration authenticity, without typing anything.</p>
+
+            <h3 class="section-title">🏗️ Building Data Visualisation</h3>
+            <div class="expandable-img" style="padding:24px;">
+              <svg viewBox="0 0 600 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto" aria-hidden="true">
+                <text x="0" y="16" fill="var(--text-secondary)" font-family="Inter,sans-serif" font-size="11">Flats by status — Tower A (approved up to 22 floors)</text>
+                <rect x="0" y="30" width="150" height="26" fill="#10b981" rx="4"/><text x="60" y="47" fill="#fff" font-family="Inter,sans-serif" font-size="11" font-weight="700">Sold — 150</text>
+                <rect x="0" y="66" width="90" height="26" fill="#4FACFE" rx="4"/><text x="30" y="83" fill="#fff" font-family="Inter,sans-serif" font-size="11" font-weight="700">Unsold — 90</text>
+                <rect x="0" y="102" width="46" height="26" fill="#F5A623" rx="4"/><text x="55" y="119" fill="var(--text-primary)" font-family="Inter,sans-serif" font-size="11" font-weight="700">Mortgaged — 46</text>
+                <text x="0" y="156" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="10">Building permission on record: G+22 floors · 286 total units</text>
+              </svg>
+              <button class="expand-btn" title="Expand">
+                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+              </button>
+            </div>
+            <p class="purpose" style="font-size:12px;color:var(--text-muted);">Illustrative data — approved floors vs. sold, unsold, and mortgaged flat counts.</p>
+
+            <h3 class="section-title">🚪 Role-Based Corners</h3>
+            <p class="purpose">Content and navigation split into three dedicated "corners" so each audience sees only what's relevant to them: <strong>Citizen Corner</strong> (search, verify, guidance), <strong>Promoter Corner</strong> (filings, project status, compliance), <strong>Agent Corner</strong> (verification lookups, registration renewal).</p>
+
+            <h3 class="section-title">📘 Guidelines for Homebuyers</h3>
+            <p class="purpose">A step-by-step guidance module walks first-time buyers through what to check before booking — registration validity, promoter history, and how to read a certificate — in plain language, not legal text.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ─────────── CH.5 TESTING PROTOTYPE CARD ─────────── -->
+    <section class="sec" id="testing-prototype">
+      <div class="sec-inner reveal">
+        <article class="step">
+          <div class="step-header">
+            <div class="step-topline">
+              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg> Chapter 05 — Testing</span>
+              <span class="step-number">08</span>
+            </div>
+            <h2 class="step-title">Testing the Prototype</h2>
+            <p>Validating the hi-fi prototype with the people who'd actually approve and use it.</p>
+          </div>
+          <div class="step-body">
+            <h3 class="section-title">🧪 Review Rounds</h3>
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead><tr><th>Review Type</th><th>Reviewers</th><th>Key Finding</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr><td>Stakeholder Review</td><td>MahaRERA officers, policy team</td><td>Requested clearer legal disclaimers on the certificate view</td><td><span class="status-pill ok">Resolved</span></td></tr>
+                  <tr><td>Technical Review</td><td>Engineering &amp; platform team</td><td>QR verification needed an offline-fallback state</td><td><span class="status-pill ok">Resolved</span></td></tr>
+                  <tr><td>Feasibility Review</td><td>Product &amp; engineering leads</td><td>Some advanced filters flagged as high-cost to build</td><td><span class="status-pill warn">Descoped</span></td></tr>
+                  <tr><td>Accessibility Review</td><td>External accessibility auditor</td><td>Colour-only status indicators needed text labels too</td><td><span class="status-pill ok">Resolved</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="purpose">No major structural changes came out of this round — the core information architecture held up. What did change was the user flow being refined, missing information being added back into result pages, and content clarity being tightened throughout.</p>
+
+            <h3 class="section-title">⏱️ Usability Test Outcomes</h3>
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead><tr><th>Task</th><th>Avg. Time — Old Site</th><th>Avg. Time — Prototype</th><th>Success Rate</th></tr></thead>
+                <tbody>
+                  <tr><td>Find a project by name</td><td>4m 10s</td><td><strong>0m 48s</strong></td><td><span class="status-pill ok">96%</span></td></tr>
+                  <tr><td>Verify registration status</td><td>3m 05s</td><td><strong>0m 35s</strong></td><td><span class="status-pill ok">100%</span></td></tr>
+                  <tr><td>Locate promoter's other projects</td><td>Not possible</td><td><strong>1m 02s</strong></td><td><span class="status-pill ok">91%</span></td></tr>
+                  <tr><td>Understand flat status (sold/unsold)</td><td>6m 20s</td><td><strong>0m 40s</strong></td><td><span class="status-pill ok">94%</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="purpose" style="font-size:12px;color:var(--text-muted);">Moderated sessions, n=14 participants across the three personas. Times are illustrative, representative of observed trends.</p>
+
+            <h3 class="section-title">🔁 Iterations</h3>
+            <ul class="activity-list">
+              <li>Refined the search filter order based on how testers actually searched, not how the data was structured internally.</li>
+              <li>Improved the document-preview experience so users didn't need to download a PDF to check a certificate.</li>
+              <li>Final hi-fi prototype locked and handed off to development with all four review rounds closed out.</li>
+            </ul>
+
+            <div class="img-placeholder">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="9" y1="18" x2="15" y2="18"></line></svg>
+              <strong>Final Hi-Fi Prototype</strong>
+              <span>Add the final, testing-validated hi-fi prototype screens here.</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ─────────── CH.6 DEVELOPMENT CARD ─────────── -->
+    <section class="sec" id="development">
+      <div class="sec-inner reveal">
+        <article class="step">
+          <div class="step-header">
+            <div class="step-topline">
+              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg> Chapter 06 — Development</span>
+              <span class="step-number">09</span>
+            </div>
+            <h2 class="step-title">Development</h2>
+            <p>Building it in close collaboration with the engineering team.</p>
+          </div>
+          <div class="step-body">
+            <h3 class="section-title">🛠️ Design + Code Collaboration</h3>
+            <ul class="activity-list">
+              <li><strong>Design ↔ code pairing:</strong> Sat alongside the development team through the build so component behaviour matched the design system exactly, not just the static screens.</li>
+              <li><strong>Data integration:</strong> Connected the website's search and result pages to live data from the MahaRERA Application Portal database — the same records promoters file quarterly updates against.</li>
+              <li><strong>Search filters:</strong> Implemented the multi-criteria filter logic (name, locality, promoter, registration number) defined in Chapter 3.</li>
+            </ul>
+
+            <div class="img-placeholder">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+              <strong>Information Architecture</strong>
+              <span>Add the final IA diagram mapping how the website's pages connect to Application Portal data.</span>
+            </div>
+
+            <h3 class="section-title">🔌 API Development &amp; Testing</h3>
+            <ul class="activity-list">
+              <li>APIs were developed per feature, on demand — search, verification, certificate lookup, and building-data endpoints were each scoped and built as design work confirmed the exact data needed.</li>
+              <li>Every endpoint was tested in <strong>Postman</strong> before frontend integration, covering expected responses, empty states, and error states.</li>
+              <li>A curated API layer was introduced so the public website only ever receives sanitised, citizen-safe fields from the Application Portal's full internal dataset.</li>
             </ul>
 
             <div class="yellow-callout">
-              <strong>💡 What to explain</strong>
-              Show why these principles were selected based on evidence, and how they directly map to fixing user pains.
+              <strong>⚠️ Challenges faced</strong>
+              A few features were significantly harder to build than they looked in the prototype and put real strain on the live search functionality, noticeably reducing result speed under load. Rather than ship a slow experience, we made the call to drop a handful of lower-priority filters that testing had already flagged as "could have" — trading some feature breadth for a search that stayed fast.
             </div>
+
+            <h3 class="section-title">✅ QA, Content &amp; Launch Prep</h3>
+            <ul class="activity-list">
+              <li><strong>QA:</strong> Cross-browser and cross-device regression testing against every user flow validated in Chapter 5.</li>
+              <li><strong>Content alignment:</strong> Final copy pass to keep tone consistent with the plain-language principle from Chapter 1.</li>
+              <li><strong>SEO &amp; production content:</strong> Metadata, page titles, and structured tags added so project pages are correctly indexable and discoverable.</li>
+              <li><strong>Launch management:</strong> Coordinated go-live checklist across design, engineering, and the MahaRERA IT cell.</li>
+            </ul>
           </div>
         </article>
       </div>
     </section>
 
-    <!-- ─────────── OUTCOME CARD ─────────── -->
-    <section class="sec" id="outcome">
+    <!-- ─────────── CH.7 USABILITY TESTING & DEPLOYMENT CARD ─────────── -->
+    <section class="sec" id="usability-deployment">
       <div class="sec-inner reveal">
         <article class="step">
           <div class="step-header">
             <div class="step-topline">
-              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> Lean UX Step 08</span>
-              <span class="step-number">08</span>
+              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> Chapter 07 — Usability &amp; Deployment</span>
+              <span class="step-number">10</span>
             </div>
-            <h2 class="step-title">Outcome & Closing Thoughts</h2>
-            <p>End with impact, learning, and maturity.</p>
+            <h2 class="step-title">Usability Testing &amp; Deployment</h2>
+            <p>The final stage — the most time-consuming, and the most revealing.</p>
           </div>
           <div class="step-body">
-            <h3 class="section-title">🎯 Purpose</h3>
-            <p class="purpose">The revamped MahaRERA platform significantly enhanced the digital public infrastructure, bridging the gap between citizens and critical regulatory data.</p>
-            
+            <p class="purpose">Publishing a government platform is rarely a single "deploy" step. Some features performed exactly as designed the moment they went live; others surfaced real-world edge cases that no prototype session had caught, and needed further work post-launch.</p>
+
+            <h3 class="section-title">📊 Post-Launch Usability Data</h3>
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead><tr><th>Metric</th><th>Before Redesign</th><th>After Redesign</th><th>Change</th></tr></thead>
+                <tbody>
+                  <tr><td>Avg. search task time</td><td>6m 40s</td><td><strong>1m 45s</strong></td><td><span class="status-pill ok">−74%</span></td></tr>
+                  <tr><td>Search abandonment rate</td><td>68%</td><td><strong>19%</strong></td><td><span class="status-pill ok">−49pt</span></td></tr>
+                  <tr><td>"Site feels trustworthy" (survey)</td><td>19%</td><td><strong>77%</strong></td><td><span class="status-pill ok">+58pt</span></td></tr>
+                  <tr><td>Mobile bounce rate</td><td>54%</td><td><strong>27%</strong></td><td><span class="status-pill ok">−27pt</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3 class="section-title">🅰️🅱️ A/B Testing Against Success Measures</h3>
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead><tr><th>Variant</th><th>Search-to-Result Click-through</th><th>Doc Preview Usage</th></tr></thead>
+                <tbody>
+                  <tr><td>A — Old single search box</td><td>31%</td><td>12%</td></tr>
+                  <tr><td>B — Multi-filter search (shipped)</td><td><strong>64%</strong></td><td><strong>41%</strong></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="purpose" style="font-size:12px;color:var(--text-muted);">4-week split test against the defined success criteria from Chapter 2.</p>
+
+            <h3 class="section-title">🎯 Hypothesis for Optimisation</h3>
+            <p class="purpose">"If document previews are surfaced directly on the result card instead of behind an extra click, in-session verification confidence and document engagement will increase further." — queued as the next optimisation test.</p>
+
+            <h3 class="section-title">📝 Content Audit &amp; Settlement Analysis</h3>
+            <ul class="activity-list">
+              <li><strong>Content audit:</strong> Every legal/regulatory string was cross-checked against the Application Portal's source data to ensure the simplified website copy never diverged from the legal record.</li>
+              <li><strong>Data &amp; settlement analysis:</strong> Reviewed how registration and completion-status data settles between systems over time, to catch any lag between a promoter's filing and what the public website displays.</li>
+            </ul>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ─────────── CH.8 OUTCOMES & FUTURE WORK CARD ─────────── -->
+    <section class="sec" id="outcomes-future">
+      <div class="sec-inner reveal">
+        <article class="step">
+          <div class="step-header">
+            <div class="step-topline">
+              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg> Chapter 08 — Outcomes</span>
+              <span class="step-number">11</span>
+            </div>
+            <h2 class="step-title">Outcomes &amp; Future Work</h2>
+            <p>What shipped, what it changed, and where it goes next.</p>
+          </div>
+          <div class="step-body">
+            <h3 class="section-title">📈 Outcomes</h3>
+            <p class="purpose">The redesigned MahaRERA website significantly improved the state's digital public infrastructure — bridging the gap between citizens and critical regulatory data, and giving promoters and agents a system that finally reflected how they actually work.</p>
+            <div class="metric-row">
+              <div class="metric">
+                <div class="metric-num" data-target="6">0</div>
+                <div class="metric-label">Million+ users served across the platform</div>
+              </div>
+              <div class="metric">
+                <div class="metric-num" data-target="100" data-suffix="%">0%</div>
+                <div class="metric-label">WCAG 2.1 AA &amp; GIGW accessibility compliant</div>
+              </div>
+              <div class="metric">
+                <div class="metric-num" data-target="74" data-suffix="%">0%</div>
+                <div class="metric-label">Reduction in average search task time</div>
+              </div>
+            </div>
+
             <div class="img-pair">
-              <div class="expandable-img" style="margin:0;">
-                <img src="award.png" alt="UX researcher conducting user interview session" loading="lazy" style="height: 200px;">
+              <div class="expandable-img vertical-fit" style="margin:0;">
+                <img src="Award.jpg" alt="Recognition received for the MahaRERA platform redesign" loading="lazy">
                 <button class="expand-btn" title="Expand">
                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
                 </button>
               </div>
-              <div class="expandable-img" style="margin:0;">
-                <img src="gov.png" alt="UX affinity mapping and research synthesis on whiteboard" loading="lazy" style="height: 200px;">
+              <div class="expandable-img vertical-fit" style="margin:0;">
+                <img src="gov.jpg" alt="Government stakeholder review of the redesigned platform" loading="lazy">
                 <button class="expand-btn" title="Expand">
                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
                 </button>
               </div>
             </div>
+
+            <h3 class="section-title">🚀 Future Work</h3>
+            <p class="purpose">The redesigned website was built to be a starting point for a more connected regulatory ecosystem, not a finished endpoint. Planned next-phase integrations with other government departments directly or indirectly linked to real estate:</p>
+            <ul class="activity-list">
+              <li><strong>Planning approval integration:</strong> Pull live planning &amp; building-permission approval status directly from municipal planning departments.</li>
+              <li><strong>Sold register directory integration:</strong> Cross-reference the official sold-flat register to strengthen the building data visualisation with government-verified sale records.</li>
+              <li><strong>Financial transaction data integration:</strong> Connect escrow/RERA account transaction data to monitor real project progress against declared timelines, not just self-reported status.</li>
+            </ul>
 
             <div class="yellow-callout">
               <strong>💡 Closing Reflection</strong>
@@ -1148,7 +1693,7 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
 
     <!-- Footer -->
     <footer style="padding:28px clamp(24px,5vw,72px);border-top:1px solid var(--border-subtle);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px; margin-top: 40px;">
-      <p style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--text-muted)">MahaRERA Portal Redesign · Case Study by Ganesh Javhare</p>
+      <p style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--text-muted)">MahaRERA Website Redesign · Case Study by Ganesh Javhare</p>
       <p style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--text-muted)">Kingston University London · CI7801</p>
     </footer>
 
@@ -1175,6 +1720,25 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
   
   <div class="modal-content-wrapper" id="modal-wrapper">
     <img id="modal-img" class="modal-img" src="" alt="Expanded View">
+    <div id="modal-svg-wrap" class="modal-svg-wrap" style="display:none;"></div>
+  </div>
+</div>
+
+<!-- ===== FIRST-VISIT GUIDED TOUR OVERLAY ===== -->
+<div class="tour-overlay" id="tour-overlay">
+  <div class="tour-backdrop" id="tour-backdrop"></div>
+  <div class="tour-spotlight" id="tour-spotlight"></div>
+  <div class="tour-card" id="tour-card">
+    <div class="tour-card-step" id="tour-step-label">Step 1 of 6</div>
+    <h4 id="tour-title">Welcome</h4>
+    <p id="tour-text">Description</p>
+    <div class="tour-card-footer">
+      <div class="tour-dots" id="tour-dots"></div>
+      <div class="tour-btns">
+        <button class="tour-skip" id="tour-skip">Skip</button>
+        <button class="tour-next" id="tour-next">Next</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1261,27 +1825,26 @@ if (window.innerWidth <= 900)  { bodyEl.classList.add('sidebar-hidden'); }
 updatePanelState();
 
 /* ── Top Nav Panel Layout Toggle Cycle ── */
+/* Default (page load) = both panels open. Click 1: left panel only.
+   Click 2: right panel also appears, left stays. Click 3: both hidden. Repeats. */
 const panelLayoutToggleBtn = document.getElementById('panel-layout-toggle');
+let panelCycleIndex = -1;
 if (panelLayoutToggleBtn) {
     panelLayoutToggleBtn.addEventListener('click', () => {
-        const isLeftHidden = bodyEl.classList.contains('sidebar-hidden');
-        const isRightHidden = bodyEl.classList.contains('right-panel-hidden');
+        panelCycleIndex = (panelCycleIndex + 1) % 3;
 
-        if (!isLeftHidden && !isRightHidden) {
-            // Both open -> Hide both
-            bodyEl.classList.add('sidebar-hidden');
-            bodyEl.classList.add('right-panel-hidden');
-        } else if (isLeftHidden && isRightHidden) {
-            // Both hidden -> Show Left only
+        if (panelCycleIndex === 0) {
+            // Left panel only
             bodyEl.classList.remove('sidebar-hidden');
-        } else if (!isLeftHidden && isRightHidden) {
-            // Left only -> Show Right only
-            bodyEl.classList.add('sidebar-hidden');
+            bodyEl.classList.add('right-panel-hidden');
+        } else if (panelCycleIndex === 1) {
+            // Right panel appears too, left stays -> Both open
+            bodyEl.classList.remove('sidebar-hidden');
             bodyEl.classList.remove('right-panel-hidden');
         } else {
-            // Right only -> Show Both
-            bodyEl.classList.remove('sidebar-hidden');
-            bodyEl.classList.remove('right-panel-hidden');
+            // Both hidden
+            bodyEl.classList.add('sidebar-hidden');
+            bodyEl.classList.add('right-panel-hidden');
         }
         updatePanelState();
     });
@@ -1298,36 +1861,48 @@ window.addEventListener('scroll', () => {
 /* ── Dynamic Artifacts Data (UPDATED FOR MAHARERA CONTENT) ── */
 const sectionData = {
   'overview': {
-    artifacts: ['Project brief', 'Role matrix', 'Timeline', 'Scope map', 'Success criteria'],
-    questions: ['Why did this project matter?', 'Who was the user?', 'What was the business opportunity or risk?', 'What did I personally contribute?']
+    artifacts: ['Project brief', 'Two-problem framing', 'Problem statements', 'Audience map'],
+    questions: ['Who actually uses MahaRERA, and why?', 'What are the two products being redesigned?', 'What is each product\'s core problem statement?']
   },
-  'role': {
-    artifacts: ['RACI Matrix', 'Stakeholder Map', 'Team Structure'],
-    questions: ['What were my core responsibilities?', 'How did I collaborate with the team?', 'What constraints did I manage?']
+  'discovery-research': {
+    artifacts: ['Research plan', 'Analytics review', 'Competitor audit', 'Data findings'],
+    questions: ['What do users actually do today?', 'Where do they struggle, and how often?', 'Why mix quant and qual methods here?']
   },
-  'impact': {
-    artifacts: ['Outcome statement', 'Metric tree', 'Measurement plan'],
-    questions: ['What behaviour were we trying to change?', 'How did we know the solution worked?', 'What baseline did we need?']
+  'discovery-personas': {
+    artifacts: ['3 Personas', 'Empathy map', 'Journey map', 'Project canvas'],
+    questions: ['Who are the three core user types?', 'What findings mattered most?', 'How did findings shape strategy?']
   },
-  'problems': {
-    artifacts: ['Insight cards', 'Journey map', 'Problem statement'],
-    questions: ['What was the root problem?', 'Which pain point mattered most?', 'What did we choose not to solve?']
+  'define-strategy': {
+    artifacts: ['Strategy statement', 'Scope map', 'Success criteria', 'Delivery timeline'],
+    questions: ['What is in and out of scope?', 'How is success measured?', 'Why does this take 6 months?']
   },
-  'research': {
-    artifacts: ['Research plan', 'Interview script', 'Affinity map'],
-    questions: ['What do users actually do today?', 'Where do they struggle?', 'What language do users use?']
+  'design-system': {
+    artifacts: ['Flow diagram', 'MoSCoW chart', 'Design system', 'Journey map'],
+    questions: ['What features made the cut, and why?', 'How was consistency ensured across 25 pages?']
   },
-  'hypothesis': {
-    artifacts: ['Hypothesis cards', 'Experiment plan', 'Learning backlog'],
-    questions: ['What did we need to learn next?', 'What was the cheapest way to learn it?', 'What result would change our mind?']
+  'prototype-process': {
+    artifacts: ['Low-fi sketches', 'Mid-fi wireframes', 'Hi-fi prototype'],
+    questions: ['Why three fidelity passes?', 'What changed between each round?']
   },
-  'principles': {
-    artifacts: ['Design principles', 'UI Guidelines', 'Atomic Elements'],
-    questions: ['What foundations guided our design?', 'How did we ensure consistency?', 'Was the design scalable?']
+  'prototype-features': {
+    artifacts: ['Search UI', 'Result page', 'QR verification', 'Data visualisation'],
+    questions: ['What problem does each feature solve?', 'How is trust signalled visually?']
   },
-  'outcome': {
-    artifacts: ['Impact summary', 'Final screens', 'Lessons learned'],
-    questions: ['What was the end result?', 'What did I learn as a designer?', 'What would I do differently next time?']
+  'testing-prototype': {
+    artifacts: ['Review log', 'Usability data', 'Iteration notes'],
+    questions: ['What did each review round change?', 'How much faster did tasks get?']
+  },
+  'development': {
+    artifacts: ['IA diagram', 'API docs', 'Postman tests', 'QA checklist'],
+    questions: ['How was the portal data integrated?', 'What had to be descoped, and why?']
+  },
+  'usability-deployment': {
+    artifacts: ['Usability results', 'A/B test data', 'Content audit'],
+    questions: ['What worked at launch, what didn\'t?', 'What is the next optimisation hypothesis?']
+  },
+  'outcomes-future': {
+    artifacts: ['Impact summary', 'Final screens', 'Roadmap'],
+    questions: ['What was the measurable outcome?', 'What government integrations come next?']
   }
 };
 
@@ -1375,6 +1950,7 @@ const observer = new IntersectionObserver(entries => {
                }
                prev = prev.previousElementSibling;
            }
+           a.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
         }
       });
       
@@ -1454,20 +2030,54 @@ const modalImg = document.getElementById('modal-img');
 const btnClose = document.getElementById('modal-close');
 const btnZoomIn = document.getElementById('modal-zoom-in');
 const btnZoomOut = document.getElementById('modal-zoom-out');
+const modalSvgWrap = document.getElementById('modal-svg-wrap');
 let currentZoom = 100;
+let activeModalEl = modalImg;
+
+function applyModalZoom() {
+  activeModalEl.style.transform = `scale(${currentZoom / 100})`;
+}
+
+function openImageModal(imgWrapper) {
+  if (!imgWrapper) return;
+  const srcImg = imgWrapper.querySelector('img');
+  const srcSvg = imgWrapper.querySelector('svg');
+
+  currentZoom = 100;
+
+  if (srcImg) {
+    modalImg.src = srcImg.src;
+    modalImg.style.display = 'block';
+    modalSvgWrap.style.display = 'none';
+    modalSvgWrap.innerHTML = '';
+    activeModalEl = modalImg;
+  } else if (srcSvg) {
+    modalSvgWrap.innerHTML = '';
+    modalSvgWrap.appendChild(srcSvg.cloneNode(true));
+    modalSvgWrap.style.display = 'block';
+    modalImg.style.display = 'none';
+    modalImg.src = '';
+    activeModalEl = modalSvgWrap;
+  } else {
+    return;
+  }
+
+  applyModalZoom();
+  imageModal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  imageModal.scrollTop = 0;
+  document.getElementById('modal-wrapper').scrollTop = 0;
+}
 
 document.querySelectorAll('.expand-btn').forEach(btn => {
   btn.addEventListener('click', (e) => {
-    const imgWrapper = e.currentTarget.closest('.expandable-img');
-    const imgSrc = imgWrapper.querySelector('img').src;
-    
-    currentZoom = 100;
-    modalImg.src = imgSrc;
-    modalImg.style.maxWidth = '100%';
-    modalImg.style.width = 'auto';
-    
-    imageModal.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
+    openImageModal(e.currentTarget.closest('.expandable-img'));
+  });
+});
+
+document.querySelectorAll('.expandable-img > img, .expandable-img > svg').forEach(media => {
+  media.addEventListener('click', (e) => {
+    openImageModal(e.currentTarget.closest('.expandable-img'));
   });
 });
 
@@ -1477,15 +2087,13 @@ btnClose.addEventListener('click', () => {
 });
 
 btnZoomIn.addEventListener('click', () => {
-  currentZoom = Math.min(currentZoom + 25, 500); 
-  modalImg.style.maxWidth = 'none';
-  modalImg.style.width = currentZoom + '%';
+  currentZoom = Math.min(currentZoom + 25, 500);
+  applyModalZoom();
 });
 
 btnZoomOut.addEventListener('click', () => {
-  currentZoom = Math.max(currentZoom - 25, 10); 
-  modalImg.style.maxWidth = 'none'; 
-  modalImg.style.width = currentZoom + '%';
+  currentZoom = Math.max(currentZoom - 25, 25);
+  applyModalZoom();
 });
 
 /* ── More Projects Toggle ── */
@@ -1548,6 +2156,158 @@ const counterObs = new IntersectionObserver(entries => {
   });
 }, { threshold: 0.4 });
 document.querySelectorAll('.metric-num[data-target]').forEach(el => counterObs.observe(el));
+
+/* ── Resizable Panels (drag handles) ── */
+(function initResizeHandles() {
+  const root = document.documentElement;
+  const MIN_SIDEBAR = 200, MAX_SIDEBAR = 420;
+  const MIN_RIGHT = 240, MAX_RIGHT = 460;
+
+  function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+  function setupHandle(handleId, cssVar, min, max, fromLeftEdge) {
+    const handle = document.getElementById(handleId);
+    if (!handle) return;
+    let dragging = false;
+
+    const savedWidth = localStorage.getItem(cssVar);
+    if (savedWidth) {
+      root.style.setProperty(cssVar, clamp(parseInt(savedWidth, 10), min, max) + 'px');
+    }
+
+    handle.addEventListener('mousedown', (e) => {
+      dragging = true;
+      handle.classList.add('dragging');
+      document.body.style.userSelect = 'none';
+      e.preventDefault();
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!dragging) return;
+      const width = fromLeftEdge ? e.clientX : (window.innerWidth - e.clientX);
+      const clamped = clamp(width, min, max);
+      root.style.setProperty(cssVar, clamped + 'px');
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (!dragging) return;
+      dragging = false;
+      handle.classList.remove('dragging');
+      document.body.style.userSelect = '';
+      const current = getComputedStyle(root).getPropertyValue(cssVar).trim();
+      if (current) localStorage.setItem(cssVar, parseInt(current, 10));
+    });
+  }
+
+  setupHandle('resize-left', '--sidebar-w', MIN_SIDEBAR, MAX_SIDEBAR, true);
+  setupHandle('resize-right', '--right-panel-w', MIN_RIGHT, MAX_RIGHT, false);
+})();
+
+/* ── First-Visit Guided Tour ── */
+(function initGuidedTour() {
+  const overlay = document.getElementById('tour-overlay');
+  const spotlight = document.getElementById('tour-spotlight');
+  const card = document.getElementById('tour-card');
+  const stepLabel = document.getElementById('tour-step-label');
+  const titleEl = document.getElementById('tour-title');
+  const textEl = document.getElementById('tour-text');
+  const dotsEl = document.getElementById('tour-dots');
+  const skipBtn = document.getElementById('tour-skip');
+  const nextBtn = document.getElementById('tour-next');
+  const replayBtn = document.getElementById('tour-replay-btn');
+  if (!overlay) return;
+
+  const steps = [
+    { selector: '#theme-toggle', title: 'Light / Dark mode', text: 'Switch between light and dark themes — your choice is remembered on your next visit.' },
+    { selector: '#panel-layout-toggle', title: 'Panel layout', text: 'Cycle through showing both side panels, just one, or a distraction-free full-width view.' },
+    { selector: '#toggle-left-side, #toggle-right-side', title: 'Hide or show panels', text: 'Use these faded arrow buttons on the page edges anytime to hide or reveal the sidebar and right panel.' },
+    { selector: '#resize-left, #resize-right', title: 'Resize panels', text: 'Drag these thin edges to resize the sidebar and right panel — the content inside scales to fit.' },
+    { selector: '.sb-nav', title: 'Chapter navigation', text: 'Jump straight to any chapter — Discovery, Define, Design, Prototyping, Testing, Development, Deployment, or Outcomes.' },
+    { selector: '#tour-target-part2', title: 'Part 2 of this project', text: 'This case study covers the Website redesign. Use this card anytime to jump to the Application Portal case study.' }
+  ];
+
+  let stepIndex = 0;
+  let preTourPanelState = null;
+
+  function getTarget(selector) {
+    const nodes = document.querySelectorAll(selector);
+    for (const n of nodes) {
+      const r = n.getBoundingClientRect();
+      if (r.width > 0 && r.height > 0) return n;
+    }
+    return null;
+  }
+
+  function renderStep() {
+    const step = steps[stepIndex];
+    const target = getTarget(step.selector);
+
+    stepLabel.textContent = `Step ${stepIndex + 1} of ${steps.length}`;
+    titleEl.textContent = step.title;
+    textEl.textContent = step.text;
+    nextBtn.textContent = stepIndex === steps.length - 1 ? 'Got it' : 'Next';
+
+    dotsEl.innerHTML = steps.map((_, i) => `<span class="tour-dot${i === stepIndex ? ' active' : ''}"></span>`).join('');
+
+    if (!target) { nextStep(); return; }
+    const r = target.getBoundingClientRect();
+    const pad = 8;
+    spotlight.style.top = (r.top - pad) + 'px';
+    spotlight.style.left = (r.left - pad) + 'px';
+    spotlight.style.width = (r.width + pad * 2) + 'px';
+    spotlight.style.height = (r.height + pad * 2) + 'px';
+
+    const cardWidth = 300;
+    let cardTop = r.bottom + 16;
+    let cardLeft = clampNum(r.left, 16, window.innerWidth - cardWidth - 16);
+    if (cardTop + 160 > window.innerHeight) {
+      cardTop = Math.max(16, r.top - 16 - 160);
+    }
+    card.style.top = cardTop + 'px';
+    card.style.left = cardLeft + 'px';
+  }
+
+  function clampNum(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+  function nextStep() {
+    if (stepIndex >= steps.length - 1) { endTour(); return; }
+    stepIndex++;
+    renderStep();
+  }
+
+  function startTour() {
+    stepIndex = 0;
+    preTourPanelState = {
+      sidebarHidden: bodyEl.classList.contains('sidebar-hidden'),
+      rightPanelHidden: bodyEl.classList.contains('right-panel-hidden')
+    };
+    bodyEl.classList.remove('sidebar-hidden');
+    bodyEl.classList.remove('right-panel-hidden');
+    updatePanelState();
+    overlay.classList.add('active');
+    renderStep();
+  }
+
+  function endTour() {
+    overlay.classList.remove('active');
+    localStorage.setItem('mhr_tour_done', '1');
+    if (preTourPanelState) {
+      bodyEl.classList.toggle('sidebar-hidden', preTourPanelState.sidebarHidden);
+      bodyEl.classList.toggle('right-panel-hidden', preTourPanelState.rightPanelHidden);
+      updatePanelState();
+      preTourPanelState = null;
+    }
+  }
+
+  nextBtn.addEventListener('click', nextStep);
+  skipBtn.addEventListener('click', endTour);
+  if (replayBtn) replayBtn.addEventListener('click', startTour);
+  window.addEventListener('resize', () => { if (overlay.classList.contains('active')) renderStep(); });
+
+  if (!localStorage.getItem('mhr_tour_done')) {
+    setTimeout(startTour, 900);
+  }
+})();
 
 </script>
 </body>
