@@ -5,14 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ganesh Javhare — UX Designer</title>
   
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
-  
-  <!-- Added Three.js for 3D Globe & AI Background -->
-  <!-- defer: don't block HTML parsing/paint on this download; deferred scripts run in order, right before DOMContentLoaded -->
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- Open the TLS/DNS connections for our third-party origins during HTML parse,
+       so the font CSS and Lenis aren't each paying a fresh handshake later. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link rel="preconnect" href="https://unpkg.com"/>
+  <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com"/>
 
-  <!-- Added Lenis for buttery smooth momentum scrolling -->
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+
+  <!-- Lenis (smooth scroll) is small and needed immediately by the main script. -->
   <script defer src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+
+  <!-- NOTE: Three.js (~600KB) is deliberately NOT loaded here any more. Both
+       scenes that use it are already skipped on low-end/mobile devices, so a
+       blocking <script defer> made those users download 600KB purely to throw
+       it away - while also delaying DOMContentLoaded (and therefore the
+       preloader) for everyone. It's now fetched on demand by loadThree() only
+       when a WebGL section is actually about to scroll into view. -->
 
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -62,7 +72,8 @@
       #preloader .preloader-name, #preloader .preloader-subtitle { animation-duration: 0.7s !important; }
       /* The fly-to-nav transform itself now runs via the Web Animations API
          (see startPreloader() JS) rather than a CSS transition, so its reduced-
-         motion handling (shorter + no stretch) lives directly in JS, not here. */
+         motion handling (a shorter total duration; the genie stretch itself is
+         intentionally kept for everyone) lives directly in JS, not here. */
     }
 
     /* Fallback: several elements set cursor:none to make way for the custom
@@ -242,7 +253,19 @@
     .preloader-name-wrap { margin-top: 28px; }
     .preloader-subtitle-wrap { margin-top: 8px; }
 
-    .preloader-name, .preloader-subtitle { display: block; }
+    /* FOUC FIX: these hold raw text in the HTML, and only become invisible once
+       JS wraps each letter in an opacity:0 .char span. That wrapping runs on
+       DOMContentLoaded, which waits on the deferred CDN scripts - so on a cold
+       network the words flashed at full opacity for hundreds of ms first.
+       Hiding them from the very first paint removes the flash regardless of
+       when (or whether) JS gets there; .chars-ready re-reveals the container
+       once the individually-hidden .char spans exist. */
+    .preloader-name, .preloader-subtitle {
+      display: block;
+      visibility: hidden;
+    }
+    #preloader.chars-ready .preloader-name,
+    #preloader.chars-ready .preloader-subtitle { visibility: visible; }
 
     .preloader-name {
       font-family: 'Syne', sans-serif;
@@ -270,10 +293,16 @@
       transform: translateY(0.5em);
       white-space: pre; /* keeps the space between words from collapsing */
     }
-    @keyframes charIn { to { opacity: 1; transform: translateY(0); } }
+    @keyframes charIn {
+      from { opacity: 0; transform: translateY(0.5em); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
     #preloader.reveal-heading .preloader-name .char,
     #preloader.reveal-subtitle .preloader-subtitle .char {
-      animation: charIn 0s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      /* Was 0s - the letters snapped in with no easing whatsoever, which is why
+         the reveal felt abrupt rather than typed. 0.55s on a decelerating curve
+         lets each glyph settle while the next is already starting. */
+      animation: charIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
       /* per-char animation-delay set inline by JS */
     }
 
@@ -341,6 +370,10 @@
 
 
     /* ── Custom Cursor ── */
+    /* NOTE: `transform` is deliberately absent from all three transitions below.
+       The rAF loop writes transform every frame, so a CSS transition on the same
+       property would continuously interpolate toward a target that has already
+       moved - producing visible smearing/lag. Position easing is done in JS. */
     #cursor {
       position: fixed; top: 0; left: 0;
       width: 12px; height: 12px;
@@ -348,8 +381,9 @@
       border-radius: 50%;
       pointer-events: none;
       z-index: 999999;
-      transition: transform 0.15s ease, width 0.25s ease, height 0.25s ease, background 0.2s;
+      transition: width 0.25s ease, height 0.25s ease, background 0.2s;
       transform: translate(-50%, -50%);
+      will-change: transform;
     }
     #cursor-ring {
       position: fixed; top: 0; left: 0;
@@ -360,7 +394,8 @@
       pointer-events: none;
       z-index: 999998;
       transform: translate(-50%, -50%);
-      transition: transform 0.08s linear, width 0.25s ease, height 0.25s ease, border-color 0.2s;
+      transition: width 0.25s ease, height 0.25s ease, border-color 0.2s;
+      will-change: transform;
     }
     #cursor-text-ring {
       position: fixed; top: 0; left: 0;
@@ -368,8 +403,9 @@
       pointer-events: none;
       z-index: 999997;
       transform: translate(-50%, -50%) scale(0);
-      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+      transition: opacity 0.4s ease;
       opacity: 0;
+      will-change: transform, opacity;
     }
     .cursor-spin-wrap {
       width: 100%; height: 100%;
@@ -423,14 +459,18 @@
     }
 
     /* ---------- DOTS LAYER ---------- */
+    /* Was position:absolute spanning the FULL page height, forcing the canvas's
+       backing store (and every clearRect call) to cover the entire scroll
+       height instead of just what's visible. Now fixed + viewport-sized: the
+       canvas itself is small and cheap, and draw() below translates its
+       drawing by -scrollY each frame so the same page-anchored dot pattern
+       still scrolls past exactly as before - just rendered onto a much
+       smaller surface. */
     .dot-layer {
-        position: absolute; 
-        top: 0;
-        left: 0;
-        width: 100%;
-        min-height: 100vh;
-        z-index: -1; 
-        pointer-events: none; 
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
     }
 
     .dot-layer canvas {
@@ -890,7 +930,7 @@
       width: 100%; height: 100%; object-fit: fit-content;
       background: var(--card-bg); display: flex; align-items: center; justify-content: fit-content;
     }
-    .about-img-inner img { width: 100%; height: 118%; object-fit: contain; object-position: center; }
+    .about-img-inner img, .about-img-inner video { width: 100%; height: 118%; object-fit: contain; object-position: center; }
     .about-badge {
       position: absolute; right: 60px; top: -60px;
       background: var(--surface); border: 1px solid var(--border); 
@@ -1223,31 +1263,106 @@
     .ai-f-text h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; color: var(--text); }
     .ai-f-text p { font-size: 0.9rem; font-weight: 500; color: var(--muted); line-height: 1.6; }
 
-    /* ── Testimonials ── */
-    #testimonials {}
-    .testimonials-wrap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-    .testimonial-card {
-      background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 32px;
-      transition: transform 0.3s, border-color 0.3s, background 0.3s;
+    /* ── Testimonials Carousel ── */
+    /* Center slide = full color, elevated, on a card background. Neighbour
+       slides = desaturated, scaled down, sitting directly on the page
+       background - the same "one highlighted, rest dimmed" language as the
+       reference design. Auto-advance/pause/prev-next logic lives in JS. */
+    #testimonials { text-align: center; }
+
+    .testimonial-carousel { position: relative; display: flex; align-items: center; gap: 12px; max-width: 1320px; margin: 0 auto; }
+
+    .test-nav {
+      flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%;
+      background: var(--surface); border: 1px solid var(--border); color: var(--text);
+      display: flex; align-items: center; justify-content: center; cursor: none;
+      transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
+      z-index: 2;
     }
-    .testimonial-card:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-    .test-quote { font-size: 2rem; color: var(--accent-text); font-family: 'Syne', sans-serif; line-height: 1; margin-bottom: 16px; }
-    .test-text { font-size: 0.95rem; font-weight: 500; color: var(--muted); line-height: 1.75; margin-bottom: 24px; font-style: italic; }
-    .test-person { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; cursor: pointer; }
-    .test-person:hover .test-name { color: var(--accent-text); }
-    .test-person:hover .link-arrow { transform: translate(2px, -2px); color: var(--accent-text); }
-    
+    .test-nav:hover { border-color: var(--accent); color: var(--accent-text); transform: scale(1.06); }
+    .test-nav:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .test-nav svg { width: 20px; height: 20px; }
+
+    .testimonial-viewport {
+      flex: 1; min-width: 0;
+      display: flex; gap: 24px;
+      overflow-x: auto; overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      scrollbar-width: none; -ms-overflow-style: none;
+      padding: 12px 0 28px;
+      /* Without this, the FIRST slide's left edge is stuck at scroll-position 0
+         and can never actually be scrolled to the center (same problem for the
+         last slide on the right) - there's simply no room to scroll into.
+         This reserves exactly half a slide-width of empty space on each side. */
+      scroll-padding: 0 calc(50% - min(330px, 82vw) / 2);
+      padding-left: calc(50% - min(330px, 82vw) / 2);
+      padding-right: calc(50% - min(330px, 82vw) / 2);
+    }
+    .testimonial-viewport::-webkit-scrollbar { display: none; }
+
+    .testimonial-slide {
+      scroll-snap-align: center;
+      flex: 0 0 min(330px, 82vw);
+      text-align: left;
+      border-radius: 20px; padding: 32px 28px;
+      border: 1px solid transparent;
+      opacity: 0.4; filter: grayscale(0.7); transform: scale(0.92);
+      transition: opacity 0.4s ease, transform 0.4s ease, filter 0.4s ease,
+                  background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+    }
+    .testimonial-slide.is-active {
+      opacity: 1; filter: grayscale(0); transform: scale(1);
+      background: var(--card-bg); border-color: var(--border);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.12);
+    }
+    [data-theme="dark"] .testimonial-slide.is-active { box-shadow: 0 24px 60px rgba(0,0,0,0.45); }
+
+    .test-quote { font-size: 2.2rem; color: var(--muted); font-family: 'Syne', sans-serif; line-height: 1; opacity: 0.6; margin-bottom: 12px; transition: color 0.4s ease, opacity 0.4s ease; }
+    .testimonial-slide.is-active .test-quote { color: var(--accent-text); opacity: 1; }
+
     .test-avatar {
-      width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      font-size: 1.1rem; font-weight: 700; font-family: 'Syne', sans-serif; color: #ffffff;
+      width: 64px; height: 64px; border-radius: 50%; margin-bottom: 18px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; font-weight: 700; font-family: 'Syne', sans-serif; color: #ffffff;
+      filter: grayscale(1); opacity: 0.7; transition: filter 0.4s ease, opacity 0.4s ease;
     }
+    .testimonial-slide.is-active .test-avatar { filter: none; opacity: 1; }
     .av1 { background: linear-gradient(135deg, var(--accent2), var(--accent3)); }
     .av2 { background: linear-gradient(135deg, var(--accent), #40c0c0); }
     .av3 { background: linear-gradient(135deg, var(--accent3), #ff9900); }
-    
-    .test-name { font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 6px; transition: color 0.2s; color: var(--text); }
+
+    .test-text {
+      font-size: 0.9rem; font-weight: 500; color: var(--muted); line-height: 1.7; margin-bottom: 20px;
+      display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden;
+      transition: color 0.4s ease;
+    }
+    .testimonial-slide.is-active .test-text { color: var(--text); }
+
+    .test-stars { display: flex; gap: 3px; margin-bottom: 14px; color: var(--border); transition: color 0.4s ease; }
+    .testimonial-slide.is-active .test-stars { color: var(--accent-text); }
+    .test-stars svg { width: 15px; height: 15px; }
+
+    .test-person { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; cursor: none; }
+    .test-person:hover .test-name { color: var(--accent-text); }
+    .test-person:hover .link-arrow { transform: translate(2px, -2px); color: var(--accent-text); }
+
+    .test-name { font-size: 0.92rem; font-weight: 700; display: flex; align-items: center; gap: 6px; transition: color 0.2s; color: var(--text); }
     .link-arrow { font-size: 0.75rem; color: var(--muted); transition: transform 0.2s, color 0.2s; }
-    .test-role { font-size: 0.8rem; font-weight: 600; color: var(--muted); }
+    .test-role { font-size: 0.78rem; font-weight: 600; color: var(--muted); }
+
+    .testimonial-dots { display: flex; justify-content: center; gap: 10px; margin-top: 12px; }
+    .test-dot {
+      width: 9px; height: 9px; border-radius: 5px; background: var(--border); border: none; padding: 0; cursor: none;
+      transition: background 0.2s ease, width 0.2s ease;
+    }
+    .test-dot.is-active { background: var(--accent); width: 24px; }
+    .test-dot:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    @media (max-width: 640px) {
+      .test-nav { display: none; } /* swipe/scroll takes over; dots still work */
+      .testimonial-viewport { padding-bottom: 20px; }
+    }
 
     /* ── Contact ── */
     #contact { background: var(--surface); display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; transition: background 0.5s; }
@@ -1307,10 +1422,26 @@
     .social-btn:hover { border-color: var(--accent); color: var(--accent-text); }
 
     /* ── Reveal animations ── */
-    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    /* Reveals previously used the browser default `ease` on both properties,
+       which decelerates weakly and reads mechanical. This pairs a long, strongly
+       decelerating curve for movement with a shorter, gentler opacity fade, so
+       elements appear to arrive and settle rather than slide to a stop.
+       --reveal-delay is set per-element by the IntersectionObserver to stagger
+       groups that enter the viewport together. */
+    .reveal {
+      opacity: 0;
+      transform: translateY(34px);
+      transition:
+        opacity 0.6s cubic-bezier(0.33, 1, 0.68, 1) var(--reveal-delay, 0ms),
+        transform 0.95s cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms);
+      will-change: transform, opacity;
+    }
     .reveal.reveal-left { transform: translateX(-60px); }
     .reveal.reveal-right { transform: translateX(60px); }
     .reveal.visible { opacity: 1; transform: translate(0, 0); }
+    /* Drop the compositor hint once the element has landed so we don't hold a
+       layer for every revealed node for the life of the page. */
+    .reveal.reveal-done { will-change: auto; }
     .reveal-delay-1 { transition-delay: 0.1s; } .reveal-delay-2 { transition-delay: 0.2s; } .reveal-delay-3 { transition-delay: 0.3s; }
 
     /* ── Scrollbar ── */
@@ -1324,7 +1455,7 @@
       .hero-stats { right: 32px; } #about { grid-template-columns: 1fr; gap: 48px; }
       .about-visual { height: 360px; } .about-img-frame { width: 260px; height: 320px; }
       .about-badge2 { left: 120px; top: 180px; width: 200px; } #contact { grid-template-columns: 1fr; gap: 48px; }
-      .process-grid { grid-template-columns: repeat(2, 1fr); } .testimonials-wrap { grid-template-columns: 1fr 1fr; }
+      .process-grid { grid-template-columns: repeat(2, 1fr); }
       footer { flex-direction: column; gap: 16px; text-align: center; }
       .footer-socials { justify-content: center; }
       #about-globe-container { width: 500px; height: 500px; bottom: -330px; }
@@ -1344,7 +1475,7 @@
       #hero { padding: 100px 20px 80px; } .hero-stats { position: relative; flex-direction: row; margin-top: 30px; gap: 24px; flex-wrap: wrap; justify-content: center;}
       .projects-grid { grid-template-columns: 1fr; } .card-lg, .card-sm, .card-md, .card-full { grid-column: span 1; }
       .process-grid { grid-template-columns: 1fr 1fr; } .skills-layout { grid-template-columns: 1fr; gap: 40px; }
-      .ai-features { grid-template-columns: 1fr; } .testimonials-wrap { grid-template-columns: 1fr; }
+      .ai-features { grid-template-columns: 1fr; }
       .form-row { grid-template-columns: 1fr; } footer { padding: 16px 20px; }
       #about-globe-container { width: 400px; height: 400px; bottom: -260px; }
     }
@@ -1505,6 +1636,45 @@
     .tool-item { transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; border-radius: 16px; width: 110px; height: 110px; padding: 16px; background: var(--card-bg); border: 1px solid var(--border); backdrop-filter: blur(10px); }
     .tool-item:hover { transform: translateY(-6px) scale(1.04); border-color: var(--accent); box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1); }
     [data-theme="dark"] .tool-item:hover { box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45); }
+
+    /* =================================================================
+       SAFARI / WEBKIT DEGRADATION
+       =================================================================
+       `.is-webkit` is set by JS on <html> after UA sniffing.
+
+       backdrop-filter is the single most expensive thing on this page in
+       Safari: each instance forces the compositor to re-sample and blur
+       everything painted beneath it, every frame it's on screen. There are a
+       dozen of them here, several on elements that are always visible (nav)
+       or repeated per card. Chrome absorbs this; Safari drops frames on
+       scroll. Since the user explicitly prioritised smooth scrolling over
+       effects, WebKit gets opaque backgrounds instead of live blur - visually
+       near-identical against these solid backdrops, and essentially free.  */
+    .is-webkit nav.scrolled,
+    .is-webkit .expand-btn,
+    .is-webkit .skip-btn,
+    .is-webkit .tool-item,
+    .is-webkit .about-badge,
+    .is-webkit .ai-feature,
+    .is-webkit .dc-card,
+    .is-webkit #card-backdrop,
+    .is-webkit .cv-scroll-hint {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+    /* Restore contrast/legibility that the live blur was providing. */
+    .is-webkit nav.scrolled { background: var(--nav-bg); }
+    .is-webkit #card-backdrop { background: rgba(10, 10, 15, 0.94); }
+    .is-webkit[data-theme="light"] #card-backdrop { background: rgba(249, 247, 245, 0.94); }
+
+    /* Safari's filter: blur() on large elements is also costly, and these orbs
+       are 400-600px of blur(80px) animating on an infinite loop behind the
+       hero. Shrink the blur radius and let the gradient do the work. */
+    .is-webkit .hero-orb { filter: blur(46px); }
+
+    /* The custom cursor's rotating SVG textPath forces Safari to re-rasterise
+       vector text every frame. Keep the ring, drop the continuous spin. */
+    .is-webkit .cursor-spin-wrap { animation: none !important; }
   </style>
 </head>
 <body class="loading">
@@ -1661,7 +1831,7 @@
       </h1>
 
       <p class="hero-sub">
-        I am a UX Designer specialised in product design, service design, and human-centred interfaces that balance beauty with function.
+        I am a UX Designer specialised in user research, product design, service design, and human-centred interfaces that balance beauty with function.
       </p>
 
       <div class="hero-actions">
@@ -1762,7 +1932,7 @@
       
       <div class="hero-stats">
         <div class="stat-item">
-          <div class="stat-num">7<span>+</span></div>
+          <div class="stat-num">2<span>+</span></div>
           <div class="stat-label">Years Experience</div>
         </div>
         <div class="stat-item">
@@ -1791,7 +1961,17 @@
   <div class="about-visual reveal">
     <div class="about-img-frame">
       <div class="about-img-inner">
-        <img src="ganesh.webm" alt="About Ganesh" onerror="this.src='ganesh.jpg';">
+        <!-- .webm is a video container, not an image format - browsers can't
+             render it inside <img> (that's why nothing was playing; it just
+             silently failed straight to the onerror fallback). A <video>
+             element is required to actually play it. poster shows ganesh.jpg
+             immediately while the clip loads, and the nested <img> is the
+             fallback for the rare browser with no video support at all. -->
+        <video class="about-video" autoplay muted loop playsinline preload="metadata"
+               poster="ganesh.jpg" aria-label="About Ganesh">
+          <source src="ganesh.webm" type="video/webm">
+          <img src="ganesh.jpg" alt="About Ganesh" loading="lazy" decoding="async">
+        </video>
       </div>
     </div>
     <div class="about-badge">
@@ -1861,7 +2041,7 @@
       </div>
       <div class="expand-scroll">
       <div class="project-thumb">
-        <Img src="mockup.webp"MahaRERA Portal app mockup"></Img>
+        <img src="mockup.webp" alt="MahaRERA Portal app mockup" loading="lazy" decoding="async">
         <div class="project-thumb-inner thumb-p1">
           <div class="thumb-mockup">
             <div class="mockup-bar"><span></span><span></span><span></span></div>
@@ -1918,7 +2098,7 @@
       </div>
       <div class="expand-scroll">
       <div class="project-thumb">
-        <Img src="MockupIYR.webp" alt="Imagine As You Read app mockup"></Img>
+        <img src="MockupIYR.webp" alt="Imagine As You Read app mockup" loading="lazy" decoding="async">
         <div class="project-thumb-inner thumb-p2">
           <div class="thumb-mockup">
             <div class="mockup-bar"><span></span><span></span><span></span></div>
@@ -1976,7 +2156,11 @@
       <div class="expand-scroll">
       <div class="project-thumb">
         <div class="project-thumb-inner thumb-p3">
-          <Img src="focus.gif" alt="FocusXR app mockup"></Img>
+          <!-- 5.9MB animated GIF. GIF has no hardware decode path, so Safari
+               decodes every frame on the main thread for as long as it's on
+               screen. lazy+async at least keeps it off the initial load; it
+               really should be re-encoded as an MP4/WebM or animated WebP. -->
+          <img src="focus.gif" alt="FocusXR app mockup" loading="lazy" decoding="async">
           <div class="thumb-mockup">
             <div class="mockup-bar"><span></span><span></span><span></span></div>
             <div class="mockup-lines"><div></div><div></div><div></div><div></div></div>
@@ -2331,73 +2515,128 @@
   <div class="section-label reveal">Kind Words</div>
   <h2 class="section-title reveal" style="margin-bottom:48px;">What colleagues Say</h2>
 
-  <div class="testimonials-wrap">
-    
-    <div class="testimonial-card reveal">
-      <div class="test-quote">"</div>
-      <p class="test-text">Ganesh completely transformed how our users experience the product. His research-first approach uncovered insights we'd been missing for years. The redesign increased our NPS by 28 points.</p>
-      <a href="https://www.linkedin.com/in/gjuxdesigner/overlay/Certifications/560312584/treasury/?profileId=ACoAABcRq6wBhHBK8GPHH-6qrfjkNpp67T5ep6g" target="_blank" class="test-person">
-        <div class="test-avatar av1">VP</div>
-        <div>
-          <div class="test-name">Vasant Prabhu <span class="link-arrow" aria-hidden="true">↗</span></div>
-          <div class="test-role">Former Secretary, MahaRERA</div>
+  <!-- Auto-advancing carousel: centred slide is highlighted, neighbours are
+       dimmed (see CSS). Logic - auto-advance every 3s, pause on hover/focus,
+       prev/next buttons, dots - lives in the TESTIMONIALS CAROUSEL script block. -->
+  <div class="testimonial-carousel reveal" role="region" aria-roledescription="carousel" aria-label="Testimonials">
+    <button type="button" class="test-nav test-nav-prev" id="test-prev" aria-label="Previous testimonial">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+
+    <div class="testimonial-viewport" id="testimonial-viewport">
+
+      <article class="testimonial-slide" aria-roledescription="slide" aria-label="1 of 5">
+        <div class="test-quote" aria-hidden="true">"</div>
+        <div class="test-avatar av1" aria-hidden="true">VP</div>
+        <p class="test-text">Throughout his seven years at MahaRERA serving as a Junior Technical Advisor and Assistant Manager, Ganesh Javhare demonstrated exceptional professionalism, analytical expertise, and insightful data visualization that significantly influenced key policy decisions. Collaborating closely with the IT department as a UX Designer and design committee secretary, his user-centric approach in creating a new application system greatly enhanced digital user experience and operational efficiency.</p>
+        <div class="test-stars" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 6.9L12 17.3 5.7 20.8l1.7-6.9-5.4-4.7 7.1-.6z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 6.9L12 17.3 5.7 20.8l1.7-6.9-5.4-4.7 7.1-.6z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 6.9L12 17.3 5.7 20.8l1.7-6.9-5.4-4.7 7.1-.6z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 6.9L12 17.3 5.7 20.8l1.7-6.9-5.4-4.7 7.1-.6z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 6.9L12 17.3 5.7 20.8l1.7-6.9-5.4-4.7 7.1-.6z"/></svg>
         </div>
-        <span class="sr-only"> (opens in new tab)</span>
-      </a>
-    </div>
-    
-    <div class="testimonial-card reveal reveal-delay-1">
-      <div class="test-quote">"</div>
-      <p class="test-text">While Working closely with Ganesh at MahaRERA, he showed an exceptional ability to turn complex regulatory workflows into clear, user-friendly digital journeys. The redesigned platform is a direct testament to his precision and dedication to digital transformation.</p>
-      <a href="https://www.linkedin.com/in/dnyaneshvar-hadadare-2042883b/" target="_blank" class="test-person">
-        <div class="test-avatar av2">DH</div>
-        <div>
-          <div class="test-name">Dyaneshwar Hadadare <span class="link-arrow" aria-hidden="true">↗</span></div>
-          <div class="test-role">Former Technical Dep. Head, MahaRERA</div>
+        <a href="https://www.linkedin.com/in/gjuxdesigner/overlay/Certifications/560312584/treasury/?profileId=ACoAABcRq6wBhHBK8GPHH-6qrfjkNpp67T5ep6g" target="_blank" class="test-person">
+          <div>
+            <div class="test-name">Vasant Prabhu <span class="link-arrow" aria-hidden="true">↗</span></div>
+            <div class="test-role">Former Secretary, MahaRERA</div>
+          </div>
+          <span class="sr-only"> (opens in new tab)</span>
+        </a>
+      </article>
+
+      <article class="testimonial-slide" aria-roledescription="slide" aria-label="2 of 5">
+        <div class="test-quote" aria-hidden="true">"</div>
+        <div class="test-avatar av2" aria-hidden="true">DH</div>
+        <p class="test-text">While Working closely with Ganesh at MahaRERA, he showed an exceptional ability to turn complex regulatory workflows into clear, user-friendly digital journeys. The redesigned platform is a direct testament to his precision and dedication to digital transformation.</p>
+        <div class="test-stars" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 6.9L12 17.3 5.7 20.8l1.7-6.9-5.4-4.7 7.1-.6z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 6.9L12 17.3 5.7 20.8l1.7-6.9-5.4-4.7 7.1-.6z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 6.9L12 17.3 5.7 20.8l1.7-6.9-5.4-4.7 7.1-.6z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 6.9L12 17.3 5.7 20.8l1.7-6.9-5.4-4.7 7.1-.6z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 6.9L12 17.3 5.7 20.8l1.7-6.9-5.4-4.7 7.1-.6z"/></svg>
         </div>
-        <span class="sr-only"> (opens in new tab)</span>
-      </a>
-    </div>
-    
-    <div class="testimonial-card reveal reveal-delay-1">
-      <div class="test-quote">"</div>
-      <p class="test-text">Ganesh and I worked together during the MahaRERA digital redesign, and it was an amazing journey. He is a brilliant UX designer who is always looking for the best ways to improve the user experience and grow in his field. He is a natural design lead who keeps the team united and truly believes in the power of collaboration. Ganesh is incredibly passionate about his craft and never hesitates to step up and help his peers whenever they need it.</p>
-      <a href="https://www.linkedin.com/in/akc-rising/" target="_blank" class="test-person">
-        <div class="test-avatar av2">AC</div>
-        <div>
-          <div class="test-name">Akkashh Chauhaan<span class="link-arrow" aria-hidden="true">↗</span></div>
-          <div class="test-role">Former Sr. Technical Advisor, MahaRERA</div>
+        <a href="https://www.linkedin.com/in/dnyaneshvar-hadadare-2042883b/" target="_blank" class="test-person">
+          <div>
+            <div class="test-name">Dyaneshwar Hadadare <span class="link-arrow" aria-hidden="true">↗</span></div>
+            <div class="test-role">Former Technical Dep. Head, MahaRERA</div>
+          </div>
+          <span class="sr-only"> (opens in new tab)</span>
+        </a>
+      </article>
+
+      <article class="testimonial-slide" aria-roledescription="slide" aria-label="3 of 5">
+        <div class="test-quote" aria-hidden="true">"</div>
+        <div class="test-avatar av2" aria-hidden="true">AC</div>
+        <p class="test-text">Ganesh and I worked together during the MahaRERA digital redesign, and it was an amazing journey. He is a brilliant UX designer who is always looking for the best ways to improve the user experience and grow in his field. He is a natural design lead who keeps the team united and truly believes in the power of collaboration.</p>
+        <div class="test-stars" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 6.9L12 17.3 5.7 20.8l1.7-6.9-5.4-4.7 7.1-.6z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 6.9L12 17.3 5.7 20.8l1.7-6.9-5.4-4.7 7.1-.6z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 6.9L12 17.3 5.7 20.8l1.7-6.9-5.4-4.7 7.1-.6z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 6.9L12 17.3 5.7 20.8l1.7-6.9-5.4-4.7 7.1-.6z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 6.9L12 17.3 5.7 20.8l1.7-6.9-5.4-4.7 7.1-.6z"/></svg>
         </div>
-        <span class="sr-only"> (opens in new tab)</span>
-      </a>
+        <a href="https://www.linkedin.com/in/akc-rising/" target="_blank" class="test-person">
+          <div>
+            <div class="test-name">Akkashh Chauhaan <span class="link-arrow" aria-hidden="true">↗</span></div>
+            <div class="test-role">Former Sr. Technical Advisor, MahaRERA</div>
+          </div>
+          <span class="sr-only"> (opens in new tab)</span>
+        </a>
+      </article>
+
+      <article class="testimonial-slide" aria-roledescription="slide" aria-label="4 of 5">
+        <div class="test-quote" aria-hidden="true">"</div>
+        <div class="test-avatar av2" aria-hidden="true">SS</div>
+        <p class="test-text">Collaborating with Ganesh during our university days was a fantastic experience. His expertise in graphic design and event planning single-handedly elevated the quality of every project we touched. He possesses a sharp eye for aesthetics and a natural instinct for creating memorable, user-centered designs.</p>
+        <div class="test-stars" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 6.9L12 17.3 5.7 20.8l1.7-6.9-5.4-4.7 7.1-.6z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 6.9L12 17.3 5.7 20.8l1.7-6.9-5.4-4.7 7.1-.6z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 6.9L12 17.3 5.7 20.8l1.7-6.9-5.4-4.7 7.1-.6z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 6.9L12 17.3 5.7 20.8l1.7-6.9-5.4-4.7 7.1-.6z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 6.9L12 17.3 5.7 20.8l1.7-6.9-5.4-4.7 7.1-.6z"/></svg>
+        </div>
+        <a href="https://www.linkedin.com/in/sukhbir-singh-36a4a1137/" target="_blank" class="test-person">
+          <div>
+            <div class="test-name">Sukhabir Sing <span class="link-arrow" aria-hidden="true">↗</span></div>
+            <div class="test-role">Design Manager, PeepalDesign</div>
+          </div>
+          <span class="sr-only"> (opens in new tab)</span>
+        </a>
+      </article>
+
+      <article class="testimonial-slide" aria-roledescription="slide" aria-label="5 of 5">
+        <div class="test-quote" aria-hidden="true">"</div>
+        <div class="test-avatar av3" aria-hidden="true">JJ</div>
+        <p class="test-text">The design system Ganesh built for us saved our engineering team hundreds of hours and brought visual consistency across our entire platform for the first time.</p>
+        <div class="test-stars" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 6.9L12 17.3 5.7 20.8l1.7-6.9-5.4-4.7 7.1-.6z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 6.9L12 17.3 5.7 20.8l1.7-6.9-5.4-4.7 7.1-.6z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 6.9L12 17.3 5.7 20.8l1.7-6.9-5.4-4.7 7.1-.6z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 6.9L12 17.3 5.7 20.8l1.7-6.9-5.4-4.7 7.1-.6z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 6.9L12 17.3 5.7 20.8l1.7-6.9-5.4-4.7 7.1-.6z"/></svg>
+        </div>
+        <a href="#" class="test-person">
+          <div>
+            <div class="test-name">Jitendra Joshi</div>
+            <div class="test-role">IT Manager, MahaRERA</div>
+          </div>
+        </a>
+      </article>
+
     </div>
 
-    <div class="testimonial-card reveal reveal-delay-1">
-      <div class="test-quote">"</div>
-      <p class="test-text">Collaborating with Ganesh during our university days was a fantastic experience. His expertise in graphic design and event planning single-handedly elevated the quality of every project we touched. He possesses a sharp eye for aesthetics and a natural instinct for creating memorable, user-centered designs.</p>
-      <a href="https://www.linkedin.com/in/sukhbir-singh-36a4a1137/" target="_blank" class="test-person">
-        <div class="test-avatar av2">SS</div>
-        <div>
-          <div class="test-name">Sukhabir Sing <span class="link-arrow" aria-hidden="true">↗</span></div>
-          <div class="test-role">Design Manager, PeepalDesign</div>
-        </div>
-        <span class="sr-only"> (opens in new tab)</span>
-      </a>
-    </div>
-   
-    <div class="testimonial-card reveal reveal-delay-2">
-      <div class="test-quote">"</div>
-      <p class="test-text">The design system Ganesh built for us saved our engineering team hundreds of hours and brought visual consistency across our entire platform for the first time.</p>
-      
-      <a href="#" class="test-person">
-        <div class="test-avatar av3">JJ</div>
-        <div>
-          <div class="test-name">Jitendra Joshi <span class="link-arrow"></span></div>
-          <div class="test-role">IT Manager, MahaRERA</div>
-        </div>
-      </a>
-    </div>
+    <button type="button" class="test-nav test-nav-next" id="test-next" aria-label="Next testimonial">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+  </div>
 
+  <div class="testimonial-dots" id="testimonial-dots" role="tablist" aria-label="Choose testimonial">
+    <button type="button" class="test-dot" role="tab" aria-label="Testimonial 1"></button>
+    <button type="button" class="test-dot" role="tab" aria-label="Testimonial 2"></button>
+    <button type="button" class="test-dot" role="tab" aria-label="Testimonial 3"></button>
+    <button type="button" class="test-dot" role="tab" aria-label="Testimonial 4"></button>
+    <button type="button" class="test-dot" role="tab" aria-label="Testimonial 5"></button>
   </div>
 </section>
 
@@ -2564,7 +2803,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // WCAG 2.3.3: skip momentum/smooth-scroll easing for users who prefer reduced motion
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const lenis = new Lenis({
-    duration: prefersReducedMotion ? 0 : 1.2,
+    duration: prefersReducedMotion ? 2 : 0,
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     direction: 'vertical',
     gestureDirection: 'vertical',
@@ -2622,6 +2861,9 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       wrapChars(preloader.querySelector('.preloader-name'), 50);
       wrapChars(preloader.querySelector('.preloader-subtitle'), 40);
+      // Every letter is now an individually-hidden .char span, so it's safe to
+      // un-hide the containers (see the FOUC note in the CSS above).
+      preloader.classList.add('chars-ready');
 
       // Sequence (one shared clock, everything keyed off .reveal-text at t=0):
       //   0.0s - 1.4s  sketch guides draw in (circles, crosshair, corner marks)
@@ -2661,32 +2903,60 @@ document.addEventListener('DOMContentLoaded', function() {
           // window folding into a macOS dock icon rather than a plain resize.
           const angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
           const smoothstep = (t) => t * t * (3 - 2 * t);
-          const stretchAmount = prefersReducedMotion ? 2 : 0; // no distortion if motion is reduced
-          const steps = 10;
+          // More samples = a smoother interpolated path between keyframes. 10 was
+          // coarse enough to read as slightly stepped at this duration.
+          // Kept on intentionally for every visitor, reduced-motion included -
+          // this is a deliberate one-time signature flourish, not decorative
+          // looping motion, so it stays instead of being stripped out. The fly
+          // duration below is still shortened for reduced-motion users, so the
+          // total time-on-screen respects that preference even though the
+          // stretch itself doesn't.
+          const stretchAmount = 0.85;
+          const steps = 26;
           const flyKeyframes = [];
           for (let i = 0; i <= steps; i++) {
               const t = i / steps;
               const e = smoothstep(t);
-              const along = 1 + stretchAmount * Math.sin(Math.PI * t);       // elongates mid-flight
-              const across = 1 - stretchAmount * 0.5 * Math.sin(Math.PI * t); // thins mid-flight
+
+              // macOS genie is asymmetric: the mark elongates hard and early as
+              // it's "pulled" toward the dock, then relaxes as it arrives. A
+              // plain sin() peaks dead-centre and reads mechanical, so the
+              // envelope is skewed to peak around a third of the way in, and
+              // eased out with a power curve for the long settle.
+              const skew = Math.pow(Math.sin(Math.PI * Math.pow(t, 0.7)), 1.4);
+              const along  = 1 + stretchAmount * skew;         // elongates along the path
+              const across = 1 - stretchAmount * 0.45 * skew;  // pinches perpendicular to it
               const baseScale = 1 + (scale - 1) * e;
               flyKeyframes.push({
-                  transform: `translate(${deltaX * e}px, ${deltaY * e}px) rotate(${angle}deg) scale(${baseScale * along}, ${baseScale * across}) rotate(${-angle}deg)`
+                  transform: `translate(${deltaX * e}px, ${deltaY * e}px) rotate(${angle}deg) scale(${baseScale * along}, ${baseScale * across}) rotate(${-angle}deg)`,
+                  // Fade only over the last stretch of the trip so the mark
+                  // dissolves into the nav logo rather than stopping dead on it.
+                  opacity: t < 0.75 ? 1 : 1 - (t - 0.75) / 0.25 * 0.15
               });
           }
           // Last keyframe collapses back to a plain, undistorted transform so it
           // lands pixel-exact on the nav logo regardless of the stretch math above.
-          flyKeyframes[steps] = { transform: `translate(${deltaX}px, ${deltaY}px) scale(${scale})` };
+          flyKeyframes[steps] = { transform: `translate(${deltaX}px, ${deltaY}px) scale(${scale})`, opacity: 1 };
 
-          const flyDuration = prefersReducedMotion ? 350 : 900;
+          const flyDuration = prefersReducedMotion ? 350 : 1100;
           flyAnim = pLogo.animate(flyKeyframes, {
               duration: flyDuration,
-              easing: 'cubic-bezier(0.6, 0, 0.35, 1)',
+              // Slow, deliberate pull-away then a soft landing - closer to the
+              // dock minimise feel than the previous near-symmetric curve.
+              easing: 'cubic-bezier(0.7, 0, 0.2, 1)',
               fill: 'forwards'
           });
 
           // Step 4: Finish transition, remove preloader, unleash the page
           flyAnim.onfinish = finishPreloader;
+
+          // Safety net. Browsers freeze Web Animations while a tab is in the
+          // background, so if the page is opened in a background tab (cmd-click,
+          // session restore) this animation sits at currentTime 0 and onfinish
+          // never fires - leaving the preloader up and `body.loading` keeping
+          // scroll locked forever. Guarantee the page is released either way;
+          // finishPreloader() is idempotent so the real onfinish is harmless.
+          setTimeout(finishPreloader, flyDuration + 400);
 
       }, 6000); // 0.8s after the text fade-out starts, so it's fully gone before the logo flies
 
@@ -2729,13 +2999,27 @@ document.addEventListener('DOMContentLoaded', function() {
   function initObservers() {
       /* ── Scroll Reveal ── */
       const revealObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            revealObserver.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.12 });
+        // Elements that cross the threshold in the same frame get a small
+        // incremental delay instead of all firing at once, so a row of cards
+        // cascades naturally rather than snapping in as one block. Sorted by
+        // vertical position so the cascade always runs top-to-bottom regardless
+        // of DOM order, and capped so a long list never stalls at the end.
+        const arriving = entries.filter(e => e.isIntersecting);
+        if (!arriving.length) return;
+
+        arriving
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
+          .forEach((entry, i) => {
+            const el = entry.target;
+            el.style.setProperty('--reveal-delay', Math.min(i * 90, 450) + 'ms');
+            el.classList.add('visible');
+            el.addEventListener('transitionend', () => {
+              el.classList.add('reveal-done');
+              el.style.removeProperty('--reveal-delay');
+            }, { once: true });
+            revealObserver.unobserve(el);
+          });
+      }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
       document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
       /* ── Skill Bar Animation ── */
@@ -2781,43 +3065,85 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   /* ── Cursor ── */
+  // `(hover: hover) and (pointer: fine)` is only true when the PRIMARY input is
+  // a precise, hover-capable pointer - i.e. an actual mouse/trackpad. It's false
+  // on phones/tablets, but correctly flips back to true on a touchscreen laptop
+  // once a real mouse is plugged in, which naive `ontouchstart`/screen-width
+  // checks can't distinguish. Everything cursor- and pointer-tracking-related
+  // (the custom dot/ring cursor AND the background canvas's mouse-reactive
+  // lines, which both read/write the shared `mouse` object below) is gated on
+  // this, since neither means anything without a real pointer to track.
+  const fineHover = window.matchMedia('(hover: hover) and (pointer: fine)');
+  let hasFinePointer = fineHover.matches;
+
+  // Declared unconditionally: the background canvas's draw() loop reads
+  // mouse.active/x/y regardless of pointer type, and simply never sees it go
+  // true on a touch-only device (the listener that updates it is inside
+  // initCursorTracking(), only called when hasFinePointer is true) - so the
+  // canvas's reactive lines/glow correctly stay inert there with no extra checks.
+  const mouse = { x: -9999, y: -9999, active: false };
+  let cursor, ring;
+
+  function initCursorTracking() {
   // Only hide the native OS cursor once we've confirmed the custom cursor script
   // is actually running - otherwise (JS error/disabled/blocked) the native
   // pointer stays visible instead of the user having no visible cursor at all.
   document.documentElement.classList.add('js-cursor-ready');
-  const cursor = document.getElementById('cursor');
-  const ring = document.getElementById('cursor-ring');
+  cursor = document.getElementById('cursor');
+  ring = document.getElementById('cursor-ring');
   let mx = 0, my = 0, rx = 0, ry = 0;
 
-  const mouse = { x: -9999, y: -9999, active: false };
+  // The cursor previously wrote `left`/`top` on every mousemove. Those are
+  // layout-triggering properties, so each mouse movement forced a reflow of the
+  // whole document - the single biggest source of Safari jank on this page.
+  // Everything below moves via `transform` instead, which stays on the
+  // compositor, and all DOM writes are batched into one rAF per frame.
+  const cursorTextRing = document.getElementById('cursor-text-ring');
+  let cursorDirty = false, ringRafId = null;
+  // The text ring's scale used to be a CSS transition on `transform`, but the
+  // rAF loop now owns that property - a CSS transition on the same property
+  // would fight it and stutter. Easing the scale here in JS keeps it smooth.
+  let cursorRingScale = 0, cursorRingTargetScale = 0;
 
   document.addEventListener('mousemove', e => {
     mx = e.clientX; my = e.clientY;
-    cursor.style.left = mx + 'px';
-    cursor.style.top = my + 'px';
     mouse.active = true;
-    mouse.x = e.pageX; 
+    mouse.x = e.pageX;
     mouse.y = e.pageY;
+    cursorDirty = true;
+    startRingLoop();
+  }, { passive: true });
+
+  document.addEventListener("mouseleave", () => {
+    mouse.active = false; mouse.x = -9999; mouse.y = -9999;
   });
 
-  document.addEventListener("mouseleave", () => { 
-    mouse.active = false; mouse.x = -9999; mouse.y = -9999; 
-  });
-
- const cursorTextRing = document.getElementById('cursor-text-ring');
-  
   function animateRing() {
     rx += (mx - rx) * 0.12;
     ry += (my - ry) * 0.12;
-    ring.style.left = rx + 'px';
-    ring.style.top = ry + 'px';
-    if(cursorTextRing) {
-      cursorTextRing.style.left = rx + 'px';
-      cursorTextRing.style.top = ry + 'px';
+    cursorRingScale += (cursorRingTargetScale - cursorRingScale) * 0.18;
+    if (Math.abs(cursorRingTargetScale - cursorRingScale) < 0.001) cursorRingScale = cursorRingTargetScale;
+
+    // translate3d keeps these three elements on their own compositor layers.
+    cursor.style.transform = `translate3d(${mx}px, ${my}px, 0) translate(-50%, -50%)`;
+    ring.style.transform = `translate3d(${rx}px, ${ry}px, 0) translate(-50%, -50%)`;
+    if (cursorTextRing) {
+      cursorTextRing.style.transform =
+        `translate3d(${rx}px, ${ry}px, 0) translate(-50%, -50%) scale(${cursorRingScale})`;
     }
-    requestAnimationFrame(animateRing);
+
+    // Park the loop once the ring has caught up and the pointer is at rest,
+    // instead of burning a rAF slot forever. mousemove/hover restarts it.
+    const settled = Math.abs(mx - rx) < 0.1 && Math.abs(my - ry) < 0.1
+                 && cursorRingScale === cursorRingTargetScale;
+    if (settled && !cursorDirty) { ringRafId = null; return; }
+    cursorDirty = false;
+    ringRafId = requestAnimationFrame(animateRing);
   }
-  animateRing();
+  function startRingLoop() {
+    if (ringRafId === null) ringRafId = requestAnimationFrame(animateRing);
+  }
+  startRingLoop();
 
   document.querySelectorAll('a:not(.project-card), button, .tool-item, .contact-link').forEach(el => {
     el.addEventListener('mouseenter', () => {
@@ -2861,13 +3187,39 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  document.addEventListener('mousemove', (e) => {
-    if (gridContainer && gridContainer.classList.contains('list-view')) {
-      document.querySelectorAll('.project-card:hover .project-thumb').forEach(thumb => {
-        thumb.style.left = e.clientX + 'px';
-        thumb.style.top = e.clientY + 'px';
-      });
+  // In list view, the hovered card's thumbnail follows the pointer. This used to
+  // run `querySelectorAll('.project-card:hover ...')` on EVERY mousemove - a
+  // selector with :hover forces a full style recalculation across the document
+  // each time, which is brutal on WebKit. Now the hovered thumb is tracked by
+  // mouseenter/mouseleave and moved via a transform inside one rAF per frame.
+  let hoveredThumb = null, thumbX = 0, thumbY = 0, thumbRaf = null;
+
+  function paintHoveredThumb() {
+    thumbRaf = null;
+    // left/top rather than transform here on purpose: the CSS owns `transform`
+    // for this element's scale-in transition, and overwriting it from JS would
+    // kill that. It's one position:fixed element written once per frame, which
+    // is cheap - the expensive part was the per-event :hover selector, now gone.
+    if (hoveredThumb) {
+      hoveredThumb.style.left = thumbX + 'px';
+      hoveredThumb.style.top = thumbY + 'px';
     }
+  }
+
+  document.addEventListener('mousemove', (e) => {
+    if (!hoveredThumb) return;
+    thumbX = e.clientX; thumbY = e.clientY;
+    if (thumbRaf === null) thumbRaf = requestAnimationFrame(paintHoveredThumb);
+  }, { passive: true });
+
+  document.querySelectorAll('.project-card').forEach(card => {
+    card.addEventListener('mouseenter', () => {
+      if (!gridContainer || !gridContainer.classList.contains('list-view')) return;
+      hoveredThumb = card.querySelector('.project-thumb');
+    });
+    card.addEventListener('mouseleave', () => {
+      hoveredThumb = null;
+    });
   });
 
   // --- DYNAMIC CIRCULAR TEXT HOVER LOGIC ---
@@ -2880,7 +3232,7 @@ document.addEventListener('DOMContentLoaded', function() {
         ring.style.width = '36px';
         ring.style.height = '36px';
         ring.style.borderColor = 'var(--accent)';
-        cursorTextRing.style.transform = 'translate(-50%, -50%) scale(0)';
+        cursorRingTargetScale = 0; startRingLoop();
         cursorTextRing.style.opacity = '0';
         return;
       }
@@ -2890,7 +3242,7 @@ document.addEventListener('DOMContentLoaded', function() {
       ring.style.width = '0px';
       ring.style.height = '0px';
       ring.style.borderColor = 'transparent';
-      cursorTextRing.style.transform = 'translate(-50%, -50%) scale(1)';
+      cursorRingTargetScale = 1; startRingLoop();
       cursorTextRing.style.opacity = '1';
 
       const projectName = el.querySelector('.project-name').innerText;
@@ -2921,13 +3273,13 @@ document.addEventListener('DOMContentLoaded', function() {
       ring.style.width = '36px';
       ring.style.height = '36px';
       ring.style.borderColor = 'var(--accent)';
-      cursorTextRing.style.transform = 'translate(-50%, -50%) scale(0)';
+      cursorRingTargetScale = 0; startRingLoop();
       cursorTextRing.style.opacity = '0';
     });
 
     el.querySelectorAll('.expand-btn, .explore-btn-list').forEach(btn => {
       btn.addEventListener('mouseenter', (e) => {
-        cursorTextRing.style.transform = 'translate(-50%, -50%) scale(0)';
+        cursorRingTargetScale = 0; startRingLoop();
         cursorTextRing.style.opacity = '0';
         // NOTE: this used to also fade .project-thumb to opacity:0 here, meant to
         // reveal the (now-removed, previously always-empty) .project-overlay
@@ -2942,7 +3294,7 @@ document.addEventListener('DOMContentLoaded', function() {
       });
 
       btn.addEventListener('mouseleave', (e) => {
-        cursorTextRing.style.transform = 'translate(-50%, -50%) scale(1)';
+        cursorRingTargetScale = 1; startRingLoop();
         cursorTextRing.style.opacity = '1';
         cursor.style.width = '6px';
         cursor.style.height = '6px';
@@ -2952,7 +3304,28 @@ document.addEventListener('DOMContentLoaded', function() {
         ring.style.borderColor = 'transparent';
       });
     });
-  }); 
+  });
+
+  } // end initCursorTracking()
+
+  if (hasFinePointer) {
+    initCursorTracking();
+  }
+
+  // One-way upgrade path: a touchscreen laptop that gets a mouse plugged in
+  // AFTER page load should still get the cursor/tracking experience. (The
+  // reverse - a mouse being unplugged mid-session - is intentionally not torn
+  // down; that's a rare enough case that ripping out dozens of live listeners
+  // to handle it isn't worth the complexity here.)
+  if (!hasFinePointer && fineHover.addEventListener) {
+    fineHover.addEventListener('change', function onFinePointerGained(e) {
+      if (e.matches && !hasFinePointer) {
+        hasFinePointer = true;
+        initCursorTracking();
+        fineHover.removeEventListener('change', onFinePointerGained);
+      }
+    });
+  }
 
   // =====================================================================
   // --- ACCESSIBILITY LOGIC ---
@@ -3057,26 +3430,81 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // --- PERFORMANCE DETECTION ---
-  const isLowEndDevice = 
+  const isLowEndDevice =
     window.a11yAnimationsDisabled ||
     (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) ||
     (navigator.deviceMemory && navigator.deviceMemory <= 4) ||
     (navigator.connection && (navigator.connection.saveData || navigator.connection.effectiveType === '2g' || navigator.connection.effectiveType === '3g')) ||
     window.innerWidth < 768;
 
+  // Safari/WebKit specifically struggles with what this page asks for: stacked
+  // backdrop-filter layers, MSAA WebGL at full Retina pixel ratio, and any
+  // per-mousemove style recalculation. Chrome absorbs it; Safari drops frames.
+  // Detected once here and used to degrade the heaviest effects below.
+  const isWebKit = /^((?!chrome|android|crios|fxios).)*safari/i.test(navigator.userAgent);
+  if (isWebKit) document.documentElement.classList.add('is-webkit');
+
+  // Fetch Three.js only when a scene actually needs it (see the <head> note).
+  // Returns a promise that resolves once window.THREE exists; repeat callers
+  // share the same in-flight request.
+  let threePromise = null;
+  function loadThree() {
+    if (window.THREE) return Promise.resolve(window.THREE);
+    if (threePromise) return threePromise;
+    threePromise = new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+      s.async = true;
+      s.onload = () => resolve(window.THREE);
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+    return threePromise;
+  }
+
+  // Runs `init` the first time `el` comes near the viewport, then disconnects.
+  // Keeps the 600KB download and the WebGL context creation off the critical path.
+  function whenNearViewport(el, init, rootMargin = '200px') {
+    if (!('IntersectionObserver' in window)) { init(); return; }
+    const io = new IntersectionObserver((entries) => {
+      if (entries.some(e => e.isIntersecting)) { io.disconnect(); init(); }
+    }, { rootMargin });
+    io.observe(el);
+  }
+
+  // Reports whether `el` is currently on screen AND the tab is focused, so
+  // render loops can skip work instead of burning GPU on invisible pixels.
+  function makeVisibilityGate(el) {
+    const state = { onScreen: false };
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver((entries) => {
+        state.onScreen = entries[0].isIntersecting;
+      }, { rootMargin: '100px' }).observe(el);
+    } else {
+      state.onScreen = true;
+    }
+    return () => state.onScreen && !document.hidden;
+  }
+
   // =====================================================================
   // --- AI CHIP & CIRCUITS 3D ANIMATION (AI SECTION) ---
   // =====================================================================
   const aiChipContainer = document.getElementById('ai-chip-canvas');
-  if (aiChipContainer && typeof THREE !== 'undefined' && !isLowEndDevice) {
+  if (aiChipContainer && !isLowEndDevice) {
+    whenNearViewport(aiChipContainer, () => loadThree().then(() => initAiChip()).catch(() => {}));
+  }
+  function initAiChip() {
+      const aiVisible = makeVisibilityGate(aiChipContainer);
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(45, aiChipContainer.clientWidth / aiChipContainer.clientHeight, 0.1, 1000);
       camera.position.set(0, 90, 130);
       camera.lookAt(0, 0, 0);
 
-      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      // antialias is a real cost on WebKit (MSAA on every frame); and an
+      // uncapped Retina pixelRatio means rendering 4x the pixels. Cap both.
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: !isWebKit, powerPreference: 'low-power' });
       renderer.setSize(aiChipContainer.clientWidth, aiChipContainer.clientHeight);
-      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, isWebKit ? 1.25 : 1.75));
       aiChipContainer.appendChild(renderer.domElement);
 
       const chipGroup = new THREE.Group();
@@ -3252,6 +3680,10 @@ document.addEventListener('DOMContentLoaded', function() {
       let time = 0;
       function animateAI() {
           requestAnimationFrame(animateAI);
+          // Skip all simulation + the WebGL draw entirely while the section is
+          // off screen or the tab is backgrounded. Previously this ran forever,
+          // so scrolling anywhere on the page paid for an invisible render.
+          if (!aiVisible()) return;
           time += 0.01;
           scene.rotation.y = Math.sin(time * 0.5) * 0.1;
           scene.rotation.x = Math.cos(time * 0.3) * 0.05;
@@ -3293,13 +3725,18 @@ document.addEventListener('DOMContentLoaded', function() {
   // --- ABOUT SECTION 3D GLOBE (THREE.JS) ---
   // =====================================================================
   const globeContainer = document.getElementById('about-globe-container');
-  if (globeContainer && typeof THREE !== 'undefined' && !isLowEndDevice) {
+  if (globeContainer && !isLowEndDevice) {
+    whenNearViewport(globeContainer, () => loadThree().then(() => initGlobe()).catch(() => {}));
+  }
+  function initGlobe() {
+      const globeVisible = makeVisibilityGate(globeContainer);
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
       camera.position.z = 650;
 
-      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: !isWebKit, powerPreference: 'low-power' });
       renderer.setSize(700, 700);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, isWebKit ? 1.25 : 1.75));
       globeContainer.appendChild(renderer.domElement);
 
       const isLight = document.documentElement.getAttribute('data-theme') === 'light';
@@ -3450,6 +3887,8 @@ document.addEventListener('DOMContentLoaded', function() {
       let time = 0;
       function animateGlobe() {
           requestAnimationFrame(animateGlobe);
+          // Same gating as the AI chip: don't spin or draw an offscreen globe.
+          if (!globeVisible()) return;
           globe.rotation.y += 0.0012;
           time += 0.04;
           const scale = 1 + Math.sin(time) * 0.5;
@@ -3461,14 +3900,24 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   /* ── Nav scroll effect ── */
+  // Was: an unthrottled, non-passive scroll listener that re-queried the DOM and
+  // touched classList on every single scroll event. Now the node is cached, the
+  // work is coalesced into one rAF per frame, the class only changes when the
+  // state actually flips, and `passive` lets WebKit scroll without waiting on us.
+  const navEl_scroll = document.querySelector('nav');
+  let navScrollQueued = false, navIsScrolled = false;
   window.addEventListener('scroll', () => {
-    const nav = document.querySelector('nav');
-    if (window.scrollY > 60) {
-      nav.classList.add('scrolled');
-    } else {
-      nav.classList.remove('scrolled');
-    }
-  });
+    if (navScrollQueued) return;
+    navScrollQueued = true;
+    requestAnimationFrame(() => {
+      navScrollQueued = false;
+      const shouldBeScrolled = window.scrollY > 60;
+      if (shouldBeScrolled !== navIsScrolled) {
+        navIsScrolled = shouldBeScrolled;
+        navEl_scroll.classList.toggle('scrolled', shouldBeScrolled);
+      }
+    });
+  }, { passive: true });
   
   if (window.scrollY > 60) {
     document.querySelector('nav').classList.add('scrolled');
@@ -3497,8 +3946,15 @@ document.addEventListener('DOMContentLoaded', function() {
   // =====================================================================
   const canvas = document.getElementById("dots");
   if (canvas && !isLowEndDevice) {
-  const ctx = canvas.getContext("2d");
-  let w = 0, h = 0, dpr = Math.max(1, window.devicePixelRatio || 1);
+  const ctx = canvas.getContext("2d", { alpha: true, desynchronized: true });
+  // This canvas is sized to the FULL page height, not the viewport. At a Retina
+  // dpr of 2 that's easily 24000x2880 = ~70M pixels (~275MB of GPU memory) for
+  // what is a grid of 1.2px dots - enough on its own to make Safari crawl.
+  // Capping dpr costs nothing visually at this dot size and saves 4x the memory
+  // and fill rate.
+  // w/h = the canvas's own (viewport-sized) backing store; pageH = the full
+  // page's scroll height, used only to size the underlying point/word grid.
+  let w = 0, h = 0, pageH = 0, dpr = Math.min(Math.max(1, window.devicePixelRatio || 1), isWebKit ? 1 : 1.5);
   let cols = 0, rows = 0;
 
   let points = []; let activeWords = []; let circuits = [];
@@ -3512,7 +3968,12 @@ document.addEventListener('DOMContentLoaded', function() {
       circuitColor: "123, 108, 255",        
       textColor: "122, 120, 144",           
       lineDist: 90, lineOpacity: 0.25, lineWidth: 1.0,          
-      fontSize: 9, fadeSpeed: 0.01, holdTime: 300, maxWords: 12,                         
+      // maxWords cut from 12 to 6: words are still placed anywhere across the
+      // full page height, so most of the previous 12 were off-screen at any
+      // given moment - just extra entries in updateWords()/charMap every
+      // frame for no visible benefit. 6 keeps the same "words drifting in
+      // occasionally" feel with half the simultaneous bookkeeping.
+      fontSize: 9, fadeSpeed: 0.01, holdTime: 300, maxWords: 6,
       words: ["UI DESIGN", "UX RESEARCH", "PROTOTYPING", "DESIGN SYSTEMS", "EMPATHY", "INTERACTION", "WIREFRAMING"],
       maxCircuits: 8, circuitSpeed: 0.05, circuitHold: 150   
   };
@@ -3540,7 +4001,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function calculateExclusionZones() {
       exclusionZones = [];
-      const bgSections = document.querySelectorAll('.project-card, .about-visual, .hero-visuals, .process-item, .testimonial-card, .contact-form, footer');
+      const bgSections = document.querySelectorAll('.project-card, .about-visual, .hero-visuals, .process-item, .testimonial-carousel, .contact-form, footer');
       bgSections.forEach(el => {
           const rect = el.getBoundingClientRect();
           exclusionZones.push({
@@ -3561,15 +4022,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function resize(){
       w = window.innerWidth;
-      h = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight, window.innerHeight);
+      h = window.innerHeight; // canvas backing store = viewport only, not the page
+      pageH = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight, window.innerHeight);
 
       canvas.width = Math.floor(w * dpr); canvas.height = Math.floor(h * dpr);
-      canvas.style.width = w + "px"; canvas.style.height = h + "px"; 
+      canvas.style.width = w + "px"; canvas.style.height = h + "px";
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      points = []; activeWords = []; circuits = []; occupiedCells.clear(); calculateExclusionZones(); 
+      points = []; activeWords = []; circuits = []; occupiedCells.clear(); calculateExclusionZones();
 
-      cols = Math.ceil(w / config.spacing) + 1; rows = Math.ceil(h / config.spacing) + 1;
+      // The point/word/circuit GRID still spans the whole page in "world"
+      // coordinates (using pageH, not h) - that's what keeps dots, snap-lines,
+      // and words appearing at the same fixed spot on the page as you scroll
+      // past it, rather than the pattern repeating/resetting every viewport.
+      // draw() below only ever iterates+paints the ones currently on screen.
+      cols = Math.ceil(w / config.spacing) + 1; rows = Math.ceil(pageH / config.spacing) + 1;
 
       for (let y = 0; y < rows; y++){
           for (let x = 0; x < cols; x++){
@@ -3690,11 +4157,30 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function draw(){
-      ctx.clearRect(0, 0, w, h);
-      updateWords(); 
-      
+      requestAnimationFrame(draw);
+      // Don't simulate or repaint the background grid while the tab is hidden.
+      if (document.hidden) return;
+
       const scrollY = window.scrollY || document.documentElement.scrollTop;
-      const viewportH = window.innerHeight;
+      const viewportH = h; // canvas backing store height = viewport height now
+
+      // Clearing (0,0,w,h) used to wipe a canvas the height of the entire page
+      // every frame; the canvas itself is viewport-sized now, so this is the
+      // same call but on a surface that's typically 5-10x smaller.
+      ctx.clearRect(0, 0, w, h);
+
+      updateWords();
+
+      // Points/words/circuits are still stored in page-absolute "world"
+      // coordinates (see resize()). Translating the context by -scrollY once,
+      // instead of subtracting it from every point's coordinates individually,
+      // makes those world coordinates land in the right place on the
+      // viewport-sized canvas - so everything below is completely unchanged
+      // from before (still draws at p.ox/p.oy), it's just now being drawn onto
+      // a small, scroll-following canvas instead of one spanning the whole page.
+      ctx.save();
+      ctx.translate(0, -scrollY);
+
       let charMap = {};
       activeWords.forEach(word => {
           word.lines.forEach((line, lIdx) => {
@@ -3704,14 +4190,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
       for (let i = 0; i < points.length; i++){
           const p = points[i];
-          if (p.oy < scrollY - 150 || p.oy > scrollY + viewportH + 150) continue; 
+          if (p.oy < scrollY - 150 || p.oy > scrollY + viewportH + 150) continue;
 
           const col = p.col; const row = p.row;
-          let distToMouse = 9999; 
+          let distToMouse = 9999;
 
           if (mouse.active){
               const dx = p.ox - mouse.x; const dy = p.oy - mouse.y;
-              distToMouse = Math.hypot(dx, dy); 
+              distToMouse = Math.hypot(dx, dy);
               if (distToMouse < config.lineDist) {
                   ctx.beginPath(); ctx.moveTo(p.ox, p.oy); ctx.lineTo(mouse.x, mouse.y);
                   const opacity = (1 - (distToMouse / config.lineDist)) * config.lineOpacity;
@@ -3723,14 +4209,14 @@ document.addEventListener('DOMContentLoaded', function() {
           if (cellData) {
               ctx.font = `600 ${config.fontSize}px 'Syne', sans-serif`;
               ctx.textAlign = "center"; ctx.textBaseline = "middle";
-              ctx.fillStyle = `rgba(${config.textColor}, ${cellData.opacity})`; 
+              ctx.fillStyle = `rgba(${config.textColor}, ${cellData.opacity})`;
               ctx.fillText(cellData.char, p.ox, p.oy);
           } else {
               ctx.beginPath();
               if (mouse.active && distToMouse < 150) {
                   const intensity = 1 - (distToMouse / 150);
                   ctx.arc(p.ox, p.oy, config.radius + (intensity * 1.5), 0, Math.PI * 2);
-                  ctx.fillStyle = `rgba(${config.dotColorHover}, ${Math.max(0.04, intensity * 0.4)})`; 
+                  ctx.fillStyle = `rgba(${config.dotColorHover}, ${Math.max(0.04, intensity * 0.4)})`;
               } else {
                   ctx.arc(p.ox, p.oy, config.radius, 0, Math.PI * 2);
                   ctx.fillStyle = `rgba(${config.dotColorIdle}, 0.03)`;
@@ -3739,7 +4225,7 @@ document.addEventListener('DOMContentLoaded', function() {
           }
       }
       updateAndDrawCircuits();
-      requestAnimationFrame(draw);
+      ctx.restore();
   }
 
   let resizeTimeout;
@@ -3906,6 +4392,186 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   if (backdrop) { backdrop.addEventListener('click', closeCard); }
+
+  // =====================================================================
+  // --- TESTIMONIALS CAROUSEL ---
+  // =====================================================================
+  // Native scroll-snap + scrollTo({behavior:'smooth'}) instead of a hand-rolled
+  // transform/track-position system: the browser handles the actual animation,
+  // it works with touch swipe/trackpad for free, and "which slide is centered"
+  // is derived from real scroll position rather than tracked separately - so it
+  // can never drift out of sync with what the user is actually looking at.
+  (function initTestimonialCarousel() {
+    const viewport = document.getElementById('testimonial-viewport');
+    if (!viewport) return;
+
+    const realSlides = Array.from(viewport.querySelectorAll('.testimonial-slide'));
+    const dotsWrap = document.getElementById('testimonial-dots');
+    const dots = dotsWrap ? Array.from(dotsWrap.querySelectorAll('.test-dot')) : [];
+    const prevBtn = document.getElementById('test-prev');
+    const nextBtn = document.getElementById('test-next');
+    const total = realSlides.length;
+    if (!total) return;
+
+    // Infinite loop via cloned slides: one full duplicate set is stitched
+    // onto each side of the real set (before + after), so there's always a
+    // real-looking card to scroll to in either direction. Once a scroll
+    // lands on a clone, we instantly (no transition) re-point the viewport
+    // at the matching real slide in the middle set - since the clone is
+    // pixel-identical, that jump is invisible to the eye.
+    const clonesBefore = realSlides.map(s => {
+      const c = s.cloneNode(true);
+      c.setAttribute('aria-hidden', 'true');
+      c.setAttribute('inert', '');
+      return c;
+    });
+    const clonesAfter = realSlides.map(s => {
+      const c = s.cloneNode(true);
+      c.setAttribute('aria-hidden', 'true');
+      c.setAttribute('inert', '');
+      return c;
+    });
+    clonesBefore.forEach(c => viewport.insertBefore(c, realSlides[0]));
+    clonesAfter.forEach(c => viewport.appendChild(c));
+
+    // trackSlides = [ ...clonesBefore, ...realSlides, ...clonesAfter ]
+    const trackSlides = Array.from(viewport.querySelectorAll('.testimonial-slide'));
+
+    let pos = total; // start on the first real slide (middle copy)
+    let autoTimer = null;
+    let isPaused = false;
+    let programmaticScroll = false;
+    let wrapCheckTimer = null;
+
+    function realIndexOf(p) { return ((p % total) + total) % total; }
+
+    function setActive(p) {
+      trackSlides.forEach((s, idx) => {
+        const active = idx === p;
+        s.classList.toggle('is-active', active);
+        s.setAttribute('aria-current', active ? 'true' : 'false');
+      });
+      const ri = realIndexOf(p);
+      dots.forEach((d, idx) => {
+        d.classList.toggle('is-active', idx === ri);
+        d.setAttribute('aria-selected', idx === ri ? 'true' : 'false');
+      });
+    }
+
+    // After landing on a clone (either end), silently re-center on the
+    // equivalent real slide in the middle copy so there's always a full
+    // set of clones left to scroll into next time.
+    function correctWrap() {
+      if (pos < total || pos >= total * 2) {
+        pos = total + realIndexOf(pos);
+        scrollToPos(pos, false);
+      }
+    }
+
+    function scrollToPos(p, smooth) {
+      const slide = trackSlides[p];
+      if (!slide) return;
+      programmaticScroll = true;
+      // scrollIntoView({inline:'center'}) rather than a hand-computed scrollLeft:
+      // this container combines scroll-snap-type with scroll-padding, and the
+      // browser's own snap-position resolution didn't match a manually computed
+      // "offsetLeft - clientWidth/2 + offsetWidth/2" target (it was quietly
+      // clamping to a different point) - scrollIntoView asks the browser to
+      // center it directly, so it can't disagree with itself.
+      slide.scrollIntoView({
+        inline: 'center', block: 'nearest',
+        behavior: smooth === false ? 'instant' : 'smooth'
+      });
+      // We already know which slide we're navigating to - set the active
+      // state immediately rather than waiting for the scroll listener's
+      // rAF-gated "closest slide" detection to notice. That detection is
+      // for user-driven manual swipe/drag; it can lag or, under a
+      // throttled/backgrounded tab, never fire at all, leaving the old
+      // slide marked active even after the scroll has visually moved on.
+      setActive(p);
+      // Scroll events keep firing briefly after this returns; give the browser
+      // a beat before trusting scroll-driven detection again so it doesn't
+      // fight with the index we just explicitly asked for.
+      clearTimeout(wrapCheckTimer);
+      wrapCheckTimer = setTimeout(() => {
+        programmaticScroll = false;
+        correctWrap();
+      }, 500);
+    }
+
+    // Keeps the highlighted card in sync with whatever is ACTUALLY centered -
+    // covers manual swipe/trackpad/drag scrolling, not just our own button clicks.
+    let scrollRaf = null;
+    let manualSettleTimer = null;
+    viewport.addEventListener('scroll', () => {
+      if (programmaticScroll || scrollRaf) return;
+      scrollRaf = requestAnimationFrame(() => {
+        scrollRaf = null;
+        const viewportCenter = viewport.scrollLeft + viewport.clientWidth / 2;
+        let closest = 0, closestDist = Infinity;
+        trackSlides.forEach((s, idx) => {
+          const dist = Math.abs((s.offsetLeft + s.offsetWidth / 2) - viewportCenter);
+          if (dist < closestDist) { closestDist = dist; closest = idx; }
+        });
+        if (closest !== pos) { pos = closest; setActive(pos); }
+      });
+      // A manual drag/swipe can also land on a clone - debounce a wrap
+      // check until scrolling has actually stopped moving.
+      clearTimeout(manualSettleTimer);
+      manualSettleTimer = setTimeout(correctWrap, 200);
+    }, { passive: true });
+
+    function goNext() { pos += 1; scrollToPos(pos); }
+    function goPrev() { pos -= 1; scrollToPos(pos); }
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function startAuto() {
+      stopAuto();
+      // Don't auto-move content for people who've asked for less motion -
+      // manual prev/next/dots still work fine, this only skips the automatic part.
+      if (prefersReducedMotion) return;
+      autoTimer = setInterval(() => { if (!isPaused) goNext(); }, 3000);
+    }
+    function stopAuto() {
+      if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+    }
+
+    // Pause on hover AND keyboard focus (Tab-ing into a link inside a slide
+    // shouldn't have the carousel yank itself away three seconds later).
+    viewport.addEventListener('mouseenter', () => { isPaused = true; });
+    viewport.addEventListener('mouseleave', () => { isPaused = false; });
+    viewport.addEventListener('focusin', () => { isPaused = true; });
+    viewport.addEventListener('focusout', () => { isPaused = false; });
+
+    // Manual navigation resets the 3s timer so it doesn't auto-advance
+    // immediately after (or mid-way through) a deliberate user action.
+    if (prevBtn) prevBtn.addEventListener('click', () => { goPrev(); startAuto(); });
+    if (nextBtn) nextBtn.addEventListener('click', () => { goNext(); startAuto(); });
+    dots.forEach((d, idx) => d.addEventListener('click', () => {
+      // Jump via the shortest path around the loop from wherever we
+      // currently are, rather than always unwinding back to the middle copy.
+      const ri = realIndexOf(pos);
+      let delta = idx - ri;
+      if (delta > total / 2) delta -= total;
+      if (delta < -total / 2) delta += total;
+      pos += delta;
+      scrollToPos(pos);
+      startAuto();
+    }));
+
+    function centerOnLoad() {
+      scrollToPos(pos, false);
+    }
+    // Slide widths depend on layout/fonts settling, so center once now and
+    // once more shortly after (covers late web-font swap) - and again on resize.
+    centerOnLoad();
+    setTimeout(centerOnLoad, 300);
+    window.addEventListener('resize', () => centerOnLoad());
+
+    startAuto();
+  })();
+
 }); // end DOMContentLoaded wrapper
 </script>
 </body>
