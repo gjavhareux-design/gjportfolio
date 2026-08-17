@@ -4472,14 +4472,19 @@ document.addEventListener('DOMContentLoaded', function() {
       const slide = trackSlides[p];
       if (!slide) return;
       programmaticScroll = true;
-      // scrollIntoView({inline:'center'}) rather than a hand-computed scrollLeft:
-      // this container combines scroll-snap-type with scroll-padding, and the
-      // browser's own snap-position resolution didn't match a manually computed
-      // "offsetLeft - clientWidth/2 + offsetWidth/2" target (it was quietly
-      // clamping to a different point) - scrollIntoView asks the browser to
-      // center it directly, so it can't disagree with itself.
-      slide.scrollIntoView({
-        inline: 'center', block: 'nearest',
+      // NOT slide.scrollIntoView(): even with block:'nearest', if the carousel
+      // is entirely off-screen (e.g. on page load, before the user has
+      // scrolled down to it) the browser has no "nearest edge" to keep it at -
+      // it counts as not-visible-at-all and scrolls the whole PAGE down to
+      // reveal it. That's what was yanking the site straight to the
+      // testimonials section on load. Scrolling only the carousel's own
+      // scrollLeft, computed from its position relative to the viewport
+      // element itself (not the page), can never touch the page's scroll.
+      const targetLeft = viewport.scrollLeft
+        + (slide.getBoundingClientRect().left - viewport.getBoundingClientRect().left)
+        - (viewport.clientWidth - slide.offsetWidth) / 2;
+      viewport.scrollTo({
+        left: targetLeft,
         behavior: smooth === false ? 'instant' : 'smooth'
       });
       // We already know which slide we're navigating to - set the active
