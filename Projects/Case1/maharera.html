@@ -39,9 +39,9 @@
   
   --shadow-soft:      0 12px 30px rgba(0, 0, 0, 0.4);
 
-  --sidebar-w: 260px;
   --right-panel-w: 300px;
   --topbar-h: 72px;
+  --breadcrumb-h: 42px;
   --ease: cubic-bezier(.4,0,.2,1);
 }
 
@@ -100,11 +100,32 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent-org); ou
 .nav-logo svg { height: 42px; width: auto; }
 .nav-logo path { fill: var(--accent-org); }
 
-.nav-title {
-  font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 15px;
-  color: var(--text-primary); position: absolute; left: 50%; transform: translateX(-50%);
-  letter-spacing: 0.02em;
+.nav-title-dropdown {
+  position: absolute; left: 50%; transform: translateX(-50%);
 }
+.nav-title-trigger {
+  display: flex; align-items: center; gap: 6px;
+  font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 15px;
+  color: var(--text-primary); letter-spacing: 0.02em;
+  padding: 6px 10px; border-radius: 8px; transition: background 0.2s;
+}
+.nav-title-trigger svg { transition: transform 0.2s var(--ease); flex-shrink: 0; color: var(--text-muted); }
+.nav-title-dropdown:hover .nav-title-trigger { background: var(--border-subtle); }
+.nav-title-dropdown:hover .nav-title-trigger svg { transform: rotate(180deg); }
+.nav-title-menu {
+  position: absolute; top: 100%; left: 50%; transform: translateX(-50%) translateY(10px);
+  background: var(--bg-card); border: 1px solid var(--border-subtle);
+  border-radius: 10px; box-shadow: var(--shadow-soft);
+  min-width: 240px; padding: 8px 0; margin-top: 6px;
+  opacity: 0; visibility: hidden; transition: all 0.2s ease; z-index: 1000;
+}
+.nav-title-dropdown:hover .nav-title-menu { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+.nav-title-menu a {
+  display: block; padding: 9px 16px; color: var(--text-secondary);
+  font-size: 13px; font-family: 'Inter', sans-serif; font-weight: 500; text-decoration: none;
+}
+.nav-title-menu a:hover { background: var(--bg-hover); color: var(--accent-org); }
+.nav-title-menu a.current { color: var(--accent-org); font-weight: 600; }
 
 .nav-right { display: flex; align-items: center; gap: 12px; }
 
@@ -127,22 +148,16 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent-org); ou
 .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255,107,53,0.3); }
 .nav-cta:hover svg { transform: translateX(-4px); }
 
-.hamburger{display:none;flex-direction:column;gap:5px;padding:6px}
-.hamburger span{display:block;width:22px;height:2px;background:var(--text-secondary);border-radius:2px;transition:all .25s var(--ease)}
-.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
-.hamburger.open span:nth-child(2){opacity:0}
-.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
-
-/* ========== DYNAMIC BREADCRUMB BAR ========== */
+/* ========== DYNAMIC BREADCRUMB BAR (permanent page index) ========== */
 .breadcrumb-bar {
+  /* overflow must stay visible (not auto/hidden) or the .bc-dropdown-menu popups below get clipped —
+     CSS forces overflow-y to auto whenever overflow-x isn't visible, so we wrap instead of scrolling. */
   position: fixed; top: var(--topbar-h); left: 0; right: 0;
   background: var(--bg-card); border-bottom: 1px solid var(--border-subtle);
-  padding: 10px clamp(20px, 5vw, 60px); z-index: 99;
+  padding: 10px clamp(20px, 5vw, 60px); z-index: 500;
   font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted);
-  transform: translateY(-100%); opacity: 0; transition: transform 0.3s var(--ease), opacity 0.3s var(--ease);
-  pointer-events: none; display: flex; align-items: center; gap: 4px;
+  display: flex; align-items: center; gap: 4px 8px; flex-wrap: wrap;
 }
-.breadcrumb-bar.visible { transform: translateY(0); opacity: 1; pointer-events: auto; border-top: 1px solid var(--border-subtle); }
 
 .bc-dropdown { position: relative; display: inline-block; cursor: pointer; }
 .bc-dropdown span {
@@ -167,8 +182,9 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent-org); ou
 .bc-dropdown-menu a:hover { background: var(--bg-hover); color: var(--accent-org); }
 
 /* ========== LAYOUT ========== */
+/* padding-top accounts for the fixed top-nav plus the always-visible breadcrumb index bar below it */
 .layout{
-  display:flex;min-height:100vh; padding-top:var(--topbar-h);
+  display:flex;min-height:100vh; padding-top:calc(var(--topbar-h) + var(--breadcrumb-h));
   transition: padding-left 0.3s var(--ease), padding-right 0.3s var(--ease);
 }
 
@@ -183,12 +199,12 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent-org); ou
   cursor: pointer; opacity: 0.6; transition: all 0.3s ease;
 }
 .side-toggle:hover { opacity: 1; background: var(--bg-hover); color: var(--accent-org); }
-.left-toggle { left: var(--sidebar-w); border-left: none; border-radius: 0 8px 8px 0; }
 .right-toggle { right: var(--right-panel-w); border-right: none; border-radius: 8px 0 0 8px; }
 
 /* ========== RESIZE HANDLES ========== */
 .resize-handle {
-  position: fixed; top: var(--topbar-h); width: 6px; height: calc(100vh - var(--topbar-h));
+  position: fixed; top: calc(var(--topbar-h) + var(--breadcrumb-h)); width: 6px;
+  height: calc(100vh - var(--topbar-h) - var(--breadcrumb-h));
   cursor: col-resize; z-index: 102; background: transparent; transition: background 0.2s;
 }
 .resize-handle:hover, .resize-handle.dragging { background: var(--accent-org-dim); }
@@ -196,103 +212,17 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent-org); ou
   content: ''; position: absolute; top: 0; bottom: 0; left: 50%; width: 1px;
   background: var(--border-default); transform: translateX(-50%);
 }
-.resize-handle-left { left: calc(var(--sidebar-w) - 3px); }
 .resize-handle-right { right: calc(var(--right-panel-w) - 3px); }
-body.sidebar-hidden .resize-handle-left, body.right-panel-hidden .resize-handle-right { display: none; }
+body.right-panel-hidden .resize-handle-right { display: none; }
 @media(max-width:900px){ .resize-handle { display: none !important; } }
 
-body.sidebar-hidden .left-toggle { left: 0; }
-body.sidebar-hidden .left-toggle svg { transform: rotate(180deg); }
 body.right-panel-hidden .right-toggle { right: 0; }
 body.right-panel-hidden .right-toggle svg { transform: rotate(180deg); }
 
-/* ========== SIDEBAR (LEFT) ========== */
-.sidebar {
-  position: fixed; top: var(--topbar-h); left: 0; width: var(--sidebar-w); height: calc(100vh - var(--topbar-h));
-  background: var(--bg-secondary); border-right: 1px solid var(--border-subtle);
-  display: flex; flex-direction: column; z-index: 100;
-  transition: transform 0.3s var(--ease), background 0.3s, border-color 0.3s;
-}
-
-.sb-top { padding: 24px 20px 20px; border-bottom: 1px solid var(--border-subtle); flex-shrink: 0;}
-.sb-badge {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: var(--accent-org-dim); border: 1px solid var(--accent-org-border);
-  border-radius: 6px; padding: 5px 9px; margin-bottom: 10px;
-}
-.sb-badge svg { flex-shrink: 0; }
-.sb-badge span { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; font-weight: 500; color: var(--accent-org); letter-spacing: .1em; text-transform: uppercase; }
-.sb-title { font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; color: var(--text-primary); line-height: 1.4; }
-.sb-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-
-/* ── EXPANDABLE PROJECTS MENU (GMAIL STYLE) ── */
-.sb-more-projects { margin-top: 20px; }
-.more-projects-toggle {
-  display: flex; align-items: center; justify-content: space-between;
-  width: 100%; padding: 8px 12px; margin-left: -12px;
-  font-family: 'Inter', sans-serif; font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
-  color: var(--text-secondary); cursor: pointer; transition: all 0.2s ease;
-  border-radius: 6px;
-}
-.more-projects-toggle:hover {
-  color: var(--text-primary);
-  background: var(--border-subtle);
-}
-.more-projects-toggle .chevron { transition: transform 0.3s var(--ease); }
-.more-projects-toggle.open .chevron { transform: rotate(180deg); }
-
-.more-projects-list {
-  max-height: 0; overflow: hidden;
-  transition: max-height 0.3s var(--ease), opacity 0.3s var(--ease), margin 0.3s var(--ease);
-  opacity: 0; display: flex; flex-direction: column; gap: 4px;
-}
-.more-projects-list.open {
-  max-height: 200px; opacity: 1; margin-top: 8px; margin-bottom: 8px;
-}
-.more-project-link {
-  font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 500;
-  color: var(--text-secondary); text-decoration: none;
-  padding: 8px 12px; border-radius: 6px; transition: all 0.2s ease;
-  display: block; margin-left: -12px; width: calc(100% + 24px);
-}
-.more-project-link:hover {
-  color: var(--accent-org); background: var(--accent-org-dim);
-}
-
-
-.sb-scrollable {
-  flex: 1; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--border-default) transparent;
-  display: flex; flex-direction: column; padding-bottom: 24px;
-}
-
-.sb-nav { padding: 16px 0 24px; }
-.sb-chapter-label {
-  font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 500;
-  color: var(--text-muted); letter-spacing: .13em; text-transform: uppercase;
-  padding: 14px 20px 7px; display: flex; align-items: center; gap: 8px;
-}
-.sb-chapter-label::after { content: ''; flex: 1; height: 1px; background: var(--border-subtle); }
-
-.nav-link {
-  display: flex; align-items: center; gap: 10px;
-  padding: 7px 20px; font-size: 12px; color: var(--text-muted);
-  transition: color .2s, background .2s; position: relative; width: 100%; text-align: left;
-}
-.nav-link .dot {
-  width: 6px; height: 6px; border-radius: 50%; border: 1.5px solid currentColor; flex-shrink: 0; transition: all .2s;
-}
-.nav-link:hover { color: var(--text-secondary); background: var(--border-subtle); }
-.nav-link.active { color: var(--accent-org); }
-.nav-link.active .dot { background: var(--accent-org); border-color: var(--accent-org); box-shadow: 0 0 8px rgba(255,107,53,.5); }
-.nav-link.active::before {
-  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
-  width: 2px; background: var(--accent-org); border-radius: 0 2px 2px 0;
-}
-
 /* ========== RIGHT PANEL (ARTIFACTS & QUESTIONS) ========== */
 .right-panel {
-  position: fixed; top: var(--topbar-h); right: 0;
-  width: var(--right-panel-w); height: calc(100vh - var(--topbar-h));
+  position: fixed; top: calc(var(--topbar-h) + var(--breadcrumb-h)); right: 0;
+  width: var(--right-panel-w); height: calc(100vh - var(--topbar-h) - var(--breadcrumb-h));
   background: var(--bg-secondary); border-left: 1px solid var(--border-subtle);
   padding: 24px 20px; overflow-y: auto;
   transition: transform 0.3s var(--ease), background 0.3s, border-color 0.3s;
@@ -359,16 +289,13 @@ body.right-panel-hidden .right-toggle svg { transform: rotate(180deg); }
 /* ========== MAIN ========== */
 .main{
   flex:1;min-width:0;
-  margin-left: var(--sidebar-w); margin-right: var(--right-panel-w);
+  margin-left: 0; margin-right: var(--right-panel-w);
   transition: margin 0.3s var(--ease);
 }
 
 /* TOGGLE STATES */
-body.sidebar-hidden .sidebar { transform: translateX(-100%); }
-body.sidebar-hidden .main { margin-left: 0; }
 body.right-panel-hidden .right-panel { transform: translateX(100%); }
 body.right-panel-hidden .main { margin-right: 0; }
-body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
 
 /* ========== MAHARERA HERO ========== */
 #hero{
@@ -429,7 +356,7 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
 
 /* ========== CONTENT SPECIFIC STYLES ========== */
 .sec { padding: 40px clamp(20px, 4vw, 50px); position: relative; }
-.sec-inner { max-width: 900px; margin: 0 auto; }
+.sec-inner { max-width: 1100px; margin: 0 auto; }
 
 .step {
   background: var(--bg-card);
@@ -640,6 +567,127 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
 .problem-card ul { margin: 0 0 14px; padding-left: 18px; font-size: 12.5px; color: var(--text-secondary); line-height: 1.7; }
 .problem-statement { padding: 14px 16px; background: var(--accent-org-dim); border-left: 3px solid var(--accent-org); border-radius: 0 8px 8px 0; font-size: 12.5px; font-style: italic; color: var(--text-secondary); }
 .problem-statement strong { display: block; font-style: normal; font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--accent-org); margin-bottom: 6px; }
+.problem-card.risk-card { border-left: 3px solid #ef4444; }
+.problem-card.risk-card h4 { color: #ef4444; }
+
+/* ========== META CHIPS (PROJECT CANVAS) ========== */
+.meta-chip-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
+.meta-chip {
+  display: inline-flex; align-items: center; gap: 7px; background: var(--bg-elevated); border: 1px solid var(--border-subtle);
+  border-radius: 100px; padding: 7px 16px; font-size: 12.5px; font-weight: 600; color: var(--text-secondary);
+}
+.meta-chip svg { color: var(--accent-org); flex-shrink: 0; }
+
+/* ========== MILESTONE GRID (PROJECT CANVAS ROADMAP) ========== */
+.milestone-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 24px; }
+.milestone-card { background: var(--bg-primary); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 20px; position: relative; overflow: hidden; }
+.milestone-num {
+  position: absolute; top: 6px; right: 12px; font-family: 'Space Grotesk', sans-serif; font-size: 34px; font-weight: 900;
+  color: var(--border-highlight); line-height: 1; user-select: none;
+}
+.milestone-icon {
+  width: 38px; height: 38px; border-radius: 10px; background: var(--accent-org-dim); color: var(--accent-org);
+  display: flex; align-items: center; justify-content: center; margin-bottom: 14px; position: relative; z-index: 1;
+}
+.milestone-card h4 { font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; position: relative; z-index: 1; }
+.milestone-card p { font-size: 12px; color: var(--text-secondary); line-height: 1.55; margin-bottom: 12px; position: relative; z-index: 1; }
+
+/* ========== TEAM ROWS (PROJECT CANVAS) ========== */
+.team-row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 12px; margin-bottom: 10px; }
+.team-row:last-child { margin-bottom: 0; }
+.team-row .persona-avatar { width: 40px; height: 40px; font-size: 13px; flex-shrink: 0; }
+.team-row-name { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+.team-row-role { font-size: 11.5px; color: var(--text-muted); }
+.resource-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 12px; margin-bottom: 10px; font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.resource-row:last-child { margin-bottom: 0; }
+.resource-row svg { color: var(--accent-org); flex-shrink: 0; }
+
+/* ========== PROJECT CANVAS — HERO BAND ========== */
+.canvas-hero {
+  display: flex; align-items: center; gap: 22px; flex-wrap: wrap; position: relative; overflow: hidden;
+  background: linear-gradient(135deg, var(--accent-org), var(--accent-gold));
+  border-radius: 20px; padding: 30px 32px; margin-bottom: 28px; color: #fff;
+}
+.canvas-hero::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .5;
+  background-image: radial-gradient(circle at 88% 15%, rgba(255,255,255,.35) 0, transparent 42%);
+}
+.canvas-hero-badge {
+  width: 56px; height: 56px; border-radius: 16px; background: rgba(255,255,255,.18);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; position: relative; z-index: 1;
+}
+.canvas-hero-text { flex: 2; min-width: 260px; position: relative; z-index: 1; }
+.canvas-hero-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; opacity: .85; display: block; margin-bottom: 8px; }
+.canvas-hero-text h3 { font-family: 'Space Grotesk', sans-serif; font-size: clamp(19px, 2.4vw, 25px); font-weight: 700; line-height: 1.3; margin-bottom: 8px; }
+.canvas-hero-text p { font-size: 13.5px; line-height: 1.6; opacity: .94; max-width: 480px; }
+.canvas-hero-meta { display: flex; flex-direction: column; gap: 8px; position: relative; z-index: 1; }
+.canvas-hero-meta .meta-chip { background: rgba(255,255,255,.16); border-color: rgba(255,255,255,.3); color: #fff; white-space: nowrap; }
+.canvas-hero-meta .meta-chip svg { color: #fff; }
+
+/* ========== PROJECT CANVAS — ICON PANEL HEADS ========== */
+.panel-icon-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.panel-icon-head .icon-badge {
+  width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  background: var(--accent-org-dim); color: var(--accent-org);
+}
+.panel-icon-head h4 { font-family: 'Space Grotesk', sans-serif; font-size: 14.5px; font-weight: 700; color: var(--text-primary); margin: 0; }
+.icon-badge.blue { background: var(--accent-blue-dim); color: var(--accent-blue); }
+.icon-badge.gold { background: var(--accent-gold-dim); color: var(--accent-gold); }
+.icon-badge.teal { background: rgba(46,204,201,.14); color: var(--accent-teal); }
+.icon-badge.red { background: rgba(239,68,68,.12); color: #ef4444; }
+
+/* ========== PROJECT CANVAS — ICON LISTS (bullet replacement) ========== */
+.icon-list { list-style: none; margin: 0 0 14px; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.icon-list li { display: flex; align-items: flex-start; gap: 10px; font-size: 12.5px; color: var(--text-secondary); line-height: 1.6; }
+.icon-list li .li-icon {
+  width: 22px; height: 22px; border-radius: 6px; background: var(--bg-elevated); color: var(--accent-org);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+}
+.icon-list.risk-list li .li-icon { background: rgba(239,68,68,.12); color: #ef4444; }
+.icon-list li strong { color: var(--text-primary); }
+
+/* ========== PROJECT CANVAS — SCOPE ICON GRID ========== */
+.scope-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 4px; }
+.scope-item { display: flex; align-items: flex-start; gap: 10px; padding: 12px; background: var(--bg-elevated); border-radius: 10px; }
+.scope-item .li-icon { width: 26px; height: 26px; border-radius: 7px; background: var(--accent-org-dim); color: var(--accent-org); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.scope-item strong { display: block; font-size: 12px; color: var(--text-primary); margin-bottom: 2px; }
+.scope-item span { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+@media(max-width:480px){ .scope-grid { grid-template-columns: 1fr; } }
+
+/* ========== PROJECT CANVAS — GROUPED USER/STAKEHOLDER CHIPS ========== */
+.user-chip-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+.user-chip { flex: 1; min-width: 90px; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; padding: 12px 8px; background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 12px; }
+.user-chip .li-icon { width: 30px; height: 30px; border-radius: 8px; background: var(--accent-blue-dim); color: var(--accent-blue); display: flex; align-items: center; justify-content: center; }
+.user-chip span { font-size: 11.5px; font-weight: 700; color: var(--text-primary); }
+.stakeholder-label { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); font-weight: 700; margin-bottom: 8px; }
+
+/* ========== CARD HOVER LIFT + ROADMAP ACCENTS (site-wide) ========== */
+.problem-card, .milestone-card, .criteria-card {
+  transition: transform .25s var(--ease), box-shadow .25s var(--ease), border-color .25s var(--ease);
+}
+.problem-card:hover, .milestone-card:hover, .criteria-card:hover {
+  transform: translateY(-3px); box-shadow: var(--shadow-soft); border-color: var(--border-highlight);
+}
+.milestone-card.accent-org { border-top: 3px solid var(--accent-org); }
+.milestone-card.accent-blue { border-top: 3px solid var(--accent-blue); }
+.milestone-card.accent-gold { border-top: 3px solid var(--accent-gold); }
+.milestone-card.accent-teal { border-top: 3px solid var(--accent-teal); }
+.icon-badge.muted { background: var(--bg-elevated); color: var(--text-muted); }
+
+/* ========== CRITERIA GRID (fact cards with icon) ========== */
+.criteria-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; margin-bottom: 24px; }
+.criteria-card {
+  background: var(--bg-primary); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 18px;
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.criteria-card .li-icon { width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0; }
+.criteria-card p { font-size: 12.5px; color: var(--text-secondary); line-height: 1.55; margin: 0; }
+
+/* ========== METRIC ICONS ========== */
+.metric-icon {
+  width: 30px; height: 30px; border-radius: 8px; background: var(--accent-org-dim); color: var(--accent-org);
+  display: flex; align-items: center; justify-content: center; margin-bottom: 10px;
+}
 
 /* ========== GUIDED TOUR OVERLAY ========== */
 .tour-overlay { position: fixed; inset: 0; z-index: 5000; display: none; }
@@ -650,7 +698,13 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
   position: absolute; max-width: 300px; background: var(--bg-card); border: 1px solid var(--border-highlight);
   border-radius: 14px; padding: 20px; box-shadow: var(--shadow-soft); transition: all 0.35s var(--ease);
 }
-.tour-card-step { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent-org); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px; }
+.tour-close {
+  position: absolute; top: 12px; right: 12px; width: 24px; height: 24px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; color: var(--text-muted);
+  background: transparent; transition: all 0.2s;
+}
+.tour-close:hover { background: var(--bg-hover); color: var(--accent-org); }
+.tour-card-step { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent-org); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px; padding-right: 24px; }
 .tour-card h4 { font-family: 'Space Grotesk', sans-serif; font-size: 15px; color: var(--text-primary); margin-bottom: 8px; }
 .tour-card p { font-size: 12.5px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 16px; }
 .tour-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
@@ -671,10 +725,6 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
   .right-toggle { display: none; }
 }
 @media(max-width:900px){
-  .sidebar{ transform: translateX(-100%); }
-  .main{ margin-left: 0; }
-  .hamburger{display:flex}
-  .mobile-menu{display:flex}
   .nav-cta span{display:none;}
   .img-pair{grid-template-columns:1fr}
   .metric-row{grid-template-columns:1fr 1fr}
@@ -684,12 +734,10 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
   .cta-primary, .cta-secondary { justify-content: center; }
 }
 @media(max-width:480px){
-  .nav-title{display:none;}
+  .nav-title-dropdown{display:none;}
   .metric-row{grid-template-columns:1fr}
   .step-header{padding:24px;}
   .step-body{padding:24px;}
-  .step-title{font-size:24px;}
-}
 </style>
 </head>
 <body>
@@ -705,18 +753,21 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
     Ganesh J.
   </a>
   
-  <div class="nav-title">MahaRERA Website Redesign</div>
+  <div class="nav-title-dropdown" id="nav-title-dropdown">
+    <button class="nav-title-trigger" type="button">
+      MahaRERA Website Redesign
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </button>
+    <div class="nav-title-menu">
+      <a href="maharera_case_study_redesign.html" class="current">MahaRERA Website Redesign</a>
+      <a href="#">MahaRERA Application Portal</a>
+      <a href="imagine-as-you-read.html">Imagine as You Read</a>
+      <a href="focusxr.html">FocusXR</a>
+      <a href="zensphere.html">ZenSphere</a>
+    </div>
+  </div>
 
   <div class="nav-right">
-    <!-- Panel Layout Toggle -->
-    <button class="icon-btn" id="panel-layout-toggle" title="Toggle Panel Layout">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-            <line x1="9" y1="3" x2="9" y2="21"></line>
-            <line x1="15" y1="3" x2="15" y2="21"></line>
-        </svg>
-    </button>
-
     <!-- Guided Tour Replay -->
     <button class="icon-btn tour-help-btn" id="tour-replay-btn" title="Show guided tour">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
@@ -732,10 +783,6 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
       <span>Back to portfolio</span>
     </a>
-    
-    <button class="hamburger" id="ham" aria-label="Toggle navigation menu">
-      <span></span><span></span><span></span>
-    </button>
   </div>
   
   <div id="pbar"></div>
@@ -758,8 +805,8 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
     <span id="bc-chapter">Introduction</span>
     <div class="bc-dropdown-menu">
       <a href="#overview">Introduction</a>
-      <a href="#discovery-research">Chapter 1 — Discovery</a>
-      <a href="#define-strategy">Chapter 2 — Define</a>
+      <a href="#define-strategy">Chapter 1 — Planning</a>
+      <a href="#discovery-research">Chapter 2 — Discovery</a>
       <a href="#design-system">Chapter 3 — Design</a>
       <a href="#prototype-process">Chapter 4 — Prototyping</a>
       <a href="#testing-prototype">Chapter 5 — Testing</a>
@@ -779,79 +826,16 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
   </div>
 </div>
 
-<!-- ===== FADED SIDE TOGGLES ===== -->
-<button id="toggle-left-side" class="side-toggle left-toggle" title="Hide Left Panel">
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-</button>
+<!-- ===== FADED SIDE TOGGLE ===== -->
 <button id="toggle-right-side" class="side-toggle right-toggle" title="Hide Right Panel">
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
 </button>
 
-<!-- ===== PANEL RESIZE HANDLES ===== -->
-<div class="resize-handle resize-handle-left" id="resize-left" title="Drag to resize sidebar"></div>
+<!-- ===== PANEL RESIZE HANDLE ===== -->
 <div class="resize-handle resize-handle-right" id="resize-right" title="Drag to resize right panel"></div>
 
 <!-- ===== LAYOUT ===== -->
 <div class="layout">
-
-  <!-- ===== SIDEBAR (LEFT) ===== -->
-  <aside class="sidebar" id="left-sidebar">
-    <div class="sb-top">
-      <div class="sb-badge">
-        <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" fill="#FF6B35"/><circle cx="5" cy="5" r="2" fill="white" opacity=".4"/></svg>
-        <span>Case Study</span>
-      </div>
-      <div class="sb-title">MahaRERA Website Redesign</div>
-      <div class="sb-sub">by Ganesh Javhare · 14 min read</div>
-      
-      <!-- EXPANDABLE PROJECTS MENU -->
-      <div class="sb-more-projects">
-        <button class="more-projects-toggle" id="more-projects-btn" title="View More projects">
-          <span>View More Case Study</span>
-          <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        </button>
-        <div class="more-projects-list" id="more-projects-list">
-          <a href="#" class="more-project-link">MahaRERA Application Portal</a>
-          <a href="imagine-as-you-read.html" class="more-project-link">Imagine as You Read</a>
-          <a href="focusxr.html" class="more-project-link">FocusXR</a>
-          <a href="zensphere.html" class="more-project-link">ZenSphere</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="sb-scrollable">
-        <nav class="sb-nav">
-          <div class="sb-chapter-label" data-chapter="Introduction">Introduction</div>
-          <a class="nav-link active" href="#overview" data-name="Overview"><span class="dot"></span>Overview</a>
-
-          <div class="sb-chapter-label" data-chapter="Chapter 1 — Discovery">Chapter 1 — Discovery</div>
-          <a class="nav-link" href="#discovery-research" data-name="Problem & Research"><span class="dot"></span>Problem & Research</a>
-          <a class="nav-link" href="#discovery-personas" data-name="Personas & Findings"><span class="dot"></span>Personas & Findings</a>
-
-          <div class="sb-chapter-label" data-chapter="Chapter 2 — Define">Chapter 2 — Define</div>
-          <a class="nav-link" href="#define-strategy" data-name="Strategy & Planning"><span class="dot"></span>Strategy & Planning</a>
-
-          <div class="sb-chapter-label" data-chapter="Chapter 3 — Design">Chapter 3 — Design</div>
-          <a class="nav-link" href="#design-system" data-name="Flow & Design System"><span class="dot"></span>Flow & Design System</a>
-
-          <div class="sb-chapter-label" data-chapter="Chapter 4 — Prototyping">Chapter 4 — Prototyping</div>
-          <a class="nav-link" href="#prototype-process" data-name="Sketches to Hi-Fi"><span class="dot"></span>Sketches to Hi-Fi</a>
-          <a class="nav-link" href="#prototype-features" data-name="Hi-Fi Feature Walkthrough"><span class="dot"></span>Hi-Fi Feature Walkthrough</a>
-
-          <div class="sb-chapter-label" data-chapter="Chapter 5 — Testing">Chapter 5 — Testing</div>
-          <a class="nav-link" href="#testing-prototype" data-name="Testing the Prototype"><span class="dot"></span>Testing the Prototype</a>
-
-          <div class="sb-chapter-label" data-chapter="Chapter 6 — Development">Chapter 6 — Development</div>
-          <a class="nav-link" href="#development" data-name="Build & Integration"><span class="dot"></span>Build & Integration</a>
-
-          <div class="sb-chapter-label" data-chapter="Chapter 7 — Usability & Deployment">Chapter 7 — Usability & Deployment</div>
-          <a class="nav-link" href="#usability-deployment" data-name="Launch & Optimisation"><span class="dot"></span>Launch & Optimisation</a>
-
-          <div class="sb-chapter-label" data-chapter="Chapter 8 — Outcomes & Future Work">Chapter 8 — Outcomes & Future Work</div>
-          <a class="nav-link" href="#outcomes-future" data-name="Outcomes & Roadmap"><span class="dot"></span>Outcomes & Roadmap</a>
-        </nav>
-    </div>
-  </aside>
 
   <!-- ===== RIGHT PANEL (ARTIFACTS & NEXT PROJECT) ===== -->
   <aside class="right-panel" id="right-panel">
@@ -1046,6 +1030,186 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
       </div>
     </section>
 
+    <!-- ─────────── PROJECT CANVAS ─────────── -->
+    <section class="sec" id="project-canvas">
+      <div class="sec-inner reveal">
+        <article class="step">
+          <div class="step-header">
+            <div class="step-topline">
+              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect></svg> Project Canvas</span>
+              <span class="step-number">02</span>
+            </div>
+            <h2 class="step-title">MahaRERA Digital Ecosystem Redesign</h2>
+            <p>A one-page view of intent, scope, stakeholders, risk, and team before design work began.</p>
+          </div>
+          <div class="step-body">
+            <div class="canvas-hero">
+              <div class="canvas-hero-badge"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg></div>
+              <div class="canvas-hero-text">
+                <span class="canvas-hero-eyebrow">Project Canvas · MahaRERA Digital Ecosystem</span>
+                <h3>Creating a seamless, accessible digital journey for MahaRERA</h3>
+                <p>Empowering homebuyers through data, and smoothing the registration flow for every real estate project in Maharashtra.</p>
+              </div>
+              <div class="canvas-hero-meta">
+                <span class="meta-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"></path><path d="M5 21V7l7-4 7 4v14"></path><path d="M9 9h1"></path><path d="M9 13h1"></path><path d="M14 9h1"></path><path d="M14 13h1"></path></svg> MahaRERA Authority</span>
+                <span class="meta-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> Discovery started 2023</span>
+              </div>
+            </div>
+
+            <div class="problem-grid">
+              <div class="problem-card">
+                <div class="panel-icon-head">
+                  <span class="icon-badge"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-4"></path></svg></span>
+                  <h4>Purpose</h4>
+                </div>
+                <ul class="icon-list">
+                  <li><span class="li-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>Give citizens an independent, trustworthy way to verify any registered project.</li>
+                  <li><span class="li-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></span>Give promoters and agents a compliance experience that matches how they actually work.</li>
+                </ul>
+              </div>
+              <div class="problem-card">
+                <div class="panel-icon-head">
+                  <span class="icon-badge blue"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></span>
+                  <h4>Success Criteria</h4>
+                </div>
+                <ul class="icon-list">
+                  <li><span class="li-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg></span>Empower homebuyers to make decisions from data, not guesswork.</li>
+                  <li><span class="li-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></span>A smooth, low-friction registration flow for every project type.</li>
+                </ul>
+                <div class="meta-chip-row" style="margin-bottom:0;">
+                  <span class="meta-chip" style="padding:5px 12px;font-size:11px;">SUS Score</span>
+                  <span class="meta-chip" style="padding:5px 12px;font-size:11px;">Time-on-Task</span>
+                  <span class="meta-chip" style="padding:5px 12px;font-size:11px;">Conversion</span>
+                </div>
+              </div>
+            </div>
+
+            <h3 class="section-title">🗺️ Project Roadmap</h3>
+            <div class="milestone-grid">
+              <div class="milestone-card accent-org">
+                <span class="milestone-num">01</span>
+                <div class="milestone-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></div>
+                <h4>User Research</h4>
+                <p>In-depth analysis of citizen needs and friction points in the current system.</p>
+                <span class="status-pill ok">Completed</span>
+              </div>
+              <div class="milestone-card accent-blue">
+                <span class="milestone-num">02</span>
+                <div class="milestone-icon" style="background:var(--accent-blue-dim);color:var(--accent-blue);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 2 4s1 2 1 3h4c0-1 0-2 1-3s2-2 2-4a5 5 0 0 0-5-5z"></path><line x1="9" y1="18" x2="15" y2="18"></line></svg></div>
+                <h4>Ideate</h4>
+                <p>Restructuring complex information into intuitive, logical flows.</p>
+                <span class="status-pill ok">Completed</span>
+              </div>
+              <div class="milestone-card accent-gold">
+                <span class="milestone-num">03</span>
+                <div class="milestone-icon" style="background:var(--accent-gold-dim);color:var(--accent-gold);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path></svg></div>
+                <h4>UI/UX Design</h4>
+                <p>Designing wireframes and modern visual interfaces to government standards.</p>
+                <span class="status-pill ok">Completed</span>
+              </div>
+              <div class="milestone-card accent-teal">
+                <span class="milestone-num">04</span>
+                <div class="milestone-icon" style="background:rgba(46,204,201,.14);color:var(--accent-teal);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></div>
+                <h4>Development</h4>
+                <p>Building a responsive front-end ecosystem for seamless multi-device access.</p>
+                <span class="status-pill ok">Completed</span>
+              </div>
+              <div class="milestone-card accent-org">
+                <span class="milestone-num">05</span>
+                <div class="milestone-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path></svg></div>
+                <h4>Final Launch</h4>
+                <p>Redesigned platform launched to the public.</p>
+                <span class="status-pill info">Launched</span>
+              </div>
+            </div>
+
+            <div class="problem-grid">
+              <div class="problem-card">
+                <div class="panel-icon-head">
+                  <span class="icon-badge blue"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect></svg></span>
+                  <h4>Project Scope</h4>
+                </div>
+                <div class="scope-grid">
+                  <div class="scope-item"><span class="li-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg></span><div><strong>Architecture</strong><span>Complete IA overhaul</span></div></div>
+                  <div class="scope-item"><span class="li-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg></span><div><strong>Simple UI</strong><span>Modern visual system</span></div></div>
+                  <div class="scope-item"><span class="li-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></span><div><strong>Accessible</strong><span>Full mobile &amp; desktop</span></div></div>
+                  <div class="scope-item"><span class="li-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="6" y1="3" x2="6" y2="15"></line><circle cx="18" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><path d="M18 9a9 9 0 0 1-9 9"></path></svg></span><div><strong>Workflows</strong><span>Simplified journeys</span></div></div>
+                </div>
+              </div>
+              <div class="problem-card">
+                <div class="panel-icon-head">
+                  <span class="icon-badge gold"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></span>
+                  <h4>Stakeholders &amp; Users</h4>
+                </div>
+                <div class="stakeholder-label">Primary Users</div>
+                <div class="user-chip-row">
+                  <div class="user-chip"><span class="li-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"></circle><path d="M4 21v-1a8 8 0 0 1 16 0v1"></path></svg></span><span>Citizens</span></div>
+                  <div class="user-chip"><span class="li-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="1"></rect><line x1="9" y1="7" x2="9" y2="7"></line><line x1="15" y1="7" x2="15" y2="7"></line><line x1="9" y1="11" x2="9" y2="11"></line><line x1="15" y1="11" x2="15" y2="11"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg></span><span>Promoters</span></div>
+                  <div class="user-chip"><span class="li-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg></span><span>Agents</span></div>
+                </div>
+                <div class="stakeholder-label">Stakeholders</div>
+                <div class="meta-chip-row" style="margin-bottom:0;">
+                  <span class="meta-chip" style="padding:5px 12px;font-size:11px;">Gov Officials</span>
+                  <span class="meta-chip" style="padding:5px 12px;font-size:11px;">Regulatory Bodies</span>
+                  <span class="meta-chip" style="padding:5px 12px;font-size:11px;">MahaRERA Admin</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="problem-grid">
+              <div class="problem-card risk-card">
+                <div class="panel-icon-head">
+                  <span class="icon-badge red"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></span>
+                  <h4>Critical Risks</h4>
+                </div>
+                <ul class="icon-list risk-list">
+                  <li><span class="li-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></span>High cognitive load causing user drop-off during complex registrations.</li>
+                  <li><span class="li-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></span>Resistance to adopting the new system from long-term users.</li>
+                </ul>
+              </div>
+              <div class="problem-card">
+                <div class="panel-icon-head">
+                  <span class="icon-badge teal"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"></path><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></span>
+                  <h4>Mitigation Strategy</h4>
+                </div>
+                <ul class="icon-list">
+                  <li><span class="li-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg></span><strong>Progress indicators:</strong>&nbsp;step-by-step guidance for complex regulatory form wizards to reduce anxiety.</li>
+                  <li><span class="li-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg></span><strong>Visual hierarchy:</strong>&nbsp;typographic scale and colour to highlight essential actions and data.</li>
+                  <li><span class="li-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg></span><strong>Simplified forms:</strong>&nbsp;chunking data entry into manageable logical sections for builders and agents.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="problem-grid">
+              <div class="problem-card">
+                <div class="panel-icon-head">
+                  <span class="icon-badge"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg></span>
+                  <h4>Core Resources</h4>
+                </div>
+                <div class="resource-row"><span>Design software (Figma / Adobe)</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path></svg></div>
+                <div class="resource-row"><span>User testing platforms</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"></path></svg></div>
+                <div class="resource-row"><span>Staging / dev environments</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg></div>
+              </div>
+              <div class="problem-card">
+                <div class="panel-icon-head">
+                  <span class="icon-badge"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>
+                  <h4>Project Team</h4>
+                </div>
+                <div class="team-row">
+                  <div class="persona-avatar" style="background:linear-gradient(135deg,var(--accent-blue),var(--accent-teal));">DC</div>
+                  <div><div class="team-row-name">Design Committee — Content Management</div><div class="team-row-role">Strategic UX direction &amp; UI system, developers</div></div>
+                </div>
+                <div class="team-row">
+                  <div class="persona-avatar" style="background:linear-gradient(135deg,var(--accent-org),var(--accent-gold));">DC</div>
+                  <div><div class="team-row-name">Design Committee — Technical Management</div><div class="team-row-role">Government officials &amp; subject matter experts</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
     <!-- ─────────── CHAPTER BANNER: WEBSITE REDESIGN ─────────── -->
     <div class="chapter-banner">
       <div class="chapter-banner-inner reveal">
@@ -1059,14 +1223,178 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
       </div>
     </div>
 
-    <!-- ─────────── CH.1 DISCOVERY — RESEARCH CARD ─────────── -->
+    <!-- ─────────── CH.1 DEFINE CARD ─────────── -->
+    <section class="sec" id="define-strategy">
+      <div class="sec-inner reveal">
+        <article class="step">
+          <div class="step-header">
+            <div class="step-topline">
+              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg> Chapter 01 — Planning</span>
+              <span class="step-number">03</span>
+            </div>
+            <h2 class="step-title">Strategy &amp; Planning</h2>
+            <p>Setting scope, success criteria, and a realistic delivery plan for the redesign.</p>
+          </div>
+          <div class="step-body">
+            <div class="canvas-hero" style="background: linear-gradient(135deg, var(--accent-blue), var(--accent-teal));">
+              <div class="canvas-hero-badge"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg></div>
+              <div class="canvas-hero-text">
+                <span class="canvas-hero-eyebrow">Chapter 1 · Planning</span>
+                <h3>Three role-based journeys, one accessible platform</h3>
+                <p>Redesign the MahaRERA website around three role-based journeys — Citizen, Promoter, Agent — replacing a single one-size-fits-all interface with role-aware information density, plain-language content, and visible trust signals, while remaining fully compliant with government accessibility and security mandates.</p>
+              </div>
+              <div class="canvas-hero-meta">
+                <span class="meta-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> 3 Role-Based Journeys</span>
+                <span class="meta-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Government Compliant</span>
+              </div>
+            </div>
+
+            <div class="problem-grid">
+              <div class="problem-card">
+                <div class="panel-icon-head">
+                  <span class="icon-badge"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></span>
+                  <h4>In Scope</h4>
+                </div>
+                <ul class="icon-list">
+                  <li><span class="li-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>Project search &amp; search results</li>
+                  <li><span class="li-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg></span>Project detail pages &amp; QR verification</li>
+                  <li><span class="li-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg></span>Homebuyer guidance &amp; the three role-based corners</li>
+                </ul>
+              </div>
+              <div class="problem-card">
+                <div class="panel-icon-head">
+                  <span class="icon-badge muted"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg></span>
+                  <h4>Out of Scope <span style="font-weight:500;color:var(--text-muted);font-size:11px;">(this phase)</span></h4>
+                </div>
+                <ul class="icon-list">
+                  <li><span class="li-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></span>Application Portal's internal filing forms (Part 2)</li>
+                  <li><span class="li-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></span>Payment gateway redesign</li>
+                  <li><span class="li-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></span>The mobile native app</li>
+                </ul>
+              </div>
+            </div>
+
+            <h3 class="section-title">✅ Success Criteria</h3>
+            <div class="criteria-grid">
+              <div class="criteria-card">
+                <span class="li-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></span>
+                <p>Reduce average project-search task time from <strong>6m 40s</strong> to under <strong>2 minutes</strong>.</p>
+              </div>
+              <div class="criteria-card">
+                <span class="li-icon" style="background:var(--accent-blue-dim);color:var(--accent-blue);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle><line x1="21.17" y1="8" x2="12" y2="8"></line><line x1="3.95" y1="6.06" x2="8.54" y2="14"></line><line x1="10.88" y1="21.94" x2="15.46" y2="14"></line></svg></span>
+                <p>Meet <strong>WCAG 2.1 AA</strong> and <strong>GIGW</strong> accessibility compliance at launch.</p>
+              </div>
+              <div class="criteria-card">
+                <span class="li-icon" style="background:var(--accent-gold-dim);color:var(--accent-gold);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></span>
+                <p>Cut "site feels untrustworthy" survey responses from <strong>81%</strong> to under <strong>25%</strong>.</p>
+              </div>
+              <div class="criteria-card">
+                <span class="li-icon" style="background:rgba(46,204,201,.14);color:var(--accent-teal);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></span>
+                <p><strong>Zero data loss</strong> on government security and penetration audit.</p>
+              </div>
+            </div>
+
+            <h3 class="section-title">🗺️ Planning — Project Phases</h3>
+            <div class="milestone-grid">
+              <div class="milestone-card accent-org">
+                <span class="milestone-num">01</span>
+                <div class="milestone-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></div>
+                <h4>Research</h4>
+                <p>Discovery interviews, analytics review, competitor audit.</p>
+              </div>
+              <div class="milestone-card accent-blue">
+                <span class="milestone-num">02</span>
+                <div class="milestone-icon" style="background:var(--accent-blue-dim);color:var(--accent-blue);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="9" y1="15" x2="15" y2="15"></line><line x1="9" y1="11" x2="15" y2="11"></line></svg></div>
+                <h4>User Stories</h4>
+                <p>Role-based stories written and prioritised with stakeholders.</p>
+              </div>
+              <div class="milestone-card accent-gold">
+                <span class="milestone-num">03</span>
+                <div class="milestone-icon" style="background:var(--accent-gold-dim);color:var(--accent-gold);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path></svg></div>
+                <h4>Design</h4>
+                <p>Full design system + ~25-page screen layout across all three corners.</p>
+              </div>
+              <div class="milestone-card accent-teal">
+                <span class="milestone-num">04</span>
+                <div class="milestone-icon" style="background:rgba(46,204,201,.14);color:var(--accent-teal);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></div>
+                <h4>Development</h4>
+                <p>Front-end build in parallel with backend API work.</p>
+              </div>
+              <div class="milestone-card accent-org">
+                <span class="milestone-num">05</span>
+                <div class="milestone-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></div>
+                <h4>Review</h4>
+                <p>Stakeholder, technical, feasibility, and accessibility review rounds.</p>
+              </div>
+              <div class="milestone-card accent-blue">
+                <span class="milestone-num">06</span>
+                <div class="milestone-icon" style="background:var(--accent-blue-dim);color:var(--accent-blue);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg></div>
+                <h4>Iteration</h4>
+                <p>Refine flows and content based on review feedback.</p>
+              </div>
+              <div class="milestone-card accent-gold">
+                <span class="milestone-num">07</span>
+                <div class="milestone-icon" style="background:var(--accent-gold-dim);color:var(--accent-gold);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></div>
+                <h4>Integration</h4>
+                <p>Connect to live backend data from the Application Portal via API.</p>
+              </div>
+              <div class="milestone-card accent-teal">
+                <span class="milestone-num">08</span>
+                <div class="milestone-icon" style="background:rgba(46,204,201,.14);color:var(--accent-teal);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg></div>
+                <h4>Testing</h4>
+                <p>Usability testing, QA, and security audit.</p>
+              </div>
+              <div class="milestone-card accent-org">
+                <span class="milestone-num">09</span>
+                <div class="milestone-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path></svg></div>
+                <h4>Deploy</h4>
+                <p>Domain approval from Government IT cell, hosting on the government server (NIC), publish.</p>
+              </div>
+            </div>
+
+            <h3 class="section-title">⏱️ Estimated Timeline</h3>
+            <div class="metric-row">
+              <div class="metric">
+                <div class="metric-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></div>
+                <div class="metric-num" data-target="6">0</div>
+                <div class="metric-label">Months estimated, discovery to publish</div>
+              </div>
+              <div class="metric">
+                <div class="metric-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg></div>
+                <div class="metric-num" data-target="25">0</div>
+                <div class="metric-label">Screen layouts designed across all corners</div>
+              </div>
+              <div class="metric">
+                <div class="metric-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg></div>
+                <div class="metric-num" data-target="9">0</div>
+                <div class="metric-label">Distinct delivery phases planned</div>
+              </div>
+            </div>
+
+            <div class="yellow-callout">
+              <strong>💡 Why 6 months?</strong>
+              Government platforms carry legal and technical complexity that consumer products don't — each of these has its own independent review queue that can't be meaningfully compressed without risking a failed audit and a full re-review cycle.
+              <div class="meta-chip-row" style="margin: 14px 0 0;">
+                <span class="meta-chip" style="background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.3);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg> GIGW Guidelines</span>
+                <span class="meta-chip" style="background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.3);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle><line x1="21.17" y1="8" x2="12" y2="8"></line><line x1="3.95" y1="6.06" x2="8.54" y2="14"></line><line x1="10.88" y1="21.94" x2="15.46" y2="14"></line></svg> Accessibility Standards</span>
+                <span class="meta-chip" style="background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.3);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> Security Audit</span>
+                <span class="meta-chip" style="background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.3);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg> Certifications</span>
+                <span class="meta-chip" style="background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.3);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg> Domain Approval</span>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ─────────── CH.2 DISCOVERY — RESEARCH CARD ─────────── -->
     <section class="sec" id="discovery-research">
       <div class="sec-inner reveal">
         <article class="step">
           <div class="step-header">
             <div class="step-topline">
-              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg> Chapter 01 — Discovery</span>
-              <span class="step-number">02</span>
+              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg> Chapter 02 — Discovery</span>
+              <span class="step-number">04</span>
             </div>
             <h2 class="step-title">Problem &amp; Research</h2>
             <p>Learning who was struggling, how, and by how much — before proposing anything.</p>
@@ -1134,14 +1462,14 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
       </div>
     </section>
 
-    <!-- ─────────── CH.1 DISCOVERY — PERSONAS CARD ─────────── -->
+    <!-- ─────────── CH.3 DISCOVERY — PERSONAS CARD ─────────── -->
     <section class="sec" id="discovery-personas">
       <div class="sec-inner reveal">
         <article class="step">
           <div class="step-header">
             <div class="step-topline">
-              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> Chapter 01 — Discovery</span>
-              <span class="step-number">03</span>
+              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> Chapter 02 — Discovery</span>
+              <span class="step-number">05</span>
             </div>
             <h2 class="step-title">User Personas &amp; Findings</h2>
             <p>Three very different people, one platform.</p>
@@ -1192,12 +1520,8 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
               <li>Promoters and agents need a different information density than citizens entirely — one dashboard could not serve all three well.</li>
             </ul>
 
+
             <div class="img-placeholder-row">
-              <div class="img-placeholder">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect></svg>
-                <strong>Project Canvas</strong>
-                <span>Add the completed project canvas covering vision, users, risks, and constraints.</span>
-              </div>
               <div class="img-placeholder">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"></circle><path d="M4 21v-1a8 8 0 0 1 16 0v1"></path></svg>
                 <strong>Empathy Map</strong>
@@ -1219,73 +1543,7 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
       </div>
     </section>
 
-    <!-- ─────────── CH.2 DEFINE CARD ─────────── -->
-    <section class="sec" id="define-strategy">
-      <div class="sec-inner reveal">
-        <article class="step">
-          <div class="step-header">
-            <div class="step-topline">
-              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg> Chapter 02 — Define</span>
-              <span class="step-number">04</span>
-            </div>
-            <h2 class="step-title">Strategy &amp; Planning</h2>
-            <p>Turning research findings into scope, success criteria, and a realistic delivery plan.</p>
-          </div>
-          <div class="step-body">
-            <h3 class="section-title">🎯 Strategy</h3>
-            <p class="purpose">Redesign the MahaRERA website around three role-based journeys — Citizen, Promoter, Agent — replacing a single one-size-fits-all interface with role-aware information density, plain-language content, and visible trust signals, while remaining fully compliant with government accessibility and security mandates.</p>
-
-            <h3 class="section-title">📐 Scope of Work</h3>
-            <ul class="activity-list">
-              <li><strong>In scope:</strong> Public website redesign — project search, search results, project detail pages, QR verification, homebuyer guidance, and the three role-based corners.</li>
-              <li><strong>Out of scope (this phase):</strong> The Application Portal's internal filing forms (Part 2), payment gateway redesign, and the mobile native app.</li>
-            </ul>
-
-            <h3 class="section-title">✅ Success Criteria</h3>
-            <ul class="activity-list">
-              <li>Reduce average project-search task time from 6m 40s to under 2 minutes.</li>
-              <li>Meet WCAG 2.1 AA and GIGW accessibility compliance at launch.</li>
-              <li>Cut "site feels untrustworthy" survey responses from 81% to under 25%.</li>
-              <li>Zero data loss on government security and penetration audit.</li>
-            </ul>
-
-            <h3 class="section-title">🗺️ Planning — Project Phases</h3>
-            <ul class="activity-list">
-              <li><strong>1. Research</strong> — discovery interviews, analytics review, competitor audit.</li>
-              <li><strong>2. User Stories</strong> — role-based stories written and prioritised with stakeholders.</li>
-              <li><strong>3. Design</strong> — full design system + ~25-page screen layout across all three corners.</li>
-              <li><strong>4. Development</strong> — front-end build in parallel with backend API work.</li>
-              <li><strong>5. Review</strong> — stakeholder, technical, feasibility, and accessibility review rounds.</li>
-              <li><strong>6. Iteration</strong> — refine flows and content based on review feedback.</li>
-              <li><strong>7. Integration</strong> — connect to live backend data from the Application Portal via API.</li>
-              <li><strong>8. Testing</strong> — usability testing, QA, and security audit.</li>
-              <li><strong>9. Deploy</strong> — domain approval from Government IT cell, hosting on the government server (NIC), publish.</li>
-            </ul>
-
-            <h3 class="section-title">⏱️ Estimated Timeline</h3>
-            <div class="metric-row">
-              <div class="metric">
-                <div class="metric-num" data-target="6">0</div>
-                <div class="metric-label">Months estimated, discovery to publish</div>
-              </div>
-              <div class="metric">
-                <div class="metric-num" data-target="25">0</div>
-                <div class="metric-label">Screen layouts designed across all corners</div>
-              </div>
-              <div class="metric">
-                <div class="metric-num" data-target="9">0</div>
-                <div class="metric-label">Distinct delivery phases planned</div>
-              </div>
-            </div>
-
-            <div class="yellow-callout">
-              <strong>💡 Why 6 months?</strong>
-              Government platforms carry legal and technical complexity that consumer products don't: mandatory <strong>GIGW guideline</strong> compliance, formal <strong>accessibility standards</strong> sign-off, an external <strong>security audit</strong>, required <strong>certifications</strong>, and a <strong>domain approval</strong> process through the state IT department — each with its own review queue. None of these can be meaningfully compressed without risking a failed audit and a full re-review cycle.
-            </div>
-          </div>
-        </article>
-      </div>
-    </section>
+    
 
     <!-- ─────────── CH.3 DESIGN CARD ─────────── -->
     <section class="sec" id="design-system">
@@ -1294,7 +1552,7 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
           <div class="step-header">
             <div class="step-topline">
               <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg> Chapter 03 — Design</span>
-              <span class="step-number">05</span>
+              <span class="step-number">06</span>
             </div>
             <h2 class="step-title">Flow, Features &amp; Design System</h2>
             <p>Deciding what to build, in what order, and under one consistent visual language.</p>
@@ -1345,7 +1603,7 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
 
             <div class="yellow-callout">
               <strong>💡 Note</strong>
-              Every feature on the MoSCoW list was traced back to a specific finding from Chapter 1 — nothing was added on assumption alone.
+              Every feature on the MoSCoW list was traced back to a specific finding from Chapter 2 — nothing was added on assumption alone.
             </div>
           </div>
         </article>
@@ -1359,7 +1617,7 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
           <div class="step-header">
             <div class="step-topline">
               <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Chapter 04 — Prototyping</span>
-              <span class="step-number">06</span>
+              <span class="step-number">07</span>
             </div>
             <h2 class="step-title">From Paper Sketches to Hi-Fi</h2>
             <p>Three fidelity passes, each earning the right to move forward.</p>
@@ -1407,7 +1665,7 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
           <div class="step-header">
             <div class="step-topline">
               <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="9" y1="18" x2="15" y2="18"></line></svg> Chapter 04 — Prototyping</span>
-              <span class="step-number">07</span>
+              <span class="step-number">08</span>
             </div>
             <h2 class="step-title">Hi-Fi Feature Walkthrough</h2>
             <p>What the redesigned MahaRERA website actually does.</p>
@@ -1467,7 +1725,7 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
           <div class="step-header">
             <div class="step-topline">
               <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg> Chapter 05 — Testing</span>
-              <span class="step-number">08</span>
+              <span class="step-number">09</span>
             </div>
             <h2 class="step-title">Testing the Prototype</h2>
             <p>Validating the hi-fi prototype with the people who'd actually approve and use it.</p>
@@ -1525,7 +1783,7 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
           <div class="step-header">
             <div class="step-topline">
               <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg> Chapter 06 — Development</span>
-              <span class="step-number">09</span>
+              <span class="step-number">10</span>
             </div>
             <h2 class="step-title">Development</h2>
             <p>Building it in close collaboration with the engineering team.</p>
@@ -1559,7 +1817,7 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
             <h3 class="section-title">✅ QA, Content &amp; Launch Prep</h3>
             <ul class="activity-list">
               <li><strong>QA:</strong> Cross-browser and cross-device regression testing against every user flow validated in Chapter 5.</li>
-              <li><strong>Content alignment:</strong> Final copy pass to keep tone consistent with the plain-language principle from Chapter 1.</li>
+              <li><strong>Content alignment:</strong> Final copy pass to keep tone consistent with the plain-language principle from Chapter 2.</li>
               <li><strong>SEO &amp; production content:</strong> Metadata, page titles, and structured tags added so project pages are correctly indexable and discoverable.</li>
               <li><strong>Launch management:</strong> Coordinated go-live checklist across design, engineering, and the MahaRERA IT cell.</li>
             </ul>
@@ -1575,7 +1833,7 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
           <div class="step-header">
             <div class="step-topline">
               <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> Chapter 07 — Usability &amp; Deployment</span>
-              <span class="step-number">10</span>
+              <span class="step-number">11</span>
             </div>
             <h2 class="step-title">Usability Testing &amp; Deployment</h2>
             <p>The final stage — the most time-consuming, and the most revealing.</p>
@@ -1606,7 +1864,7 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
                 </tbody>
               </table>
             </div>
-            <p class="purpose" style="font-size:12px;color:var(--text-muted);">4-week split test against the defined success criteria from Chapter 2.</p>
+            <p class="purpose" style="font-size:12px;color:var(--text-muted);">4-week split test against the defined success criteria from Chapter 1.</p>
 
             <h3 class="section-title">🎯 Hypothesis for Optimisation</h3>
             <p class="purpose">"If document previews are surfaced directly on the result card instead of behind an extra click, in-session verification confidence and document engagement will increase further." — queued as the next optimisation test.</p>
@@ -1628,7 +1886,7 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
           <div class="step-header">
             <div class="step-topline">
               <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg> Chapter 08 — Outcomes</span>
-              <span class="step-number">11</span>
+              <span class="step-number">12</span>
             </div>
             <h2 class="step-title">Outcomes &amp; Future Work</h2>
             <p>What shipped, what it changed, and where it goes next.</p>
@@ -1729,6 +1987,9 @@ body.breadcrumb-active .layout { padding-top: calc(var(--topbar-h) + 40px); }
   <div class="tour-backdrop" id="tour-backdrop"></div>
   <div class="tour-spotlight" id="tour-spotlight"></div>
   <div class="tour-card" id="tour-card">
+    <button class="tour-close" id="tour-close" title="Close" aria-label="Close guided tour">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
     <div class="tour-card-step" id="tour-step-label">Step 1 of 6</div>
     <h4 id="tour-title">Welcome</h4>
     <p id="tour-text">Description</p>
@@ -1770,50 +2031,27 @@ function updateThemeIcons(theme) {
     }
 }
 
-/* ── Panel Toggles ── */
-const toggleLeftBtn = document.getElementById('toggle-left-side');
+/* ── Measure the real breadcrumb bar height (avoids relying on a hardcoded guess) ── */
+(function syncBreadcrumbHeight() {
+  const bar = document.getElementById('breadcrumb-bar');
+  if (!bar) return;
+  function sync() {
+    const h = bar.getBoundingClientRect().height;
+    if (h > 0) document.documentElement.style.setProperty('--breadcrumb-h', h + 'px');
+  }
+  sync();
+  window.addEventListener('resize', sync);
+  window.addEventListener('load', sync);
+})();
+
+/* ── Panel Toggle (right panel only — left sidebar removed) ── */
 const toggleRightBtn = document.getElementById('toggle-right-side');
 const bodyEl = document.body;
-const breadcrumbBar = document.getElementById('breadcrumb-bar');
 
 function updatePanelState() {
-    const isLeftHidden = bodyEl.classList.contains('sidebar-hidden');
     const isRightHidden = bodyEl.classList.contains('right-panel-hidden');
-    
-    toggleLeftBtn.title = isLeftHidden ? "Open Left Panel" : "Hide Left Panel";
     toggleRightBtn.title = isRightHidden ? "Open Right Panel" : "Hide Right Panel";
-
-    if (isLeftHidden) {
-        bodyEl.classList.add('breadcrumb-active');
-        breadcrumbBar.classList.add('visible');
-    } else {
-        bodyEl.classList.remove('breadcrumb-active');
-        breadcrumbBar.classList.remove('visible');
-    }
-
-    // Dynamically update the Top Nav Layout Icon based on which panels are visible
-    const layoutToggleSvg = document.querySelector('#panel-layout-toggle svg');
-    if (layoutToggleSvg) {
-        if (!isLeftHidden && !isRightHidden) {
-            // Both panels open: Show left and right vertical lines
-            layoutToggleSvg.innerHTML = '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line>';
-        } else if (isLeftHidden && isRightHidden) {
-            // Both hidden: Show just the empty box
-            layoutToggleSvg.innerHTML = '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>';
-        } else if (!isLeftHidden && isRightHidden) {
-            // Left panel only open: Show left vertical line only
-            layoutToggleSvg.innerHTML = '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line>';
-        } else {
-            // Right panel only open: Show right vertical line only
-            layoutToggleSvg.innerHTML = '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="15" y1="3" x2="15" y2="21"></line>';
-        }
-    }
 }
-
-toggleLeftBtn.addEventListener('click', () => {
-    bodyEl.classList.toggle('sidebar-hidden');
-    updatePanelState();
-});
 
 toggleRightBtn.addEventListener('click', () => {
     bodyEl.classList.toggle('right-panel-hidden');
@@ -1821,34 +2059,7 @@ toggleRightBtn.addEventListener('click', () => {
 });
 
 if (window.innerWidth < 1150) { bodyEl.classList.add('right-panel-hidden'); }
-if (window.innerWidth <= 900)  { bodyEl.classList.add('sidebar-hidden'); }
 updatePanelState();
-
-/* ── Top Nav Panel Layout Toggle Cycle ── */
-/* Default (page load) = both panels open. Click 1: left panel only.
-   Click 2: right panel also appears, left stays. Click 3: both hidden. Repeats. */
-const panelLayoutToggleBtn = document.getElementById('panel-layout-toggle');
-let panelCycleIndex = -1;
-if (panelLayoutToggleBtn) {
-    panelLayoutToggleBtn.addEventListener('click', () => {
-        panelCycleIndex = (panelCycleIndex + 1) % 3;
-
-        if (panelCycleIndex === 0) {
-            // Left panel only
-            bodyEl.classList.remove('sidebar-hidden');
-            bodyEl.classList.add('right-panel-hidden');
-        } else if (panelCycleIndex === 1) {
-            // Right panel appears too, left stays -> Both open
-            bodyEl.classList.remove('sidebar-hidden');
-            bodyEl.classList.remove('right-panel-hidden');
-        } else {
-            // Both hidden
-            bodyEl.classList.add('sidebar-hidden');
-            bodyEl.classList.add('right-panel-hidden');
-        }
-        updatePanelState();
-    });
-}
 
 /* ── Progress bar ── */
 const pbar = document.getElementById('pbar');
@@ -1864,12 +2075,16 @@ const sectionData = {
     artifacts: ['Project brief', 'Two-problem framing', 'Problem statements', 'Audience map'],
     questions: ['Who actually uses MahaRERA, and why?', 'What are the two products being redesigned?', 'What is each product\'s core problem statement?']
   },
+  'project-canvas': {
+    artifacts: ['Strategic intent', 'Roadmap', 'Scope map', 'Risk log', 'Team roster'],
+    questions: ['What was the strategic intent?', 'Who were the stakeholders?', 'What risks were anticipated, and how?']
+  },
   'discovery-research': {
     artifacts: ['Research plan', 'Analytics review', 'Competitor audit', 'Data findings'],
     questions: ['What do users actually do today?', 'Where do they struggle, and how often?', 'Why mix quant and qual methods here?']
   },
   'discovery-personas': {
-    artifacts: ['3 Personas', 'Empathy map', 'Journey map', 'Project canvas'],
+    artifacts: ['3 Personas', 'Empathy map', 'Journey map'],
     questions: ['Who are the three core user types?', 'What findings mattered most?', 'How did findings shape strategy?']
   },
   'define-strategy': {
@@ -1918,9 +2133,44 @@ function updateDynamicPanel(sectionId) {
 }
 
 
-/* ── Active nav & Breadcrumbs ── */
+/* ── Chapter/Section Index Data (drives breadcrumb bar now that the sidebar is gone) ── */
+const chapterIndex = [
+  { chapter: 'Introduction', sections: [
+    { id: 'overview', name: 'Overview' },
+    { id: 'project-canvas', name: 'Project Canvas' }
+  ]},
+  { chapter: 'Chapter 1 — Planning', sections: [
+    { id: 'define-strategy', name: 'Strategy & Planning' }
+  ]},
+  { chapter: 'Chapter 2 — Discovery', sections: [
+    { id: 'discovery-research', name: 'Problem & Research' },
+    { id: 'discovery-personas', name: 'Personas & Findings' }
+  ]},
+  { chapter: 'Chapter 3 — Design', sections: [
+    { id: 'design-system', name: 'Flow & Design System' }
+  ]},
+  { chapter: 'Chapter 4 — Prototyping', sections: [
+    { id: 'prototype-process', name: 'Sketches to Hi-Fi' },
+    { id: 'prototype-features', name: 'Hi-Fi Feature Walkthrough' }
+  ]},
+  { chapter: 'Chapter 5 — Testing', sections: [
+    { id: 'testing-prototype', name: 'Testing the Prototype' }
+  ]},
+  { chapter: 'Chapter 6 — Development', sections: [
+    { id: 'development', name: 'Build & Integration' }
+  ]},
+  { chapter: 'Chapter 7 — Usability & Deployment', sections: [
+    { id: 'usability-deployment', name: 'Launch & Optimisation' }
+  ]},
+  { chapter: 'Chapter 8 — Outcomes & Future Work', sections: [
+    { id: 'outcomes-future', name: 'Outcomes & Roadmap' }
+  ]}
+];
+const sectionMeta = {};
+chapterIndex.forEach(ch => ch.sections.forEach(s => { sectionMeta[s.id] = { name: s.name, chapter: ch.chapter }; }));
+
+/* ── Active section & Breadcrumbs ── */
 const sections  = document.querySelectorAll('section.sec');
-const navLinks  = document.querySelectorAll('.sidebar .nav-link');
 const bcChapterText = document.getElementById('bc-chapter');
 const bcSectionText = document.getElementById('bc-section');
 const bcSectionMenu = document.getElementById('bc-section-menu');
@@ -1930,34 +2180,15 @@ const observer = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if (e.isIntersecting) {
       const id = e.target.id;
-      let activeText = '';
-      let activeChapter = '';
-      
+      const meta = sectionMeta[id];
+
       sections.forEach(s => s.classList.remove('active-sec'));
       e.target.classList.add('active-sec');
 
-      navLinks.forEach(a => {
-        const match = a.getAttribute('href') === '#' + id;
-        a.classList.toggle('active', match);
-        
-        if(match) {
-           activeText = a.getAttribute('data-name');
-           let prev = a.previousElementSibling;
-           while(prev) {
-               if(prev.classList.contains('sb-chapter-label')) {
-                   activeChapter = prev.getAttribute('data-chapter');
-                   break;
-               }
-               prev = prev.previousElementSibling;
-           }
-           a.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-        }
-      });
-      
-      if(activeText) bcSectionText.textContent = activeText;
-      if(activeChapter) {
-         bcChapterText.textContent = activeChapter;
-         updateSectionDropdown(activeChapter);
+      if (meta) {
+         bcSectionText.textContent = meta.name;
+         bcChapterText.textContent = meta.chapter;
+         updateSectionDropdown(meta.chapter);
       }
 
       updateDynamicPanel(id);
@@ -1969,21 +2200,15 @@ const observer = new IntersectionObserver(entries => {
 sections.forEach(s => observer.observe(s));
 
 function updateSectionDropdown(chapterName) {
-   bcSectionMenu.innerHTML = ''; 
-   let collect = false;
-   const sidebarNodes = document.querySelector('.sb-nav').children;
-   
-   for(let i=0; i<sidebarNodes.length; i++) {
-      let node = sidebarNodes[i];
-      if(node.classList.contains('sb-chapter-label')) {
-         collect = (node.getAttribute('data-chapter') === chapterName);
-      } else if (collect && node.tagName === 'A') {
-         let clone = document.createElement('a');
-         clone.href = node.getAttribute('href');
-         clone.textContent = node.getAttribute('data-name');
-         bcSectionMenu.appendChild(clone);
-      }
-   }
+   bcSectionMenu.innerHTML = '';
+   const chapterObj = chapterIndex.find(ch => ch.chapter === chapterName);
+   if (!chapterObj) return;
+   chapterObj.sections.forEach(s => {
+      const a = document.createElement('a');
+      a.href = '#' + s.id;
+      a.textContent = s.name;
+      bcSectionMenu.appendChild(a);
+   });
 }
 
 /* ── Hero Observer for Snapshot Card ── */
@@ -2096,24 +2321,6 @@ btnZoomOut.addEventListener('click', () => {
   applyModalZoom();
 });
 
-/* ── More Projects Toggle ── */
-const moreProjectsBtn = document.getElementById('more-projects-btn');
-const moreProjectsList = document.getElementById('more-projects-list');
-if (moreProjectsBtn && moreProjectsList) {
-  moreProjectsBtn.addEventListener('click', () => {
-    moreProjectsBtn.classList.toggle('open');
-    moreProjectsList.classList.toggle('open');
-  });
-}
-
-/* ── Mobile menu ── */
-const ham    = document.getElementById('ham');
-const mob    = document.getElementById('mob-menu');
-ham.addEventListener('click', () => {
-  const open = mob.classList.toggle('open');
-  ham.classList.toggle('open', open);
-  document.body.style.overflow = open ? 'hidden' : '';
-});
 
 /* ── Scroll reveal ── */
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -2157,15 +2364,14 @@ const counterObs = new IntersectionObserver(entries => {
 }, { threshold: 0.4 });
 document.querySelectorAll('.metric-num[data-target]').forEach(el => counterObs.observe(el));
 
-/* ── Resizable Panels (drag handles) ── */
+/* ── Resizable Right Panel (drag handle) ── */
 (function initResizeHandles() {
   const root = document.documentElement;
-  const MIN_SIDEBAR = 200, MAX_SIDEBAR = 420;
   const MIN_RIGHT = 240, MAX_RIGHT = 460;
 
   function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
 
-  function setupHandle(handleId, cssVar, min, max, fromLeftEdge) {
+  function setupHandle(handleId, cssVar, min, max) {
     const handle = document.getElementById(handleId);
     if (!handle) return;
     let dragging = false;
@@ -2184,7 +2390,7 @@ document.querySelectorAll('.metric-num[data-target]').forEach(el => counterObs.o
 
     window.addEventListener('mousemove', (e) => {
       if (!dragging) return;
-      const width = fromLeftEdge ? e.clientX : (window.innerWidth - e.clientX);
+      const width = window.innerWidth - e.clientX;
       const clamped = clamp(width, min, max);
       root.style.setProperty(cssVar, clamped + 'px');
     });
@@ -2199,8 +2405,7 @@ document.querySelectorAll('.metric-num[data-target]').forEach(el => counterObs.o
     });
   }
 
-  setupHandle('resize-left', '--sidebar-w', MIN_SIDEBAR, MAX_SIDEBAR, true);
-  setupHandle('resize-right', '--right-panel-w', MIN_RIGHT, MAX_RIGHT, false);
+  setupHandle('resize-right', '--right-panel-w', MIN_RIGHT, MAX_RIGHT);
 })();
 
 /* ── First-Visit Guided Tour ── */
@@ -2215,14 +2420,15 @@ document.querySelectorAll('.metric-num[data-target]').forEach(el => counterObs.o
   const skipBtn = document.getElementById('tour-skip');
   const nextBtn = document.getElementById('tour-next');
   const replayBtn = document.getElementById('tour-replay-btn');
+  const closeBtn = document.getElementById('tour-close');
+  const backdrop = document.getElementById('tour-backdrop');
   if (!overlay) return;
 
   const steps = [
+    { selector: '.nav-title-trigger', title: 'Switch projects', text: 'Click the case study name anytime to jump to another project — the Application Portal, Imagine as You Read, FocusXR, or ZenSphere.' },
     { selector: '#theme-toggle', title: 'Light / Dark mode', text: 'Switch between light and dark themes — your choice is remembered on your next visit.' },
-    { selector: '#panel-layout-toggle', title: 'Panel layout', text: 'Cycle through showing both side panels, just one, or a distraction-free full-width view.' },
-    { selector: '#toggle-left-side, #toggle-right-side', title: 'Hide or show panels', text: 'Use these faded arrow buttons on the page edges anytime to hide or reveal the sidebar and right panel.' },
-    { selector: '#resize-left, #resize-right', title: 'Resize panels', text: 'Drag these thin edges to resize the sidebar and right panel — the content inside scales to fit.' },
-    { selector: '.sb-nav', title: 'Chapter navigation', text: 'Jump straight to any chapter — Discovery, Define, Design, Prototyping, Testing, Development, Deployment, or Outcomes.' },
+    { selector: '#breadcrumb-bar', title: 'Chapter index', text: 'Use this bar to jump straight to any chapter or section — Discovery, Define, Design, Prototyping, Testing, Development, Deployment, or Outcomes.' },
+    { selector: '#toggle-right-side, #resize-right', title: 'Resize or hide this panel', text: 'Drag the thin edge to resize this panel, or use the faded arrow to hide it for a distraction-free read.' },
     { selector: '#tour-target-part2', title: 'Part 2 of this project', text: 'This case study covers the Website redesign. Use this card anytime to jump to the Application Portal case study.' }
   ];
 
@@ -2278,10 +2484,8 @@ document.querySelectorAll('.metric-num[data-target]').forEach(el => counterObs.o
   function startTour() {
     stepIndex = 0;
     preTourPanelState = {
-      sidebarHidden: bodyEl.classList.contains('sidebar-hidden'),
       rightPanelHidden: bodyEl.classList.contains('right-panel-hidden')
     };
-    bodyEl.classList.remove('sidebar-hidden');
     bodyEl.classList.remove('right-panel-hidden');
     updatePanelState();
     overlay.classList.add('active');
@@ -2292,7 +2496,6 @@ document.querySelectorAll('.metric-num[data-target]').forEach(el => counterObs.o
     overlay.classList.remove('active');
     localStorage.setItem('mhr_tour_done', '1');
     if (preTourPanelState) {
-      bodyEl.classList.toggle('sidebar-hidden', preTourPanelState.sidebarHidden);
       bodyEl.classList.toggle('right-panel-hidden', preTourPanelState.rightPanelHidden);
       updatePanelState();
       preTourPanelState = null;
@@ -2301,7 +2504,12 @@ document.querySelectorAll('.metric-num[data-target]').forEach(el => counterObs.o
 
   nextBtn.addEventListener('click', nextStep);
   skipBtn.addEventListener('click', endTour);
+  if (closeBtn) closeBtn.addEventListener('click', endTour);
+  if (backdrop) backdrop.addEventListener('click', endTour);
   if (replayBtn) replayBtn.addEventListener('click', startTour);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && overlay.classList.contains('active')) endTour();
+  });
   window.addEventListener('resize', () => { if (overlay.classList.contains('active')) renderStep(); });
 
   if (!localStorage.getItem('mhr_tour_done')) {
