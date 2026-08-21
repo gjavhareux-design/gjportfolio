@@ -497,6 +497,19 @@ body.right-panel-hidden .main { margin-right: 0; }
 .img-placeholder-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
 .img-placeholder-row .img-placeholder { margin-bottom: 0; }
 
+/* ========== IMAGE TILE GRID (2-column, uniform centred tiles) ========== */
+.image-tile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+.image-tile-grid > .expandable-img, .image-tile-grid > .img-placeholder { margin-bottom: 0; }
+.expandable-img.tile {
+  height: 260px; display: flex; align-items: center; justify-content: center; padding: 16px;
+}
+.expandable-img.tile img, .expandable-img.tile > svg {
+  width: auto; height: auto; max-width: 100%; max-height: 100%;
+  object-fit: contain; object-position: center;
+}
+.img-placeholder.tile { height: 260px; min-height: 260px; }
+@media(max-width:700px){ .image-tile-grid { grid-template-columns: 1fr; } }
+
 /* ========== DATA TABLE ========== */
 .data-table-wrap { overflow-x: auto; margin-bottom: 24px; border: 1px solid var(--border-subtle); border-radius: 12px; }
 .data-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 480px; }
@@ -591,6 +604,20 @@ body.right-panel-hidden .main { margin-right: 0; }
 }
 .milestone-card h4 { font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; position: relative; z-index: 1; }
 .milestone-card p { font-size: 12px; color: var(--text-secondary); line-height: 1.55; margin-bottom: 12px; position: relative; z-index: 1; }
+
+/* ========== TIMELINE TRACK (ESTIMATED TIMELINE, redesigned) ========== */
+.timeline-wrap { background: var(--bg-primary); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 28px 24px 22px; margin-bottom: 24px; overflow-x: auto; }
+.timeline-track { position: relative; display: flex; gap: 4px; min-width: 640px; padding-top: 8px; }
+.timeline-track-line { position: absolute; top: 21px; left: 0; right: 0; height: 2px; background: var(--border-default); z-index: 0; }
+.timeline-node { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; }
+.timeline-dot {
+  width: 15px; height: 15px; border-radius: 50%; background: var(--bg-card); border: 3px solid var(--accent-org); flex-shrink: 0;
+}
+.timeline-node.accent-blue .timeline-dot { border-color: var(--accent-blue); }
+.timeline-node.accent-gold .timeline-dot { border-color: var(--accent-gold); }
+.timeline-node.accent-teal .timeline-dot { border-color: var(--accent-teal); }
+.timeline-title { font-size: 11.5px; font-weight: 700; color: var(--text-primary); line-height: 1.35; padding: 0 4px; }
+.timeline-month { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .04em; }
 
 /* ========== TEAM ROWS (PROJECT CANVAS) ========== */
 .team-row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 12px; margin-bottom: 10px; }
@@ -1299,75 +1326,99 @@ body.right-panel-hidden .main { margin-right: 0; }
               <div class="milestone-card accent-org">
                 <span class="milestone-num">01</span>
                 <div class="milestone-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></div>
-                <h4>Research</h4>
-                <p>Discovery interviews, analytics review, competitor audit.</p>
+                <h4>Research &amp; User Stories</h4>
+                <p>Discovery interviews, analytics review, competitor audit, and role-based stories prioritised with stakeholders.</p>
               </div>
               <div class="milestone-card accent-blue">
                 <span class="milestone-num">02</span>
-                <div class="milestone-icon" style="background:var(--accent-blue-dim);color:var(--accent-blue);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="9" y1="15" x2="15" y2="15"></line><line x1="9" y1="11" x2="15" y2="11"></line></svg></div>
-                <h4>User Stories</h4>
-                <p>Role-based stories written and prioritised with stakeholders.</p>
+                <div class="milestone-icon" style="background:var(--accent-blue-dim);color:var(--accent-blue);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"></path></svg></div>
+                <h4>Ideation</h4>
+                <p>Translating research into concepts, flows, and feature priorities (MoSCoW).</p>
               </div>
               <div class="milestone-card accent-gold">
                 <span class="milestone-num">03</span>
                 <div class="milestone-icon" style="background:var(--accent-gold-dim);color:var(--accent-gold);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path></svg></div>
-                <h4>Design</h4>
-                <p>Full design system + ~25-page screen layout across all three corners.</p>
+                <h4>Design &amp; Prototype</h4>
+                <p>Full design system, ~25-page screen layout, and interactive hi-fi prototypes across all three corners.</p>
               </div>
               <div class="milestone-card accent-teal">
                 <span class="milestone-num">04</span>
-                <div class="milestone-icon" style="background:rgba(46,204,201,.14);color:var(--accent-teal);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></div>
-                <h4>Development</h4>
-                <p>Front-end build in parallel with backend API work.</p>
+                <div class="milestone-icon" style="background:rgba(46,204,201,.14);color:var(--accent-teal);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg></div>
+                <h4>Iterations</h4>
+                <p>Refine flows and content across stakeholder, technical, and accessibility review rounds.</p>
               </div>
               <div class="milestone-card accent-org">
                 <span class="milestone-num">05</span>
-                <div class="milestone-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></div>
-                <h4>Review</h4>
-                <p>Stakeholder, technical, feasibility, and accessibility review rounds.</p>
+                <div class="milestone-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></div>
+                <h4>Development</h4>
+                <p>Front-end build in parallel with backend API work.</p>
               </div>
               <div class="milestone-card accent-blue">
                 <span class="milestone-num">06</span>
-                <div class="milestone-icon" style="background:var(--accent-blue-dim);color:var(--accent-blue);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg></div>
-                <h4>Iteration</h4>
-                <p>Refine flows and content based on review feedback.</p>
-              </div>
-              <div class="milestone-card accent-gold">
-                <span class="milestone-num">07</span>
-                <div class="milestone-icon" style="background:var(--accent-gold-dim);color:var(--accent-gold);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></div>
+                <div class="milestone-icon" style="background:var(--accent-blue-dim);color:var(--accent-blue);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></div>
                 <h4>Integration</h4>
                 <p>Connect to live backend data from the Application Portal via API.</p>
               </div>
-              <div class="milestone-card accent-teal">
-                <span class="milestone-num">08</span>
-                <div class="milestone-icon" style="background:rgba(46,204,201,.14);color:var(--accent-teal);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg></div>
+              <div class="milestone-card accent-gold">
+                <span class="milestone-num">07</span>
+                <div class="milestone-icon" style="background:var(--accent-gold-dim);color:var(--accent-gold);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg></div>
                 <h4>Testing</h4>
                 <p>Usability testing, QA, and security audit.</p>
               </div>
-              <div class="milestone-card accent-org">
-                <span class="milestone-num">09</span>
-                <div class="milestone-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path></svg></div>
+              <div class="milestone-card accent-teal">
+                <span class="milestone-num">08</span>
+                <div class="milestone-icon" style="background:rgba(46,204,201,.14);color:var(--accent-teal);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path></svg></div>
                 <h4>Deploy</h4>
                 <p>Domain approval from Government IT cell, hosting on the government server (NIC), publish.</p>
               </div>
             </div>
 
             <h3 class="section-title">⏱️ Estimated Timeline</h3>
-            <div class="metric-row">
-              <div class="metric">
-                <div class="metric-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></div>
-                <div class="metric-num" data-target="6">0</div>
-                <div class="metric-label">Months estimated, discovery to publish</div>
-              </div>
-              <div class="metric">
-                <div class="metric-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg></div>
-                <div class="metric-num" data-target="25">0</div>
-                <div class="metric-label">Screen layouts designed across all corners</div>
-              </div>
-              <div class="metric">
-                <div class="metric-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg></div>
-                <div class="metric-num" data-target="9">0</div>
-                <div class="metric-label">Distinct delivery phases planned</div>
+           
+
+            <div class="timeline-wrap">
+              <div class="timeline-track">
+                <div class="timeline-track-line"></div>
+                <div class="timeline-node accent-org">
+                  <span class="timeline-dot"></span>
+                  <span class="timeline-title">Research &amp; User Stories</span>
+                  <span class="timeline-month">Month 1</span>
+                </div>
+                <div class="timeline-node accent-blue">
+                  <span class="timeline-dot"></span>
+                  <span class="timeline-title">Ideation</span>
+                  <span class="timeline-month">Month 1–2</span>
+                </div>
+                <div class="timeline-node accent-gold">
+                  <span class="timeline-dot"></span>
+                  <span class="timeline-title">Design &amp; Prototype</span>
+                  <span class="timeline-month">Month 2–3</span>
+                </div>
+                <div class="timeline-node accent-teal">
+                  <span class="timeline-dot"></span>
+                  <span class="timeline-title">Iterations</span>
+                  <span class="timeline-month">Month 3</span>
+                </div>
+                <div class="timeline-node accent-org">
+                  <span class="timeline-dot"></span>
+                  <span class="timeline-title">Development</span>
+                  <span class="timeline-month">Month 3–5</span>
+                </div>
+                <div class="timeline-node accent-blue">
+                  <span class="timeline-dot"></span>
+                  <span class="timeline-title">Integration</span>
+                  <span class="timeline-month">Month 5</span>
+                </div>
+                <div class="timeline-node accent-gold">
+                  <span class="timeline-dot"></span>
+                  <span class="timeline-title">Testing</span>
+                  <span class="timeline-month">Month 5–6</span>
+                </div>
+                <div class="timeline-node accent-teal">
+                  <span class="timeline-dot"></span>
+                  <span class="timeline-title">Deploy</span>
+                  <span class="timeline-month">Month 6</span>
+                </div>
               </div>
             </div>
 
@@ -1404,17 +1455,18 @@ body.right-panel-hidden .main { margin-right: 0; }
             <p class="purpose">"Homebuyers in Maharashtra cannot quickly and confidently verify whether a real estate project is legitimate and on schedule, because the website presents registration data in a technical, disconnected format that assumes users already know what they're looking for."</p>
 
             <h3 class="section-title">😤 User Frustrations</h3>
-            <div class="expandable-img">
-              <img src="User Frustration.png" alt="Diagram of common user frustrations reported by MahaRERA website users" loading="lazy">
-              <button class="expand-btn" title="Expand">
-                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-              </button>
-            </div>
-
-            <div class="img-placeholder">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg>
-              <strong>Add image</strong>
-              <span>Screen recording stills or annotated screenshots of real user frustration moments from usability sessions.</span>
+            <div class="image-tile-grid">
+              <div class="expandable-img tile">
+                <img src="User Frustration.png" alt="Diagram of common user frustrations reported by MahaRERA website users" loading="lazy">
+                <button class="expand-btn" title="Expand">
+                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+                </button>
+              </div>
+              <div class="img-placeholder tile">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg>
+                <strong>Add image</strong>
+                <span>Screen recording stills or annotated screenshots of real user frustration moments from usability sessions.</span>
+              </div>
             </div>
 
             <h3 class="section-title">🔬 Research Approach</h3>
@@ -1521,13 +1573,13 @@ body.right-panel-hidden .main { margin-right: 0; }
             </ul>
 
 
-            <div class="img-placeholder-row">
-              <div class="img-placeholder">
+            <div class="image-tile-grid">
+              <div class="img-placeholder tile">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"></circle><path d="M4 21v-1a8 8 0 0 1 16 0v1"></path></svg>
                 <strong>Empathy Map</strong>
                 <span>Add the Says / Thinks / Does / Feels map synthesised from the interview sessions.</span>
               </div>
-              <div class="img-placeholder">
+              <div class="img-placeholder tile">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12h4l3 8 4-16 3 8h4"></path></svg>
                 <strong>Journey Map</strong>
                 <span>Add the end-to-end journey map from "hears about a project" to "makes a decision".</span>
@@ -1560,12 +1612,6 @@ body.right-panel-hidden .main { margin-right: 0; }
           <div class="step-body">
             <h3 class="section-title">🧭 Determine Flow</h3>
             <p class="purpose">Every user flow was mapped back to the three personas before any screen was drawn — search flow, verification flow, and role-corner navigation.</p>
-            <div class="expandable-img" style="padding:20px; background:var(--bg-card);">
-              <img src="flow.svg" alt="User flow diagram for search and verification journeys" loading="lazy" style="max-height:320px;object-fit:contain;">
-              <button class="expand-btn" title="Expand">
-                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-              </button>
-            </div>
 
             <h3 class="section-title">📋 Feature Prioritisation — MoSCoW</h3>
             <div class="moscow-grid">
@@ -1594,11 +1640,20 @@ body.right-panel-hidden .main { margin-right: 0; }
               <li><strong>Branding:</strong> Retained the official MahaRERA identity while modernising iconography and removing dense bureaucratic visual noise.</li>
             </ul>
 
-            <h3 class="section-title">🗺️ Journey Mapping</h3>
-            <div class="img-placeholder">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12h4l3 8 4-16 3 8h4"></path></svg>
-              <strong>Add Journey Map</strong>
-              <span>Add the finalised journey map showing touchpoints, emotions, and redesigned moments across the search-to-decision flow.</span>
+            <h3 class="section-title">🗺️ Flow &amp; Journey Mapping</h3>
+            <p class="purpose">Every screen traced back to a mapped flow and journey — from search intent to final decision.</p>
+            <div class="image-tile-grid">
+              <div class="expandable-img tile" style="background:var(--bg-card);">
+                <img src="flow.svg" alt="User flow diagram for search and verification journeys" loading="lazy">
+                <button class="expand-btn" title="Expand">
+                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+                </button>
+              </div>
+              <div class="img-placeholder tile">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12h4l3 8 4-16 3 8h4"></path></svg>
+                <strong>Add Journey Map</strong>
+                <span>Add the finalised journey map showing touchpoints, emotions, and redesigned moments across the search-to-decision flow.</span>
+              </div>
             </div>
 
             <div class="yellow-callout">
