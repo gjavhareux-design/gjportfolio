@@ -65,3 +65,21 @@ The repo had grown to 50 loose files in one folder, which made it hard to tell w
 - Bring the Imagine As You Read case study back from the archive into `projects/imagine-as-you-read/` and link it from the homepage.
 - Build the About page the homepage navigation already points to.
 - Replace placeholder stock images on the homepage cards with real UI screenshots from each project.
+
+---
+
+## Update — 15 October 2026 (afternoon): new case study and About page
+
+**What I did**
+- Shipped **v3 of the MahaRERA case study**. It's a fuller, chaptered story covering the two products, user groups, research methods, survey and usability results, and a six-frame storyboard of the old website. v2 moved to `archive/maharera-v2/`. The URL didn't change, so existing links keep working.
+- Added the **About page** that the homepage navigation was already pointing to.
+- Filed every new upload by the page that owns it. Shared files (stylesheet, Three.js, avatar, thumbnails) went to `assets/shared/`.
+- Replaced the placeholder photo on the Imagine As You Read homepage card with the real app mockup.
+- Fixed "home" links on the new pages, which pointed to an old filename.
+
+**Why**
+The case study is the core of the portfolio, so it gets versioned rather than overwritten. Each version reads more like evidence and less like a description. A single-owner rule for files keeps the structure from drifting back into one flat folder as more projects arrive.
+
+**Still to add**
+- Case study images not uploaded yet: the About-MahaRERA intro graphic, three user photos, five old-site pain-point images and the hero image.
+- About page: one project thumbnail (`concept-800.webp`) and testimonial photos. The testimonials fall back to initials until the photos are added.

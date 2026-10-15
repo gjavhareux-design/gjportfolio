@@ -23,17 +23,25 @@ This repository is the source of my portfolio. I design and build it myself, and
 ```
 .
 ├── index.html                  Homepage (must stay at root; GitHub Pages serves from here)
+├── about.html                  About page
 ├── assets/
-│   └── home/                   Images used only by the homepage
+│   ├── home/                   Images used only by the homepage
+│   ├── about/                  Images and map data used only by the About page
+│   └── shared/                 Used by more than one page
+│       ├── css/                site.css
+│       ├── js/                 three.min.js
+│       └── images/             Small avatar, project thumbnails
 ├── projects/
 │   └── maharera/
 │       ├── maharera-case-study.html
-│       └── assets/             Images used only by this case study
+│       └── assets/             Images belonging to this case study
 ├── docs/
 │   └── PROCESS.md              Design log: what changed, why, and how I iterate
 ├── archive/                    Earlier versions and unused assets, kept for reference
 │   ├── pages/                  Previous homepages, coming-soon page, IYR draft
-│   ├── maharera-case1-old/     First MahaRERA case-study draft with its images
+│   ├── maharera-case1-old/     MahaRERA case study v1
+│   ├── maharera-v2/            MahaRERA case study v2
+│   ├── unused-uploads/         Uploaded images not yet used by any page
 │   └── assets/                 Retired icons, logos, media, resumes
 ├── sitemap.xml                 For search engines
 ├── CNAME                       Custom domain (www.gjuxdesign.in)
@@ -42,7 +50,8 @@ This repository is the source of my portfolio. I design and build it myself, and
 
 **Conventions**
 
-- **Homepage and projects are kept apart.** Homepage files live in `assets/home/`. Each project gets its own folder, `projects/<name>/`, with its page and an `assets/` folder. A project can be added, updated or retired as one unit without touching the homepage.
+- **Homepage and projects are kept apart.** Site pages (homepage, About) sit at the root, with their images in `assets/home/` and `assets/about/`. Each project gets its own folder, `projects/<name>/`, with its page and an `assets/` folder, so it can be added, updated or retired as one unit.
+- **Every file has one owner.** An image lives with the page or project it belongs to. If another page shows it too, that page links to it there instead of keeping a copy. Only files with no single owner (CSS, scripts, avatar) go in `assets/shared/`.
 - **Nothing is deleted outright.** Work that's no longer live moves to `archive/`, so earlier iterations stay visible and recoverable.
 - **Every commit explains itself.** Commit messages say what changed and *why*, so the history reads as a design log.
 
