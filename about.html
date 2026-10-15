@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>About Ganesh Javhare | UX Designer</title>
+  <meta name="description" content="The story of Ganesh Javhare: from a small town in Maharashtra and urban planning at COEP, to leading the MahaRERA redesign, to a UX Master's in London.">
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://www.gjuxdesign.in/about.html" />
+
+  <meta property="og:title" content="About — Ganesh Javhare, UX Designer" />
+  <meta property="og:description" content="From planning cities to designing the services people use to live in them." />
+  <meta property="og:image" content="aboutbck.webp" />
+  <meta property="og:url" content="https://www.gjuxdesign.in/about.html" />
+  <meta property="og:type" content="profile" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@700;800&family=Courgette&family=Noto+Sans+Devanagari:wght@600&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@700;800&family=Courgette&family=Noto+Sans+Devanagari:wght@600&display=swap"></noscript>
+  <script async id="three-js" src="three.min.js"></script>
+
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; }
+
+    :root {
+      --nav-height: 64px;
+      --ink: #36383d;
+      --accent: #ff5f00;
+      --paper: #F9F7F5;
+      --studio: #b0b0b0;   /* exact grey of aboutbck.webp */
+      --rail: #e2ded9;
+      --line: #e4e4e7;
+      --muted: #71717a;
+      --accent-soft: #fff1e8;
+    }
+
+    /* ========== HEADER (same as MahaRERA case study) ========== */
+    .progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      width: 0;
+      background: var(--accent);
+      z-index: 100
+    }
+
+    .nav {
+      position: fixed;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 2rem);
+      max-width: 1000px;
+      height: 60px;
+      background: rgba(255, 255, 255, .75);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, .6);
+      border-radius: 999px;
+      box-shadow: 0 10px 30px -12px rgba(0, 0, 0, .12);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px 0 16px;
+      z-index: 90
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none
+    }
+
+    .brand svg {
+      width: 28px;
+      height: 28px;
+      overflow: visible
+    }
+
+    .brand .n {
+      display: flex;
+      flex-direction: column;
+      border-left: 2px solid var(--line);
+      padding-left: 10px;
+      line-height: 1
+    }
+
+    .brand .n b {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -.01em
+    }
+
+    .brand .n small {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 4px
+    }
+
+    .nav-chapter {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: opacity .3s
+    }
+
+    .nav-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, .04);
+      border: 1px solid rgba(0, 0, 0, .05);
+      transition: .3s
+    }
+
+    .nav-back:hover {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent)
+    }
+
+    @media(max-width:760px) {
+      .nav-chapter {
+        display: none
+      }
+    }
+
+
+    /* ---- Avatar + menu in header ---- */
+    .nav-right { display: flex; align-items: center; gap: 8px; }
+    .nav-me { position: relative; }
+    .nav-me > button { display: block; padding: 2px; border: 2px solid transparent; border-radius: 50%; background: none; cursor: pointer; transition: border-color .2s; }
+    .nav-me:hover > button, .nav-me.open > button, .nav-me > button:focus-visible { border-color: var(--accent); }
+    .nav-me img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; display: block; background: #e4e4e7; }
+    .nav-menu {
+      position: absolute; right: 0; top: calc(100% + 10px); min-width: 180px; padding: 6px;
+      background: rgba(255,255,255,.97); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 20px 40px -16px rgba(0,0,0,.18);
+      opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity .25s, transform .25s, visibility .25s;
+    }
+    .nav-menu::before { content: ""; position: absolute; left: 0; right: 0; top: -12px; height: 12px; }
+    .nav-me:hover .nav-menu, .nav-me:focus-within .nav-menu, .nav-me.open .nav-menu { opacity: 1; visibility: visible; transform: none; }
+    .nav-menu a { display: block; padding: 10px 14px; border-radius: 10px; font-size: 14px; font-weight: 600; color: var(--ink); text-decoration: none; }
+    .nav-menu a:hover, .nav-menu a[aria-current="page"] { background: var(--accent-soft); color: var(--accent); }
+    @media (max-width: 400px) { .nav-back .lbl { display: none; } .nav-back { padding: 10px 13px; } }
+
+
+    .brand .n b { font-size: 16px; font-weight: 700; letter-spacing: -0.015em; color: var(--ink); }
+    .brand .n small { font-size: 9.5px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #71717a; }
+    .nav-chapter, .nav-back { font-size: 13px; font-weight: 500; color: var(--ink); }
+    .nav-chapter { color: #71717a; }
+
+    /* ========== HERO ========== */
+    .about-hero {
+      background-color: var(--studio);
+      background-image: url('aboutbck.webp');
+      background-repeat: no-repeat;
+      background-position: right bottom;
+      background-size: auto 100%;
+    }
+    @media (min-width: 1500px) {
+      .about-hero { background-position: center bottom; background-size: cover; }
+    }
+    @media (max-width: 767px) {
+      .about-hero { background-size: auto 48%; background-position: 78% bottom; }
+    }
+    .about-hero { height: 100svh; min-height: 520px; }
+    .hero-title {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      color: #2a2c30;
+      /* scales with both width and height so it always fits the screen */
+      font-size: clamp(2rem, min(4.4vw, 7.5vh), 4rem);
+    }
+    .hero-sub { font-size: clamp(1rem, min(1.6vw, 2.6vh), 1.25rem); }
+    @media (max-width: 767px) {
+      .hero-title { font-size: clamp(1.9rem, min(9vw, 6.2vh), 2.75rem); }
+    }
+
+    /* ========== JOURNEY: pinned globe + scrolling text ========== */
+    .journey { position: relative; background: var(--paper); }
+    .journey-grid { display: grid; grid-template-columns: 1fr; }
+    .globe-pane {
+      position: sticky; top: 0; z-index: 5; height: 46svh;
+      padding: 84px 16px 8px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: var(--paper);
+    }
+    /* soft fade under the pinned globe on phones, so text slides away beneath it */
+    .globe-pane::after {
+      content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 40px; pointer-events: none;
+      background: linear-gradient(to bottom, var(--paper), rgba(249,247,245,0));
+    }
+    .globe-stage {
+      position: relative; width: 100%; flex: 1; min-height: 0;
+      /* fade the edges so a zoomed-in globe never ends in a hard box */
+      -webkit-mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent), linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent);
+      -webkit-mask-composite: source-in;
+      mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent), linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent);
+      mask-composite: intersect;
+    }
+    .globe-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+    .globe-tag {
+      position: absolute; left: 0; top: 0; pointer-events: none; white-space: nowrap;
+      transform: translate(14px, -50%); display: flex; flex-direction: column; gap: 2px;
+      background: rgba(255,255,255,.92); border: 1px solid #ebe7e2; border-radius: 10px; padding: 6px 10px;
+      box-shadow: 0 8px 20px -10px rgba(54,56,61,.25); transition: opacity .3s;
+    }
+    .globe-tag b { font-size: 14px; font-weight: 700; color: var(--ink); }
+    .globe-tag span { font-size: 12.5px; font-weight: 600; color: var(--accent); font-family: 'Inter', 'Noto Sans Devanagari', 'Nirmala UI', 'Mangal', sans-serif; }
+    .globe-caption { display: flex; gap: .75rem; align-items: baseline; font-size: .85rem; color: #71717a; margin-top: 6px; }
+    .cap-step { font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+
+    .journey-text { position: relative; z-index: 1; padding: 0 24px 12svh; }
+    .journey-intro, .stop { min-height: 62svh; display: flex; flex-direction: column; justify-content: center; padding: 6svh 0; }
+    .stop { opacity: .25; transition: opacity .45s ease; }
+    .stop.is-active { opacity: 1; }
+    .stop-meta { margin-bottom: 1.25rem; }
+    .stop-place {
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: clamp(2rem, 3.4vw, 2.8rem); line-height: 1; letter-spacing: -0.02em; color: var(--ink);
+    }
+    .stop-when { font-weight: 600; color: #71717a; margin-top: .5rem; font-size: .95rem; }
+
+    @media (min-width: 900px) {
+      .journey-grid { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); }
+      .globe-pane { height: 100svh; padding: 96px 2vw 32px 4vw; background: none; }
+      .globe-pane::after { display: none; }
+      .journey-text { padding: 0 6vw 20svh 3vw; }
+      .journey-intro, .stop { min-height: 90svh; padding: 10svh 0; }
+      .journey-intro { min-height: 100svh; }
+    }
+
+    .story { max-width: 62ch; font-size: 1.125rem; line-height: 1.75; color: #45474d; }
+    .story p + p { margin-top: 1.1rem; }
+    .story strong { color: var(--ink); font-weight: 700; }
+    .story h3 {
+      font-family: 'Syne', sans-serif; font-weight: 700; color: var(--ink);
+      font-size: 1.6rem; line-height: 1.2; letter-spacing: -0.01em; margin-bottom: 1rem;
+    }
+
+    .shipped { margin-top: 1.5rem; border-top: 1px solid var(--rail); }
+    .shipped li {
+      display: flex; gap: 1rem; align-items: baseline;
+      padding: .8rem 0; border-bottom: 1px solid var(--rail);
+      font-size: 1rem; color: var(--ink); font-weight: 500;
+    }
+    .shipped li span { color: #8a8a92; font-weight: 500; font-size: .9rem; margin-left: auto; text-align: right; }
+
+    .aside-note {
+      font-family: 'Courgette', cursive; color: var(--accent);
+      font-size: 1.25rem; line-height: 1.4; transform: rotate(-2deg);
+    }
+
+
+    /* ========== CONTENT ROWS (blogs + other work) ========== */
+    .row-head { display: flex; align-items: end; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem; }
+    .row-title { font-family: 'Syne', sans-serif; font-weight: 800; letter-spacing: -0.02em; line-height: 1.05; font-size: clamp(1.8rem, 3.6vw, 2.75rem); }
+    .row-controls { display: flex; align-items: center; gap: .5rem; flex-shrink: 0; }
+    .row-arrow {
+      width: 40px; height: 40px; border-radius: 50%; display: none; align-items: center; justify-content: center;
+      border: 1px solid currentColor; opacity: .55; transition: opacity .2s, background .2s, color .2s;
+    }
+    .row-arrow:hover { opacity: 1; }
+    .row-arrow:disabled { opacity: .2; cursor: default; }
+    @media (min-width: 768px) { .row-arrow { display: inline-flex; } }
+    .view-more { font-weight: 700; white-space: nowrap; padding: .55rem 1.1rem; border-radius: 999px; transition: background .2s, color .2s; }
+
+    .row-track {
+      display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scroll-padding-inline: 1.5rem;
+      padding: .75rem 1.5rem 1.5rem; margin: 0 -1.5rem; scrollbar-width: none;
+    }
+    .row-track::-webkit-scrollbar { display: none; }
+    .row-track > * { scroll-snap-align: start; flex: 0 0 auto; }
+
+    /* Netflix-style tiles */
+    .tile {
+      position: relative; width: min(78vw, 340px); aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden;
+      background: #2a2b2f; transition: transform .3s ease, box-shadow .3s ease;
+    }
+    .tile img { width: 100%; height: 100%; object-fit: cover; }
+    .tile::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,.85) 0%, rgba(0,0,0,.15) 45%, transparent 70%); }
+    .tile-info { position: absolute; left: 1rem; right: 1rem; bottom: .85rem; z-index: 2; color: #fff; }
+    .tile-info h3 { font-weight: 700; font-size: 1.05rem; line-height: 1.25; }
+    .tile-info p { font-size: .8rem; color: rgba(255,255,255,.75); margin-top: .2rem; }
+    @media (hover: hover) {
+      .tile:hover, .tile:focus-visible { transform: scale(1.05); box-shadow: 0 18px 40px rgba(0,0,0,.5); z-index: 3; }
+    }
+    .tile-more {
+      width: min(50vw, 200px); aspect-ratio: auto; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .75rem;
+      border: 1.5px dashed rgba(255,255,255,.3); background: transparent; color: #fff; font-weight: 700;
+    }
+    .tile-more::after { display: none; }
+    .tile-more span.circle { width: 52px; height: 52px; border-radius: 50%; background: var(--accent); display: grid; place-items: center; }
+
+    /* Blog cards */
+    .post { width: min(80vw, 320px); display: flex; flex-direction: column; background: #fff; border: 1px solid #ebe7e2; border-radius: 16px; overflow: hidden; transition: border-color .25s, box-shadow .25s; }
+    .post:hover, .post:focus-visible { border-color: rgba(255,95,0,.45); box-shadow: 0 12px 30px rgba(54,56,61,.08); }
+    .post-img { aspect-ratio: 16 / 10; background: #f3efea; overflow: hidden; }
+    .post-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
+    .post:hover .post-img img { transform: scale(1.04); }
+    .post-body { padding: 1.1rem 1.2rem 1.3rem; display: flex; flex-direction: column; gap: .5rem; flex: 1; }
+    .post-tag { align-self: flex-start; font-size: .75rem; font-weight: 700; color: #c24800; background: #fff1e8; padding: .2rem .6rem; border-radius: 999px; }
+    .post h3 { font-weight: 700; font-size: 1.1rem; line-height: 1.3; color: var(--ink); }
+    .post p { font-size: .92rem; line-height: 1.55; color: #6b6d73; }
+    .post-read { margin-top: auto; padding-top: .4rem; font-weight: 700; font-size: .9rem; color: var(--ink); }
+    .post:hover .post-read { color: var(--accent); }
+
+    /* Testimonials */
+    .quote-card { width: min(84vw, 400px); background: #fff; border: 1px solid #ebe7e2; border-radius: 20px; padding: 1.9rem 1.75rem 1.6rem; display: flex; flex-direction: column; }
+    .quote-mark { font-family: 'Courgette', cursive; color: var(--accent); font-size: 3.5rem; line-height: .6; height: 1.6rem; }
+    .quote-card blockquote { font-size: 1rem; line-height: 1.65; color: #45474d; margin-top: .75rem; flex: 1; }
+    .quote-who { display: flex; align-items: center; gap: .85rem; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid #ebe7e2; }
+    .quote-avatar { position: relative; flex: none; width: 46px; height: 46px; border-radius: 50%; overflow: hidden; background: #fff1e8; color: #c24800; display: grid; place-items: center; font-weight: 700; font-size: .9rem; }
+    .quote-avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .3s; }
+    .quote-avatar img.is-loaded { opacity: 1; }
+    .quote-name strong { display: block; color: var(--ink); font-weight: 700; }
+    .quote-name span { font-size: .875rem; color: #71717a; }
+    .quote-link { align-self: flex-start; margin-top: 1rem; display: inline-flex; align-items: center; gap: .35rem; font-size: .875rem; font-weight: 700; color: var(--ink); text-decoration: none; }
+    .quote-link:hover { color: var(--accent); }
+    .quote-track { align-items: stretch; }
+
+    a:focus-visible, button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .greeting-roller { animation: none; }
+      .stop { transition: none; }
+      .glow-card::before, .glow-card::after { transition: none; }
+    }
+  
+    /* ---- Header matched to home page: size, brand, expanding back button, divider ---- */
+    .nav { height: 64px; max-width: 1024px; top: 16px; padding: 0 12px 0 16px; background: rgba(255,255,255,.7);
+           border: 1px solid rgba(255,255,255,.5); box-shadow: 0 10px 15px -3px rgba(228,228,231,.3), 0 4px 6px -4px rgba(228,228,231,.3); }
+    .brand { gap: 12px; }
+    .brand svg { width: 32px; height: 32px; }
+    .brand .n { border-left: 2px solid #e4e4e7; padding-left: 12px; }
+    .brand .n b { font-family: 'Courgette', cursive; font-size: 16px; font-weight: 700; letter-spacing: -0.015em; color: var(--ink); transition: color .2s; }
+    .brand:hover .n b { color: var(--accent); }
+    .brand .n small { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #71717a; margin-top: 4px; }
+
+    .fluid-back {
+      position: relative; display: flex; align-items: center; justify-content: center;
+      width: 40px; height: 40px; border-radius: 20px; overflow: hidden; text-decoration: none;
+      background: rgba(0,0,0,.03); border: 1px solid rgba(0,0,0,.05); color: var(--ink);
+      transition: width .5s cubic-bezier(0.34,1.56,0.64,1), background .3s, color .3s, border-color .3s;
+    }
+    .fluid-back .nav-icon { position: absolute; width: 16px; height: 16px; transition: all .5s cubic-bezier(0.34,1.56,0.64,1); }
+    .fluid-back .nav-text {
+      position: absolute; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+      font-size: .85rem; font-weight: 600; opacity: 0; transform: translateY(20px) scale(.8);
+      transition: all .5s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .fluid-back .nav-text svg { width: 14px; height: 14px; }
+    .fluid-back:hover, .fluid-back:focus-visible { width: 118px; background: var(--accent); border-color: var(--accent); color: #fff; }
+    .fluid-back:hover .nav-icon, .fluid-back:focus-visible .nav-icon { opacity: 0; transform: translateY(-20px) scale(.8); }
+    .fluid-back:hover .nav-text, .fluid-back:focus-visible .nav-text { opacity: 1; transform: none; }
+    .nav-sep { width: 1px; height: 24px; background: #e4e4e7; margin: 0 8px; }
+    .nav-right { gap: 0; }
+
+  
+    /* Icons: Font Awesome 6.6.0 (free, CC BY 4.0) drawn from built-in images instead of the 100 KB+ icon-font download */
+    .fa-solid,.fa-regular,.fa-brands,.fas,.far,.fab{display:inline-block;width:var(--fa-w,1em);height:1em;vertical-align:-0.125em;background-color:currentColor;-webkit-mask:var(--fa-i) center/contain no-repeat;mask:var(--fa-i) center/contain no-repeat;font-style:normal;flex-shrink:0}
+    .fa-spin{animation:fa-spin 1s linear infinite}@keyframes fa-spin{to{transform:rotate(360deg)}}
+    .fa-arrow-down{--fa-i:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 384 512%22%3E%3Cpath d=%22M169.4 470.6c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L224 370.8 224 64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 306.7L54.6 265.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l160 160z%22/%3E%3C/svg%3E");--fa-w:0.7500em}
+    .fa-arrow-right{--fa-i:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 448 512%22%3E%3Cpath d=%22M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z%22/%3E%3C/svg%3E");--fa-w:0.8750em}
+    .fa-chevron-right{--fa-i:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 320 512%22%3E%3Cpath d=%22M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z%22/%3E%3C/svg%3E");--fa-w:0.6250em}
+  </style>
+  <link rel="stylesheet" href="site.css">
+</head>
+<body class="overflow-x-hidden bg-[#F9F7F5] text-ink selection:bg-[#ff5f00]/20 selection:text-[#ff5f00]">
+
+  <!-- Header (same as MahaRERA case study) -->
+  <div class="progress" id="progress"></div>
+
+  <nav class="nav" aria-label="Main">
+    <a href="newsimple1.html" class="brand" aria-label="Ganesh Javhare — home">
+      <svg id="Layer_2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 317.37 376.83"
+        class="w-full h-full overflow-visible">
+        <defs>
+          <style>
+            .cls-1,
+            .cls-2,
+            .cls-3 {
+              fill: #ff5f00;
+              stroke: #ff5f00;
+              stroke-width: 8px;
+              /* Increased thickness */
+              stroke-linejoin: round;
+            }
+            </style>
+        </defs>
+        <g id="Layer_1-2" data-name="Layer_1">
+          <g>
+            <path class="cls-2"
+              d="M192.9,12.47c-21.83-.35-43.56,5.7-63.41,14.31C69.29,52.25,24.39,108.18,20.17,174.3c-7.76,100.38,77.21,188.92,178.28,181.83,30.27-2.43,62.93-14.17,80.75-39.77,17.74-25.77,15.18-67.35-11.29-86.29-32.01-22.07-75.72.34-78.56,38.69-2.44,20.53,16.97,41.66,38.12,35.79,14.89-3.59,25.12-18.82,23.24-34.01-1.08-10.46-7.3-19.94-16.31-25.45-4.58-2.83-9.88-4.59-15.47-5.23v-.83c10.22-1.19,21.07,2.95,28.35,10.31,15.01,14.77,14.24,40.22-.8,54.78-9.12,9.17-22.87,13.59-35.62,10.98-12.97-2.69-23.63-11.87-29.77-23.34-3.04-5.74-4.96-12.2-5.3-18.95-1.44-25.64,13.8-51.11,37.19-62.06,38.67-18.29,81.29,2.81,92.99,43.3,3.57,12.21,4.27,24.93,2.7,37.56-4.73,39.26-37.24,66.52-73.12,77.69-22.99,7.53-47.58,9.16-71.47,5.99C37,359.32-38.06,218.6,19.85,104.3,41.27,62.01,78.66,27.29,123.61,11.66c16.76-5.74,34.21-8.82,51.8-9.91,5.84-.31,11.66-.45,17.49-.68,0,0,0,11.4,0,11.4h0Z" />
+            <path class="cls-1"
+              d="M18.69,310.17c17.93-1.04,23.41-19.33,29.15-33.67,14.63-38.69,27.52-93.26,73.27-106.16,6.4-1.71,12.9-2.38,19.44-2.24,2.45.11,5.52.1,8.02.04,12.72-.16,38.28-.54,50.99-.84,0,0,50.74-1.25,50.74-1.25,7.11-.38,14.04-2.34,20.21-5.74,12.41-6.77,21.51-19.12,24.64-32.89,1.71-6.26,1.28-16.53,1.4-23.04.13-8.52.33-17.03.67-25.55.7-17.62,1.79-36.62,2.38-54.28,0,0,.05-1.6.05-1.6.31-3.94-2.24-7.98-6-9.15-1.3-.55-3.05-.4-4.44-.47-21.03-.54-49.09-.67-70.25-.92-5.84.01-16.46-.3-22.18-.11-4.84.44-9.71,1.26-14.34,2.71-18.31,6.03-33.34,20.31-42.03,37.31-5.4,10.6-7.26,22.75-7.4,34.58-1.31,29.84-2.93,59.62-5.5,89.41-2.21-25.54-3.62-51.06-4.87-76.64-.31-8.55-1.03-17.46-.79-26.03.79-18.44,8.22-36.99,21.06-50.43,13-13.46,31.55-21.13,50.07-21.97,16.88-.14,60.74-.58,77.07-.82,6.19-.13,12.94-.18,19.16-.35,9.25-.74,17.73,3.81,22.13,11.96,2.12,3.8,2.94,8.21,2.91,12.52,0,0,.1,3.19.1,3.19,0,0,.51,12.77.51,12.77,1.1,23.3,2.41,46.95,2.49,70.25.15,7.16-.22,14.43-1.95,21.41-6.74,29.68-33.92,52.65-64.64,52.47-14.56-.22-36.68-.87-51.44-1.18-16.52-.5-42.67-.55-59.14-1.05-27.39-1.35-43.63,18.61-54.56,41.43-7.38,15-12.97,30.87-19.67,46.34-3.46,8.08-7.26,16.06-12.23,23.46-7.37,11.38-20.76,23.07-35.03,16.52h0Z" />
+            <path class="cls-3"
+              d="M93.48,135.7c.18,9.29-8.53,17.06-17.69,15.57-17.86-3.11-17.86-28.03,0-31.14,9.16-1.48,17.87,6.28,17.69,15.57h0ZM80.4,135.7c.19-5.25-5.77-9.16-10.45-5.85-3.95,2.59-3.95,9.11,0,11.69,4.68,3.32,10.65-.6,10.45-5.85h0Z" />
+          </g>
+        </g>
+      </svg>
+      <span class="n"><b>Ganesh Javhare</b><small>UX Designer</small></span>
+    </a>
+    <div class="nav-chapter" id="navChapter">About Me</div>
+    <div class="nav-right">
+      <a href="newsimple1.html#work" class="fluid-back" aria-label="All work">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        <span class="nav-text"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> All work</span>
+      </a>
+      <span class="nav-sep" aria-hidden="true"></span>
+      <div class="nav-me">
+        <button type="button" aria-label="Open menu" aria-haspopup="true" aria-expanded="false"><img src="avatar-sm.webp" width="36" height="36" alt="Ganesh Javhare"></button>
+        <div class="nav-menu">
+          <a href="about.html" aria-current="page">About Me</a>
+          <a href="projects.html">Resume</a>
+          <a href="gallery.html">Other Work</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+  <!-- ================= HERO ================= -->
+  <section id="hero" class="about-hero relative flex items-start md:items-center pt-28 md:pt-20 overflow-hidden" data-title="About Me">
+    <div class="max-w-7xl mx-auto px-6 w-full relative z-10">
+      <div class="max-w-[34rem] md:max-w-[52%] lg:max-w-[40rem]">
+        <p class="text-base md:text-lg font-semibold text-[#2a2c30] mb-3 md:mb-5">Hi, I'm Ganesh.</p>
+        <h1 class="hero-title">I make complicated things simple to use.</h1>
+        <p class="hero-sub mt-4 md:mt-6 font-medium leading-relaxed text-[#2a2c30] max-w-[30rem]">
+          I'm a UX designer. I find out where people get stuck, then design websites and services that are clear, quick and easy.
+        </p>
+        <a href="#story" class="mt-6 md:mt-9 inline-flex items-center gap-3 bg-[#36383d] text-white px-6 py-3 md:px-7 md:py-4 rounded-full font-bold hover:bg-[#ff5f00] transition-colors duration-300">
+          Read my story <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SHORT VERSION ================= -->
+  <section id="intro" class="bg-white border-t border-zinc-200 py-24" data-title="Hello">
+    <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-[minmax(0,320px)_1fr] gap-12 md:gap-20 items-center">
+      <figure class="relative mx-auto md:mx-0 w-[240px] md:w-full">
+        <img src="ganesh.webp" loading="lazy" decoding="async" alt="Portrait of Ganesh Javhare" width="400" height="580" class="w-full rounded-[2rem] object-cover aspect-[4/5.8] bg-zinc-200">
+        <figcaption class="aside-note absolute -bottom-6 -right-4 md:-right-10 bg-white px-4 py-2 rounded-full shadow-md">Mumbai → London</figcaption>
+      </figure>
+      <div class="story">
+        <h2 class="font-['Syne'] font-bold text-3xl md:text-4xl leading-tight text-ink mb-6">The short version</h2>
+        <p>I'm a UX designer from Mumbai, now based in London. For seven years I worked inside <strong>MahaRERA</strong>, Maharashtra's real estate regulator, first writing the policies, then designing the digital services that put those policies into people's hands.</p>
+        <p>I like problems with a lot of people on both sides of the counter: a homebuyer looking for answers, and an officer with a pile of applications to clear. Good design should make both of their days easier.</p>
+        <p>The longer version is below. It starts in a small town.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= THE JOURNEY (pinned globe + scrolling text) =================
+       The globe pane stays fixed on screen while the text column scrolls.
+       Each <article class="stop"> has data-loc = jamner | pune | mumbai | london.
+       Coordinates live in the LOCATIONS list in the <script> at the bottom. -->
+  <section id="story" class="journey" data-title="My Story">
+    <div class="journey-grid">
+
+      <div class="globe-pane">
+        <div class="globe-stage" id="globeStage" aria-hidden="true">
+          <canvas id="globeCanvas"></canvas>
+          <div class="globe-tag" id="globeTag"><b id="tagPlace">Jamner</b><span id="tagDms">Birthplace (जन्मभूमि)</span></div>
+        </div>
+        <p class="globe-caption" aria-live="polite">
+          <span class="cap-step" id="capStep">1 / 6</span>
+          <span class="cap-place" id="capPlace">Jamner, Maharashtra, India</span>
+        </p>
+      </div>
+
+      <div class="journey-text">
+        <header class="journey-intro" data-loc="jamner" data-far="1">
+          <h2 class="font-['Syne'] font-extrabold text-4xl md:text-6xl tracking-tight leading-[1.02] text-ink">The long way round</h2>
+          <p class="mt-5 text-lg text-zinc-600 max-w-[46ch]">Planners draw routes before anyone travels them. Here's mine, drawn after the fact. Scroll, and follow it across the globe.</p>
+        </header>
+
+        <article class="stop" data-title="Jamner" data-loc="jamner">
+          <div class="stop-meta">
+            <div class="stop-place">Jamner</div>
+            <div class="stop-when">Where it starts</div>
+          </div>
+          <div class="story">
+            <h3>A small town that taught me to notice</h3>
+            <p>I was born in Jamner, a small town in Maharashtra. In a place that size you don't need a map; you learn the town by walking it. You notice which road floods first in the monsoon, where everyone queues, which office makes people wait the longest.</p>
+            <p>I didn't have a word for it then, but that habit of noticing how places work, and where they don't, became the thread through everything that followed.</p>
+          </div>
+        </article>
+
+        <article class="stop" data-title="COEP, Pune" data-loc="pune">
+          <div class="stop-meta">
+            <div class="stop-place">Pune</div>
+            <div class="stop-when">College of Engineering Pune</div>
+          </div>
+          <div class="story">
+            <h3>Learning to read a city like a system</h3>
+            <p>I studied urban planning at <strong>COEP</strong>. Planning gave me a new way of seeing: a city isn't just buildings and roads, it's a system of rules, flows and people, and every line on a plan decides how someone's day will go.</p>
+            <p>That's a design problem. I just didn't know yet that I'd end up solving it on screens instead of on streets.</p>
+          </div>
+        </article>
+
+        <article class="stop" data-title="MahaRERA" data-loc="mumbai">
+          <div class="stop-meta">
+            <div class="stop-place">Mumbai</div>
+            <div class="stop-when">2017 · Technical Advisor, MahaRERA</div>
+          </div>
+          <div class="story">
+            <h3>Writing the rules, then wondering who reads them</h3>
+            <p>In 2017 I joined MahaRERA, the authority that regulates real estate across Maharashtra. As a technical advisor I framed and shaped policy. Most days meant deep <strong>data analysis</strong>: reading thousands of records to understand what was really happening in the market before we wrote a single rule.</p>
+            <p>Then came the project that changed my direction. Homebuyers had no clear way to report <strong>unregistered projects</strong>, so I was asked to help design a complaint module. I mapped the user flows, built the prototype and saw the final design through for two very different people: the citizen filing the complaint, and the authority officer who had to act on it.</p>
+            <p>Watching people use something I'd designed, and seeing where they hesitated, was the moment I realised policy only works if people can actually use it.</p>
+          </div>
+        </article>
+
+        <article class="stop" data-title="Design Lead" data-loc="mumbai">
+          <div class="stop-meta">
+            <div class="stop-place">Mumbai</div>
+            <div class="stop-when">2022 · UX Design Lead, MahaRERA</div>
+          </div>
+          <div class="story">
+            <h3>From advisor to design lead</h3>
+            <p>In 2022 I was promoted to <strong>UX Design Lead</strong> and given the job of redesigning how the whole authority met the public online. I also served as <strong>Secretary of the Design Committee</strong>, which meant making the case for design decisions in rooms full of lawyers, engineers and officials.</p>
+            <p>I led the end-to-end redesign of the MahaRERA website, then turned to the online application portal, the system behind almost every interaction a builder, agent or homebuyer has with the regulator.</p>
+            <ul class="shipped" aria-label="What the portal redesign covered">
+              <li>Project registration <span>for promoters</span></li>
+              <li>Agent registration <span>for real estate agents</span></li>
+              <li>Complaint module <span>for homebuyers</span></li>
+              <li>Application processing <span>for authority approval</span></li>
+            </ul>
+            <p class="mt-6">The result I'm proudest of isn't a screen. An office that once ran on paper files, signatures and stamps became a <strong>paperless office</strong>. Applications that used to travel from desk to desk now moved through one shared system.</p>
+          </div>
+        </article>
+
+        <article class="stop" data-title="Kingston University" data-loc="london">
+          <div class="stop-meta">
+            <div class="stop-place">London</div>
+            <div class="stop-when">January 2025 · Kingston University</div>
+          </div>
+          <div class="story">
+            <h3>Going back to school, on purpose</h3>
+            <p>Leading a project at that scale left me with one clear feeling: this is the work I want to do for the rest of my career. I wanted the theory and research rigour behind the instincts I'd built on the job.</p>
+            <p>So in January 2025 I packed up, moved to London and started a Master's in <strong>User Experience Design at Kingston University</strong>. New city, new classmates, and a chance to test everything I thought I knew.</p>
+          </div>
+        </article>
+
+        <article class="stop" data-title="Today" data-loc="london">
+          <div class="stop-meta">
+            <div class="stop-place">London</div>
+            <div class="stop-when">2026 · MSc UX Design, with Merit</div>
+          </div>
+          <div class="story">
+            <h3>Officially a UX designer</h3>
+            <p>In 2026 I graduated with <strong>Merit</strong>. Officially, a UX designer, though in practice I'd been one since the day I watched a homebuyer struggle with a form I helped write.</p>
+            <p>I still think like a planner. I look at the whole system first, then design for the one person standing in it.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= BLOGS & WRITE-UPS ================= -->
+  <!-- TODO: replace href="#" with links to your real articles, and blogs.html with your blog listing page -->
+  <section id="blogs" class="bg-white border-t border-zinc-200 py-20 md:py-24" data-title="Blogs">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="row-head text-ink">
+        <div>
+          <h2 class="row-title">Blogs &amp; write-ups</h2>
+          <p class="mt-2 text-zinc-600">Notes on research, public services and design decisions.</p>
+        </div>
+        <div class="row-controls">
+            <button type="button" class="row-arrow" data-dir="-1" aria-label="Scroll left"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+            <button type="button" class="row-arrow" data-dir="1" aria-label="Scroll right"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
+            <a href="blogs.html" class="view-more text-ink hover:bg-[#ff5f00] hover:text-white">View more <i class="fa-solid fa-chevron-right text-xs ml-1" aria-hidden="true"></i></a>
+        </div>
+      </div>
+      <div class="row-track">
+          <a href="#" class="post">
+            <div class="post-img"><img src="usability-hero.webp" alt="" loading="lazy"></div>
+            <div class="post-body">
+              <span class="post-tag">Usability</span>
+              <h3>What I learned watching people use a government portal</h3>
+              <p>Small moments of hesitation told us more than any analytics dashboard.</p>
+              <span class="post-read">Read article</span>
+            </div>
+          </a>
+          <a href="#" class="post">
+            <div class="post-img"><img src="survey-hero.webp" alt="" loading="lazy"></div>
+            <div class="post-body">
+              <span class="post-tag">Research</span>
+              <h3>Designing mobile-first for a regulator</h3>
+              <p>Why our survey changed how we thought about MahaRERA on phones.</p>
+              <span class="post-read">Read article</span>
+            </div>
+          </a>
+          <a href="#" class="post">
+            <div class="post-img"><img src="research-hero.webp" alt="" loading="lazy"></div>
+            <div class="post-body">
+              <span class="post-tag">Process</span>
+              <h3>How we found out what users actually needed</h3>
+              <p>Turning complaints, calls and data into clear design priorities.</p>
+              <span class="post-read">Read article</span>
+            </div>
+          </a>
+          <a href="#" class="post">
+            <div class="post-img"><img src="Homebuyer.webp" alt="" loading="lazy"></div>
+            <div class="post-body">
+              <span class="post-tag">Case note</span>
+              <h3>Designing for homebuyers who don't know what to search for</h3>
+              <p>Search is easy when you know the project number. Most people don't.</p>
+              <span class="post-read">Read article</span>
+            </div>
+          </a>
+          <a href="#" class="post">
+            <div class="post-img"><img src="introillustration.webp" alt="" loading="lazy"></div>
+            <div class="post-body">
+              <span class="post-tag">Public services</span>
+              <h3>From paper files to a paperless office</h3>
+              <p>What it takes to move a whole authority onto one shared system.</p>
+              <span class="post-read">Read article</span>
+            </div>
+          </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= OTHER WORK (Netflix-style row) ================= -->
+  <section id="other-work" class="bg-[#18191b] py-20 md:py-24 text-white" data-title="Other Work">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="row-head">
+        <div>
+          <h2 class="row-title">Other work</h2>
+          <p class="mt-2 text-zinc-400">Concepts, visuals and side projects.</p>
+        </div>
+        <div class="row-controls">
+            <button type="button" class="row-arrow" data-dir="-1" aria-label="Scroll left"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+            <button type="button" class="row-arrow" data-dir="1" aria-label="Scroll right"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
+            <a href="gallery.html" class="view-more text-white hover:bg-[#ff5f00]">View more <i class="fa-solid fa-chevron-right text-xs ml-1" aria-hidden="true"></i></a>
+        </div>
+      </div>
+      <div class="row-track">
+          <a href="gallery.html" class="tile">
+            <img src="MockupIYR-800.webp" alt="" loading="lazy">
+            <div class="tile-info"><h3>Imagine as You Read</h3><p>Mobile app concept</p></div>
+          </a>
+          <a href="gallery.html" class="tile">
+            <img src="concept-800.webp" alt="" loading="lazy">
+            <div class="tile-info"><h3>The Grid Is Lying</h3><p>Poster series</p></div>
+          </a>
+          <a href="gallery.html" class="tile">
+            <img src="mockup-800.webp" alt="" loading="lazy">
+            <div class="tile-info"><h3>MahaRERA digital suite</h3><p>Responsive web design</p></div>
+          </a>
+          <a href="gallery.html" class="tile">
+            <img src="newwebsite-800.webp" alt="" loading="lazy">
+            <div class="tile-info"><h3>MahaRERA homepage</h3><p>Website redesign</p></div>
+          </a>
+          <a href="gallery.html" class="tile">
+            <img src="intro-800.webp" alt="" loading="lazy">
+            <div class="tile-info"><h3>About MahaRERA</h3><p>Visual communication</p></div>
+          </a>
+          <a href="gallery.html" class="tile">
+            <img src="realestate-800.webp" alt="" loading="lazy">
+            <div class="tile-info"><h3>Real estate illustration set</h3><p>Illustration</p></div>
+          </a>
+          <a href="gallery.html" class="tile tile-more">
+            <span class="circle"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+            View more
+          </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= TESTIMONIALS =================
+       Quotes copied from the CD_2 Preloader page.
+       PHOTOS: drop an image into this folder with the filename in each <img> (e.g. testimonial-vasant-prabhu.jpg)
+       and it replaces the initials automatically. -->
+  <section id="testimonials" class="py-20 md:py-24" data-title="Testimonials">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="row-head text-ink">
+        <div>
+          <h2 class="row-title">What people say</h2>
+          <p class="mt-2 text-zinc-600">From colleagues, managers and classmates I've worked with.</p>
+        </div>
+        <div class="row-controls">
+            <button type="button" class="row-arrow" data-dir="-1" aria-label="Scroll left"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+            <button type="button" class="row-arrow" data-dir="1" aria-label="Scroll right"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
+        </div>
+      </div>
+      <div class="row-track quote-track">
+        <figure class="quote-card">
+          <div class="quote-mark" aria-hidden="true">&ldquo;</div>
+          <blockquote>During his seven years at MahaRERA, Ganesh drove key policy decisions and digital transformations, progressing to Assistant Manager and UX Designer. As secretary of the design committee, his user-centric approach and technical expertise significantly enhanced our digital platforms. Combining innovative problem-solving with strong leadership, Ganesh is an invaluable asset to any team.</blockquote>
+          <figcaption class="quote-who">
+            <span class="quote-avatar" aria-hidden="true">VP<img src="testimonial-vasant-prabhu.jpg" alt="" loading="lazy" onload="this.classList.add('is-loaded')" onerror="this.remove()"></span>
+            <span class="quote-name"><strong>Vasant Prabhu</strong><span>Former Secretary, MahaRERA</span></span>
+          </figcaption>
+          <a href="https://www.linkedin.com/in/gjuxdesigner/overlay/Certifications/560312584/treasury/?profileId=ACoAABcRq6wBhHBK8GPHH-6qrfjkNpp67T5ep6g" target="_blank" rel="noopener" class="quote-link">View endorsement <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg><span class="sr-only"> on LinkedIn (opens in new tab)</span></a>
+        </figure>
+
+        <figure class="quote-card">
+          <div class="quote-mark" aria-hidden="true">&ldquo;</div>
+          <blockquote>Ganesh significantly improved the user experience of MahaRERA's digital platforms by simplifying complex workflows and making critical regulatory information accessible. His unique blend of analytical expertise and user-centered design was invaluable to our operational efficiency.</blockquote>
+          <figcaption class="quote-who">
+            <span class="quote-avatar" aria-hidden="true">JJ<img src="testimonial-jitendra-joshi.jpg" alt="" loading="lazy" onload="this.classList.add('is-loaded')" onerror="this.remove()"></span>
+            <span class="quote-name"><strong>Jitendra Joshi</strong><span>IT Manager, MahaRERA</span></span>
+          </figcaption>
+          <span class="quote-link" aria-hidden="true" style="visibility:hidden">View endorsement</span>
+        </figure>
+
+        <figure class="quote-card">
+          <div class="quote-mark" aria-hidden="true">&ldquo;</div>
+          <blockquote>While working closely with Ganesh at MahaRERA, he showed an exceptional ability to turn complex regulatory workflows into clear, user-friendly digital journeys. The redesigned platform is a direct testament to his precision and dedication to digital transformation.</blockquote>
+          <figcaption class="quote-who">
+            <span class="quote-avatar" aria-hidden="true">DH<img src="testimonial-dyaneshwar-hadadare.jpg" alt="" loading="lazy" onload="this.classList.add('is-loaded')" onerror="this.remove()"></span>
+            <span class="quote-name"><strong>Dnyaneshvar Hadadare</strong><span>Former Technical Dep. Head, MahaRERA</span></span>
+          </figcaption>
+          <a href="https://www.linkedin.com/in/dnyaneshvar-hadadare-2042883b/" target="_blank" rel="noopener" class="quote-link">View endorsement <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg><span class="sr-only"> on LinkedIn (opens in new tab)</span></a>
+        </figure>
+
+        <figure class="quote-card">
+          <div class="quote-mark" aria-hidden="true">&ldquo;</div>
+          <blockquote>Collaborating with Ganesh during our university days was a fantastic experience. His expertise in graphic design and event planning single-handedly elevated the quality of every project we touched. He possesses a sharp eye for aesthetics and a natural instinct for creating memorable, user-centered designs.</blockquote>
+          <figcaption class="quote-who">
+            <span class="quote-avatar" aria-hidden="true">SS<img src="testimonial-sukhbir-singh.jpg" alt="" loading="lazy" onload="this.classList.add('is-loaded')" onerror="this.remove()"></span>
+            <span class="quote-name"><strong>Sukhbir Singh</strong><span>Design Manager, PeepalDesign</span></span>
+          </figcaption>
+          <a href="https://www.linkedin.com/in/sukhbir-singh-36a4a1137/" target="_blank" rel="noopener" class="quote-link">View endorsement <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg><span class="sr-only"> on LinkedIn (opens in new tab)</span></a>
+        </figure>
+
+        <figure class="quote-card">
+          <div class="quote-mark" aria-hidden="true">&ldquo;</div>
+          <blockquote>Ganesh and I worked together during the MahaRERA digital redesign, and it was an amazing journey. He is a brilliant UX designer who is always looking for the best ways to improve the user experience and grow in his field. He is a natural design lead who keeps the team united and truly believes in the power of collaboration. Ganesh is incredibly passionate about his craft and never hesitates to step up and help his peers whenever they need it.</blockquote>
+          <figcaption class="quote-who">
+            <span class="quote-avatar" aria-hidden="true">AC<img src="testimonial-akkashh-chauhaan.jpg" alt="" loading="lazy" onload="this.classList.add('is-loaded')" onerror="this.remove()"></span>
+            <span class="quote-name"><strong>Akkashh Chauhaan</strong><span>Former Sr. Technical Advisor, MahaRERA</span></span>
+          </figcaption>
+          <a href="https://www.linkedin.com/in/akc-rising/" target="_blank" rel="noopener" class="quote-link">View endorsement <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg><span class="sr-only"> on LinkedIn (opens in new tab)</span></a>
+        </figure>
+
+        <figure class="quote-card">
+          <div class="quote-mark" aria-hidden="true">&ldquo;</div>
+          <blockquote>During our Town Planning programme, Ganesh Javhare was the go-to design expert whose sketching, visualization, and creative projects consistently stood out. He was equally reliable on the technical side, always stepping in to calmly and quickly resolve software or computer issues for everyone. With his rare blend of artistic talent and technical problem-solving skills, Ganesh is a highly resourceful addition to any team.</blockquote>
+          <figcaption class="quote-who">
+            <span class="quote-avatar" aria-hidden="true">MC<img src="testimonial-mayur-chaure.jpg" alt="" loading="lazy" onload="this.classList.add('is-loaded')" onerror="this.remove()"></span>
+            <span class="quote-name"><strong>Mayur Chaure</strong><span>Design Consultant, Anumana</span></span>
+          </figcaption>
+          <a href="https://www.linkedin.com/in/mayur-chaure/" target="_blank" rel="noopener" class="quote-link">View endorsement <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg><span class="sr-only"> on LinkedIn (opens in new tab)</span></a>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= NEXT STOP ================= -->
+  <section id="next" class="bg-white border-t border-zinc-200 py-24" data-title="Contact">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+      <p class="aside-note inline-block mb-4">Next stop</p>
+      <h2 class="font-['Syne'] font-extrabold text-4xl md:text-5xl tracking-tight leading-tight text-ink">Got a complicated service that should feel simple?</h2>
+      <p class="mt-5 text-lg text-zinc-600 max-w-[48ch] mx-auto">I'm open to full-time roles, freelance projects and good conversations about public services and PropTech.</p>
+      <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="newsimple1.html#work" class="inline-flex items-center justify-center gap-3 bg-[#ff5f00] text-white px-8 py-4 rounded-full font-bold hover:bg-[#e65500] hover:-translate-y-1 transition-all duration-300 shadow-xl shadow-[#ff5f00]/30">See my case studies</a>
+        <a href="newsimple1.html#contact" class="inline-flex items-center justify-center gap-3 border-2 border-zinc-300 text-ink px-8 py-4 rounded-full font-bold hover:border-[#ff5f00] hover:text-[#ff5f00] transition-colors duration-300">Get in touch</a>
+      </div>
+    </div>
+  </section>
+  </main>
+
+  <!-- HTML Sitemap -->
+  <nav aria-label="Sitemap" class="py-12 bg-white border-t border-zinc-200 text-center">
+    <h2 class="text-lg font-bold text-ink mb-6 font-['Syne']">Sitemap</h2>
+    <div class="flex flex-wrap justify-center gap-8">
+      <a href="https://www.gjuxdesign.in/" class="text-zinc-500 hover:text-[#ff5f00] font-semibold transition">Home</a>
+      <a href="about.html" class="text-[#ff5f00] font-semibold" aria-current="page">About</a>
+      <a href="gallery.html" class="text-zinc-500 hover:text-[#ff5f00] font-semibold transition">Gallery</a>
+      <a href="projects.html" class="text-zinc-500 hover:text-[#ff5f00] font-semibold transition">Projects</a>
+    </div>
+  </nav>
+
+  <!-- Footer -->
+  <footer class="bg-white py-8 px-6 border-t border-zinc-100 flex flex-col md:flex-row justify-between items-center gap-6">
+    <div class="font-bold text-xl text-ink font-['Syne']">Ganesh Javhare<span class="text-[#ff5f00]">.</span></div>
+    <div class="text-sm font-semibold text-zinc-400 text-center tracking-wide">© 2026 Ganesh Javhare · Crafted with care in London</div>
+    <div class="flex gap-4">
+      <a href="https://www.linkedin.com/in/gjuxdesigner" target="_blank" rel="noopener" class="w-10 h-10 bg-zinc-50 border border-zinc-200 rounded-xl flex items-center justify-center text-zinc-400 hover:border-[#ff5f00] hover:text-[#ff5f00] hover:bg-white hover:-translate-y-1 transition-all font-bold" aria-label="LinkedIn">in</a>
+      <a href="https://github.com/gjavhareux-design" target="_blank" rel="noopener" class="w-10 h-10 bg-zinc-50 border border-zinc-200 rounded-xl flex items-center justify-center text-zinc-400 hover:border-[#ff5f00] hover:text-[#ff5f00] hover:bg-white hover:-translate-y-1 transition-all font-bold" aria-label="GitHub">Git</a>
+      <a href="https://www.behance.net/ganeshjavhare" target="_blank" rel="noopener" class="w-10 h-10 bg-zinc-50 border border-zinc-200 rounded-xl flex items-center justify-center text-zinc-400 hover:border-[#ff5f00] hover:text-[#ff5f00] hover:bg-white hover:-translate-y-1 transition-all font-bold" aria-label="Behance">Bé</a>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const bar = document.getElementById('progress');
+      const navCh = document.getElementById('navChapter');
+      const titled = document.querySelectorAll('section[data-title], .stop[data-title]');
+      const journeySteps = [...document.querySelectorAll('.journey-intro, .stop')];
+      let activeStep = -1;
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function onScroll() {
+        // Header: reading progress + current section name (same behaviour as the case study)
+        const h = document.documentElement;
+        bar.style.width = (h.scrollTop / (h.scrollHeight - h.clientHeight) * 100) + '%';
+        let current = 'About Me';
+        titled.forEach(el => {
+          if (el.getBoundingClientRect().top < window.innerHeight * 0.4) current = el.dataset.title;
+        });
+        const label = current === 'About Me' ? 'About Me' : 'About Me · ' + current;
+        if (navCh.textContent !== label) {
+          navCh.style.opacity = 0;
+          setTimeout(() => { navCh.textContent = label; navCh.style.opacity = 1; }, 150);
+        }
+
+        // Journey: the step whose top has passed 55% of the screen is the active one
+        let idx = 0;
+        const trigger = window.innerHeight * (window.innerWidth < 900 ? 0.78 : 0.55);   // phones: wait until the heading is below the pinned globe
+        journeySteps.forEach((el, i) => { if (el.getBoundingClientRect().top < trigger) idx = i; });
+        if (idx !== activeStep) {
+          activeStep = idx;
+          journeySteps.forEach((el, i) => el.classList.toggle('is-active', i === idx));
+          window.journeyGlobe && window.journeyGlobe.go(idx);
+        }
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll);
+      onScroll();
+
+
+      // Row arrows (blogs + other work)
+      document.querySelectorAll('.row-head').forEach(head => {
+        const track = head.parentElement.querySelector('.row-track');
+        const btns = head.querySelectorAll('.row-arrow');
+        const update = () => {
+          btns[0].disabled = track.scrollLeft < 4;
+          btns[1].disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 4;
+        };
+        btns.forEach(b => b.addEventListener('click', () => {
+          track.scrollBy({ left: Number(b.dataset.dir) * track.clientWidth * 0.85, behavior: reduce ? 'auto' : 'smooth' });
+        }));
+        track.addEventListener('scroll', update, { passive: true });
+        window.addEventListener('resize', update);
+        update();
+      });
+
+      /* ===== Avatar menu (tap to open on touch screens) ===== */
+      document.querySelectorAll('.nav-me').forEach(me => {
+        const btn = me.querySelector('button');
+        btn.addEventListener('click', e => { e.stopPropagation(); const o = me.classList.toggle('open'); btn.setAttribute('aria-expanded', o); });
+        document.addEventListener('click', () => { me.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); });
+        me.addEventListener('keydown', e => { if (e.key === 'Escape') { me.classList.remove('open'); btn.focus(); } });
+      });
+    });
+  </script>
+  <!-- ================= JOURNEY GLOBE =================
+       Built the same way as the globe in the CD_2 preloader page (Three.js r128):
+       light sphere, faint lat/long grid, country outlines, orange pulsing marker.
+       LOCATIONS: edit names, meanings and coordinates here. -->
+  <script>
+  function initJourneyGlobe() {
+    if (initJourneyGlobe.done) return; initJourneyGlobe.done = true;
+    const LOCATIONS = {
+      jamner: { name: 'Jamner', full: 'Jamner, Maharashtra, India', lat: 20.8094, lon: 75.7789,  meaning: 'Birthplace (जन्मभूमि)' },
+      pune:   { name: 'Pune',   full: 'Pune, Maharashtra, India',   lat: 18.5167, lon: 73.8563,  meaning: 'Land of education (विद्याभूमि)' },
+      mumbai: { name: 'Mumbai', full: 'Mumbai, Maharashtra, India', lat: 19.0760, lon: 72.8777,  meaning: 'Land of work (कर्मभूमि)' },
+      london: { name: 'London', full: 'London, United Kingdom',     lat: 51.5074, lon: -0.1278,  meaning: 'Land of vision (संकल्पभूमि)' }
+    };
+    const ROUTE = ['jamner', 'pune', 'mumbai', 'london'];           // order the journey line is drawn in
+    const steps = [...document.querySelectorAll('.journey-intro, .stop')].map(el => ({
+      loc: el.dataset.loc, far: el.dataset.far === '1'
+    }));
+
+    const stage = document.getElementById('globeStage');
+    const canvas = document.getElementById('globeCanvas');
+    const tag = document.getElementById('globeTag');
+    const tagPlace = document.getElementById('tagPlace');
+    const tagDms = document.getElementById('tagDms');
+    const capStep = document.getElementById('capStep');
+    const capPlace = document.getElementById('capPlace');
+    // The spin always plays, even when the device's "reduce motion" / "animation effects off" setting is on.
+    // Change to true to respect that setting (the globe will then jump straight to each place).
+    const RESPECT_REDUCED_MOTION = false;
+    const reduce = RESPECT_REDUCED_MOTION && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const D2R = Math.PI / 180;
+
+    function setCaption(i) {
+      const L = LOCATIONS[steps[i].loc];
+      tagPlace.textContent = L.name; tagDms.textContent = L.meaning;
+      capPlace.textContent = L.full;
+      const n = steps.filter(s => !s.far).length;
+      const k = steps.slice(0, i + 1).filter(s => !s.far).length;
+      capStep.textContent = (k || 1) + ' / ' + n;
+    }
+
+    // No WebGL / Three.js: keep the caption working, hide the globe
+    let gl = null;
+    try { gl = typeof THREE !== 'undefined' && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')); } catch (e) {}
+    if (!gl) {
+      tag.style.display = 'none';
+      window.journeyGlobe = { go: setCaption };
+      setCaption(Math.max(0, [...document.querySelectorAll('.journey-intro, .stop')].findIndex(e => e.classList.contains('is-active'))));
+      return;
+    }
+
+    // ---------- scene (same build as the preloader globe) ----------
+    let visible = true, rafId = 0, time = 0;
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 2000);
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+
+    const radius = 240;
+    const globe = new THREE.Group();
+    scene.add(globe);
+
+    const sphere = new THREE.Mesh(
+      new THREE.SphereGeometry(radius, 64, 64),
+      new THREE.MeshBasicMaterial({ color: 0xfcf9f6, transparent: true, opacity: 0.97 })
+    );
+    globe.add(sphere);
+
+    // soft rim so the globe reads against the page background
+    const rimCanvas = document.createElement('canvas'); rimCanvas.width = rimCanvas.height = 256;
+    const rc = rimCanvas.getContext('2d');
+    const grad = rc.createRadialGradient(128, 128, 96, 128, 128, 128);
+    grad.addColorStop(0, 'rgba(54,56,61,0)'); grad.addColorStop(0.82, 'rgba(54,56,61,0.10)'); grad.addColorStop(1, 'rgba(54,56,61,0)');
+    rc.fillStyle = grad; rc.fillRect(0, 0, 256, 256);
+    const rim = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(rimCanvas), depthWrite: false, transparent: true }));
+    rim.scale.set(radius * 2.65, radius * 2.65, 1);
+    rim.renderOrder = -1;
+    scene.add(rim);
+
+    const gridMat = new THREE.LineBasicMaterial({ color: 0xc8c6d0, transparent: true, opacity: 0.35 });
+    for (let la = -80; la <= 80; la += 20) {
+      const r = (radius + 0.2) * Math.cos(la * D2R), y = (radius + 0.2) * Math.sin(la * D2R);
+      const c = new THREE.Line(new THREE.BufferGeometry().setFromPoints(new THREE.EllipseCurve(0, 0, r, r, 0, 2 * Math.PI).getPoints(96)), gridMat);
+      c.rotation.x = Math.PI / 2; c.position.y = y; globe.add(c);
+    }
+    for (let lo = 0; lo < 180; lo += 20) {
+      const c = new THREE.Line(new THREE.BufferGeometry().setFromPoints(new THREE.EllipseCurve(0, 0, radius + 0.2, radius + 0.2, 0, 2 * Math.PI).getPoints(96)), gridMat);
+      c.rotation.y = lo * D2R; globe.add(c);
+    }
+
+    // lat/lon -> 3D point (same formula as the preloader globe)
+    function toVec(lat, lon, r) {
+      const phi = (90 - lat) * D2R, theta = (lon + 90) * D2R;
+      return new THREE.Vector3(-(r * Math.sin(phi) * Math.cos(theta)), r * Math.cos(phi), r * Math.sin(phi) * Math.sin(theta));
+    }
+
+    // country outlines
+    const mapMat = new THREE.LineBasicMaterial({ color: 0x9a98a8, transparent: true, opacity: 0.6 });
+    fetch('countries.geo.json')
+      .then(r => r.json())
+      .then(data => {
+        const line = coords => {
+          let pts = [];
+          coords.forEach((c, i) => {
+            if (i > 0 && Math.abs(c[0] - coords[i - 1][0]) > 180) {
+              if (pts.length > 1) globe.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), mapMat));
+              pts = [];
+            }
+            pts.push(toVec(c[1], c[0], radius + 0.3));
+          });
+          if (pts.length > 1) globe.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), mapMat));
+        };
+        data.features.forEach(f => {
+          if (!f.geometry) return;
+          if (f.geometry.type === 'Polygon') f.geometry.coordinates.forEach(line);
+          else if (f.geometry.type === 'MultiPolygon') f.geometry.coordinates.forEach(p => p.forEach(line));
+        });
+        requestRender();
+      })
+      .catch(() => { gridMat.opacity = 0.6; });
+
+    // ---------- markers ----------
+    const GREY = new THREE.Color(0x9a98a8), INK = new THREE.Color(0x36383d);
+    const markers = {};
+    Object.entries(LOCATIONS).forEach(([key, L]) => {
+      const g = new THREE.Group();
+      g.position.copy(toVec(L.lat, L.lon, radius + 1));
+      g.lookAt(g.position.clone().multiplyScalar(2));
+      const dotMat = new THREE.MeshBasicMaterial({ color: 0x9a98a8, side: THREE.DoubleSide });
+      const dot = new THREE.Mesh(new THREE.CircleGeometry(1.4, 32), dotMat);
+      const innerMat = new THREE.MeshBasicMaterial({ color: 0xff5f00, transparent: true, opacity: 0, side: THREE.DoubleSide });
+      const inner = new THREE.Mesh(new THREE.RingGeometry(2.1, 3.3, 32), innerMat);
+      const pulseMat = new THREE.MeshBasicMaterial({ color: 0xff5f00, transparent: true, opacity: 0, side: THREE.DoubleSide });
+      const pulse = new THREE.Mesh(new THREE.RingGeometry(4, 5.4, 32), pulseMat);
+      g.add(dot, inner, pulse);
+      globe.add(g);
+      markers[key] = { g, dotMat, innerMat, pulse, pulseMat, on: 0 };
+    });
+
+    // ---------- journey arcs (drawn as you progress) ----------
+    const arcs = [];
+    for (let i = 0; i < ROUTE.length - 1; i++) {
+      const A = LOCATIONS[ROUTE[i]], B = LOCATIONS[ROUTE[i + 1]];
+      const a = toVec(A.lat, A.lon, 1).normalize(), b = toVec(B.lat, B.lon, 1).normalize();
+      const ang = a.angleTo(b), lift = Math.min(0.02 + ang * 0.22, 0.25);
+      const pts = [];
+      for (let t = 0; t <= 1.0001; t += 1 / 96) {
+        // spherical interpolation, lifted off the surface in the middle
+        const s1 = Math.sin((1 - t) * ang) / Math.sin(ang), s2 = Math.sin(t * ang) / Math.sin(ang);
+        const v = a.clone().multiplyScalar(s1).add(b.clone().multiplyScalar(s2));
+        pts.push(v.multiplyScalar(radius * (1.003 + lift * Math.sin(Math.PI * t))));
+      }
+      const geo = new THREE.BufferGeometry().setFromPoints(pts);
+      geo.setDrawRange(0, 0);
+      const ln = new THREE.Line(geo, new THREE.LineBasicMaterial({ color: 0xff5f00, transparent: true, opacity: 0.9 }));
+      globe.add(ln);
+      arcs.push({ geo, count: pts.length, shown: 0, target: 0 });
+    }
+
+    // ---------- camera targets ----------
+    // rotation.y brings the longitude to the front, rotation.x tilts the latitude to the centre
+    function viewFor(step) {
+      const L = LOCATIONS[step.loc];
+      const india = step.loc !== 'london';
+      return {
+        ry: -L.lon * D2R,
+        rx: (L.lat - (india ? 2 : 4)) * D2R,
+        z: step.far ? 620 : (india ? 390 : 420)
+      };
+    }
+    const cur = { ry: 0, rx: 0, z: 900 };
+    let from = null, to = null, t0 = 0, dur = 1, bump = 0;
+    let active = 0, lastIdx = 0, settled = true, lastNow = 0;
+
+    function go(i) {
+      active = i;
+      setCaption(i);
+      const step = steps[i];
+      // which arcs should be drawn: every leg up to the current location
+      const reached = ROUTE.indexOf(step.loc);
+      arcs.forEach((a, k) => { a.target = (!step.far && k < reached) ? 1 : 0; });
+      Object.entries(markers).forEach(([k, m]) => m.target = (k === step.loc && !step.far) ? 1 : 0);
+
+      to = viewFor(step);
+      from = { ...cur };
+      // Turn the globe only by the real distance between the two places, the short way round.
+      lastIdx = i;
+      const TWO_PI = 2 * Math.PI;
+      const diff = ((to.ry - from.ry) % TWO_PI + 3 * Math.PI) % TWO_PI - Math.PI;   // shortest turn, -π..π
+      to.ry = from.ry + diff;
+      const dist = Math.abs(diff) + Math.abs(to.rx - from.rx);                      // radians travelled
+      // longer journeys take longer: a short hop ≈ 1.2 s, Mumbai → London ≈ 4 s, never more than 5 s
+      dur = reduce ? 1 : Math.min(5000, 1200 + dist * 2200);
+      bump = reduce ? 0 : Math.min(dist * 160, 180);                                 // pull back a little on long trips
+      settled = false;
+      t0 = performance.now();
+      requestRender();
+    }
+    window.journeyGlobe = { go };
+
+    // ---------- sizing ----------
+    function resize() {
+      const w = stage.clientWidth, h = stage.clientHeight;
+      if (!w || !h) return;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      // keep the globe the same visual size whether the stage is wide or tall
+      camera.fov = w >= h ? 45 : 2 * Math.atan(Math.tan(22.5 * D2R) / camera.aspect) / D2R;
+      camera.updateProjectionMatrix();
+      requestRender();
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // ---------- render loop (only while the section is on screen) ----------
+    const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    function requestRender() { if (!rafId && visible) rafId = requestAnimationFrame(frame); }
+    const tmp = new THREE.Vector3();
+
+    function frame(now) {
+      rafId = 0;
+      let moving = false;
+      if (to && !settled) {
+        const t = Math.min(1, (now - t0) / dur), e = ease(t);
+        cur.ry = from.ry + (to.ry - from.ry) * e;
+        cur.rx = from.rx + (to.rx - from.rx) * e;
+        cur.z = from.z + (to.z - from.z) * e + bump * Math.sin(Math.PI * e);
+        if (t < 1) moving = true; else settled = true;
+      }
+      // opening view: keep the globe turning slowly until the first place is reached
+      const dt = Math.min(0.1, (now - (lastNow || now)) / 1000); lastNow = now;
+      if (steps[active].far && !reduce && (!to || now - t0 > dur)) { cur.ry += 0.15 * dt; moving = true; }   // ≈ 8.6° per second
+      globe.rotation.set(cur.rx, cur.ry, 0);
+      camera.position.set(0, 0, cur.z);
+
+      // arcs draw in / out
+      arcs.forEach(a => {
+        const step = reduce ? 1 : 0.025;
+        if (a.shown < a.target) a.shown = Math.min(a.target, a.shown + step);
+        else if (a.shown > a.target) a.shown = Math.max(a.target, a.shown - step * 2);
+        if (a.shown !== a.target) moving = true;
+        a.geo.setDrawRange(0, Math.floor(a.shown * a.count));
+      });
+
+      // markers: active one turns orange and pulses
+      time += 0.04;
+      Object.values(markers).forEach(m => {
+        m.on += ((m.target || 0) - m.on) * (reduce ? 1 : 0.12);
+        m.innerMat.opacity = 0.95 * m.on;
+        m.dotMat.color.copy(GREY).lerp(INK, m.on);
+        const sc = 1 + (reduce ? 0.3 : (Math.sin(time) * 0.5 + 0.5) * 0.9);
+        m.pulse.scale.set(sc, sc, sc);
+        m.pulseMat.opacity = m.on * Math.max(0, 0.6 - (sc - 1) * 0.6);
+        if (m.on > 0.01) moving = true;
+      });
+
+      renderer.render(scene, camera);
+
+      // HTML label follows the active marker
+      const step = steps[active];
+      const m = markers[step.loc];
+      if (m && !step.far) {
+        m.g.getWorldPosition(tmp);
+        const facing = tmp.clone().normalize().dot(camera.position.clone().sub(tmp).normalize()) > 0.15;
+        tmp.project(camera);
+        const x = (tmp.x * 0.5 + 0.5) * stage.clientWidth, y = (-tmp.y * 0.5 + 0.5) * stage.clientHeight;
+        tag.style.left = x + 'px'; tag.style.top = y + 'px';
+        // wide screens: label sits to the right of the marker; phones: centred above it
+        tag.style.transform = stage.clientWidth < 560 ? 'translate(-50%, calc(-100% - 16px))'
+          : (x + tag.offsetWidth + 28 > stage.clientWidth * 0.9 ? 'translate(calc(-100% - 14px), -50%)' : 'translate(14px, -50%)');
+        tag.style.opacity = (facing && (!to || performance.now() - t0 > dur * 0.85)) ? 1 : 0;
+      } else {
+        tag.style.opacity = 0;
+      }
+
+      if (moving) requestRender();
+    }
+
+    new IntersectionObserver(entries => {
+      visible = entries[0].isIntersecting;
+      if (visible) requestRender();
+    }).observe(stage);
+
+    const startIdx = Math.max(0, [...document.querySelectorAll('.journey-intro, .stop')].findIndex(e => e.classList.contains('is-active')));
+    go(startIdx);
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    if (window.THREE) return initJourneyGlobe();
+    const three = document.getElementById('three-js');
+    three.addEventListener('load', initJourneyGlobe);
+    three.addEventListener('error', initJourneyGlobe);   // no Three.js: caption still works, globe hidden
+  });
+  </script>
+</body>
+</html>
