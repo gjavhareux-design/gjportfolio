@@ -98,3 +98,20 @@ Stock and placeholder images were one of the clearest gaps in earlier reviews of
 
 **Next**
 - Write up the Imagine As You Read, FocusXR and XP Sarthi case studies in `projects/<name>/` and link the cards to them. The cards currently link to `#`.
+
+---
+
+## Update — 15 October 2026 (afternoon): two more case studies
+
+**What I did**
+- Published the **Imagine As You Read** case study (`projects/imagine-as-you-read/`), rebuilt from the earlier draft in the archive. It covers research numbers, personas, MoSCoW prioritisation, four prototype fidelities, usability results and the two iterations they drove.
+- Published **FocusXR** (`projects/focusxr/`) as a clearly labelled *concept study*, built from my Kingston University assignment on social superpowers in XR. It covers the research behind it, Kolb's learning cycle, the six superpowers, and the risks a real version would have to handle.
+- Both pages use the same page system and five chapters as the MahaRERA case study (Introduction, Discover, Define, Develop, Deliver), so every case study reads the same way.
+- On the homepage, FocusXR moved to the end of the academic grid, after ZenSphere, and is tagged "Concept". The case studies now link to each other in a loop.
+
+**Why**
+A consistent structure lets a reviewer compare projects instead of re-learning each page. Labelling FocusXR as a concept, and saying plainly that its visuals are AI-generated and nothing was tested, keeps the portfolio honest about what each project is evidence of. Tested work comes first in the grid; speculative work comes last.
+
+**Next**
+- Add real screens from the Imagine As You Read Figma prototype to its case study, plus a link to the prototype.
+- Write up XP Sarthi and ZenSphere.

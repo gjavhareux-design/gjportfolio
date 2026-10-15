@@ -13,9 +13,9 @@ This repository is the source of my portfolio. I design and build it myself, and
 | Project | What it covers | Link |
 |---|---|---|
 | **MahaRERA Portal & Website Redesign** | Redesigning a state regulator's public website and portal for homebuyers, promoters and agents | [Read the case study](https://www.gjuxdesign.in/projects/maharera/maharera-case-study.html) |
-| Imagine As You Read *(in progress)* | Research-led exploration of modern reading habits with AI-assisted, immersive storytelling (MSc project) | Coming back soon |
-| FocusXR *(case study coming soon)* | Immersive XR learning platform that turns lectures into interactive visual experiences, with AI tutor presence, live captions, notetaking and post-lecture analytics | Coming soon |
+| **Imagine As You Read** | AI-powered reading companion that turns selected text into visual scenes, only when the reader asks (MSc major project) | [Read the case study](https://www.gjuxdesign.in/projects/imagine-as-you-read/imagine-as-you-read-case-study.html) |
 | XP Sarthi *(case study coming soon)* | AI-powered AR travel companion that brings destinations to life with personalised recommendations, real-time storytelling and historical insights | Coming soon |
+| **FocusXR** *(concept)* | Conceptual XR classroom giving remote students social superpowers (focus control, rewind, live captions, embedded notes) and lecturers real-time engagement insight | [Read the concept study](https://www.gjuxdesign.in/projects/focusxr/focusxr-case-study.html) |
 
 ---
 
@@ -32,10 +32,10 @@ This repository is the source of my portfolio. I design and build it myself, and
 │       ├── css/                site.css
 │       ├── js/                 three.min.js
 │       └── images/             Small avatar, project thumbnails
-├── projects/
-│   └── maharera/
-│       ├── maharera-case-study.html
-│       └── assets/             Images belonging to this case study
+├── projects/                   One folder per case study: the page + its assets/
+│   ├── maharera/               MahaRERA website redesign
+│   ├── imagine-as-you-read/    Imagine As You Read (MSc major project)
+│   └── focusxr/                FocusXR (concept study)
 ├── docs/
 │   └── PROCESS.md              Design log: what changed, why, and how I iterate
 ├── archive/                    Earlier versions and unused assets, kept for reference
