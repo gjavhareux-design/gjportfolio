@@ -14,7 +14,8 @@ This repository is the source of my portfolio. I design and build it myself, and
 |---|---|---|
 | **MahaRERA Portal & Website Redesign** | Redesigning a state regulator's public website and portal for homebuyers, promoters and agents | [Read the case study](https://www.gjuxdesign.in/projects/maharera/maharera-case-study.html) |
 | Imagine As You Read *(in progress)* | Research-led exploration of modern reading habits with AI-assisted, immersive storytelling (MSc project) | Coming back soon |
-| FocusXR *(in progress)* | Academic project | Coming soon |
+| FocusXR *(case study coming soon)* | Immersive XR learning platform that turns lectures into interactive visual experiences, with AI tutor presence, live captions, notetaking and post-lecture analytics | Coming soon |
+| XP Sarthi *(case study coming soon)* | AI-powered AR travel companion that brings destinations to life with personalised recommendations, real-time storytelling and historical insights | Coming soon |
 
 ---
 

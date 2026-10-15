@@ -83,3 +83,18 @@ The case study is the core of the portfolio, so it gets versioned rather than ov
 **Still to add**
 - Case study images not uploaded yet: the About-MahaRERA intro graphic, three user photos, five old-site pain-point images and the hero image.
 - About page: one project thumbnail (`concept-800.webp`) and testimonial photos. The testimonials fall back to initials until the photos are added.
+
+---
+
+## Update — 15 October 2026 (afternoon): real project visuals on the homepage
+
+**What I did**
+- Replaced the placeholder thumbnails on the homepage's academic project cards with each project's key visual: **Imagine As You Read** and **FocusXR**.
+- Added a new project card, **XP Sarthi**, an AI-powered AR travel companion. The academic grid is now an even 2 × 2: Imagine, FocusXR, XP Sarthi, then ZenSphere (in progress).
+- Changed the academic cards from 3:2 to 16:9 frames so the key visuals show in full. The 3:2 frame cropped the project names and logos at the left edge.
+
+**Why**
+Stock and placeholder images were one of the clearest gaps in earlier reviews of the site. A reviewer judges a project card in a second or two, so the thumbnail should be the project itself, not a random photo. Matching the frame to the artwork keeps each project's name readable at a glance.
+
+**Next**
+- Write up the Imagine As You Read, FocusXR and XP Sarthi case studies in `projects/<name>/` and link the cards to them. The cards currently link to `#`.
