@@ -115,3 +115,21 @@ A consistent structure lets a reviewer compare projects instead of re-learning e
 **Next**
 - Add real screens from the Imagine As You Read Figma prototype to its case study, plus a link to the prototype.
 - Write up XP Sarthi and ZenSphere.
+
+---
+
+## Update — 26 October 2026: About page on phones
+
+**What was wrong**
+On a phone, the About page could be zoomed out and dragged sideways, and the journey globe ran ahead of the story. It showed the next city while you were still reading about the previous one.
+
+**What I found**
+Both problems had one cause. A hidden screen-reader label inside each testimonial link was positioned against the whole page instead of its scrolling row, so the page laid out about 1,770px wide on a 390px screen. The wider page also made the browser report the screen as roughly 3,400px tall, which made the globe's step changes fire early.
+
+**What I changed**
+- Scrolling rows now contain everything inside them, so the page is exactly as wide as the screen.
+- On portrait phones, the globe switches to a new stop once its heading is clearly in view below the pinned globe, and the stop you just finished fades less.
+- In landscape, phones get the side-by-side layout instead of a globe squeezed into a thin strip.
+
+**Why it matters**
+Most portfolio visits from recruiters happen on phones. A page that slides sideways reads as unfinished, and a story whose map disagrees with the text undoes the one interaction designed to make that section memorable.

@@ -229,8 +229,10 @@
 
     .journey-text { position: relative; z-index: 1; padding: 0 24px 12svh; }
     .journey-intro, .stop { min-height: 62svh; display: flex; flex-direction: column; justify-content: center; padding: 6svh 0; }
-    .stop { opacity: .25; transition: opacity .45s ease; }
+    /* phones: the stop you've just finished stays readable (lighter fade) */
+    .stop { opacity: .45; transition: opacity .45s ease; }
     .stop.is-active { opacity: 1; }
+    @media (min-width: 900px) { .stop { opacity: .25; } .stop.is-active { opacity: 1; } }
     .stop-meta { margin-bottom: 1.25rem; }
     .stop-place {
       font-family: 'Syne', sans-serif; font-weight: 800;
@@ -245,6 +247,17 @@
       .journey-text { padding: 0 6vw 20svh 3vw; }
       .journey-intro, .stop { min-height: 90svh; padding: 10svh 0; }
       .journey-intro { min-height: 100svh; }
+    }
+    /* Phones held sideways: too short to stack the globe above the text (it shrank to a
+       ~60px strip), so use the side-by-side layout with a tighter top padding. */
+    @media (max-width: 899px) and (min-width: 560px) and (orientation: landscape) {
+      .journey-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+      .globe-pane { height: 100svh; padding: 76px 8px 14px 16px; background: none; }
+      .globe-pane::after { display: none; }
+      .journey-text { padding: 0 20px 20svh 8px; }
+      .journey-intro, .stop { min-height: 100svh; padding: 12svh 0; }
+      .stop { opacity: .25; }
+      .stop.is-active { opacity: 1; }
     }
 
     .story { max-width: 62ch; font-size: 1.125rem; line-height: 1.75; color: #45474d; }
@@ -283,6 +296,10 @@
     .view-more { font-weight: 700; white-space: nowrap; padding: .55rem 1.1rem; border-radius: 999px; transition: background .2s, color .2s; }
 
     .row-track {
+      /* position: relative keeps absolutely-positioned children (e.g. the screen-reader
+         "opens in a new tab" labels inside links) inside the scroller. Without it they
+         escape to <body> and stretch the page sideways on phones. */
+      position: relative;
       display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scroll-padding-inline: 1.5rem;
       padding: .75rem 1.5rem 1.5rem; margin: 0 -1.5rem; scrollbar-width: none;
     }
@@ -810,6 +827,7 @@
       const navCh = document.getElementById('navChapter');
       const titled = document.querySelectorAll('section[data-title], .stop[data-title]');
       const journeySteps = [...document.querySelectorAll('.journey-intro, .stop')];
+      const globePane = document.querySelector('.globe-pane');
       let activeStep = -1;
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -827,9 +845,18 @@
           setTimeout(() => { navCh.textContent = label; navCh.style.opacity = 1; }, 150);
         }
 
-        // Journey: the step whose top has passed 55% of the screen is the active one
+        // Journey: the step whose top has passed the trigger line is the active one.
+        // Wide screens: 55% down the screen. Phones: the globe is pinned across the top, so the
+        // line sits 40% of the way down the reading area *below* the globe. A new stop takes over
+        // once its heading is comfortably in view, and the previous stop has mostly scrolled away.
         let idx = 0;
-        const trigger = window.innerHeight * (window.innerWidth < 900 ? 0.78 : 0.55);   // phones: wait until the heading is below the pinned globe
+        let trigger = window.innerHeight * 0.55;
+        // "Stacked" = the globe is pinned across the top (portrait phones), not beside the text.
+        const stacked = globePane && globePane.getBoundingClientRect().width > window.innerWidth * 0.8;
+        if (stacked) {
+          const paneBottom = Math.max(0, globePane.getBoundingClientRect().bottom);
+          trigger = paneBottom + (window.innerHeight - paneBottom) * 0.4;
+        }
         journeySteps.forEach((el, i) => { if (el.getBoundingClientRect().top < trigger) idx = i; });
         if (idx !== activeStep) {
           activeStep = idx;
