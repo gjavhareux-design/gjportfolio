@@ -133,3 +133,14 @@ Both problems had one cause. A hidden screen-reader label inside each testimonia
 
 **Why it matters**
 Most portfolio visits from recruiters happen on phones. A page that slides sideways reads as unfinished, and a story whose map disagrees with the text undoes the one interaction designed to make that section memorable.
+
+---
+
+## Update — 28 October 2026: MahaRERA problem statements, in full
+
+**What I did**
+- Gave each MahaRERA persona (Priya the homebuyer, Rajesh the promoter, Sneha the agent) a photo and the full set of "How might we" questions that came out of the Define stage: 9, 10 and 12 questions, each grouped into three themes.
+- Changed the three narrow cards to one full-width card per persona, with the person and problem on the left and the numbered questions on the right.
+
+**Why**
+One summary HMW per user hid how much framing work sat behind each design decision. The grouped questions show the range of opportunities considered and how they cluster, and the themes link straight to the features built in the Deliver chapter, such as smart search, status badges and agent verification. Putting a face to each statement keeps the questions anchored to a real person rather than a role.
