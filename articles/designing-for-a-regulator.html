@@ -20,8 +20,8 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@700;800&family=Courgette&display=swap" media="print" onload="this.media='all'">
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@700;800&family=Courgette&display=swap"></noscript>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Courgette&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Courgette&display=swap"></noscript>
 
   <script type="application/ld+json">
   {
@@ -211,111 +211,112 @@
     .nav-right { gap: 0; }
 
 
-    /* ========== ARTICLE ========== */
-    .wrap { max-width: 1040px; margin: 0 auto; padding: 0 1.5rem; }
-    .col  { max-width: 700px; margin: 0 auto; }
+    /* ========== ARTICLE ==========
+       Type follows the portfolio's type system (see the MahaRERA case study):
+       Inter for all text, headings 600 with tight tracking in #36383d, body #5f5f68.
+       Sizes follow common editorial reading sizes (Dribbble-style):
+         H1 title     40px desktop / 28px phone · 600 · 1.2
+         Standfirst   20px / 18px · 400 · 1.6
+         Body         18px / 17px · 400 · 1.75
+         H2 section   26px / 22px · 600 · 1.3
+         H3 note      18px · 600 · 1.4
+         Label/meta   12–14px
+       ========================================== */
+    body { font-feature-settings: "kern", "liga", "calt"; text-rendering: optimizeLegibility; }
+    h1, h2, h3 { text-wrap: balance; }
+    p, li { text-wrap: pretty; }
 
-    .a-head { padding: 9.5rem 0 2.5rem; }
-    .crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; font-size: .85rem; font-weight: 600; color: var(--muted); }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 0 1.5rem; }
+    .col  { max-width: 680px; margin: 0 auto; }
+
+    .a-head { padding: 8.5rem 0 2rem; }
+    .crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; font-size: 14px; font-weight: 500; color: var(--muted); }
     .crumbs a { color: var(--muted); text-decoration: none; }
     .crumbs a:hover { color: var(--accent); }
-    .tag { display: inline-block; font-size: .75rem; font-weight: 700; color: var(--accent-ink); background: var(--accent-soft); padding: .25rem .7rem; border-radius: 999px; }
-    .a-title {
-      font-family: 'Syne', sans-serif; font-weight: 800; letter-spacing: -0.025em; line-height: 1.04;
-      font-size: clamp(2.1rem, 5.6vw, 3.9rem); margin: 1.25rem 0 0; color: var(--ink); text-wrap: balance;
-    }
-    .a-title em { font-style: normal; color: var(--accent); }
-    .standfirst { font-size: clamp(1.1rem, 2vw, 1.3rem); line-height: 1.55; color: #5b5d63; margin-top: 1.4rem; max-width: 640px; text-wrap: pretty; }
+    .tag { display: inline-block; font-size: 12px; font-weight: 600; color: var(--accent-ink); background: var(--accent-soft); padding: .2rem .65rem; border-radius: 999px; }
+    .a-title { font-size: clamp(28px, 3.6vw, 40px); font-weight: 600; line-height: 1.2; letter-spacing: -0.025em; color: var(--ink); margin: 1rem 0 0; }
+    .standfirst { font-size: clamp(18px, 1.6vw, 20px); font-weight: 400; line-height: 1.6; color: #5f5f68; margin: 1rem 0 0; }
 
-    .byline { display: flex; flex-wrap: wrap; align-items: center; gap: .9rem 1.5rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); }
-    .who { display: flex; align-items: center; gap: .75rem; text-decoration: none; color: inherit; }
-    .who img { width: 44px; height: 44px; border-radius: 50%; background: #e4e4e7; object-fit: cover; }
-    .who strong { display: block; font-weight: 700; color: var(--ink); }
-    .who span { font-size: .85rem; color: var(--muted); }
-    .meta { display: flex; flex-wrap: wrap; gap: .4rem 1rem; font-size: .875rem; color: var(--muted); }
-    .meta span + span::before { content: "·"; margin-right: 1rem; color: #c4c4c8; }
+    .byline { display: flex; flex-wrap: wrap; align-items: center; gap: .9rem 1.25rem; margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--rule); }
+    .who { display: flex; align-items: center; gap: .7rem; text-decoration: none; color: inherit; }
+    .who img { width: 40px; height: 40px; border-radius: 50%; background: #e4e4e7; object-fit: cover; }
+    .who strong { display: block; font-size: 15px; font-weight: 600; color: var(--ink); }
+    .who span { font-size: 13px; color: var(--muted); }
+    .meta { display: flex; flex-wrap: wrap; gap: .4rem .75rem; font-size: 14px; color: var(--muted); }
+    .meta span + span::before { content: "·"; margin-right: .75rem; color: #c4c4c8; }
     .share { margin-left: auto; display: flex; gap: .5rem; }
     .share button, .share a {
-      display: inline-flex; align-items: center; gap: .4rem; height: 38px; padding: 0 .9rem; border-radius: 999px;
-      border: 1px solid var(--line); background: #fff; color: var(--ink); font: 600 .85rem 'Inter', sans-serif; cursor: pointer; text-decoration: none;
+      display: inline-flex; align-items: center; gap: .4rem; height: 36px; padding: 0 .85rem; border-radius: 999px;
+      border: 1px solid var(--line); background: #fff; color: var(--ink); font: 500 13px 'Inter', sans-serif; cursor: pointer; text-decoration: none;
       transition: border-color .2s, color .2s;
     }
     .share button:hover, .share a:hover { border-color: var(--accent); color: var(--accent); }
-    .share svg { width: 15px; height: 15px; }
+    .share svg { width: 14px; height: 14px; }
 
-    .hero-fig { margin: 0 auto; max-width: 1040px; padding: 0 1.5rem; }
-    .hero-fig img { width: 100%; height: auto; display: block; border-radius: 20px; aspect-ratio: 1600 / 824; object-fit: cover; background: #ece8e3; }
+    /* Hero image: same width as the reading column, a fixed 16:9 frame */
+    .hero-fig { max-width: 760px; margin: 0 auto; padding: 0 1.5rem; }
+    .hero-fig img { width: 100%; height: auto; display: block; border-radius: 12px; aspect-ratio: 16 / 9; object-fit: cover; background: #ece8e3; }
 
-    .prose { padding: 3rem 0 2rem; font-size: 1.125rem; line-height: 1.75; color: var(--body); }
-    .prose p { margin: 0 0 1.4em; }
-    .prose strong { color: var(--ink); }
-    .prose a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 3px; text-decoration-thickness: 2px; }
+    .prose { padding: 2.5rem 0 1.5rem; font-size: 18px; font-weight: 400; line-height: 1.75; color: #5f5f68; }
+    .prose p { margin: 0 0 1.5em; }
+    .prose strong { font-weight: 600; color: var(--ink); }
+    .prose em { font-style: italic; }
+    .prose a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 3px; }
     .prose a:hover { color: var(--accent); }
 
-    .about-author { font-style: italic; color: #5b5d63; padding: 1.1rem 1.3rem; background: #fff; border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 12px; margin-bottom: 2.4rem !important; font-size: 1rem; line-height: 1.65; }
-    .about-author b { font-style: normal; color: var(--ink); }
+    .about-author { font-size: 16px; line-height: 1.65; font-style: italic; color: var(--muted); padding-bottom: 1.5rem; border-bottom: 1px solid var(--rule); margin-bottom: 2rem !important; }
+    .about-author b { font-weight: 600; color: var(--ink); }
 
-    .lead::first-letter { font-family: 'Syne', sans-serif; font-weight: 800; float: left; font-size: 4.1em; line-height: .82; margin: .08em .1em 0 0; color: var(--accent); }
+    .prose h2 { font-size: clamp(22px, 2.4vw, 26px); font-weight: 600; line-height: 1.3; letter-spacing: -0.02em; color: var(--ink); margin: 3rem 0 1rem; scroll-margin-top: 100px; }
+    .prose h2 .n { display: block; font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--accent-ink); margin-bottom: .5rem; }
+    .prose h3 { font-size: 18px; font-weight: 600; line-height: 1.4; color: var(--ink); margin: 1.75rem 0 .4rem; }
 
-    .prose h2 {
-      font-family: 'Syne', sans-serif; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15;
-      font-size: clamp(1.5rem, 3vw, 2rem); color: var(--ink); margin: 3.4rem 0 1.1rem; text-wrap: balance;
-      scroll-margin-top: 110px;
-    }
-    .prose h2 .n { display: block; font-family: 'Inter', sans-serif; font-size: .8rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent-ink); margin-bottom: .6rem; }
+    .prose ul.pack { margin: 0 0 1.5em; padding-left: 1.25rem; }
+    .prose ul.pack li { margin: 0 0 .6em; padding-left: .25rem; }
+    .prose ul.pack li::marker { color: var(--accent); }
+    .prose ul.pack li b { font-weight: 600; color: var(--ink); }
 
-    .prose ul.pack { list-style: none; padding: 0; margin: 0 0 1.6em; display: grid; gap: .6rem; }
-    .prose ul.pack li { position: relative; padding: .85rem 1rem .85rem 2.6rem; background: #fff; border: 1px solid var(--rule); border-radius: 12px; font-size: 1.02rem; line-height: 1.55; }
-    .prose ul.pack li::before { content: ""; position: absolute; left: 1rem; top: 1.25rem; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); }
-    .prose ul.pack li b { color: var(--ink); }
+    .fig { margin: 2rem 0; }
+    .fig img { width: 100%; height: auto; display: block; border-radius: 12px; background: #ece8e3; border: 1px solid var(--rule); }
+    .fig.crop img { aspect-ratio: 16 / 9; object-fit: cover; object-position: top; }
+    .fig figcaption { font-size: 14px; line-height: 1.5; color: var(--muted); margin-top: .6rem; text-align: center; }
 
-    .fig { margin: 2rem 0 2.2rem; }
-    .fig img { width: 100%; height: auto; display: block; border-radius: 16px; background: #ece8e3; border: 1px solid var(--rule); }
-    .fig figcaption { font-size: .85rem; line-height: 1.5; color: var(--muted); margin-top: .7rem; }
-    .fig.wide { margin-left: calc(50% - min(50vw, 520px) + 1.5rem); margin-right: calc(50% - min(50vw, 520px) + 1.5rem); }
-    @media (max-width: 760px) { .fig.wide { margin-left: 0; margin-right: 0; } }
-    .fig.crop img { aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
+    .pull { margin: 2rem 0; padding: .25rem 0 .25rem 1.25rem; border-left: 3px solid var(--accent); }
+    .pull p { font-size: 22px; font-weight: 500; line-height: 1.45; letter-spacing: -0.01em; color: var(--ink); margin: 0 0 .5rem; }
+    .pull cite { font-style: normal; font-size: 14px; color: var(--muted); }
 
-    .pull { margin: 2.4rem 0; padding: 0 0 0 1.4rem; border-left: 4px solid var(--accent); }
-    .pull p { font-family: 'Syne', sans-serif; font-weight: 700; font-size: clamp(1.3rem, 2.6vw, 1.65rem); line-height: 1.3; letter-spacing: -0.01em; color: var(--ink); margin: 0 0 .6rem; }
-    .pull cite { font-style: normal; font-size: .9rem; color: var(--muted); }
+    .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: .75rem; margin: 1.75rem 0 2rem; }
+    .stat { background: #fff; border: 1px solid var(--rule); border-radius: 12px; padding: 1rem; }
+    .stat b { display: block; font-size: 24px; font-weight: 600; line-height: 1.1; letter-spacing: -0.02em; color: var(--ink); font-variant-numeric: tabular-nums; }
+    .stat b i { font-style: normal; color: var(--accent); padding: 0 .1em; }
+    .stat span { display: block; font-size: 14px; line-height: 1.4; color: var(--muted); margin-top: .35rem; }
 
-    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: .75rem; margin: 2rem 0 2.2rem; }
-    .stat { background: #fff; border: 1px solid var(--rule); border-radius: 14px; padding: 1.1rem 1.1rem 1rem; }
-    .stat b { display: block; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.75rem; line-height: 1; color: var(--ink); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
-    .stat b i { font-style: normal; color: var(--accent); }
-    .stat span { display: block; font-size: .85rem; line-height: 1.4; color: var(--muted); margin-top: .5rem; }
-
-    .notes { display: grid; gap: 1rem; margin: 0 0 1.6em; }
-    .note { background: #fff; border: 1px solid var(--rule); border-radius: 14px; padding: 1.2rem 1.3rem; }
-    .note h3 { font-weight: 700; font-size: 1.05rem; color: var(--ink); margin: 0 0 .35rem; line-height: 1.35; }
-    .note p { margin: 0; font-size: 1rem; line-height: 1.65; }
-
-    .end { padding: 1rem 0 5rem; }
+    .end { padding: 1rem 1.5rem 4.5rem; }
     .cta {
-      display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 1.5rem;
-      background: #18191b; color: #fff; border-radius: 20px; padding: 1.75rem 1.75rem 1.75rem 2rem; text-decoration: none;
+      display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 1.25rem;
+      background: #18191b; color: #fff; border-radius: 16px; padding: 1.5rem 1.5rem 1.5rem 1.75rem; text-decoration: none;
       transition: transform .3s ease, box-shadow .3s ease;
     }
-    .cta:hover, .cta:focus-visible { transform: translateY(-3px); box-shadow: 0 20px 40px rgba(24,25,27,.25); }
-    .cta small { display: block; font-size: .75rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #ff8a47; }
-    .cta strong { display: block; font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(1.3rem, 2.6vw, 1.7rem); line-height: 1.2; margin-top: .4rem; }
-    .cta span.d { display: block; color: rgba(255,255,255,.7); font-size: .95rem; margin-top: .4rem; }
-    .cta .go { width: 54px; height: 54px; border-radius: 50%; background: var(--accent); display: grid; place-items: center; }
-    .cta .go svg { width: 20px; height: 20px; }
+    .cta:hover, .cta:focus-visible { transform: translateY(-2px); box-shadow: 0 16px 32px rgba(24,25,27,.2); }
+    .cta small { display: block; font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: #ff8a47; }
+    .cta strong { display: block; font-size: 20px; font-weight: 600; line-height: 1.3; letter-spacing: -0.01em; margin-top: .35rem; }
+    .cta span.d { display: block; color: rgba(255,255,255,.7); font-size: 15px; line-height: 1.5; margin-top: .35rem; }
+    .cta .go { width: 48px; height: 48px; border-radius: 50%; background: var(--accent); display: grid; place-items: center; }
+    .cta .go svg { width: 18px; height: 18px; }
     @media (max-width: 520px) { .cta { grid-template-columns: 1fr; } }
-    .after { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; margin-top: 1.75rem; font-size: .95rem; }
-    .after a { color: var(--ink); font-weight: 700; text-decoration: none; }
+    .after { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; margin-top: 1.5rem; font-size: 15px; }
+    .after a { color: var(--ink); font-weight: 600; text-decoration: none; }
     .after a:hover { color: var(--accent); }
 
-    .site-foot { border-top: 1px solid var(--line); background: #fff; padding: 2rem 1.5rem; text-align: center; font-size: .875rem; color: var(--muted); }
+    .site-foot { border-top: 1px solid var(--line); background: #fff; padding: 2rem 1.5rem; text-align: center; font-size: 14px; color: var(--muted); }
 
     a:focus-visible, button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
 
     @media (max-width: 640px) {
-      .a-head { padding-top: 7.5rem; }
+      .a-head { padding-top: 7rem; }
       .share { margin-left: 0; }
-      .prose { font-size: 1.06rem; }
+      .prose { font-size: 17px; }
+      .pull p { font-size: 20px; }
     }
     @media (prefers-reduced-motion: reduce) { .cta { transition: none; } }
   </style>
@@ -384,7 +385,7 @@
             <span aria-hidden="true">/</span>
             <span class="tag">Public services</span>
           </nav>
-          <h1 class="a-title">We Redesigned a Government Platform for 6&nbsp;Million Users. Here's What Designing for a <em>Regulator</em> Looks Like.</h1>
+          <h1 class="a-title">We Redesigned a Government Platform for 6&nbsp;Million Users. Here's What Designing for a Regulator Looks Like.</h1>
           <p class="standfirst">Five years on the MahaRERA public website taught me that the design process barely changes when your client is a regulator. Everything around it does.</p>
 
           <div class="byline">
@@ -409,7 +410,7 @@
 
         <p class="about-author"><b>About the author:</b> Ganesh Javhare is a UX designer based in London. He spent seven years at MahaRERA, Maharashtra's real estate regulator, first drafting the policies and then leading the design of the digital services that carry them to homebuyers, promoters and agents. He holds an MSc in User Experience Design from Kingston University London.</p>
 
-        <p class="lead">Here's something nobody tells you about designing for a government regulator: the actual <em>design</em> part barely changes. You still sit with users, find out where they get stuck, sketch something better, test it, get told it's wrong, and fix it. The same steps you'd follow for a food delivery app or a fintech start-up.</p>
+        <p>Here's something nobody tells you about designing for a government regulator: the actual <em>design</em> part barely changes. You still sit with users, find out where they get stuck, sketch something better, test it, get told it's wrong, and fix it. The same steps you'd follow for a food delivery app or a fintech start-up.</p>
 
         <p>What changes is everything wrapped around the design. That's the part that turns you from "a designer who happens to work at a regulator" into someone who can actually ship there.</p>
 
@@ -432,7 +433,7 @@
 
         <h2 id="l1"><span class="n">Lesson 01</span>The hard part isn't the screens. It's admitting who they were really for.</h2>
 
-        <figure class="fig wide crop">
+        <figure class="fig crop">
           <img src="../projects/maharera/assets/maharera-old-website-opt.webp" width="1512" height="2292" alt="The old MahaRERA homepage: a dense block of legal text, a 3D pie chart and auto-scrolling announcements" loading="lazy">
           <figcaption>The old MahaRERA homepage, January 2022. The tasks people came for were nowhere in sight.</figcaption>
         </figure>
@@ -489,7 +490,7 @@
 
         <h2 id="l5"><span class="n">Lesson 05</span>Saying no is a design decision.</h2>
 
-        <figure class="fig wide">
+        <figure class="fig">
           <img src="../projects/maharera/assets/mockup-1600.webp" width="1600" height="893" alt="The redesigned MahaRERA website on desktop, laptop, tablet and phone" loading="lazy">
           <figcaption>What shipped: the high and mid-priority features from our bull's-eye, and nothing from outside it.</figcaption>
         </figure>
@@ -517,20 +518,12 @@
 
         <h2 id="more">A few more things worth knowing.</h2>
 
-        <div class="notes">
-          <div class="note">
-            <h3>Your stakeholder is not your user, but they are your ally.</h3>
-            <p>The officers signing off on the work rarely use the public site themselves. They do, however, answer the phone when citizens can't find something. Show them the calls your design will prevent, and you've got a champion.</p>
-          </div>
-          <div class="note">
-            <h3>Legal language is a design material. Translate it; don't delete it.</h3>
-            <p>"QPR" means nothing to a homebuyer, and everything to a regulator. Keep the official term, but put a plain explanation next to it. Both audiences get what they need, and nobody has to re-read the Act.</p>
-          </div>
-          <div class="note">
-            <h3>Start where the most people are.</h3>
-            <p>MahaRERA runs two products: the public website and the application portal. The portal had painful problems too, but the website served far more people, so we fixed it first. On a public service, reach is a fair way to break a tie.</p>
-          </div>
-        </div>
+        <h3>Your stakeholder is not your user, but they are your ally.</h3>
+        <p>The officers signing off on the work rarely use the public site themselves. They do, however, answer the phone when citizens can't find something. Show them the calls your design will prevent, and you've got a champion.</p>
+        <h3>Legal language is a design material. Translate it; don't delete it.</h3>
+        <p>"QPR" means nothing to a homebuyer, and everything to a regulator. Keep the official term, but put a plain explanation next to it. Both audiences get what they need, and nobody has to re-read the Act.</p>
+        <h3>Start where the most people are.</h3>
+        <p>MahaRERA runs two products: the public website and the application portal. The portal had painful problems too, but the website served far more people, so we fixed it first. On a public service, reach is a fair way to break a tie.</p>
 
         <h2 id="close">So what does it actually take to design for a regulator?</h2>
 

@@ -157,3 +157,14 @@ One summary HMW per user hid how much framing work sat behind each design decisi
 **Why**
 The case study shows *what* I did on MahaRERA. The article shows *how I think* about it: six lessons on designing inside a regulator, written in a lighter editorial voice for readers who won't sit through a full case study. It reuses the case study's images from `projects/maharera/assets/` rather than copying them, following the one-owner rule.
 
+
+## Update — 2 November 2026: article typography
+
+**What changed**
+- The article now uses the portfolio's type system (Inter only, headings at weight 600 with tight tracking) instead of the Syne display font.
+- Common editorial sizes: 40px title, 20px standfirst, 18px body (17px on phones), 26px section headings, 18px sub-headings.
+- The hero image and all figures now sit within the reading column (760px) in a 16:9 frame, instead of filling the screen.
+- Removed the drop cap, the highlighted word in the title, and the card styling around lists and notes, so the page reads as an article rather than a landing page.
+
+**Why**
+The first version looked more like a campaign page than something to read. An article should feel calm and familiar: one typeface, a clear title → section → sub-heading hierarchy, and images that support the text instead of competing with it.
