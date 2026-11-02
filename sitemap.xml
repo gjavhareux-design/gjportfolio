@@ -7,7 +7,7 @@
   </url>
   <url>
     <loc>https://www.gjuxdesign.in/about.html</loc>
-    <lastmod>2026-10-15</lastmod>
+    <lastmod>2026-11-02</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
@@ -24,5 +24,10 @@
     <loc>https://www.gjuxdesign.in/projects/focusxr/focusxr-case-study.html</loc>
     <lastmod>2026-10-15</lastmod>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.gjuxdesign.in/articles/designing-for-a-regulator.html</loc>
+    <lastmod>2026-11-02</lastmod>
+    <priority>0.6</priority>
   </url>
 </urlset>

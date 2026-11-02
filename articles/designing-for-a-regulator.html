@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en-GB" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>We Redesigned a Government Platform for 6 Million Users | Ganesh Javhare</title>
+  <meta name="description" content="What five years of designing MahaRERA's public website taught me about designing for a regulator: legal language, three very different users, and why the real work happens around the screens.">
+  <meta name="author" content="Ganesh Javhare">
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://www.gjuxdesign.in/articles/designing-for-a-regulator.html" />
+
+  <meta property="og:title" content="We Redesigned a Government Platform for 6 Million Users. Here's What Designing for a Regulator Looks Like." />
+  <meta property="og:description" content="Six lessons from redesigning the MahaRERA public website, from a designer who first wrote the rules and then designed the screens." />
+  <meta property="og:image" content="https://www.gjuxdesign.in/projects/maharera/assets/intro-1600.webp" />
+  <meta property="og:url" content="https://www.gjuxdesign.in/articles/designing-for-a-regulator.html" />
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2026-11-02" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@700;800&family=Courgette&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@700;800&family=Courgette&display=swap"></noscript>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "We Redesigned a Government Platform for 6 Million Users. Here's What Designing for a Regulator Looks Like.",
+    "image": "https://www.gjuxdesign.in/projects/maharera/assets/intro-1600.webp",
+    "datePublished": "2026-11-02",
+    "author": { "@type": "Person", "name": "Ganesh Javhare", "url": "https://www.gjuxdesign.in/about.html" }
+  }
+  </script>
+
+  <link rel="stylesheet" href="../assets/shared/css/site.css">
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; margin: 0; background: #F9F7F5; color: #36383d; overflow-x: hidden; }
+
+    :root {
+      --nav-height: 64px;
+      --ink: #36383d;
+      --accent: #ff5f00;
+      --accent-ink: #c24800;   /* accent dark enough for small text on white (AA) */
+      --paper: #F9F7F5;
+      --line: #e4e4e7;
+      --rule: #ebe7e2;
+      --muted: #71717a;
+      --body: #45474d;
+      --accent-soft: #fff1e8;
+    }
+
+    /* ========== HEADER (same as MahaRERA case study) ========== */
+    .progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      width: 0;
+      background: var(--accent);
+      z-index: 100
+    }
+
+    .nav {
+      position: fixed;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 2rem);
+      max-width: 1000px;
+      height: 60px;
+      background: rgba(255, 255, 255, .75);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, .6);
+      border-radius: 999px;
+      box-shadow: 0 10px 30px -12px rgba(0, 0, 0, .12);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px 0 16px;
+      z-index: 90
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none
+    }
+
+    .brand svg {
+      width: 28px;
+      height: 28px;
+      overflow: visible
+    }
+
+    .brand .n {
+      display: flex;
+      flex-direction: column;
+      border-left: 2px solid var(--line);
+      padding-left: 10px;
+      line-height: 1
+    }
+
+    .brand .n b {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -.01em
+    }
+
+    .brand .n small {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 4px
+    }
+
+    .nav-chapter {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: opacity .3s
+    }
+
+    .nav-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, .04);
+      border: 1px solid rgba(0, 0, 0, .05);
+      transition: .3s
+    }
+
+    .nav-back:hover {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent)
+    }
+
+    @media(max-width:760px) {
+      .nav-chapter {
+        display: none
+      }
+    }
+
+
+    /* ---- Avatar + menu in header ---- */
+    .nav-right { display: flex; align-items: center; gap: 8px; }
+    .nav-me { position: relative; }
+    .nav-me > button { display: block; padding: 2px; border: 2px solid transparent; border-radius: 50%; background: none; cursor: pointer; transition: border-color .2s; }
+    .nav-me:hover > button, .nav-me.open > button, .nav-me > button:focus-visible { border-color: var(--accent); }
+    .nav-me img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; display: block; background: #e4e4e7; }
+    .nav-menu {
+      position: absolute; right: 0; top: calc(100% + 10px); min-width: 180px; padding: 6px;
+      background: rgba(255,255,255,.97); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 20px 40px -16px rgba(0,0,0,.18);
+      opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity .25s, transform .25s, visibility .25s;
+    }
+    .nav-menu::before { content: ""; position: absolute; left: 0; right: 0; top: -12px; height: 12px; }
+    .nav-me:hover .nav-menu, .nav-me:focus-within .nav-menu, .nav-me.open .nav-menu { opacity: 1; visibility: visible; transform: none; }
+    .nav-menu a { display: block; padding: 10px 14px; border-radius: 10px; font-size: 14px; font-weight: 600; color: var(--ink); text-decoration: none; }
+    .nav-menu a:hover, .nav-menu a[aria-current="page"] { background: var(--accent-soft); color: var(--accent); }
+    @media (max-width: 400px) { .nav-back .lbl { display: none; } .nav-back { padding: 10px 13px; } }
+
+
+    .brand .n b { font-size: 16px; font-weight: 700; letter-spacing: -0.015em; color: var(--ink); }
+    .brand .n small { font-size: 9.5px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #71717a; }
+    .nav-chapter, .nav-back { font-size: 13px; font-weight: 500; color: var(--ink); }
+    .nav-chapter { color: #71717a; }
+
+    /* ---- Header matched to home page: size, brand, expanding back button, divider ---- */
+    .nav { height: 64px; max-width: 1024px; top: 16px; padding: 0 12px 0 16px; background: rgba(255,255,255,.7);
+           border: 1px solid rgba(255,255,255,.5); box-shadow: 0 10px 15px -3px rgba(228,228,231,.3), 0 4px 6px -4px rgba(228,228,231,.3); }
+    .brand { gap: 12px; }
+    .brand svg { width: 32px; height: 32px; }
+    .brand .n { border-left: 2px solid #e4e4e7; padding-left: 12px; }
+    .brand .n b { font-family: 'Courgette', cursive; font-size: 16px; font-weight: 700; letter-spacing: -0.015em; color: var(--ink); transition: color .2s; }
+    .brand:hover .n b { color: var(--accent); }
+    .brand .n small { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #71717a; margin-top: 4px; }
+
+    .fluid-back {
+      position: relative; display: flex; align-items: center; justify-content: center;
+      width: 40px; height: 40px; border-radius: 20px; overflow: hidden; text-decoration: none;
+      background: rgba(0,0,0,.03); border: 1px solid rgba(0,0,0,.05); color: var(--ink);
+      transition: width .5s cubic-bezier(0.34,1.56,0.64,1), background .3s, color .3s, border-color .3s;
+    }
+    .fluid-back .nav-icon { position: absolute; width: 16px; height: 16px; transition: all .5s cubic-bezier(0.34,1.56,0.64,1); }
+    .fluid-back .nav-text {
+      position: absolute; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+      font-size: .85rem; font-weight: 600; opacity: 0; transform: translateY(20px) scale(.8);
+      transition: all .5s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .fluid-back .nav-text svg { width: 14px; height: 14px; }
+    .fluid-back:hover, .fluid-back:focus-visible { width: 118px; background: var(--accent); border-color: var(--accent); color: #fff; }
+    .fluid-back:hover .nav-icon, .fluid-back:focus-visible .nav-icon { opacity: 0; transform: translateY(-20px) scale(.8); }
+    .fluid-back:hover .nav-text, .fluid-back:focus-visible .nav-text { opacity: 1; transform: none; }
+    .nav-sep { width: 1px; height: 24px; background: #e4e4e7; margin: 0 8px; }
+    .nav-right { gap: 0; }
+
+
+    /* ========== ARTICLE ========== */
+    .wrap { max-width: 1040px; margin: 0 auto; padding: 0 1.5rem; }
+    .col  { max-width: 700px; margin: 0 auto; }
+
+    .a-head { padding: 9.5rem 0 2.5rem; }
+    .crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; font-size: .85rem; font-weight: 600; color: var(--muted); }
+    .crumbs a { color: var(--muted); text-decoration: none; }
+    .crumbs a:hover { color: var(--accent); }
+    .tag { display: inline-block; font-size: .75rem; font-weight: 700; color: var(--accent-ink); background: var(--accent-soft); padding: .25rem .7rem; border-radius: 999px; }
+    .a-title {
+      font-family: 'Syne', sans-serif; font-weight: 800; letter-spacing: -0.025em; line-height: 1.04;
+      font-size: clamp(2.1rem, 5.6vw, 3.9rem); margin: 1.25rem 0 0; color: var(--ink); text-wrap: balance;
+    }
+    .a-title em { font-style: normal; color: var(--accent); }
+    .standfirst { font-size: clamp(1.1rem, 2vw, 1.3rem); line-height: 1.55; color: #5b5d63; margin-top: 1.4rem; max-width: 640px; text-wrap: pretty; }
+
+    .byline { display: flex; flex-wrap: wrap; align-items: center; gap: .9rem 1.5rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); }
+    .who { display: flex; align-items: center; gap: .75rem; text-decoration: none; color: inherit; }
+    .who img { width: 44px; height: 44px; border-radius: 50%; background: #e4e4e7; object-fit: cover; }
+    .who strong { display: block; font-weight: 700; color: var(--ink); }
+    .who span { font-size: .85rem; color: var(--muted); }
+    .meta { display: flex; flex-wrap: wrap; gap: .4rem 1rem; font-size: .875rem; color: var(--muted); }
+    .meta span + span::before { content: "·"; margin-right: 1rem; color: #c4c4c8; }
+    .share { margin-left: auto; display: flex; gap: .5rem; }
+    .share button, .share a {
+      display: inline-flex; align-items: center; gap: .4rem; height: 38px; padding: 0 .9rem; border-radius: 999px;
+      border: 1px solid var(--line); background: #fff; color: var(--ink); font: 600 .85rem 'Inter', sans-serif; cursor: pointer; text-decoration: none;
+      transition: border-color .2s, color .2s;
+    }
+    .share button:hover, .share a:hover { border-color: var(--accent); color: var(--accent); }
+    .share svg { width: 15px; height: 15px; }
+
+    .hero-fig { margin: 0 auto; max-width: 1040px; padding: 0 1.5rem; }
+    .hero-fig img { width: 100%; height: auto; display: block; border-radius: 20px; aspect-ratio: 1600 / 824; object-fit: cover; background: #ece8e3; }
+
+    .prose { padding: 3rem 0 2rem; font-size: 1.125rem; line-height: 1.75; color: var(--body); }
+    .prose p { margin: 0 0 1.4em; }
+    .prose strong { color: var(--ink); }
+    .prose a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 3px; text-decoration-thickness: 2px; }
+    .prose a:hover { color: var(--accent); }
+
+    .about-author { font-style: italic; color: #5b5d63; padding: 1.1rem 1.3rem; background: #fff; border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 12px; margin-bottom: 2.4rem !important; font-size: 1rem; line-height: 1.65; }
+    .about-author b { font-style: normal; color: var(--ink); }
+
+    .lead::first-letter { font-family: 'Syne', sans-serif; font-weight: 800; float: left; font-size: 4.1em; line-height: .82; margin: .08em .1em 0 0; color: var(--accent); }
+
+    .prose h2 {
+      font-family: 'Syne', sans-serif; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15;
+      font-size: clamp(1.5rem, 3vw, 2rem); color: var(--ink); margin: 3.4rem 0 1.1rem; text-wrap: balance;
+      scroll-margin-top: 110px;
+    }
+    .prose h2 .n { display: block; font-family: 'Inter', sans-serif; font-size: .8rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent-ink); margin-bottom: .6rem; }
+
+    .prose ul.pack { list-style: none; padding: 0; margin: 0 0 1.6em; display: grid; gap: .6rem; }
+    .prose ul.pack li { position: relative; padding: .85rem 1rem .85rem 2.6rem; background: #fff; border: 1px solid var(--rule); border-radius: 12px; font-size: 1.02rem; line-height: 1.55; }
+    .prose ul.pack li::before { content: ""; position: absolute; left: 1rem; top: 1.25rem; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); }
+    .prose ul.pack li b { color: var(--ink); }
+
+    .fig { margin: 2rem 0 2.2rem; }
+    .fig img { width: 100%; height: auto; display: block; border-radius: 16px; background: #ece8e3; border: 1px solid var(--rule); }
+    .fig figcaption { font-size: .85rem; line-height: 1.5; color: var(--muted); margin-top: .7rem; }
+    .fig.wide { margin-left: calc(50% - min(50vw, 520px) + 1.5rem); margin-right: calc(50% - min(50vw, 520px) + 1.5rem); }
+    @media (max-width: 760px) { .fig.wide { margin-left: 0; margin-right: 0; } }
+    .fig.crop img { aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
+
+    .pull { margin: 2.4rem 0; padding: 0 0 0 1.4rem; border-left: 4px solid var(--accent); }
+    .pull p { font-family: 'Syne', sans-serif; font-weight: 700; font-size: clamp(1.3rem, 2.6vw, 1.65rem); line-height: 1.3; letter-spacing: -0.01em; color: var(--ink); margin: 0 0 .6rem; }
+    .pull cite { font-style: normal; font-size: .9rem; color: var(--muted); }
+
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: .75rem; margin: 2rem 0 2.2rem; }
+    .stat { background: #fff; border: 1px solid var(--rule); border-radius: 14px; padding: 1.1rem 1.1rem 1rem; }
+    .stat b { display: block; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.75rem; line-height: 1; color: var(--ink); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+    .stat b i { font-style: normal; color: var(--accent); }
+    .stat span { display: block; font-size: .85rem; line-height: 1.4; color: var(--muted); margin-top: .5rem; }
+
+    .notes { display: grid; gap: 1rem; margin: 0 0 1.6em; }
+    .note { background: #fff; border: 1px solid var(--rule); border-radius: 14px; padding: 1.2rem 1.3rem; }
+    .note h3 { font-weight: 700; font-size: 1.05rem; color: var(--ink); margin: 0 0 .35rem; line-height: 1.35; }
+    .note p { margin: 0; font-size: 1rem; line-height: 1.65; }
+
+    .end { padding: 1rem 0 5rem; }
+    .cta {
+      display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 1.5rem;
+      background: #18191b; color: #fff; border-radius: 20px; padding: 1.75rem 1.75rem 1.75rem 2rem; text-decoration: none;
+      transition: transform .3s ease, box-shadow .3s ease;
+    }
+    .cta:hover, .cta:focus-visible { transform: translateY(-3px); box-shadow: 0 20px 40px rgba(24,25,27,.25); }
+    .cta small { display: block; font-size: .75rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #ff8a47; }
+    .cta strong { display: block; font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(1.3rem, 2.6vw, 1.7rem); line-height: 1.2; margin-top: .4rem; }
+    .cta span.d { display: block; color: rgba(255,255,255,.7); font-size: .95rem; margin-top: .4rem; }
+    .cta .go { width: 54px; height: 54px; border-radius: 50%; background: var(--accent); display: grid; place-items: center; }
+    .cta .go svg { width: 20px; height: 20px; }
+    @media (max-width: 520px) { .cta { grid-template-columns: 1fr; } }
+    .after { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; margin-top: 1.75rem; font-size: .95rem; }
+    .after a { color: var(--ink); font-weight: 700; text-decoration: none; }
+    .after a:hover { color: var(--accent); }
+
+    .site-foot { border-top: 1px solid var(--line); background: #fff; padding: 2rem 1.5rem; text-align: center; font-size: .875rem; color: var(--muted); }
+
+    a:focus-visible, button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
+
+    @media (max-width: 640px) {
+      .a-head { padding-top: 7.5rem; }
+      .share { margin-left: 0; }
+      .prose { font-size: 1.06rem; }
+    }
+    @media (prefers-reduced-motion: reduce) { .cta { transition: none; } }
+  </style>
+</head>
+<body>
+
+  <div class="progress" id="progress"></div>
+
+  <div class="progress" id="progress"></div>
+
+  <nav class="nav" aria-label="Main">
+    <a href="../index.html" class="brand" aria-label="Ganesh Javhare — home">
+      <svg id="Layer_2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 317.37 376.83"
+        class="w-full h-full overflow-visible">
+        <defs>
+          <style>
+            .cls-1,
+            .cls-2,
+            .cls-3 {
+              fill: #ff5f00;
+              stroke: #ff5f00;
+              stroke-width: 8px;
+              /* Increased thickness */
+              stroke-linejoin: round;
+            }
+            </style>
+        </defs>
+        <g id="Layer_1-2" data-name="Layer_1">
+          <g>
+            <path class="cls-2"
+              d="M192.9,12.47c-21.83-.35-43.56,5.7-63.41,14.31C69.29,52.25,24.39,108.18,20.17,174.3c-7.76,100.38,77.21,188.92,178.28,181.83,30.27-2.43,62.93-14.17,80.75-39.77,17.74-25.77,15.18-67.35-11.29-86.29-32.01-22.07-75.72.34-78.56,38.69-2.44,20.53,16.97,41.66,38.12,35.79,14.89-3.59,25.12-18.82,23.24-34.01-1.08-10.46-7.3-19.94-16.31-25.45-4.58-2.83-9.88-4.59-15.47-5.23v-.83c10.22-1.19,21.07,2.95,28.35,10.31,15.01,14.77,14.24,40.22-.8,54.78-9.12,9.17-22.87,13.59-35.62,10.98-12.97-2.69-23.63-11.87-29.77-23.34-3.04-5.74-4.96-12.2-5.3-18.95-1.44-25.64,13.8-51.11,37.19-62.06,38.67-18.29,81.29,2.81,92.99,43.3,3.57,12.21,4.27,24.93,2.7,37.56-4.73,39.26-37.24,66.52-73.12,77.69-22.99,7.53-47.58,9.16-71.47,5.99C37,359.32-38.06,218.6,19.85,104.3,41.27,62.01,78.66,27.29,123.61,11.66c16.76-5.74,34.21-8.82,51.8-9.91,5.84-.31,11.66-.45,17.49-.68,0,0,0,11.4,0,11.4h0Z" />
+            <path class="cls-1"
+              d="M18.69,310.17c17.93-1.04,23.41-19.33,29.15-33.67,14.63-38.69,27.52-93.26,73.27-106.16,6.4-1.71,12.9-2.38,19.44-2.24,2.45.11,5.52.1,8.02.04,12.72-.16,38.28-.54,50.99-.84,0,0,50.74-1.25,50.74-1.25,7.11-.38,14.04-2.34,20.21-5.74,12.41-6.77,21.51-19.12,24.64-32.89,1.71-6.26,1.28-16.53,1.4-23.04.13-8.52.33-17.03.67-25.55.7-17.62,1.79-36.62,2.38-54.28,0,0,.05-1.6.05-1.6.31-3.94-2.24-7.98-6-9.15-1.3-.55-3.05-.4-4.44-.47-21.03-.54-49.09-.67-70.25-.92-5.84.01-16.46-.3-22.18-.11-4.84.44-9.71,1.26-14.34,2.71-18.31,6.03-33.34,20.31-42.03,37.31-5.4,10.6-7.26,22.75-7.4,34.58-1.31,29.84-2.93,59.62-5.5,89.41-2.21-25.54-3.62-51.06-4.87-76.64-.31-8.55-1.03-17.46-.79-26.03.79-18.44,8.22-36.99,21.06-50.43,13-13.46,31.55-21.13,50.07-21.97,16.88-.14,60.74-.58,77.07-.82,6.19-.13,12.94-.18,19.16-.35,9.25-.74,17.73,3.81,22.13,11.96,2.12,3.8,2.94,8.21,2.91,12.52,0,0,.1,3.19.1,3.19,0,0,.51,12.77.51,12.77,1.1,23.3,2.41,46.95,2.49,70.25.15,7.16-.22,14.43-1.95,21.41-6.74,29.68-33.92,52.65-64.64,52.47-14.56-.22-36.68-.87-51.44-1.18-16.52-.5-42.67-.55-59.14-1.05-27.39-1.35-43.63,18.61-54.56,41.43-7.38,15-12.97,30.87-19.67,46.34-3.46,8.08-7.26,16.06-12.23,23.46-7.37,11.38-20.76,23.07-35.03,16.52h0Z" />
+            <path class="cls-3"
+              d="M93.48,135.7c.18,9.29-8.53,17.06-17.69,15.57-17.86-3.11-17.86-28.03,0-31.14,9.16-1.48,17.87,6.28,17.69,15.57h0ZM80.4,135.7c.19-5.25-5.77-9.16-10.45-5.85-3.95,2.59-3.95,9.11,0,11.69,4.68,3.32,10.65-.6,10.45-5.85h0Z" />
+          </g>
+        </g>
+      </svg>
+      <span class="n"><b>Ganesh Javhare</b><small>UX Designer</small></span>
+    </a>
+    <div class="nav-chapter" id="navChapter">Article</div>
+    <div class="nav-right">
+      <a href="../index.html#work" class="fluid-back" aria-label="All work">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        <span class="nav-text"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> All work</span>
+      </a>
+      <span class="nav-sep" aria-hidden="true"></span>
+      <div class="nav-me">
+        <button type="button" aria-label="Open menu" aria-haspopup="true" aria-expanded="false"><img src="../assets/shared/images/avatar-sm.webp" width="36" height="36" alt="Ganesh Javhare"></button>
+        <div class="nav-menu">
+          <a href="../about.html">About Me</a>
+          <a href="../projects.html">Resume</a>
+          <a href="../gallery.html">Other Work</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+
+  <main>
+    <article>
+      <header class="a-head">
+        <div class="wrap"><div class="col">
+          <nav class="crumbs" aria-label="Breadcrumb">
+            <a href="../about.html#blogs">Blogs &amp; write-ups</a>
+            <span aria-hidden="true">/</span>
+            <span class="tag">Public services</span>
+          </nav>
+          <h1 class="a-title">We Redesigned a Government Platform for 6&nbsp;Million Users. Here's What Designing for a <em>Regulator</em> Looks Like.</h1>
+          <p class="standfirst">Five years on the MahaRERA public website taught me that the design process barely changes when your client is a regulator. Everything around it does.</p>
+
+          <div class="byline">
+            <a class="who" href="../about.html">
+              <img src="../assets/shared/images/avatar-sm.webp" width="44" height="44" alt="">
+              <div><strong>Ganesh Javhare</strong><span>UX Designer · London</span></div>
+            </a>
+            <div class="meta"><span><time datetime="2026-11-02">2 Nov 2026</time></span><span id="readTime">8 min read</span></div>
+            <div class="share">
+              <button type="button" id="copyLink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><span>Copy link</span></button>
+              <a id="shareLi" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fwww.gjuxdesign.in%2Farticles%2Fdesigning-for-a-regulator.html" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg><span>Share</span></a>
+            </div>
+          </div>
+        </div></div>
+      </header>
+
+      <figure class="hero-fig">
+        <img src="../projects/maharera/assets/intro-1600.webp" srcset="../projects/maharera/assets/intro-800.webp 800w, ../projects/maharera/assets/intro-1600.webp 1600w" sizes="(max-width: 1040px) 100vw, 1040px" width="1600" height="824" alt="The redesigned MahaRERA website shown on a desktop monitor, laptop, tablet and phone">
+      </figure>
+
+      <div class="wrap"><div class="col prose" id="prose">
+
+        <p class="about-author"><b>About the author:</b> Ganesh Javhare is a UX designer based in London. He spent seven years at MahaRERA, Maharashtra's real estate regulator, first drafting the policies and then leading the design of the digital services that carry them to homebuyers, promoters and agents. He holds an MSc in User Experience Design from Kingston University London.</p>
+
+        <p class="lead">Here's something nobody tells you about designing for a government regulator: the actual <em>design</em> part barely changes. You still sit with users, find out where they get stuck, sketch something better, test it, get told it's wrong, and fix it. The same steps you'd follow for a food delivery app or a fintech start-up.</p>
+
+        <p>What changes is everything wrapped around the design. That's the part that turns you from "a designer who happens to work at a regulator" into someone who can actually ship there.</p>
+
+        <p>At a start-up, a button label is a product decision. At a regulator, a button label is a legal statement. Your screen answers to a circular, the circular answers to the regulations, the regulations answer to an Act of Parliament, and somewhere along that chain is an officer who will ask, very politely, which section of the Act your new menu item is based on. It's less "ship and iterate" and more "ship, and be ready to defend every word in a hearing."</p>
+
+        <p>Here's the welcome package when you design for a regulator:</p>
+
+        <ul class="pack">
+          <li><b>Words with legal weight.</b> "Registration", "complaint" and "order" each mean something precise. Rename one and you've changed the law, at least in someone's eyes.</li>
+          <li><b>Accessibility as a mandate.</b> GIGW and WCAG aren't nice-to-haves. They're requirements for a government website, and the old one met neither.</li>
+          <li><b>Three audiences who barely overlap.</b> First-time homebuyers, developers with legal teams, and agents who live on their phones, all using the same site.</li>
+          <li><b>Two languages.</b> English and Marathi, and a long tail of legal terms that don't translate neatly in either direction.</li>
+          <li><b>Data you can't simplify away.</b> Public disclosure is the whole point. You can reorganise it, but you can't hide it.</li>
+          <li><b>Sign-off from people who will never use the site.</b> Officers, IT, legal. All of them right, all of them looking at a different risk.</li>
+        </ul>
+
+        <p>Is it slower than a start-up? Yes. But a regulator's website does something most products never get to do: it sits between a family and the biggest purchase of their lives. Get that right and you help an entire state's housing market trust itself a little more.</p>
+
+        <p>Here's what that work taught me.</p>
+
+        <h2 id="l1"><span class="n">Lesson 01</span>The hard part isn't the screens. It's admitting who they were really for.</h2>
+
+        <figure class="fig wide crop">
+          <img src="../projects/maharera/assets/maharera-old-website-opt.webp" width="1512" height="2292" alt="The old MahaRERA homepage: a dense block of legal text, a 3D pie chart and auto-scrolling announcements" loading="lazy">
+          <figcaption>The old MahaRERA homepage, January 2022. The tasks people came for were nowhere in sight.</figcaption>
+        </figure>
+
+        <p>The old homepage opened with paragraphs of legal text, a 3D pie chart and a ticker of auto-scrolling updates. It wasn't badly made. It was made for the people who built it: officials, on desktops, who already knew where everything lived.</p>
+
+        <p>Before we touched a single screen, we ran a survey. Of 312 responses, <strong>71% came from people on phones</strong>, and only a third said they could reliably find what they came for. The site had been designed for the office. Its real audience was a homebuyer on a bus, holding a brochure, wondering whether to pay a booking amount.</p>
+
+        <p>That one chart did more to move the project than any design review. It's very hard to argue for a desktop-first layout when the evidence says three out of four visitors will never see it.</p>
+
+        <h2 id="l2"><span class="n">Lesson 02</span>Every search box is a promise to someone's life savings.</h2>
+
+        <figure class="fig">
+          <img src="../projects/maharera/assets/Homebuyer.webp" width="402" height="301" alt="Illustration of a frustrated homebuyer at a laptop, with prompts saying 'Need exact project name or number', 'No guidance?' and 'Where is documents?'" loading="lazy">
+          <figcaption>The homebuyer we kept designing for: no registration number, no guidance and too many PDFs.</figcaption>
+        </figure>
+
+        <p>MahaRERA sits behind more than 45,000 registered projects, 15,000 builders and 42,000 agents. At that scale, a search box isn't a feature. It's the front door to a decision people make once or twice in their lives.</p>
+
+        <p>On the old site, checking a project meant knowing its exact registration number. Almost no first-time buyer has one. They have a project name from a hoarding, a locality and a builder's name, and a lot of anxiety.</p>
+
+        <blockquote class="pull">
+          <p>"I almost paid a booking amount before I knew the project was delayed by two years."</p>
+          <cite>Homebuyer, 34, Pune</cite>
+        </blockquote>
+
+        <p>So the first thing we redesigned was search: by name, area, builder or registration number, with suggestions as you type. Then a colour-coded status badge, so "on track", "delayed" or "complaint filed" is visible before anyone opens a document. Verifying a project used to take <strong>nine steps and around twelve minutes</strong>, ending with a call to the office. Now it takes under two.</p>
+
+        <h2 id="l3"><span class="n">Lesson 03</span>Watch people fail before you decide anything.</h2>
+
+        <figure class="fig">
+          <img src="../projects/maharera/assets/usability-hero.webp" width="795" height="348" alt="Illustration of a user struggling to find information on a website" loading="lazy">
+          <figcaption>Usability testing on the old site: twelve participants, five everyday tasks.</figcaption>
+        </figure>
+
+        <p>In a government setting, everyone has an opinion about the website, and most of them are sincere. The fastest way through a room of opinions is a room of evidence.</p>
+
+        <p>We asked twelve people to do what they normally come to the site for. Only a quarter could find a project by name. Fewer than one in five could work out how to file a complaint. The site scored <strong>46 out of 100</strong> on the System Usability Scale, against an industry average of 68.</p>
+
+        <p>Watching someone give up on a page they were sure would be simple is hard to forget, for designers and officials alike. After that, the conversation moved from "should we change this?" to "what do we change first?" Which is exactly the conversation you want.</p>
+
+        <h2 id="l4"><span class="n">Lesson 04</span>You're designing for three users who want the same truth for different reasons.</h2>
+
+        <figure class="fig">
+          <img src="../projects/maharera/assets/research-hero.webp" width="520" height="355" alt="Illustration of a report with charts under a magnifying glass" loading="lazy">
+          <figcaption>326 research notes, clustered into four themes: can't find it, can't understand it, can't trust it, can't use it on a phone.</figcaption>
+        </figure>
+
+        <p>A homebuyer wants to know if a project is safe. A promoter wants that same page to make their project look credible. An agent wants to prove they're registered at all. Same data, three very different jobs.</p>
+
+        <p>Two quotes from research summed it up. An agent in Thane told us clients ask for proof of registration, and her only option was to send a screenshot. A promoter in Mumbai said buyers judge his project from the MahaRERA page, and it looks like a spreadsheet.</p>
+
+        <p>Neither of them is wrong, and neither is the homebuyer. The trick is not to pick a winner. It's to find the version of the page where verified information serves all three at once: a clear project summary that helps buyers decide and helps honest promoters stand out, and an agent lookup with a shareable verified link, so the screenshot era can quietly end.</p>
+
+        <h2 id="l5"><span class="n">Lesson 05</span>Saying no is a design decision.</h2>
+
+        <figure class="fig wide">
+          <img src="../projects/maharera/assets/mockup-1600.webp" width="1600" height="893" alt="The redesigned MahaRERA website on desktop, laptop, tablet and phone" loading="lazy">
+          <figcaption>What shipped: the high and mid-priority features from our bull's-eye, and nothing from outside it.</figcaption>
+        </figure>
+
+        <p>Once people believe the website can change, ideas arrive from every direction. Some of them are good ideas. Plenty of them are not ideas a regulator should act on.</p>
+
+        <p>We ranked every feature on a bull's-eye: the closer to the centre, the more directly it answered one of our three problem statements. Ideas that didn't fit a regulator's role went into a discarded ring. Not always because they were bad, but because a regulator that starts promoting or ranking private projects stops being neutral.</p>
+
+        <p>That ring was one of the most useful artefacts in the whole project. When a new request arrived, we didn't need a debate. We needed a pin and a question: where does this sit?</p>
+
+        <h2 id="l6"><span class="n">Lesson 06</span>Compliance isn't the ceiling. It's the floor.</h2>
+
+        <p>It's tempting to treat GIGW and WCAG as a checklist you clear at the end. On a public website, they're the minimum that everyone is owed. We built them in from the first wireframe: WCAG 2.1 AA, an English and मराठी toggle, text resizing and mobile-first layouts as defaults rather than extras.</p>
+
+        <p>The interesting thing is that the accessible version kept turning out to be the better version for everyone. Plain-language summaries above the legal documents helped first-time buyers, but they also saved promoters' legal teams from answering the same questions over and over. Designing for the least expert user didn't dumb anything down. It just made the expert users faster.</p>
+
+        <p>We repeated the original usability test on the redesigned site with twelve new participants. The before-and-after numbers tell the story better than I can:</p>
+
+        <div class="stats">
+          <div class="stat"><b>25<i>→</i>92%</b><span>found a project by name</span></div>
+          <div class="stat"><b>33<i>→</i>92%</b><span>could tell if a project was delayed</span></div>
+          <div class="stat"><b>42<i>→</i>100%</b><span>verified an agent</span></div>
+          <div class="stat"><b>17<i>→</i>83%</b><span>found how to file a complaint</span></div>
+        </div>
+
+        <h2 id="more">A few more things worth knowing.</h2>
+
+        <div class="notes">
+          <div class="note">
+            <h3>Your stakeholder is not your user, but they are your ally.</h3>
+            <p>The officers signing off on the work rarely use the public site themselves. They do, however, answer the phone when citizens can't find something. Show them the calls your design will prevent, and you've got a champion.</p>
+          </div>
+          <div class="note">
+            <h3>Legal language is a design material. Translate it; don't delete it.</h3>
+            <p>"QPR" means nothing to a homebuyer, and everything to a regulator. Keep the official term, but put a plain explanation next to it. Both audiences get what they need, and nobody has to re-read the Act.</p>
+          </div>
+          <div class="note">
+            <h3>Start where the most people are.</h3>
+            <p>MahaRERA runs two products: the public website and the application portal. The portal had painful problems too, but the website served far more people, so we fixed it first. On a public service, reach is a fair way to break a tie.</p>
+          </div>
+        </div>
+
+        <h2 id="close">So what does it actually take to design for a regulator?</h2>
+
+        <p>Here's the big misconception: that public-sector design needs a fundamentally different process. It doesn't. Research, define, test, iterate. The fundamentals hold up exactly the same whether you're building a start-up or redesigning a state regulator. The real skill is learning to work with everything <em>around</em> the design: the law, the officers, the languages and the evidence you need to bring every room along with you.</p>
+
+        <p>And trust compounds. A regulator's website earns it slowly, one verified project and one completed task at a time. But once people trust what they see there, they stop relying on screenshots, rumours and whatever a property portal tells them. For a public service, that's the outcome that matters most.</p>
+
+      </div></div>
+
+      <footer class="wrap end"><div class="col">
+        <a class="cta" href="../projects/maharera/maharera-case-study.html">
+          <div>
+            <small>Read the full case study</small>
+            <strong>MahaRERA: redesigning a government platform for 6 million users</strong>
+            <span class="d">Research, problem statements, user flows and the before-and-after results.</span>
+          </div>
+          <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+        </a>
+        <div class="after">
+          <a href="../about.html#blogs">← More blogs &amp; write-ups</a>
+          <a href="../about.html#next">Get in touch →</a>
+        </div>
+      </div></footer>
+    </article>
+  </main>
+
+  <footer class="site-foot">© 2026 Ganesh Javhare · Crafted with care in London</footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Reading progress + current section in the header
+      const bar = document.getElementById('progress');
+      const navCh = document.getElementById('navChapter');
+      const heads = [...document.querySelectorAll('.prose h2')];
+      function onScroll() {
+        const h = document.documentElement;
+        bar.style.width = (h.scrollTop / (h.scrollHeight - h.clientHeight) * 100) + '%';
+        let label = 'Article';
+        heads.forEach(el => {
+          if (el.getBoundingClientRect().top < window.innerHeight * 0.4) {
+            const n = el.querySelector('.n');
+            label = n ? 'Article · ' + n.textContent : 'Article';
+          }
+        });
+        if (navCh.textContent !== label) {
+          navCh.style.opacity = 0;
+          setTimeout(() => { navCh.textContent = label; navCh.style.opacity = 1; }, 150);
+        }
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+
+      // Read time from the actual word count (~230 words a minute)
+      const words = document.getElementById('prose').innerText.trim().split(/\s+/).length;
+      document.getElementById('readTime').textContent = Math.max(1, Math.round(words / 230)) + ' min read';
+
+      // Copy link
+      const copy = document.getElementById('copyLink');
+      copy.addEventListener('click', async () => {
+        const label = copy.querySelector('span');
+        try { await navigator.clipboard.writeText(location.href.split('#')[0]); label.textContent = 'Copied'; }
+        catch (e) { label.textContent = 'Copy failed'; }
+        setTimeout(() => { label.textContent = 'Copy link'; }, 1800);
+      });
+
+      // Avatar menu (tap to open on touch screens)
+      document.querySelectorAll('.nav-me').forEach(me => {
+        const btn = me.querySelector('button');
+        btn.addEventListener('click', e => { e.stopPropagation(); const o = me.classList.toggle('open'); btn.setAttribute('aria-expanded', o); });
+        document.addEventListener('click', () => { me.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); });
+        me.addEventListener('keydown', e => { if (e.key === 'Escape') { me.classList.remove('open'); btn.focus(); } });
+      });
+    });
+  </script>
+</body>
+</html>

@@ -144,3 +144,16 @@ Most portfolio visits from recruiters happen on phones. A page that slides sidew
 
 **Why**
 One summary HMW per user hid how much framing work sat behind each design decision. The grouped questions show the range of opportunities considered and how they cluster, and the themes link straight to the features built in the Deliver chapter, such as smart search, status badges and agent verification. Putting a face to each statement keeps the questions anchored to a real person rather than a role.
+
+---
+
+## Update — 2 November 2026: first article
+
+**What I did**
+- Published my first long-form article, *We Redesigned a Government Platform for 6 Million Users. Here's What Designing for a Regulator Looks Like.* (`articles/designing-for-a-regulator.html`).
+- Linked it as the first card in the About page's "Blogs & write-ups" row, replacing a placeholder link with real content.
+- Added the page to `sitemap.xml`.
+
+**Why**
+The case study shows *what* I did on MahaRERA. The article shows *how I think* about it: six lessons on designing inside a regulator, written in a lighter editorial voice for readers who won't sit through a full case study. It reuses the case study's images from `projects/maharera/assets/` rather than copying them, following the one-owner rule.
+

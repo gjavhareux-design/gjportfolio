@@ -32,6 +32,7 @@ This repository is the source of my portfolio. I design and build it myself, and
 │       ├── css/                site.css
 │       ├── js/                 three.min.js
 │       └── images/             Small avatar, project thumbnails
+├── articles/                   Blog articles, linked from the About page (images stay with their project)
 ├── projects/                   One folder per case study: the page + its assets/
 │   ├── maharera/               MahaRERA website redesign
 │   ├── imagine-as-you-read/    Imagine As You Read (MSc major project)
