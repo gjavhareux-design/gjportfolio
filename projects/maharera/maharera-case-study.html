@@ -3214,10 +3214,11 @@
        ---------------------------------------------------------------------
        Desktop (≥1024px with a mouse): half of a small wheel of chapter icons
        peeks in from the right edge and turns as you scroll, keeping the
-       chapter being read at 9 o'clock. Each chapter's name sits between its
-       icon and the centre; the current one is highlighted, the rest dimmed.
-       A thin outer ring fills as you read. When you stop scrolling everything
-       fades back except the current chapter; hovering slides out the full wheel.
+       chapter being read at 9 o'clock. Only the current chapter and the ones
+       still to come are shown (current highlighted, the rest dimmed). A thin
+       outer ring fills as you read. When you stop scrolling everything fades
+       back except the current chapter; hovering unrolls the wheel into a
+       vertical list.
        Mobile / touch: a small chapter button at the bottom-right opens a
        bottom sheet.
        Built by the "CIRCULAR CHAPTER NAV" script at the end of <body>.
@@ -3252,8 +3253,12 @@
     .cnav-hit { fill: transparent; pointer-events: all; }
     .cnav-wheel:not(.is-shown) .cnav-hit { pointer-events: none; }
     /* a soft disc in the page colour keeps names readable where the wheel overlaps content */
-    .cnav-backdrop { fill: var(--bg); opacity: .9; stroke: rgba(0, 0, 0, 0); transition: opacity .35s ease, filter .35s ease, stroke .35s ease; pointer-events: none; }
-    .cnav-wheel.is-open .cnav-backdrop { fill: #fbfaf8; opacity: 1; stroke: rgba(0, 0, 0, .06); filter: drop-shadow(0 18px 40px rgba(0, 0, 0, .14)); }
+    .cnav-backdrop { fill: var(--bg); opacity: .9; pointer-events: none; }
+    .cnav-listbg { fill: #fbfaf8; stroke: rgba(0, 0, 0, .05); filter: drop-shadow(0 16px 36px rgba(0, 0, 0, .12)); opacity: 0; pointer-events: none; }
+    .cnav-wheel:not(.is-open) .cnav-hitlist { pointer-events: none; }
+    /* chapters already read leave the menu: it only shows where you are and what's next */
+    .cnav-cat { transition: opacity .45s ease; }
+    .cnav-cat.is-past, .cnav-cat.is-far { opacity: 0; pointer-events: none !important; }
 
     /* outer ring: reading progress */
     .cnav-track, .cnav-progress { fill: none; stroke-width: 3; stroke-linecap: round; }
@@ -3278,7 +3283,7 @@
     .cnav-cat.is-active .cnav-dot .ic { stroke: #fff; }
 
     /* chapter names: between each icon and the centre */
-    /* horizontal option fades names in/out */
+    /* names fade in/out at the screen edge */
     .cnav-name { transition: opacity .3s ease; }
     .cnav-name text {
       font: 600 11px/1 'Inter', system-ui, sans-serif;
@@ -5085,7 +5090,6 @@
       size: .20,           // menu diameter as a share of the window width (desktop)
       sizeMin: 240,        // px, smallest diameter
       sizeMax: 320,        // px, largest diameter
-      labels: new URLSearchParams(location.search).get('labels') === 'radial' ? 'radial' : 'horizontal', // 'horizontal' (default) | 'radial'
       wheelQuery: '(min-width: 1024px) and (hover: hover) and (pointer: fine)'
     };
 
@@ -5206,7 +5210,7 @@
         const changed = next.ch !== act.ch || next.item !== act.item;
         const chChanged = next.ch !== act.ch;
         act = next;
-        if (changed) paintState(chChanged);
+        if (changed) { paintState(chChanged); kick(); }
         const hero = document.getElementById('overview');
         const shown = scrollY > (hero ? hero.offsetHeight * .55 : 200);
         wheel.classList.toggle('is-shown', shown);
@@ -5219,100 +5223,124 @@
       root.innerHTML = '';
       const wheel = htmlEl('div', 'cnav-wheel', root);
       const svg = svgEl('svg', { viewBox: '-300 -300 600 600' }, wheel);
-      const R_ICON = 110, R_DOT = 16, R_RING = 140, R_NAME = 88;   // icon ring, icon size, progress ring, where names start
+      const R_ICON = 110, R_DOT = 16, R_RING = 140;   // icon ring, icon size, progress ring
+      const ROW = 42, LIST_X = -214;                  // vertical list: row height, icon column
       const backdrop = svgEl('circle', { class: 'cnav-backdrop', r: R_RING + 12 }, svg);
+      const listBg = svgEl('rect', { class: 'cnav-listbg', rx: 22 }, svg);
       const hit = svgEl('circle', { class: 'cnav-hit', r: R_RING + 16 }, svg);
-      const rot = svgEl('g', {}, svg);
+      const hitList = svgEl('rect', { class: 'cnav-hit cnav-hitlist' }, svg);
 
       // outer ring: reading progress (turns with the wheel, so its head always sits at 9 o'clock)
+      const ring = svgEl('g', { class: 'cnav-ringg' }, svg);
+      const rot = svgEl('g', {}, ring);
       svgEl('circle', { class: 'cnav-track', r: R_RING }, rot);
       const prog = svgEl('path', { class: 'cnav-progress' }, rot);
-      const headHalo = svgEl('circle', { class: 'cnav-head-halo', r: 9, cx: -R_RING, cy: 0 }, svg);
-      const headDot = svgEl('circle', { class: 'cnav-head', r: 4, cx: -R_RING, cy: 0 }, svg);
+      svgEl('circle', { class: 'cnav-head-halo', r: 9, cx: -R_RING, cy: 0 }, ring);
+      svgEl('circle', { class: 'cnav-head', r: 4, cx: -R_RING, cy: 0 }, ring);
 
-      // inner ring: one icon per chapter, spaced evenly round the circle, its name between icon and centre
+      // categories: icon + name. Positions are worked out every frame so each one can travel
+      // smoothly between its place on the wheel and its row in the list.
+      const cats = svgEl('g', {}, svg);
       chapters.forEach(c => {
-        const a = svgEl('a', { href: '#' + c.id, class: 'cnav-cat', 'aria-label': `Chapter ${c.num}: ${c.name}` }, rot);
-        const th = ang(c.index + .5);
-        const [x, y] = pt(R_ICON, th);
+        const a = svgEl('a', { href: '#' + c.id, class: 'cnav-cat', 'aria-label': `Chapter ${c.num}: ${c.name}` }, cats);
         const name = svgEl('g', { class: 'cnav-name' }, a);
-        const text = svgEl('text', { y: 0 }, name);
+        const text = svgEl('text', { x: 0, y: 0, 'text-anchor': 'middle' }, name);
         text.textContent = c.name;
-        const at = svgEl('g', { transform: `translate(${x} ${y})` }, a);   // position (attribute) …
-        const dot = svgEl('g', { class: 'cnav-dot' }, at);                     // … kept apart from the CSS hover scale
+        const at = svgEl('g', {}, a);                       // position (attribute) …
+        const dot = svgEl('g', { class: 'cnav-dot' }, at);  // … kept apart from the CSS hover scale
         svgEl('circle', { class: 'bg', r: R_DOT }, dot);
-        const up = svgEl('g', {}, dot);                                        // counter-turn keeps the icon upright
-        const ic = svgEl('g', { class: 'ic', transform: 'translate(-9 -9) scale(.75)' }, up);
+        const ic = svgEl('g', { class: 'ic', transform: 'translate(-9 -9) scale(.75)' }, dot);
         ic.innerHTML = c.icon;
-        c.cat = a;
-        c.up = up;
-        c.name_ = { g: name, text, th, flip: null, x, y };
+        Object.assign(c, { cat: a, at, nameG: name, text, th: ang(c.index + .5), w: 0, ly: null, hid: null });
       });
-
-      // names always sit on the centre side of their icon: on the left half they read
-      // inwards (left → right), on the right half they are turned so they still read left → right
-      function orientName(N, r) {
-        const screen = ((N.th + r) % 360 + 360) % 360;
-        const flip = Math.cos(rad(screen)) > .02;
-        if (flip === N.flip) return;
-        N.flip = flip;
-        N.g.setAttribute('transform', `rotate(${(flip ? N.th : N.th - 180).toFixed(2)})`);
-        N.text.setAttribute('x', flip ? R_NAME : -R_NAME);
-        N.text.setAttribute('text-anchor', flip ? 'end' : 'start');
-      }
-
-      // horizontal option: names stay level and sit on the side of the icon that faces the centre.
-      // Beside the icon at 9 and 3 o'clock, sliding smoothly to above/below it near 12 and 6 o'clock,
-      // so names on opposite sides of the wheel never run into each other.
-      function placeFlat(N, r) {
-        if (!N.w) { N.w = N.text.getComputedTextLength(); N.text.setAttribute('text-anchor', 'middle'); N.text.setAttribute('x', 0); }
-        const a = rad(N.th + r), c = Math.cos(a), sn = Math.sin(a);
-        const d = R_DOT + 8 + 5 * Math.abs(sn);
-        const lx = -c * (d + (N.w || 60) / 2), ly = -sn * d;
-        N.g.setAttribute('transform', `translate(${N.x} ${N.y}) rotate(${(-r).toFixed(3)}) translate(${lx.toFixed(1)} ${ly.toFixed(1)})`);
-        // while only the left half is showing, hide names of icons past the centre (they would be cut off)
-        const sx = N.x * Math.cos(rad(r)) - N.y * Math.sin(rad(r));
-        const hide = !open && sx > -12;
-        if (hide !== N.hidden) { N.hidden = hide; N.g.style.opacity = hide ? '0' : ''; }
-      }
 
       function arc(r, a0, a1) {
         const span = Math.max(.01, Math.abs(a0 - a1));
         return ['M', ...pt(r, a0), 'A', r, r, 0, span > 180 ? 1 : 0, a1 > a0 ? 1 : 0, ...pt(r, a1)].join(' ');
       }
+      const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      const lerp = (a, b, t) => a + (b - a) * t;
+      const clamp01 = t => Math.max(0, Math.min(1, t));
 
+      let mShown = 0;        // 0 = wheel, 1 = list
       function render() {
         raf = 0;
-        const k = reduce.matches ? 1 : .14;
-        pShown += (p - pShown) * k;
+        const fast = reduce.matches;
+        pShown += (p - pShown) * (fast ? 1 : .14);
         if (Math.abs(p - pShown) < .0008) pShown = p;
-        const q = qOf(pShown), n = chapters.length;
-        const r = rotFor(q);
+        const mT = open ? 1 : 0;
+        mShown += (mT - mShown) * (fast ? 1 : .16);
+        if (Math.abs(mT - mShown) < .002) mShown = mT;
+        let busy = pShown !== p || mShown !== mT;
+
+        const q = qOf(pShown), n = chapters.length, r = rotFor(q);
         rot.setAttribute('transform', `rotate(${r.toFixed(3)})`);
-        const up = `rotate(${(-r).toFixed(3)})`;
-        chapters.forEach(c => { c.up.setAttribute('transform', up); CFG.labels === 'horizontal' ? placeFlat(c.name_, r) : orientName(c.name_, r); });
         prog.setAttribute('d', q > .002 ? arc(R_RING, ang(0), ang(Math.min(q, n - .001))) : '');
+        const ringOn = 1 - ease(mShown);
+        ring.style.opacity = ringOn.toFixed(3);
+        backdrop.style.opacity = (ringOn * .9).toFixed(3);
+
+        // the list holds the current chapter and the ones still to come, in page order
+        const first = Math.max(0, act.ch);
+        const rows = n - first;
+        let maxW = 0;
+        chapters.forEach(c => {
+          if (!c.w) c.w = c.text.getComputedTextLength();
+          if (c.index >= first) maxW = Math.max(maxW, c.w || 70);
+        });
+        chapters.forEach(c => {
+          const slot = c.index - first;
+          // wheel position
+          const a = rad(c.th + r), ca = Math.cos(a), sa = Math.sin(a);
+          const wx = R_ICON * ca, wy = R_ICON * sa;
+          // list position (rows glide when a chapter drops off the top)
+          const ty = (Math.max(slot, 0) - (rows - 1) / 2) * ROW;
+          c.ly = c.ly == null || fast ? ty : c.ly + (ty - c.ly) * .2;
+          if (Math.abs(c.ly - ty) < .3) c.ly = ty; else busy = true;
+          // a light stagger so the wheel unrolls into the list from the top down
+          const delay = Math.min(.24, Math.max(slot, 0) * .04);
+          const e = ease(clamp01((mShown - delay) / (1 - delay)));
+          const x = lerp(wx, LIST_X, e), y = lerp(wy, c.ly, e);
+          c.at.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)})`);
+          // name: beside the icon on the centre side on the wheel, to the right of it in the list
+          const w = c.w || 60, d = R_DOT + 8 + 5 * Math.abs(sa);
+          const nx = lerp(-ca * (d + w / 2), R_DOT + 12 + w / 2, e), ny = lerp(-sa * d, 0, e);
+          c.nameG.setAttribute('transform', `translate(${(x + nx).toFixed(1)} ${(y + ny).toFixed(1)})`);
+          // on the half-wheel, names of icons past the centre would be cut off by the screen edge
+          const hide = e < .5 && !open && wx > -12;
+          if (hide !== c.hid) { c.hid = hide; c.nameG.style.opacity = hide ? '0' : ''; }
+          // names fade a little mid-morph so they never visibly cross each other
+          if (!hide) c.nameG.style.opacity = e > .001 && e < .999 ? (1 - .75 * Math.sin(Math.PI * e)).toFixed(3) : '';
+          // on the wheel, upcoming chapters only fill the arc *below* the current one, so the order
+          // always reads downwards; chapters that would wrap round to the top wait until they're next
+          const delta = (c.index + .5 - q) * STEP;
+          c.cat.classList.toggle('is-far', e < .5 && delta > 170);
+        });
+
+        // list panel + hover area grow with the list
+        const lo = ease(mShown), h = rows * ROW + 20;
+        const x0 = LIST_X - R_DOT - 14, x1 = LIST_X + R_DOT + 12 + maxW + 20;
+        listBg.setAttribute('x', x0); listBg.setAttribute('width', x1 - x0);
+        listBg.setAttribute('y', -h / 2); listBg.setAttribute('height', h);
+        listBg.style.opacity = lo.toFixed(3);
+        hitList.setAttribute('x', x0 - 10); hitList.setAttribute('width', 300 - x0 + 10);
+        hitList.setAttribute('y', -h / 2 - 16); hitList.setAttribute('height', h + 32);
+
         // mobile button: same progress, as a full ring starting at 12 o'clock
         const f = q / n;
         fabProg.setAttribute('d', f > .002 ? arc(21, -90, -90 + Math.min(359.9, 360 * f)) : '');
-        if (pShown !== p) raf = requestAnimationFrame(render);
+        if (busy) raf = requestAnimationFrame(render);
       }
       const kick = () => { if (!raf) raf = requestAnimationFrame(render); };
 
-      /* position: half the wheel peeks in from the right edge; on hover it slides out in full */
+      /* position: half the wheel peeks in from the right edge; on hover it turns into a list in place */
       let open = false, hoverT = 0, leaveT = 0;
       function place() {
         const W = innerWidth, H = innerHeight, top = 84;
         const d = Math.max(CFG.sizeMin, Math.min(CFG.sizeMax, W * CFG.size, (H - top) * .6));
-        let s = d / (2 * (R_RING + 2));
-        let cx = W + (CFG.labels === 'horizontal' && !open ? -28 * s : 0), cy = top + (H - top) / 2;
-        if (open) {
-          cx = W - (R_RING + 14) * s - 16;
-          hit.setAttribute('r', R_RING + 70);    // big enough to keep the pointer inside while it slides
-        } else {
-          hit.setAttribute('r', R_RING + 16);
-          if (!wheel.classList.contains('is-shown')) cx += 60;
-        }
+        const s = d / (2 * (R_RING + 2));
+        let cx = W - 28 * s, cy = top + (H - top) / 2;
+        if (!wheel.classList.contains('is-shown')) cx += 80;
         wheel.style.transform = `translate(${(cx - 300).toFixed(1)}px, ${(cy - 300).toFixed(1)}px) scale(${s.toFixed(4)})`;
       }
       function setOpen(v) {
@@ -5320,8 +5348,7 @@
         open = v;
         wheel.classList.toggle('is-open', v);
         if (v) wheel.classList.remove('is-idle'); else scheduleIdle();
-        place();
-        render();
+        kick();
       }
 
       wheel.addEventListener('pointerenter', () => {
@@ -5511,6 +5538,8 @@
         chapters.forEach(c => {
           const state = act.ch < 0 ? 'up' : c.index < act.ch ? 'done' : c.index === act.ch ? 'active' : 'up';
           c.cat.classList.toggle('is-done', state === 'done');
+          c.cat.classList.toggle('is-past', state === 'done');
+          c.cat.setAttribute('tabindex', state === 'done' ? '-1' : '0');
           c.cat.classList.toggle('is-active', state === 'active');
           state === 'active' ? c.cat.setAttribute('aria-current', 'location') : c.cat.removeAttribute('aria-current');
           c.box.classList.toggle('is-done', state === 'done');
