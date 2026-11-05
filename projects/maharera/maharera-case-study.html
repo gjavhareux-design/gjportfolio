@@ -5262,16 +5262,20 @@
       const lerp = (a, b, t) => a + (b - a) * t;
       const clamp01 = t => Math.max(0, Math.min(1, t));
 
-      let mShown = 0;        // 0 = wheel, 1 = list
+      // wheel ↔ list morph runs on a clock (not per frame) so it looks the same on every screen
+      const MORPH_MS = 720;
+      let mShown = 0, mFrom = 0, mTo = 0, mT0 = 0;   // 0 = wheel, 1 = list
+      function morphTo(v) {
+        mFrom = mShown; mTo = v; mT0 = performance.now();
+      }
       function render() {
         raf = 0;
         const fast = reduce.matches;
         pShown += (p - pShown) * (fast ? 1 : .14);
         if (Math.abs(p - pShown) < .0008) pShown = p;
-        const mT = open ? 1 : 0;
-        mShown += (mT - mShown) * (fast ? 1 : .16);
-        if (Math.abs(mT - mShown) < .002) mShown = mT;
-        let busy = pShown !== p || mShown !== mT;
+        const mt = fast ? 1 : Math.min(1, (performance.now() - mT0) / (MORPH_MS * Math.max(.35, Math.abs(mTo - mFrom))));
+        mShown = mFrom + (mTo - mFrom) * mt;
+        let busy = pShown !== p || mt < 1;
 
         const q = qOf(pShown), n = chapters.length, r = rotFor(q);
         rot.setAttribute('transform', `rotate(${r.toFixed(3)})`);
@@ -5298,7 +5302,7 @@
           c.ly = c.ly == null || fast ? ty : c.ly + (ty - c.ly) * .2;
           if (Math.abs(c.ly - ty) < .3) c.ly = ty; else busy = true;
           // a light stagger so the wheel unrolls into the list from the top down
-          const delay = Math.min(.24, Math.max(slot, 0) * .04);
+          const delay = Math.min(.3, Math.max(slot, 0) * .05);
           const e = ease(clamp01((mShown - delay) / (1 - delay)));
           const x = lerp(wx, LIST_X, e), y = lerp(wy, c.ly, e);
           c.at.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)})`);
@@ -5307,7 +5311,7 @@
           const nx = lerp(-ca * (d + w / 2), R_DOT + 12 + w / 2, e), ny = lerp(-sa * d, 0, e);
           c.nameG.setAttribute('transform', `translate(${(x + nx).toFixed(1)} ${(y + ny).toFixed(1)})`);
           // on the half-wheel, names of icons past the centre would be cut off by the screen edge
-          const hide = e < .5 && !open && wx > -12;
+          const hide = e < .5 && !open && wx > -40;
           if (hide !== c.hid) { c.hid = hide; c.nameG.style.opacity = hide ? '0' : ''; }
           // names fade a little mid-morph so they never visibly cross each other
           if (!hide) c.nameG.style.opacity = e > .001 && e < .999 ? (1 - .75 * Math.sin(Math.PI * e)).toFixed(3) : '';
@@ -5348,6 +5352,7 @@
         open = v;
         wheel.classList.toggle('is-open', v);
         if (v) wheel.classList.remove('is-idle'); else scheduleIdle();
+        morphTo(v ? 1 : 0);
         kick();
       }
 
