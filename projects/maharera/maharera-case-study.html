@@ -3375,12 +3375,13 @@
     @supports not (transition-timing-function: linear(0, 1)) {
       :root { --cn-spring: cubic-bezier(.2, .9, .3, 1.04); --cn-bounce: cubic-bezier(.34, 1.45, .64, 1); }
     }
-    .cnav-sheet { position: fixed; inset: 0; z-index: 120; visibility: hidden; transition: visibility 0s linear .5s; }
+    .cnav-sheet { position: fixed; inset: 0; z-index: 120; pointer-events: none; visibility: hidden; transition: visibility 0s linear .5s; }
     .cnav-sheet.is-open { visibility: visible; transition: none; }
-    .cnav-sheet-bg { position: absolute; inset: 0; background: rgba(24, 24, 27, .22); opacity: 0; transition: opacity .35s ease; }
+    .cnav-sheet-bg { position: absolute; inset: 0; pointer-events: none; background: rgba(24, 24, 27, .12); opacity: 0; transition: opacity .35s ease; }
     .cnav-sheet.is-open .cnav-sheet-bg { opacity: 1; }
     .cnav-panel {
       position: absolute;
+      pointer-events: auto;
       left: 0;
       right: 0;
       bottom: 0;
@@ -3471,7 +3472,6 @@
     .cnav-ch-items a.is-active b, .cnav-ch-items a.is-active small { color: var(--accent); }
     .cnav-ch-items a:active { background: #f4f4f5; }
     .cnav-ch-items a:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
-    html.cnav-lock, html.cnav-lock body { overflow: hidden; }
 
     /* ---------- Which version shows ---------- */
     .cnav[data-mode="wheel"] .cnav-fab,
@@ -5486,7 +5486,6 @@
 
       const sheet = htmlEl('div', 'cnav-sheet', root);
       sheet.setAttribute('role', 'dialog');
-      sheet.setAttribute('aria-modal', 'true');
       sheet.setAttribute('aria-labelledby', 'cnavTitle');
       const sheetBg = htmlEl('div', 'cnav-sheet-bg', sheet);
       const panel = htmlEl('div', 'cnav-panel', sheet);
@@ -5556,18 +5555,18 @@
 
       function openSheet() {
         sheetOpen = true;
-        chapters.forEach(c => expand(c, c.index === Math.max(0, act.ch)));
+        // categories stay as the visitor left them (all closed at first); nothing opens by itself
         panel.style.setProperty('--drag', '0px');
         panel.style.transition = 'none';  // jump (unanimated) to the button's circle first …
         clipToFab();
         void panel.offsetWidth;
         panel.style.transition = '';      // … then spring open from there
         sheet.classList.add('is-open');
-        document.documentElement.classList.add('cnav-lock');
         fab.setAttribute('aria-expanded', 'true');
         requestAnimationFrame(() => {
           closeBtn.focus({ preventScroll: true });
-          const cur = list.querySelector('a.is-active') || chapters[Math.max(0, act.ch)].btn;
+          const curCh = chapters[Math.max(0, act.ch)];
+          const cur = curCh.box.classList.contains('is-expanded') && list.querySelector('a.is-active') || curCh.btn;
           const lr = list.getBoundingClientRect(), cr = cur.getBoundingClientRect();
           if (cr.bottom > lr.bottom - 20 || cr.top < lr.top) list.scrollTop += cr.top - lr.top - 80;
         });
@@ -5578,21 +5577,16 @@
         clipToFab();                     // shrink back into the button
         sheet.classList.remove('is-open');
         panel.style.setProperty('--drag', '0px');
-        document.documentElement.classList.remove('cnav-lock');
         fab.setAttribute('aria-expanded', 'false');
         if (then) then(); else fab.focus({ preventScroll: true });
       }
       fab.addEventListener('click', openSheet);
       closeBtn.addEventListener('click', () => closeSheet());
-      sheetBg.addEventListener('click', () => closeSheet());
+      document.addEventListener('click', e => {
+        if (sheetOpen && !panel.contains(e.target) && !fab.contains(e.target)) closeSheet(() => {});
+      });
       sheet.addEventListener('keydown', e => {
         if (e.key === 'Escape') { e.preventDefault(); closeSheet(); }
-        if (e.key === 'Tab') {
-          const f = [...panel.querySelectorAll('button, a[tabindex="0"]')];
-          const first = f[0], last = f[f.length - 1];
-          if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-          else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-        }
       });
       list.addEventListener('click', e => {
         const a = e.target.closest('a[href^="#"]');
