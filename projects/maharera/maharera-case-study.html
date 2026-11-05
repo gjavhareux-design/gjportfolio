@@ -3256,77 +3256,41 @@
     .cnav-seg path { transition: fill .35s ease; fill: var(--cn-upcoming); }
     .cnav-seg.is-done path { fill: var(--cn-done); }
     .cnav-seg.is-active path { fill: var(--cn-active); }
-    .cnav-seg text {
-      font: 650 17px/1 'Inter', system-ui, sans-serif;
-      letter-spacing: -.01em;
-      fill: var(--ink);
-      dominant-baseline: central;
-      text-anchor: middle;
-      pointer-events: none;
-      transition: fill .35s ease;
-    }
-    .cnav-seg.is-active text { fill: #fff; }
-    .cnav-seg:hover path, .cnav-seg:focus-visible path { filter: brightness(.96); }
-    .cnav-wheel a { cursor: pointer; outline: none; }
-    .cnav-seg:focus-visible path { stroke: var(--ink); stroke-width: 2.5; }
+    .cnav-wheel a { cursor: pointer; outline: none; pointer-events: auto; }
+    .cnav-seg > a path:hover { filter: brightness(.97); }
 
-    /* inner ring (headings) — only in the open wheel */
-    .cnav-items { opacity: 0; transition: opacity .35s ease; pointer-events: none; }
-    .cnav-wheel.is-open .cnav-items { opacity: 1; transition-delay: .15s; }
-    .cnav-wheel.is-open .cnav-items a { pointer-events: auto; }
-    .cnav-wheel:not(.is-open) .cnav-items a { pointer-events: none; }
-    .cnav-ring-bg { fill: #fff; stroke: var(--line); stroke-width: 1; }
-    .cnav-item rect { fill: transparent; }
-    .cnav-item text {
-      font: 500 12px/1 'Inter', system-ui, sans-serif;
-      fill: var(--muted);
+    /* labels inside the ring: chapter name (bold) + section headings */
+    .cnav-wheel text {
       dominant-baseline: central;
-      text-anchor: middle;
-      transition: fill .25s ease;
+      pointer-events: none;
+      transition: fill .3s ease, opacity .3s ease;
     }
-    .cnav-item circle { fill: #d4d4d8; transition: fill .25s ease, r .25s ease; }
-    .cnav-item.is-read text { fill: #52525b; }
-    .cnav-item.is-read circle { fill: #ffb68a; }
-    .cnav-item.is-active text { fill: var(--accent); font-weight: 700; }
-    .cnav-item.is-active circle { fill: var(--accent); r: 4.5; }
-    .cnav-item:hover text, .cnav-item:focus-visible text { fill: var(--ink); font-weight: 700; }
-    .cnav-item:focus-visible rect { stroke: var(--accent); stroke-width: 1.5; }
+    .cnav-ch-label text { font: 700 17px/1 'Inter', system-ui, sans-serif; letter-spacing: -.01em; fill: var(--ink); }
+    .cnav-item text { font: 500 12.5px/1 'Inter', system-ui, sans-serif; fill: var(--ink); opacity: .62; }
+    .cnav-wheel rect { fill: transparent; transition: fill .2s ease; }
+    .cnav-ch-label:hover rect, .cnav-ch-label:focus-visible rect,
+    .cnav-item:hover rect, .cnav-item:focus-visible rect { fill: rgba(255, 255, 255, .6); }
+    .cnav-item.is-read text { opacity: .82; }
+    .cnav-item.is-active text { opacity: 1; font-weight: 700; }
+    .cnav-item:hover text, .cnav-item:focus-visible text { opacity: 1; }
+    .cnav-ch-label:focus-visible rect, .cnav-item:focus-visible rect { stroke: var(--ink); stroke-width: 1.5; }
+
+    /* chapter being read: orange segment, white text */
+    .cnav-seg.is-active .cnav-ch-label text, .cnav-item.in-active text { fill: #fff; }
+    .cnav-item.in-active text { opacity: .78; }
+    .cnav-item.in-active.is-active text { opacity: 1; }
+    .cnav-seg.is-active .cnav-ch-label:hover rect, .cnav-item.in-active:hover rect,
+    .cnav-seg.is-active .cnav-ch-label:focus-visible rect, .cnav-item.in-active:focus-visible rect { fill: rgba(255, 255, 255, .2); stroke: #fff; }
+    .cnav-item.in-active.is-active rect { fill: rgba(255, 255, 255, .22); }
+
+    /* section headings only show when the wheel is open */
+    .cnav-items { opacity: 0; transition: opacity .3s ease; }
+    .cnav-wheel.is-open .cnav-items { opacity: 1; transition-delay: .12s; }
+    .cnav-wheel:not(.is-open) .cnav-items a { pointer-events: none; }
 
     .cnav-track { fill: none; stroke: var(--cn-track); stroke-width: 5; }
     .cnav-progress { fill: none; stroke: var(--accent); stroke-width: 5; stroke-linecap: round; }
     .cnav-pointer { fill: var(--accent); }
-
-    /* centre hub (does not rotate) */
-    .cnav-hub {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      width: 248px;
-      height: 248px;
-      margin: -124px 0 0 -124px;
-      border-radius: 50%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 30px;
-      gap: 6px;
-      opacity: 0;
-      transform: scale(.92);
-      transition: opacity .3s ease, transform .4s cubic-bezier(.22, 1, .36, 1);
-      pointer-events: none;
-    }
-    .cnav-wheel.is-open .cnav-hub { opacity: 1; transform: none; transition-delay: .18s; }
-    .cnav-hub small {
-      font: 700 11px/1.2 'Inter', system-ui, sans-serif;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      color: var(--accent);
-    }
-    .cnav-hub b { font: 700 18px/1.25 'Inter', system-ui, sans-serif; color: var(--ink); letter-spacing: -.01em; }
-    .cnav-hub span { font: 400 13px/1.45 'Inter', system-ui, sans-serif; color: var(--muted); }
-    .cnav-hub em { font: 500 11px/1 'Inter', system-ui, sans-serif; font-style: normal; color: #a1a1aa; margin-top: 6px; }
 
     .cnav-scrim {
       position: fixed;
@@ -3478,7 +3442,7 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .cnav-wheel, .cnav-wheel.is-shown, .cnav-hub, .cnav-items, .cnav-scrim, .cnav-fab, .cnav-panel,
+      .cnav-wheel, .cnav-wheel.is-shown, .cnav-items, .cnav-scrim, .cnav-fab, .cnav-panel,
       .cnav-sheet-bg, .cnav-ch-items, .cnav-chev, .cnav-toast { transition-duration: .01s !important; transition-delay: 0s !important; }
     }
   </style>
@@ -3499,8 +3463,9 @@
          look for "DATA — edit here".
        • Chapter navigation (circular wheel on desktop, button + sheet on mobile) is built
          automatically from the page: every chapter divider (class="break" + data-chapter)
-         becomes an outer-ring category, and every <section data-nav="…"> after it becomes
-         an inner-ring item (label = data-nav, heading = its h2, sub-heading = its h3).
+         becomes a category on the wheel, and every <section data-nav="…"> after it is listed
+         under that category (wheel shows the short data-nav label; the mobile list also
+         shows the section's h2 and h3).
          Give each new section a unique id and a short data-nav label to include it.
        ===================================================================== -->
 
@@ -5106,7 +5071,7 @@
        CIRCULAR CHAPTER NAV
        Reads the chapters (.break[data-chapter]) and sections (section[data-nav])
        from the page and builds:
-         • desktop: rotating half-wheel on the right that opens on hover
+         • desktop: rotating single-ring half-wheel on the right that opens on hover
          • mobile / touch: chapter button + bottom sheet
        Settings are in CFG below.
        ===================================================================== -->
@@ -5172,11 +5137,11 @@
       const anchors = [];
       chapters.forEach((c, i) => {
         c.index = i;
-        c.u = i + .1;
+        c.u = i + .12;
         anchors.push({ el: c.el, u: c.u, ch: i, item: -1 });
         const n = c.items.length;
         c.items.forEach((it, j) => {
-          it.u = i + .1 + .8 * (j + .5) / n;
+          it.u = i + .12 + .8 * (j + 1) / (n + 1);
           it.ch = i;
           it.index = j;
           anchors.push({ el: it.el, u: it.u, ch: i, item: j });
@@ -5240,65 +5205,53 @@
       svgEl('circle', { class: 'cnav-track', r: 416 }, rot);
       const prog = svgEl('path', { class: 'cnav-progress' }, rot);
 
-      // outer ring: one arrow-shaped segment per chapter (look borrowed from the reference)
-      const R1 = 398, R0 = 280, RM = (R0 + R1) / 2, GAP = 1.4, TIP = 2.6;
+      // single ring: one arrow-shaped segment per chapter (look borrowed from the reference).
+      // Inside each segment the chapter name and its section headings fan out like a list.
+      const R1 = 398, R0 = 250, RM = (R0 + R1) / 2, GAP = 1.4, TIP = 2.6, TX = R1 - 16;
+      const segs = svgEl('g', {}, rot), items = svgEl('g', { class: 'cnav-items' }, rot);
+      const spoke = (parent, cls, href, label, u, title) => {
+        const a = svgEl('a', { href: '#' + href, class: cls, 'aria-label': title }, parent);
+        const g = svgEl('g', {}, a);
+        svgEl('rect', { x: -R1 + 4, y: -11, width: R1 - R0 - 8, height: 22, rx: 11 }, g);
+        const t = svgEl('text', { x: -TX, y: 0 }, g);
+        t.textContent = label;
+        return { a, lab: { el: g, text: t, base: ang(u), flip: null } };
+      };
       chapters.forEach(c => {
         const a0 = ang(c.index) - GAP / 2, a1 = ang(c.index + 1) + GAP / 2;
-        const a = svgEl('a', { href: '#' + c.id, class: 'cnav-seg', 'aria-label': `Chapter ${c.num}: ${c.name}` }, rot);
+        const g = svgEl('g', { class: 'cnav-seg' }, segs);
         const d = [
           'M', ...pt(R1, a0), 'A', R1, R1, 0, 0, 0, ...pt(R1, a1),
           'L', ...pt(RM, a1 - TIP), 'L', ...pt(R0, a1),
           'A', R0, R0, 0, 0, 1, ...pt(R0, a0),
           'L', ...pt(RM, a0 - TIP), 'Z'
         ].join(' ');
-        svgEl('path', { d }, a);
-        const t = svgEl('text', { x: -RM, y: 0 }, a);
-        t.textContent = c.name;
-        c.seg = a;
-        c.lab = { el: t, base: ang(c.index + .5), flip: null, x: -RM };
-        a.addEventListener('pointerenter', () => showHub(c, null));
-        a.addEventListener('focus', () => showHub(c, null));
+        const bg = svgEl('a', { href: '#' + c.id, tabindex: '-1', 'aria-hidden': 'true' }, g);
+        svgEl('path', { d }, bg);
+        const head = spoke(g, 'cnav-ch-label', c.id, c.name, c.u, `Chapter ${c.num}: ${c.name}`);
+        c.seg = g;
+        c.lab = head.lab;
+        c.items.forEach(it => {
+          const sp = spoke(items, 'cnav-item', it.id, it.label, it.u, it.h);
+          svgEl('title', {}, sp.a).textContent = it.h;
+          it.spoke = sp.a;
+          it.lab = sp.lab;
+          it.spoke.dataset.ch = c.index;
+        });
       });
-
-      // inner ring: one spoke per section heading
-      const items = svgEl('g', { class: 'cnav-items' }, rot);
-      svgEl('circle', { class: 'cnav-ring-bg', r: 276 }, items);
-      const IR = 211;
-      chapters.forEach(c => c.items.forEach(it => {
-        const a = svgEl('a', { href: '#' + it.id, class: 'cnav-item', 'aria-label': `${it.h}. ${it.sub}` }, items);
-        const g = svgEl('g', {}, a);
-        svgEl('rect', { x: -272, y: -10, width: 124, height: 20, rx: 6 }, g);
-        svgEl('circle', { cx: -146, cy: 0, r: 3 }, g);
-        const t = svgEl('text', { x: -IR, y: 0 }, g);
-        t.textContent = it.label;
-        it.spoke = a;
-        it.lab = { el: g, base: ang(it.u), flip: null, x: -IR };
-        a.addEventListener('pointerenter', () => showHub(c, it));
-        a.addEventListener('focus', () => showHub(c, it));
-      }));
       svgEl('path', { class: 'cnav-pointer', d: 'M -436 -13 L -422 0 L -436 13 Z' }, svg);
 
-      const hub = htmlEl('div', 'cnav-hub', wheel);
-      const hubCh = htmlEl('small', '', hub), hubH = htmlEl('b', '', hub), hubS = htmlEl('span', '', hub), hubHint = htmlEl('em', '', hub, 'Click to jump');
-
-      function showHub(c, it) {
-        hubCh.textContent = `${c.num} · ${c.name}`;
-        hubH.textContent = it ? it.h : c.title;
-        hubS.textContent = it ? it.sub : c.desc;
-      }
-      function hubToActive() {
-        const c = chapters[Math.max(0, act.ch)];
-        showHub(c, act.item >= 0 ? c.items[act.item] : null);
-      }
-
-      // keep text upright: labels on the right half of the open wheel are turned 180°
+      // keep text upright: on the right half of the open wheel a label reads from the centre outwards
       function orient(L, r) {
         const screen = ((L.base + r) % 360 + 360) % 360;
         const flip = Math.cos(rad(screen)) > .02;
         if (flip === L.flip) return;
         L.flip = flip;
-        const rotate = `rotate(${(L.base - 180).toFixed(2)})`;
-        L.el.setAttribute('transform', flip ? `${rotate} rotate(180 ${L.x} 0)` : rotate);
+        L.el.setAttribute('transform', `rotate(${(flip ? L.base : L.base - 180).toFixed(2)})`);
+        L.text.setAttribute('x', flip ? TX : -TX);
+        L.text.setAttribute('text-anchor', flip ? 'end' : 'start');
+        const rect = L.el.querySelector('rect');
+        rect.setAttribute('x', flip ? R0 + 4 : -R1 + 4);
       }
 
       function arc(r, a0, a1) {
@@ -5345,7 +5298,7 @@
         open = v;
         wheel.classList.toggle('is-open', v);
         scrim.classList.toggle('is-on', v);
-        if (v) { wheel.classList.remove('is-idle'); hubToActive(); }
+        if (v) wheel.classList.remove('is-idle');
         else if (!instant) markActive();
         place();
       }
@@ -5359,7 +5312,7 @@
       });
       wheel.addEventListener('pointerleave', () => {
         clearTimeout(hoverT);
-        leaveT = setTimeout(() => { setOpen(false); hubToActive(); }, CFG.closeDelay);
+        leaveT = setTimeout(() => setOpen(false), CFG.closeDelay);
       });
       wheel.addEventListener('pointerdown', e => {
         if (!open && e.pointerType !== 'mouse') { e.preventDefault(); setOpen(true); }
@@ -5368,10 +5321,6 @@
       wheel.addEventListener('focusout', e => { if (!wheel.contains(e.relatedTarget)) setOpen(false); });
       wheel.addEventListener('keydown', e => {
         if (e.key === 'Escape') { setOpen(false); document.activeElement?.blur(); }
-      });
-      wheel.addEventListener('pointerleave', e => {
-        // leaving the hub area back to the ring shouldn't flicker the hub text
-        if (open) hubToActive();
       });
       wheel.addEventListener('click', e => {
         const a = e.target.closest('a[href^="#"]');
@@ -5550,7 +5499,7 @@
           const state = act.ch < 0 ? 'up' : c.index < act.ch ? 'done' : c.index === act.ch ? 'active' : 'up';
           c.seg.classList.toggle('is-done', state === 'done');
           c.seg.classList.toggle('is-active', state === 'active');
-          c.seg.toggleAttribute('aria-current', state === 'active');
+          c.lab.el.parentNode.toggleAttribute('aria-current', state === 'active');
           c.fabArc.setAttribute('class', state === 'done' ? 'is-done' : state === 'active' ? 'is-active' : '');
           c.box.classList.toggle('is-done', state === 'done');
           c.box.classList.toggle('is-active', state === 'active');
@@ -5561,6 +5510,8 @@
             const read = c.index < act.ch || (c.index === act.ch && it.index < act.item);
             it.spoke.classList.toggle('is-active', isAct);
             it.spoke.classList.toggle('is-read', read);
+            it.spoke.classList.toggle('in-active', c.index === act.ch);
+            it.spoke.classList.toggle('in-done', c.index < act.ch);
             it.sheetLink.classList.toggle('is-active', isAct);
             isAct ? it.sheetLink.setAttribute('aria-current', 'location') : it.sheetLink.removeAttribute('aria-current');
           });
@@ -5572,7 +5523,6 @@
         let n = 0;
         chapters.forEach(x => { if (x.index < ai) n += x.items.length; });
         headSub.textContent = `Now reading ${c.num} · ${c.name}${it ? ` — section ${n + act.item + 1} of ${totalItems}` : ''}`;
-        if (open) hubToActive();
         if (chChanged && act.ch >= 0 && mode === 'sheet' && !sheetOpen && fab.classList.contains('is-shown')) {
           toast.textContent = `${c.num} · ${c.name}`;
           toast.classList.add('is-on');
@@ -5605,7 +5555,6 @@
       setMode();
       pShown = p;
       render();
-      hubToActive();
       scheduleIdle();
     }
 
