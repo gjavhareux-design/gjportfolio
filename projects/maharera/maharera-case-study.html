@@ -5225,7 +5225,8 @@
       const wheel = htmlEl('div', 'cnav-wheel', root);
       const svg = svgEl('svg', { viewBox: '-300 -300 600 600' }, wheel);
       const R_ICON = 110, R_DOT = 16, R_RING = 140;   // icon ring, icon size, progress ring
-      const ROW = 42, LIST_X = -214;                  // vertical list: row height, icon column
+      const ROW = 42;                                 // vertical list: row height
+      const EDGE = 28;                                // the window's right edge, measured from the wheel's centre
       // one shape that is a circle on the wheel and a rounded rectangle around the list.
       // backdrop = soft disc in the page colour; card = white card that fades in as it straightens;
       // track = the outline (the progress ring's track on the wheel, the list's border as a list)
@@ -5315,7 +5316,9 @@
         // list box (all chapters, page order)
         let maxW = 0;
         chapters.forEach(c => { if (!c.w) c.w = c.text.getComputedTextLength(); maxW = Math.max(maxW, c.w || 70); });
-        const x0 = LIST_X - R_DOT - 16, x1 = LIST_X + R_DOT + 12 + maxW + 22;
+        // the list card sits against the right edge of the window (its right corners run off-screen)
+        const x1 = EDGE + CORNER + 4, x0 = x1 - (CORNER + 4) - (R_DOT * 2 + 16 + 12 + maxW + 26);
+        const listX = x0 + R_DOT + 16;
         const box = { cx: (x0 + x1) / 2, a: (x1 - x0) / 2, b: n * ROW / 2 + 14 };
 
         // the shape itself
@@ -5343,7 +5346,7 @@
           // stagger radiates out from the current chapter, so it stays put while the rest gather round it
           const delay = Math.min(.3, Math.abs(c.index - cur) * .045);
           const e = ease(clamp01((mShown - delay) / (1 - delay)));
-          const x = lerp(wx, LIST_X, e), y = lerp(wy, ty, e);
+          const x = lerp(wx, listX, e), y = lerp(wy, ty, e);
           c.at.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)})`);
           // name: beside the icon on the centre side on the wheel, to the right of it in the list
           const w = c.w || 60, d = R_DOT + 15 + 6 * Math.abs(sa);   // gap between icon and name on the wheel
@@ -5378,7 +5381,7 @@
         const W = innerWidth, H = innerHeight, top = 84;
         const d = Math.max(CFG.sizeMin, Math.min(CFG.sizeMax, W * CFG.size, (H - top) * .6));
         const s = d / (2 * (R_RING + 2));
-        let cx = W - 28 * s, cy = top + (H - top) / 2;
+        let cx = W - EDGE * s, cy = top + (H - top) / 2;
         if (!wheel.classList.contains('is-shown')) cx += 80;
         wheel.style.transform = `translate(${(cx - 300).toFixed(1)}px, ${(cy - 300).toFixed(1)}px) scale(${s.toFixed(4)})`;
       }
