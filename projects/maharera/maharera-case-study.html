@@ -5303,7 +5303,7 @@
           const x = lerp(wx, LIST_X, e), y = lerp(wy, c.ly, e);
           c.at.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)})`);
           // name: beside the icon on the centre side on the wheel, to the right of it in the list
-          const w = c.w || 60, d = R_DOT + 8 + 5 * Math.abs(sa);
+          const w = c.w || 60, d = R_DOT + 15 + 6 * Math.abs(sa);   // gap between icon and name on the wheel
           const nx = lerp(-ca * (d + w / 2), R_DOT + 12 + w / 2, e), ny = lerp(-sa * d, 0, e);
           c.nameG.setAttribute('transform', `translate(${(x + nx).toFixed(1)} ${(y + ny).toFixed(1)})`);
           // on the half-wheel, names of icons past the centre would be cut off by the screen edge
