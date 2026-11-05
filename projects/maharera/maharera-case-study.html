@@ -3278,6 +3278,8 @@
     .cnav-cat.is-active .cnav-dot .ic { stroke: #fff; }
 
     /* chapter names: between each icon and the centre */
+    /* horizontal option fades names in/out */
+    .cnav-name { transition: opacity .3s ease; }
     .cnav-name text {
       font: 600 11px/1 'Inter', system-ui, sans-serif;
       letter-spacing: .01em;
@@ -5083,6 +5085,7 @@
       size: .20,           // menu diameter as a share of the window width (desktop)
       sizeMin: 240,        // px, smallest diameter
       sizeMax: 320,        // px, largest diameter
+      labels: new URLSearchParams(location.search).get('labels') === 'horizontal' ? 'horizontal' : 'radial', // 'radial' | 'horizontal'
       wheelQuery: '(min-width: 1024px) and (hover: hover) and (pointer: fine)'
     };
 
@@ -5243,7 +5246,7 @@
         ic.innerHTML = c.icon;
         c.cat = a;
         c.up = up;
-        c.name_ = { g: name, text, th, flip: null };
+        c.name_ = { g: name, text, th, flip: null, x, y };
       });
 
       // names always sit on the centre side of their icon: on the left half they read
@@ -5256,6 +5259,21 @@
         N.g.setAttribute('transform', `rotate(${(flip ? N.th : N.th - 180).toFixed(2)})`);
         N.text.setAttribute('x', flip ? R_NAME : -R_NAME);
         N.text.setAttribute('text-anchor', flip ? 'end' : 'start');
+      }
+
+      // horizontal option: names stay level and sit on the side of the icon that faces the centre.
+      // Beside the icon at 9 and 3 o'clock, sliding smoothly to above/below it near 12 and 6 o'clock,
+      // so names on opposite sides of the wheel never run into each other.
+      function placeFlat(N, r) {
+        if (!N.w) { N.w = N.text.getComputedTextLength(); N.text.setAttribute('text-anchor', 'middle'); N.text.setAttribute('x', 0); }
+        const a = rad(N.th + r), c = Math.cos(a), sn = Math.sin(a);
+        const d = R_DOT + 8 + 5 * Math.abs(sn);
+        const lx = -c * (d + (N.w || 60) / 2), ly = -sn * d;
+        N.g.setAttribute('transform', `translate(${N.x} ${N.y}) rotate(${(-r).toFixed(3)}) translate(${lx.toFixed(1)} ${ly.toFixed(1)})`);
+        // while only the left half is showing, hide names of icons past the centre (they would be cut off)
+        const sx = N.x * Math.cos(rad(r)) - N.y * Math.sin(rad(r));
+        const hide = !open && sx > -12;
+        if (hide !== N.hidden) { N.hidden = hide; N.g.style.opacity = hide ? '0' : ''; }
       }
 
       function arc(r, a0, a1) {
@@ -5272,7 +5290,7 @@
         const r = rotFor(q);
         rot.setAttribute('transform', `rotate(${r.toFixed(3)})`);
         const up = `rotate(${(-r).toFixed(3)})`;
-        chapters.forEach(c => { c.up.setAttribute('transform', up); orientName(c.name_, r); });
+        chapters.forEach(c => { c.up.setAttribute('transform', up); CFG.labels === 'horizontal' ? placeFlat(c.name_, r) : orientName(c.name_, r); });
         prog.setAttribute('d', q > .002 ? arc(R_RING, ang(0), ang(Math.min(q, n - .001))) : '');
         // mobile button: same progress, as a full ring starting at 12 o'clock
         const f = q / n;
@@ -5287,7 +5305,7 @@
         const W = innerWidth, H = innerHeight, top = 84;
         const d = Math.max(CFG.sizeMin, Math.min(CFG.sizeMax, W * CFG.size, (H - top) * .6));
         let s = d / (2 * (R_RING + 2));
-        let cx = W, cy = top + (H - top) / 2;
+        let cx = W + (CFG.labels === 'horizontal' && !open ? -28 * s : 0), cy = top + (H - top) / 2;
         if (open) {
           cx = W - (R_RING + 14) * s - 16;
           hit.setAttribute('r', R_RING + 70);    // big enough to keep the pointer inside while it slides
@@ -5303,6 +5321,7 @@
         wheel.classList.toggle('is-open', v);
         if (v) wheel.classList.remove('is-idle'); else scheduleIdle();
         place();
+        render();
       }
 
       wheel.addEventListener('pointerenter', () => {
