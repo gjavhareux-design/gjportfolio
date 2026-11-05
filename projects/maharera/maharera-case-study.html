@@ -3270,15 +3270,14 @@
       transition: transform .35s cubic-bezier(.22, 1, .36, 1), opacity .3s ease;
       opacity: .42;
     }
-    .cnav-cat .cnav-dot .bg { fill: var(--paper); stroke: #d6d2cc; stroke-width: 1.25; transition: fill .3s ease, stroke .3s ease; }
+    .cnav-cat .cnav-dot .bg { fill: var(--paper); stroke: transparent; stroke-width: 1.25; transition: fill .3s ease, stroke .3s ease; }
     .cnav-cat .cnav-dot .ic { fill: none; stroke: var(--ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transition: stroke .3s ease; }
-    .cnav-cat.is-done .cnav-dot .bg { stroke: #ffb68a; }
     .cnav-cat.is-active .cnav-dot { opacity: 1; transform: scale(1.18); }
     .cnav-cat.is-active .cnav-dot .bg { fill: var(--accent); stroke: var(--accent); }
     .cnav-cat.is-active .cnav-dot .ic { stroke: #fff; }
 
     .cnav-pill { opacity: 0; transition: opacity .3s ease, transform .4s cubic-bezier(.22, 1, .36, 1); }
-    .cnav-pill rect { fill: rgba(255, 255, 255, .92); stroke: #d6d2cc; stroke-width: 1; }
+    .cnav-pill rect { fill: rgba(255, 255, 255, .92); stroke: transparent; stroke-width: 1; }
     .cnav-pill text {
       font: 600 11.5px/1 'Inter', system-ui, sans-serif;
       letter-spacing: .01em;
