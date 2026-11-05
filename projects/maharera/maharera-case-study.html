@@ -3254,7 +3254,7 @@
     .cnav-wheel:not(.is-shown) .cnav-hit { pointer-events: none; }
     /* a soft disc in the page colour keeps names readable where the wheel overlaps content */
     .cnav-backdrop { fill: var(--bg); opacity: .9; pointer-events: none; }
-    .cnav-listbg { fill: #fbfaf8; stroke: rgba(0, 0, 0, .05); filter: drop-shadow(0 16px 36px rgba(0, 0, 0, .12)); opacity: 0; pointer-events: none; }
+    .cnav-listbg { fill: #fbfaf8; filter: drop-shadow(0 16px 36px rgba(0, 0, 0, .12)); opacity: 0; pointer-events: none; }
     .cnav-wheel:not(.is-open) .cnav-hitlist { pointer-events: none; }
     /* chapters already read leave the menu: it only shows where you are and what's next */
     .cnav-cat { transition: opacity .45s ease; }
@@ -3265,7 +3265,7 @@
     .cnav-track { stroke: var(--cn-track); }
     .cnav-progress { stroke: var(--accent); }
     .cnav-head { fill: var(--accent); }
-    .cnav-head-halo { fill: var(--accent); opacity: .18; }
+    .cnav-head-halo { fill: var(--accent); }
 
     /* inner ring: one icon + name per chapter */
     .cnav-cat { cursor: pointer; outline: none; pointer-events: auto; }
@@ -3296,9 +3296,10 @@
     .cnav-cat.is-active .cnav-name text { font-weight: 700; font-size: 12px; fill: var(--accent); opacity: 1; }
 
     /* idle (scrolling stopped): everything fades back except the current chapter */
-    .cnav-track, .cnav-progress, .cnav-head, .cnav-head-halo { transition: opacity .45s ease; }
-    .cnav-wheel.is-idle:not(.is-open) :is(.cnav-track, .cnav-progress, .cnav-head) { opacity: .4; }
-    .cnav-wheel.is-idle:not(.is-open) .cnav-head-halo { opacity: .08; }
+    .cnav-track { transition: opacity .45s ease; }
+    .cnav-progress, .cnav-head, .cnav-head-halo { transition: filter .45s ease; }
+    .cnav-wheel.is-idle:not(.is-open) .cnav-track { opacity: .4; }
+    .cnav-wheel.is-idle:not(.is-open) :is(.cnav-progress, .cnav-head, .cnav-head-halo) { filter: opacity(.45); }
     .cnav-wheel.is-idle:not(.is-open) .cnav-cat:not(.is-active) .cnav-dot { opacity: .22; }
     .cnav-wheel.is-idle:not(.is-open) .cnav-cat:not(.is-active) .cnav-name text { opacity: .3; }
     .cnav-wheel.is-idle:not(.is-open) .cnav-cat.is-active .cnav-dot { opacity: .9; }
@@ -5225,18 +5226,17 @@
       const svg = svgEl('svg', { viewBox: '-300 -300 600 600' }, wheel);
       const R_ICON = 110, R_DOT = 16, R_RING = 140;   // icon ring, icon size, progress ring
       const ROW = 42, LIST_X = -214;                  // vertical list: row height, icon column
-      const backdrop = svgEl('circle', { class: 'cnav-backdrop', r: R_RING + 12 }, svg);
-      const listBg = svgEl('rect', { class: 'cnav-listbg', rx: 22 }, svg);
+      // one shape that is a circle on the wheel and a rounded rectangle around the list.
+      // backdrop = soft disc in the page colour; card = white card that fades in as it straightens;
+      // track = the outline (the progress ring's track on the wheel, the list's border as a list)
+      const backdrop = svgEl('path', { class: 'cnav-backdrop' }, svg);
+      const card = svgEl('path', { class: 'cnav-listbg' }, svg);
       const hit = svgEl('circle', { class: 'cnav-hit', r: R_RING + 16 }, svg);
       const hitList = svgEl('rect', { class: 'cnav-hit cnav-hitlist' }, svg);
-
-      // outer ring: reading progress (turns with the wheel, so its head always sits at 9 o'clock)
-      const ring = svgEl('g', { class: 'cnav-ringg' }, svg);
-      const rot = svgEl('g', {}, ring);
-      svgEl('circle', { class: 'cnav-track', r: R_RING }, rot);
-      const prog = svgEl('path', { class: 'cnav-progress' }, rot);
-      svgEl('circle', { class: 'cnav-head-halo', r: 9, cx: -R_RING, cy: 0 }, ring);
-      svgEl('circle', { class: 'cnav-head', r: 4, cx: -R_RING, cy: 0 }, ring);
+      const track = svgEl('path', { class: 'cnav-track' }, svg);
+      const prog = svgEl('path', { class: 'cnav-progress' }, svg);
+      const headHalo = svgEl('circle', { class: 'cnav-head-halo', r: 9 }, svg);
+      const headDot = svgEl('circle', { class: 'cnav-head', r: 4 }, svg);
 
       // categories: icon + name. Positions are worked out every frame so each one can travel
       // smoothly between its place on the wheel and its row in the list.
@@ -5268,6 +5268,24 @@
       function morphTo(v) {
         mFrom = mShown; mTo = v; mT0 = performance.now();
       }
+      // circle → rounded rectangle: every point of the circle at angle φ is paired with the point
+      // at the same parameter on a squircle (a rectangle with smooth corners) and moved between them
+      const SQ = 2 / 9;   // squircle corner softness (smaller = squarer)
+      const sq = u => Math.sign(u) * Math.pow(Math.abs(u), SQ);
+      function shapePt(phi, R, box, e) {
+        const c = Math.cos(rad(phi)), s = Math.sin(rad(phi));
+        return [lerp(R * c, box.cx + box.a * sq(c), e), lerp(R * s, box.b * sq(s), e)];
+      }
+      function shapePath(R, box, e, from = 0, to = 360, closed = true) {
+        const steps = Math.max(2, Math.ceil(Math.abs(to - from) / 2.5));
+        let d = '';
+        for (let i = 0; i <= steps; i++) {
+          const [x, y] = shapePt(from + (to - from) * i / steps, R, box, e);
+          d += (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1);
+        }
+        return closed ? d + 'Z' : d;
+      }
+
       function render() {
         raf = 0;
         const fast = reduce.matches;
@@ -5278,59 +5296,62 @@
         let busy = pShown !== p || mt < 1;
 
         const q = qOf(pShown), n = chapters.length, r = rotFor(q);
-        rot.setAttribute('transform', `rotate(${r.toFixed(3)})`);
-        prog.setAttribute('d', q > .002 ? arc(R_RING, ang(0), ang(Math.min(q, n - .001))) : '');
-        const ringOn = 1 - ease(mShown);
-        ring.style.opacity = ringOn.toFixed(3);
-        backdrop.style.opacity = (ringOn * .9).toFixed(3);
+        const eS = ease(mShown);
 
-        // the list holds the current chapter and the ones still to come, in page order
-        const first = Math.max(0, act.ch);
-        const rows = n - first;
+        // list box (all chapters, page order)
         let maxW = 0;
+        chapters.forEach(c => { if (!c.w) c.w = c.text.getComputedTextLength(); maxW = Math.max(maxW, c.w || 70); });
+        const x0 = LIST_X - R_DOT - 16, x1 = LIST_X + R_DOT + 12 + maxW + 22;
+        const box = { cx: (x0 + x1) / 2, a: (x1 - x0) / 2, b: n * ROW / 2 + 14 };
+
+        // the shape itself
+        const outline = shapePath(R_RING, box, eS);
+        track.setAttribute('d', outline);
+        card.setAttribute('d', outline);
+        card.style.opacity = eS.toFixed(3);
+        backdrop.setAttribute('d', shapePath(R_RING + 12, { cx: box.cx, a: box.a + 2, b: box.b + 2 }, eS));
+        // reading progress runs along the same shape and fades as it becomes the list border
+        const pa = ang(0) + r;   // where the progress starts, on screen
+        prog.setAttribute('d', q > .002 ? shapePath(R_RING, box, eS, pa, 180, false) : '');
+        const [hx, hy] = shapePt(180, R_RING, box, eS);
+        headDot.setAttribute('cx', hx.toFixed(1)); headDot.setAttribute('cy', hy.toFixed(1));
+        headHalo.setAttribute('cx', hx.toFixed(1)); headHalo.setAttribute('cy', hy.toFixed(1));
+        const pOn = (1 - eS).toFixed(3);
+        prog.style.opacity = pOn; headDot.style.opacity = pOn; headHalo.style.opacity = (pOn * .18).toFixed(3);
+
+        const cur = Math.max(0, act.ch);
         chapters.forEach(c => {
-          if (!c.w) c.w = c.text.getComputedTextLength();
-          if (c.index >= first) maxW = Math.max(maxW, c.w || 70);
-        });
-        chapters.forEach(c => {
-          const slot = c.index - first;
           // wheel position
           const a = rad(c.th + r), ca = Math.cos(a), sa = Math.sin(a);
           const wx = R_ICON * ca, wy = R_ICON * sa;
-          // list position (rows glide when a chapter drops off the top)
-          const ty = (Math.max(slot, 0) - (rows - 1) / 2) * ROW;
-          c.ly = c.ly == null || fast ? ty : c.ly + (ty - c.ly) * .2;
-          if (Math.abs(c.ly - ty) < .3) c.ly = ty; else busy = true;
-          // a light stagger so the wheel unrolls into the list from the top down
-          const delay = Math.min(.3, Math.max(slot, 0) * .05);
+          // list position: every chapter, in page order
+          const ty = (c.index - (n - 1) / 2) * ROW;
+          // stagger radiates out from the current chapter, so it stays put while the rest gather round it
+          const delay = Math.min(.3, Math.abs(c.index - cur) * .045);
           const e = ease(clamp01((mShown - delay) / (1 - delay)));
-          const x = lerp(wx, LIST_X, e), y = lerp(wy, c.ly, e);
+          const x = lerp(wx, LIST_X, e), y = lerp(wy, ty, e);
           c.at.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)})`);
           // name: beside the icon on the centre side on the wheel, to the right of it in the list
           const w = c.w || 60, d = R_DOT + 15 + 6 * Math.abs(sa);   // gap between icon and name on the wheel
           const nx = lerp(-ca * (d + w / 2), R_DOT + 12 + w / 2, e), ny = lerp(-sa * d, 0, e);
           c.nameG.setAttribute('transform', `translate(${(x + nx).toFixed(1)} ${(y + ny).toFixed(1)})`);
-          // on the half-wheel, names of icons past the centre would be cut off by the screen edge
+          // on the half-wheel, names of icons near the screen edge would be cut off
           const hide = e < .5 && !open && wx > -40;
-          if (hide !== c.hid) { c.hid = hide; c.nameG.style.opacity = hide ? '0' : ''; }
           // names fade a little mid-morph so they never visibly cross each other
-          if (!hide) c.nameG.style.opacity = e > .001 && e < .999 ? (1 - .75 * Math.sin(Math.PI * e)).toFixed(3) : '';
-          // on the wheel, upcoming chapters only fill the arc *below* the current one, so the order
-          // always reads downwards; chapters that would wrap round to the top wait until they're next
+          c.nameG.style.opacity = hide ? '0' : e > .001 && e < .999 ? (1 - .75 * Math.sin(Math.PI * e)).toFixed(3) : '';
+          // the wheel is a reading guide (current + what's next, never wrapping round);
+          // the list shows everything
           const delta = (c.index + .5 - q) * STEP;
+          c.cat.classList.toggle('is-past', e < .5 && c.index < act.ch);
           c.cat.classList.toggle('is-far', e < .5 && delta > 170);
         });
 
-        // list panel + hover area grow with the list
-        const lo = ease(mShown), h = rows * ROW + 20;
-        const x0 = LIST_X - R_DOT - 14, x1 = LIST_X + R_DOT + 12 + maxW + 20;
-        listBg.setAttribute('x', x0); listBg.setAttribute('width', x1 - x0);
-        listBg.setAttribute('y', -h / 2); listBg.setAttribute('height', h);
-        listBg.style.opacity = lo.toFixed(3);
-        hitList.setAttribute('x', x0 - 10); hitList.setAttribute('width', 300 - x0 + 10);
-        hitList.setAttribute('y', -h / 2 - 16); hitList.setAttribute('height', h + 32);
+        // hover area follows the list
+        const top = -box.b - 16;
+        hitList.setAttribute('x', x0 - 12); hitList.setAttribute('width', 300 - x0 + 12);
+        hitList.setAttribute('y', top); hitList.setAttribute('height', -2 * top);
 
-        // mobile button: same progress, as a full ring starting at 12 o'clock
+      // mobile button: same progress, as a full ring starting at 12 o'clock
         const f = q / n;
         fabProg.setAttribute('d', f > .002 ? arc(21, -90, -90 + Math.min(359.9, 360 * f)) : '');
         if (busy) raf = requestAnimationFrame(render);
@@ -5543,8 +5564,6 @@
         chapters.forEach(c => {
           const state = act.ch < 0 ? 'up' : c.index < act.ch ? 'done' : c.index === act.ch ? 'active' : 'up';
           c.cat.classList.toggle('is-done', state === 'done');
-          c.cat.classList.toggle('is-past', state === 'done');
-          c.cat.setAttribute('tabindex', state === 'done' ? '-1' : '0');
           c.cat.classList.toggle('is-active', state === 'active');
           state === 'active' ? c.cat.setAttribute('aria-current', 'location') : c.cat.removeAttribute('aria-current');
           c.box.classList.toggle('is-done', state === 'done');
