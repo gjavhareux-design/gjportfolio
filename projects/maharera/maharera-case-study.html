@@ -233,59 +233,6 @@
     .nav-menu a:hover, .nav-menu a[aria-current="page"] { background: var(--accent-soft); color: var(--accent); }
     @media (max-width: 400px) { .nav-back .lbl { display: none; } .nav-back { padding: 10px 13px; } }
 
-    .rail {
-      position: fixed;
-      right: 22px;
-      top: 50%;
-      transform: translateY(-50%);
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      z-index: 80
-    }
-
-    .rail a {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 10px;
-      text-decoration: none
-    }
-
-    .rail a span {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--muted);
-      opacity: 0;
-      transform: translateX(6px);
-      transition: .25s;
-      white-space: nowrap
-    }
-
-    .rail a i {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #d4d4d8;
-      transition: .25s
-    }
-
-    .rail a:hover span,
-    .rail a.on span {
-      opacity: 1;
-      transform: none
-    }
-
-    .rail a.on i {
-      background: var(--accent);
-      transform: scale(1.4)
-    }
-
-    @media(max-width:1280px) {
-      .rail {
-        display: none
-      }
-    }
 
     /* ================= SECTION PATTERN: Heading → Sub-heading → Text → Image ================= */
     section {
@@ -2861,7 +2808,7 @@
 
     /* NV3 · Interface text
        Used by: nav chapter name, "All work", chapter dots, footer copyright, social links */
-    .nv3, .nav-chapter, .nav-back, .rail a span, footer small, footer .soc a {
+    .nv3, .nav-chapter, .nav-back, footer small, footer .soc a {
       font-size: 13px;
       font-weight: 500;
       letter-spacing: 0;
@@ -3261,6 +3208,279 @@
     .fa-user-check{--fa-i:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 640 512%22%3E%3Cpath d=%22M96 128a128 128 0 1 1 256 0A128 128 0 1 1 96 128zM0 482.3C0 383.8 79.8 304 178.3 304l91.4 0C368.2 304 448 383.8 448 482.3c0 16.4-13.3 29.7-29.7 29.7L29.7 512C13.3 512 0 498.7 0 482.3zM625 177L497 305c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L591 143c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z%22/%3E%3C/svg%3E");--fa-w:1.2500em}
     .fa-user-tie{--fa-i:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 448 512%22%3E%3Cpath d=%22M96 128a128 128 0 1 0 256 0A128 128 0 1 0 96 128zm94.5 200.2l18.6 31L175.8 483.1l-36-146.9c-2-8.1-9.8-13.4-17.9-11.3C51.9 342.4 0 405.8 0 481.3c0 17 13.8 30.7 30.7 30.7l131.7 0c0 0 0 0 .1 0l5.5 0 112 0 5.5 0c0 0 0 0 .1 0l131.7 0c17 0 30.7-13.8 30.7-30.7c0-75.5-51.9-138.9-121.9-156.4c-8.1-2-15.9 3.3-17.9 11.3l-36 146.9L238.9 359.2l18.6-31c6.4-10.7-1.3-24.2-13.7-24.2L224 304l-19.7 0c-12.4 0-20.1 13.6-13.7 24.2z%22/%3E%3C/svg%3E");--fa-w:0.8750em}
     .fa-xmark{--fa-i:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 384 512%22%3E%3Cpath d=%22M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z%22/%3E%3C/svg%3E");--fa-w:0.7500em}
+
+    /* =====================================================================
+       CIRCULAR CHAPTER NAVIGATION
+       ---------------------------------------------------------------------
+       Desktop (≥1024px with a mouse): a half-wheel peeks in from the right
+       edge, rotates as you scroll, dims when you stop, and opens into the
+       full wheel on hover. Mobile / touch: a small chapter button at the
+       bottom-right opens a bottom sheet.
+       Built by the "CIRCULAR CHAPTER NAV" script at the end of <body>.
+       ===================================================================== */
+    :root {
+      --cn-upcoming: #ebe8e4;      /* chapters not reached yet */
+      --cn-done:     #ffd8c1;      /* chapters already read */
+      --cn-active:   var(--accent);/* chapter being read */
+      --cn-track:    #e7e3de;      /* thin outer progress track */
+    }
+
+    [data-nav], .break[data-chapter] { scroll-margin-top: 96px; }
+
+    .cnav { display: contents; }
+
+    /* ---------- Desktop wheel ---------- */
+    .cnav-wheel {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 880px;
+      height: 880px;
+      transform-origin: 440px 440px;
+      z-index: 85;
+      pointer-events: none;
+      opacity: 0;
+      visibility: hidden;
+      transition: transform .65s cubic-bezier(.22, 1, .36, 1), opacity .45s ease, filter .45s ease, visibility 0s linear .65s;
+      will-change: transform;
+    }
+    .cnav-wheel.is-shown { opacity: 1; visibility: visible; transition: transform .65s cubic-bezier(.22, 1, .36, 1), opacity .45s ease, filter .45s ease; }
+    .cnav-wheel.is-shown.is-idle:not(.is-open) { opacity: .42; filter: saturate(.55); }
+    .cnav-wheel svg { width: 100%; height: 100%; overflow: visible; display: block; }
+
+    .cnav-hit { fill: transparent; pointer-events: all; }
+    .cnav-wheel:not(.is-shown) .cnav-hit,
+    .cnav-wheel:not(.is-shown) a { pointer-events: none; }
+
+    .cnav-rot { transform-box: view-box; }
+    .cnav-seg path { transition: fill .35s ease; fill: var(--cn-upcoming); }
+    .cnav-seg.is-done path { fill: var(--cn-done); }
+    .cnav-seg.is-active path { fill: var(--cn-active); }
+    .cnav-seg text {
+      font: 650 17px/1 'Inter', system-ui, sans-serif;
+      letter-spacing: -.01em;
+      fill: var(--ink);
+      dominant-baseline: central;
+      text-anchor: middle;
+      pointer-events: none;
+      transition: fill .35s ease;
+    }
+    .cnav-seg.is-active text { fill: #fff; }
+    .cnav-seg:hover path, .cnav-seg:focus-visible path { filter: brightness(.96); }
+    .cnav-wheel a { cursor: pointer; outline: none; }
+    .cnav-seg:focus-visible path { stroke: var(--ink); stroke-width: 2.5; }
+
+    /* inner ring (headings) — only in the open wheel */
+    .cnav-items { opacity: 0; transition: opacity .35s ease; pointer-events: none; }
+    .cnav-wheel.is-open .cnav-items { opacity: 1; transition-delay: .15s; }
+    .cnav-wheel.is-open .cnav-items a { pointer-events: auto; }
+    .cnav-wheel:not(.is-open) .cnav-items a { pointer-events: none; }
+    .cnav-ring-bg { fill: #fff; stroke: var(--line); stroke-width: 1; }
+    .cnav-item rect { fill: transparent; }
+    .cnav-item text {
+      font: 500 12px/1 'Inter', system-ui, sans-serif;
+      fill: var(--muted);
+      dominant-baseline: central;
+      text-anchor: middle;
+      transition: fill .25s ease;
+    }
+    .cnav-item circle { fill: #d4d4d8; transition: fill .25s ease, r .25s ease; }
+    .cnav-item.is-read text { fill: #52525b; }
+    .cnav-item.is-read circle { fill: #ffb68a; }
+    .cnav-item.is-active text { fill: var(--accent); font-weight: 700; }
+    .cnav-item.is-active circle { fill: var(--accent); r: 4.5; }
+    .cnav-item:hover text, .cnav-item:focus-visible text { fill: var(--ink); font-weight: 700; }
+    .cnav-item:focus-visible rect { stroke: var(--accent); stroke-width: 1.5; }
+
+    .cnav-track { fill: none; stroke: var(--cn-track); stroke-width: 5; }
+    .cnav-progress { fill: none; stroke: var(--accent); stroke-width: 5; stroke-linecap: round; }
+    .cnav-pointer { fill: var(--accent); }
+
+    /* centre hub (does not rotate) */
+    .cnav-hub {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 248px;
+      height: 248px;
+      margin: -124px 0 0 -124px;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 30px;
+      gap: 6px;
+      opacity: 0;
+      transform: scale(.92);
+      transition: opacity .3s ease, transform .4s cubic-bezier(.22, 1, .36, 1);
+      pointer-events: none;
+    }
+    .cnav-wheel.is-open .cnav-hub { opacity: 1; transform: none; transition-delay: .18s; }
+    .cnav-hub small {
+      font: 700 11px/1.2 'Inter', system-ui, sans-serif;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .cnav-hub b { font: 700 18px/1.25 'Inter', system-ui, sans-serif; color: var(--ink); letter-spacing: -.01em; }
+    .cnav-hub span { font: 400 13px/1.45 'Inter', system-ui, sans-serif; color: var(--muted); }
+    .cnav-hub em { font: 500 11px/1 'Inter', system-ui, sans-serif; font-style: normal; color: #a1a1aa; margin-top: 6px; }
+
+    .cnav-scrim {
+      position: fixed;
+      inset: 0;
+      z-index: 84;
+      background: rgba(249, 247, 245, .62);
+      -webkit-backdrop-filter: blur(3px);
+      backdrop-filter: blur(3px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity .4s ease, visibility 0s linear .4s;
+    }
+    .cnav-scrim.is-on { opacity: 1; visibility: visible; transition: opacity .4s ease; }
+
+    /* ---------- Mobile button ---------- */
+    .cnav-fab {
+      position: fixed;
+      right: 16px;
+      bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+      z-index: 90;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 0, 0, .06);
+      background: rgba(255, 255, 255, .88);
+      -webkit-backdrop-filter: blur(14px);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 8px 24px -10px rgba(0, 0, 0, .25);
+      padding: 0;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      opacity: 0;
+      transform: translateY(12px) scale(.9);
+      visibility: hidden;
+      transition: opacity .35s ease, transform .4s cubic-bezier(.22, 1, .36, 1), visibility 0s linear .4s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .cnav-fab.is-shown { opacity: 1; transform: none; visibility: visible; transition: opacity .35s ease, transform .4s cubic-bezier(.22, 1, .36, 1); }
+    .cnav-fab.is-shown.is-idle { opacity: .82; }
+    .cnav-fab svg { position: absolute; inset: 3px; width: 48px; height: 48px; overflow: visible; }
+    .cnav-fab path { fill: none; stroke-width: 4; stroke: var(--cn-upcoming); transition: stroke .3s ease; }
+    .cnav-fab path.is-done { stroke: var(--cn-done); }
+    .cnav-fab path.is-active { stroke: var(--accent); }
+    .cnav-fab .cnav-fab-tick { fill: var(--accent); stroke: none; }
+    .cnav-fab b { position: relative; font: 800 14px/1 'Inter', system-ui, sans-serif; color: var(--ink); font-variant-numeric: tabular-nums; }
+    .cnav-fab:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+    .cnav-toast {
+      position: fixed;
+      right: 80px;
+      bottom: calc(29px + env(safe-area-inset-bottom, 0px));
+      z-index: 90;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: var(--ink);
+      color: #fff;
+      font: 600 12px/1 'Inter', system-ui, sans-serif;
+      white-space: nowrap;
+      opacity: 0;
+      transform: translateX(8px);
+      transition: opacity .3s ease, transform .3s ease;
+      pointer-events: none;
+    }
+    .cnav-toast.is-on { opacity: .92; transform: none; }
+
+    /* ---------- Mobile bottom sheet ---------- */
+    .cnav-sheet { position: fixed; inset: 0; z-index: 120; visibility: hidden; transition: visibility 0s linear .4s; }
+    .cnav-sheet.is-open { visibility: visible; transition: none; }
+    .cnav-sheet-bg { position: absolute; inset: 0; background: rgba(24, 24, 27, .42); opacity: 0; transition: opacity .35s ease; }
+    .cnav-sheet.is-open .cnav-sheet-bg { opacity: 1; }
+    .cnav-panel {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      max-height: min(84vh, 760px);
+      display: flex;
+      flex-direction: column;
+      background: var(--paper);
+      border-radius: 24px 24px 0 0;
+      box-shadow: 0 -12px 40px -16px rgba(0, 0, 0, .3);
+      transform: translateY(100%);
+      transition: transform .42s cubic-bezier(.22, 1, .36, 1);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    .cnav-sheet.is-open .cnav-panel { transform: translateY(var(--drag, 0px)); }
+    .cnav-panel.is-dragging { transition: none; }
+    .cnav-grab { padding: 10px 0 2px; touch-action: none; }
+    .cnav-grab i { display: block; width: 40px; height: 5px; border-radius: 3px; background: #d4d4d8; margin: 0 auto; }
+    .cnav-head { display: flex; align-items: center; gap: 12px; padding: 6px 12px 12px 20px; border-bottom: 1px solid var(--line); touch-action: none; }
+    .cnav-head div { flex: 1; min-width: 0; }
+    .cnav-head h2 { font: 700 18px/1.2 'Inter', system-ui, sans-serif; color: var(--ink); }
+    .cnav-head p { font: 500 13px/1.3 'Inter', system-ui, sans-serif; color: var(--muted); margin-top: 3px; }
+    .cnav-close {
+      width: 44px; height: 44px; border-radius: 50%; border: 0;
+      background: #f4f4f5; color: var(--ink); cursor: pointer;
+      display: grid; place-items: center; flex-shrink: 0;
+    }
+    .cnav-close svg { width: 18px; height: 18px; }
+    .cnav-close:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+    .cnav-list { overflow-y: auto; overscroll-behavior: contain; padding: 8px 12px 20px; -webkit-overflow-scrolling: touch; }
+    .cnav-ch + .cnav-ch { border-top: 1px solid #f1f1f3; }
+    .cnav-ch-btn {
+      width: 100%; min-height: 60px; display: flex; align-items: center; gap: 14px;
+      padding: 10px 8px; border: 0; background: none; cursor: pointer; text-align: left;
+      border-radius: 14px; color: var(--ink); -webkit-tap-highlight-color: transparent;
+    }
+    .cnav-ch-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
+    .cnav-num {
+      width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0;
+      font: 700 13px/1 'Inter', system-ui, sans-serif; background: var(--cn-upcoming); color: var(--ink);
+    }
+    .cnav-ch.is-done .cnav-num { background: var(--cn-done); }
+    .cnav-ch.is-active .cnav-num { background: var(--accent); color: #fff; }
+    .cnav-ch-txt { flex: 1; min-width: 0; }
+    .cnav-ch-txt b { display: block; font: 700 16px/1.25 'Inter', system-ui, sans-serif; }
+    .cnav-ch-txt small { display: block; font: 400 13px/1.35 'Inter', system-ui, sans-serif; color: var(--muted); margin-top: 2px; }
+    .cnav-badge { font: 700 10px/1 'Inter', system-ui, sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); padding: 5px 7px; border-radius: 999px; }
+    .cnav-chev { width: 20px; height: 20px; color: #a1a1aa; transition: transform .3s ease; flex-shrink: 0; }
+    .cnav-ch.is-expanded .cnav-chev { transform: rotate(180deg); }
+    .cnav-ch-items { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .32s ease; }
+    .cnav-ch.is-expanded .cnav-ch-items { grid-template-rows: 1fr; }
+    .cnav-ch-items > ul { overflow: hidden; list-style: none; margin: 0 0 0 26px; padding: 0 0 0 0; border-left: 2px solid #f1f1f3; }
+    .cnav-ch.is-expanded .cnav-ch-items > ul { padding-bottom: 10px; }
+    .cnav-ch-items a {
+      display: block; min-height: 48px; padding: 10px 12px 10px 20px; margin-left: -2px;
+      border-left: 2px solid transparent; text-decoration: none; color: var(--ink);
+      border-radius: 0 12px 12px 0; -webkit-tap-highlight-color: transparent;
+    }
+    .cnav-ch-items a b { display: block; font: 600 15px/1.3 'Inter', system-ui, sans-serif; }
+    .cnav-ch-items a span { display: block; font: 400 13px/1.4 'Inter', system-ui, sans-serif; color: var(--muted); margin-top: 2px; }
+    .cnav-ch-items a small { display: block; font: 700 10px/1 'Inter', system-ui, sans-serif; letter-spacing: .1em; text-transform: uppercase; color: #a1a1aa; margin-bottom: 5px; }
+    .cnav-ch-items a.is-active { border-left-color: var(--accent); background: var(--accent-soft); }
+    .cnav-ch-items a.is-active b, .cnav-ch-items a.is-active small { color: var(--accent); }
+    .cnav-ch-items a:active { background: #f4f4f5; }
+    .cnav-ch-items a:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
+    html.cnav-lock, html.cnav-lock body { overflow: hidden; }
+
+    /* ---------- Which version shows ---------- */
+    .cnav[data-mode="wheel"] .cnav-fab,
+    .cnav[data-mode="wheel"] .cnav-toast,
+    .cnav[data-mode="wheel"] .cnav-sheet { display: none; }
+    .cnav[data-mode="sheet"] .cnav-wheel,
+    .cnav[data-mode="sheet"] .cnav-scrim { display: none; }
+    @media (max-width: 1023px) {
+      footer { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .cnav-wheel, .cnav-wheel.is-shown, .cnav-hub, .cnav-items, .cnav-scrim, .cnav-fab, .cnav-panel,
+      .cnav-sheet-bg, .cnav-ch-items, .cnav-chev, .cnav-toast { transition-duration: .01s !important; transition-delay: 0s !important; }
+    }
   </style>
 </head>
 
@@ -3277,12 +3497,18 @@
        • Chapter dividers → blocks with class="break". Change the big number and title there.
        • Chart data (assumption map, bull's-eye, donut) → the <script> at the bottom,
          look for "DATA — edit here".
-       • Right-hand chapter dots → <aside class="rail"> near the top. Keep each href="#id"
-         matching the id of its chapter divider.
+       • Chapter navigation (circular wheel on desktop, button + sheet on mobile) is built
+         automatically from the page: every chapter divider (class="break" + data-chapter)
+         becomes an outer-ring category, and every <section data-nav="…"> after it becomes
+         an inner-ring item (label = data-nav, heading = its h2, sub-heading = its h3).
+         Give each new section a unique id and a short data-nav label to include it.
        ===================================================================== -->
 
 
   <div class="progress" id="progress"></div>
+
+  <!-- Chapter navigation (wheel on desktop, button + sheet on mobile) — filled in by the "CIRCULAR CHAPTER NAV" script -->
+  <nav class="cnav" id="cnav" aria-label="Chapter navigation"></nav>
 
   <nav class="nav" aria-label="Main">
     <a href="../../index.html" class="brand" aria-label="Ganesh Javhare — home">
@@ -3332,14 +3558,6 @@
     </div>
   </nav>
 
-  <aside class="rail" aria-label="Chapters">
-    <a href="#overview"><span>Overview</span><i></i></a>
-    <a href="#intro"><span>01 · Introduction</span><i></i></a>
-    <a href="#discover"><span>02 · Discover</span><i></i></a>
-    <a href="#define"><span>03 · Define</span><i></i></a>
-    <a href="#develop"><span>04 · Develop</span><i></i></a>
-    <a href="#deliver"><span>05 · Deliver</span><i></i></a>
-  </aside>
 
   <main>
 
@@ -3383,7 +3601,7 @@
     </div>
 
     <!-- About — single image: assets/intro.webp -->
-    <section>
+    <section id="about" data-nav="About MahaRERA" data-nav-h="Meet MahaRERA" data-nav-sub="The regulator, its services and the people it serves">
       <div class="wrap">
         <figure class="rv">
           <img src="assets/intro.webp" alt="About MahaRERA: Maharashtra Real Estate Regulatory Authority, the watchdog for every real estate project in the state. A governing and regulating body of government of Maharashtra, India; regulates real estate in Maharashtra state; protects home buyers and their interests." style="width:100%;height:auto;border-radius:24px">
@@ -3392,7 +3610,7 @@
     </section>
 
     <!-- Users -->
-    <section style="padding-top:20px">
+    <section id="users" data-nav="The users" style="padding-top:20px">
       <div class="wrap">
         <div class="sh rv">
           <span class="tag lb1">The users</span>
@@ -3455,7 +3673,7 @@
          ===================================================================== -->
 
     <!-- Part 1: Two products -->
-    <section id="products" style="padding-top:20px">
+    <section id="products" data-nav="Digital services" style="padding-top:20px">
       <div class="wrap">
         <div class="sh rv">
           <span class="tag lb1">Digital services</span>
@@ -3503,7 +3721,7 @@
     </section>
 
     <!-- Part 2: Two challenges -->
-    <section id="challenges" style="padding-top:20px">
+    <section id="challenges" data-nav="The challenge" style="padding-top:20px">
       <div class="wrap">
         <div class="sh rv">
           <span class="tag lb1">The challenge</span>
@@ -3553,7 +3771,7 @@
     </section>
 
     <!-- Old website: screenshot (maharera-old-website.jpg), then UX pain point cards (assets/UXP1–UXP5.jpg) -->
-    <section style="padding-top:20px">
+    <section id="old-website" data-nav="The old website" style="padding-top:20px">
       <div class="wrap">
         <div class="sh rv">
           <span class="tag lb1">The starting point</span>
@@ -3595,7 +3813,7 @@
 
     <!-- Research methods — tinted stat cards with illustrations (research-ill-1…5.webp)
          and a header illustration (assets/research-hero.webp). Colours: CSS "RESEARCH METHODS". -->
-    <section id="research" class="rm-section" style="padding-top:20px">
+    <section id="research" data-nav="Research methods" class="rm-section" style="padding-top:20px">
       <div class="wrap">
         <div class="rm-head">
           <div class="sh rv">
@@ -3648,7 +3866,7 @@
     <!-- Survey + analytics — header illustration (assets/survey-hero.webp), three stat cards,
          and a column chart "Why do you use the MahaRERA website?".
          Edit numbers here: bars use data-w="%" ; columns use --v (value) and --c (colour). -->
-    <section id="survey" style="padding-top:20px">
+    <section id="survey" data-nav="Survey &amp; analytics" style="padding-top:20px">
       <div class="wrap">
         <div class="sv-head">
           <div class="sh rv">
@@ -3733,7 +3951,7 @@
 
     <!-- Usability test of old site — illustration (assets/usability-hero.webp), task success bars, SUS gauge.
          Edit bars: data-w = %, style background = bar colour. Gauge: data-gauge = score. -->
-    <section id="usability" style="padding-top:20px">
+    <section id="usability" data-nav="Usability test" style="padding-top:20px">
       <div class="wrap">
         <div class="sv-head">
           <div class="sh rv">
@@ -3780,7 +3998,7 @@
          Grid: 3 columns × 2 rows on desktop, 2 on tablet, 1 on phone.
          Layout settings are in CSS under "STORYBOARD".
          ===================================================================== -->
-    <section id="storyboard" style="padding-top:0px">
+    <section id="storyboard" data-nav="User frustrations" style="padding-top:0px">
       <div class="wrap">
         <div class="sh rv">
           <h2 class="sh1">User frustrations</h2>
@@ -3815,7 +4033,7 @@
     </div>
 
     <!-- Affinity -->
-    <section>
+    <section id="affinity" data-nav="Affinity mapping">
       <div class="wrap">
         <div class="sh rv">
           <span class="tag lb1">Affinity mapping</span>
@@ -3868,7 +4086,7 @@
     </section>
 
     <!-- Problem statements -->
-    <section style="padding-top:20px">
+    <section id="problems" data-nav="Problem statements" style="padding-top:20px">
       <div class="wrap">
         <div class="sh rv">
           <span class="tag lb1">Problem statements</span>
@@ -4022,7 +4240,7 @@
     </section>
 
     <!-- Journey -->
-    <section style="padding-top:20px">
+    <section id="journey" data-nav="Journey map" style="padding-top:20px">
       <div class="wrap">
         <div class="sh rv">
           <span class="tag lb1">Journey map · Homebuyer</span>
@@ -4104,7 +4322,7 @@
       </div>
     </section>
 
-    <section style="padding-top:20px">
+    <section id="pain-points" data-nav="UX pain points" style="padding-top:20px">
       <div class="wrap">
         <div class="sh rv">
           <span class="tag lb1">Old website user experience analysis</span>
@@ -4154,14 +4372,14 @@
     </section>
 
     <!-- ======================================================= -->
-    <!-- 04 DEVELOP -->
+    <!-- 04 DESIGN -->
     <!-- ======================================================= -->
-    <div class="break" id="develop" data-chapter="04 · Develop">
+    <div class="break" id="design" data-chapter="04 · Design">
       <div class="inner rv">
         <div class="big ch1">04</div>
-        <div class="txt"><small class="lb1">Chapter four · Develop</small>
+        <div class="txt"><small class="lb1">Chapter four · Design</small>
           <h3 class="ch2">Deciding what to build first</h3>
-          <p class="ch3">Test the risky ideas, then rank every feature.</p>
+          <p class="ch3">Test the risky ideas, rank every feature, then simplify the key journeys.</p>
         </div>
       </div>
       <div class="rule">
@@ -4170,7 +4388,7 @@
     </div>
 
     <!-- Assumption map -->
-    <section>
+    <section id="assumptions" data-nav="Assumption map">
       <div class="wrap">
         <div class="sh rv">
           <span class="tag lb1">Assumption prioritisation</span>
@@ -4203,7 +4421,7 @@
     </section>
 
     <!-- Bullseye -->
-    <section style="padding-top:20px">
+    <section id="bullseye" data-nav="Feature bull’s-eye" style="padding-top:20px">
       <div class="wrap">
         <div class="sh rv">
           <span class="tag lb1">Feature prioritisation</span>
@@ -4234,7 +4452,7 @@
     </section>
 
     <!-- Eased flow -->
-    <section style="padding-top:20px">
+    <section id="user-flows" data-nav="User flows" style="padding-top:20px">
       <div class="wrap">
         <div class="sh rv">
           <span class="tag lb1">User flow · Before vs after</span>
@@ -4311,14 +4529,14 @@
     </section>
 
     <!-- ======================================================= -->
-    <!-- 05 DELIVER -->
+    <!-- 05 DEVELOP -->
     <!-- ======================================================= -->
-    <div class="break" id="deliver" data-chapter="05 · Deliver">
+    <div class="break" id="develop" data-chapter="05 · Develop">
       <div class="inner rv">
         <div class="big ch1">05</div>
-        <div class="txt"><small class="lb1">Chapter five · Deliver</small>
-          <h3 class="ch2">What we built, and how it performed</h3>
-          <p class="ch3">High-priority features shipped first.</p>
+        <div class="txt"><small class="lb1">Chapter five · Develop</small>
+          <h3 class="ch2">Turning priorities into features</h3>
+          <p class="ch3">Every high-priority idea, built to answer a problem statement.</p>
         </div>
       </div>
       <div class="rule">
@@ -4327,7 +4545,7 @@
     </div>
 
     <!-- Features -->
-    <section>
+    <section id="features" data-nav="Key features">
       <div class="wrap">
         <div class="sh rv">
           <span class="tag lb1">Key features</span>
@@ -4379,8 +4597,24 @@
       </div>
     </section>
 
+    <!-- ======================================================= -->
+    <!-- 06 TEST -->
+    <!-- ======================================================= -->
+    <div class="break" id="test" data-chapter="06 · Test">
+      <div class="inner rv">
+        <div class="big ch1">06</div>
+        <div class="txt"><small class="lb1">Chapter six · Test</small>
+          <h3 class="ch2">Back in front of real users</h3>
+          <p class="ch3">The same five tasks, with twelve new participants.</p>
+        </div>
+      </div>
+      <div class="rule">
+        <div></div>
+      </div>
+    </div>
+
     <!-- Retest -->
-    <section style="padding-top:20px">
+    <section id="retest" data-nav="Usability retest">
       <div class="wrap">
         <div class="sh rv">
           <span class="tag lb1">Usability retest</span>
@@ -4445,8 +4679,24 @@
       </div>
     </section>
 
+    <!-- ======================================================= -->
+    <!-- 07 LAUNCH -->
+    <!-- ======================================================= -->
+    <div class="break" id="launch" data-chapter="07 · Launch">
+      <div class="inner rv">
+        <div class="big ch1">07</div>
+        <div class="txt"><small class="lb1">Chapter seven · Launch</small>
+          <h3 class="ch2">What happened after go-live</h3>
+          <p class="ch3">Six months of results, and the lessons I’m keeping.</p>
+        </div>
+      </div>
+      <div class="rule">
+        <div></div>
+      </div>
+    </div>
+
     <!-- Impact -->
-    <section style="padding-top:20px">
+    <section id="impact" data-nav="Impact">
       <div class="wrap">
         <div class="dark rv" style="padding:48px 32px">
           <div class="sh center" style="margin-bottom:30px">
@@ -4477,7 +4727,7 @@
     </section>
 
     <!-- Reflection -->
-    <section style="padding-top:20px">
+    <section id="reflection" data-nav="Reflection" style="padding-top:20px">
       <div class="wrap">
         <div class="sh center rv">
           <span class="tag lb1">Reflection</span>
@@ -4809,11 +5059,10 @@
           .tab));
       }));
 
-      /* ===== Progress, nav label, rail ===== */
+      /* ===== Progress, nav label ===== */
       const bar = document.getElementById('progress'),
         navCh = document.getElementById('navChapter');
-      const chapters = [...document.querySelectorAll('[data-chapter]')],
-        rail = [...document.querySelectorAll('.rail a')];
+      const chapters = [...document.querySelectorAll('[data-chapter]')];
       const onScroll = () => {
         const h = document.documentElement;
         bar.style.width = (h.scrollTop / (h.scrollHeight - h.clientHeight) * 100) + '%';
@@ -4829,7 +5078,6 @@
             navCh.style.opacity = 1;
           }, 150);
         }
-        rail.forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + cur.id));
       };
       addEventListener('scroll', onScroll, {
         passive: true
@@ -4852,6 +5100,518 @@
         c.style.setProperty('--my', (e.clientY - r.top) + 'px');
       }));
     });
+  </script>
+
+  <!-- =====================================================================
+       CIRCULAR CHAPTER NAV
+       Reads the chapters (.break[data-chapter]) and sections (section[data-nav])
+       from the page and builds:
+         • desktop: rotating half-wheel on the right that opens on hover
+         • mobile / touch: chapter button + bottom sheet
+       Settings are in CFG below.
+       ===================================================================== -->
+  <script>
+  (() => {
+    const CFG = {
+      readLine: .38,       // a section counts as "being read" once its top passes 38% of the screen
+      idleAfter: 1100,     // ms without scrolling before the wheel dims
+      hoverDelay: 110,     // ms the pointer must rest on the wheel before it opens
+      closeDelay: 260,     // ms after the pointer leaves before it closes
+      peek: 190,           // px of the wheel visible at the right edge (desktop, closed)
+      sector: 45,          // degrees per chapter (7 × 45° leaves a gap where the story starts/ends)
+      wheelQuery: '(min-width: 1024px) and (hover: hover) and (pointer: fine)'
+    };
+
+    const NS = 'http://www.w3.org/2000/svg';
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+    const svgEl = (tag, attrs = {}, parent) => {
+      const e = document.createElementNS(NS, tag);
+      for (const k in attrs) e.setAttribute(k, attrs[k]);
+      if (parent) parent.appendChild(e);
+      return e;
+    };
+    const htmlEl = (tag, cls, parent, text) => {
+      const e = document.createElement(tag);
+      if (cls) e.className = cls;
+      if (text != null) e.textContent = text;
+      if (parent) parent.appendChild(e);
+      return e;
+    };
+    const clean = t => (t || '').replace(/\s+/g, ' ').trim();
+    const rad = d => d * Math.PI / 180;
+    const pt = (r, a) => [+(r * Math.cos(rad(a))).toFixed(2), +(r * Math.sin(rad(a))).toFixed(2)];
+
+    function init() {
+      const root = document.getElementById('cnav');
+      if (!root) return;
+
+      /* ---------- 1. Read the page structure ---------- */
+      const chapters = [];
+      document.querySelectorAll('.break[data-chapter], section[data-nav]').forEach(el => {
+        if (el.matches('.break')) {
+          const [num, name] = el.dataset.chapter.split('·').map(clean);
+          chapters.push({
+            el, id: el.id, num, name,
+            title: clean(el.querySelector('.ch2')?.textContent),
+            desc: clean(el.querySelector('.ch3')?.textContent),
+            items: []
+          });
+        } else if (chapters.length) {
+          chapters[chapters.length - 1].items.push({
+            el, id: el.id,
+            label: clean(el.dataset.nav),
+            h: clean(el.dataset.navH || el.querySelector('h2')?.textContent),
+            sub: clean(el.dataset.navSub || el.querySelector('h2 ~ h3, .sh2')?.textContent)
+          });
+        }
+      });
+      if (!chapters.length) return;
+
+      // Every chapter divider and section becomes an "anchor" with a position u on the wheel.
+      // Chapter i covers u = i … i+1; its sections are spread evenly inside it.
+      const anchors = [];
+      chapters.forEach((c, i) => {
+        c.index = i;
+        c.u = i + .1;
+        anchors.push({ el: c.el, u: c.u, ch: i, item: -1 });
+        const n = c.items.length;
+        c.items.forEach((it, j) => {
+          it.u = i + .1 + .8 * (j + .5) / n;
+          it.ch = i;
+          it.index = j;
+          anchors.push({ el: it.el, u: it.u, ch: i, item: j });
+        });
+      });
+      const uEnd = chapters.length - .06;
+      const START = 180 + CFG.sector / 2;                 // where chapter 1 begins (just above 9 o'clock)
+      const ang = u => START - CFG.sector * u;          // wheel angle of a position u
+      const rotFor = p => 180 - ang(p);                 // rotation that puts p at the pointer (9 o'clock)
+
+      /* ---------- 2. State ---------- */
+      let p = 0, pShown = 0, act = { ch: -1, item: -1 }, raf = 0, idleT = 0, mode = '';
+
+      function measure() {
+        const line = innerHeight * CFG.readLine;
+        const maxY = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+        const ys = anchors.map(a => a.el.getBoundingClientRect().top + scrollY - line);
+        // anchors that can never reach the reading line (end of page) are squeezed in before the bottom
+        for (let k = ys.length - 1, room = maxY; k >= 0; k--) {
+          room = Math.min(ys[k], room);
+          ys[k] = room;
+          room -= 60;
+        }
+        return { ys, maxY };
+      }
+
+      function compute() {
+        const { ys, maxY } = measure();
+        const y = scrollY;
+        let k = -1;
+        for (let i = 0; i < ys.length; i++) if (ys[i] <= y + 1) k = i;
+        if (k < 0) {
+          p = anchors[0].u * Math.max(0, Math.min(1, y / Math.max(1, ys[0])));
+        } else if (k === ys.length - 1) {
+          const t = Math.min(1, (y - ys[k]) / Math.max(1, maxY - ys[k]));
+          p = anchors[k].u + (uEnd - anchors[k].u) * t;
+        } else {
+          const t = (y - ys[k]) / Math.max(1, ys[k + 1] - ys[k]);
+          p = anchors[k].u + (anchors[k + 1].u - anchors[k].u) * t;
+        }
+        const next = k < 0 ? { ch: -1, item: -1 } : { ch: anchors[k].ch, item: anchors[k].item };
+        const changed = next.ch !== act.ch || next.item !== act.item;
+        const chChanged = next.ch !== act.ch;
+        act = next;
+        if (changed) paintState(chChanged);
+        const hero = document.getElementById('overview');
+        const shown = scrollY > (hero ? hero.offsetHeight * .55 : 200);
+        wheel.classList.toggle('is-shown', shown);
+        fab.classList.toggle('is-shown', shown);
+        if (!shown && open) setOpen(false, true);
+        place();
+      }
+
+      /* ---------- 3. Desktop wheel ---------- */
+      root.innerHTML = '';
+      const scrim = htmlEl('div', 'cnav-scrim', root);
+      const wheel = htmlEl('div', 'cnav-wheel', root);
+      const svg = svgEl('svg', { viewBox: '-440 -440 880 880', role: 'presentation' }, wheel);
+      svgEl('circle', { class: 'cnav-hit', r: 440 }, svg);
+      const rot = svgEl('g', { class: 'cnav-rot' }, svg);
+      svgEl('circle', { class: 'cnav-track', r: 416 }, rot);
+      const prog = svgEl('path', { class: 'cnav-progress' }, rot);
+
+      // outer ring: one arrow-shaped segment per chapter (look borrowed from the reference)
+      const R1 = 398, R0 = 280, RM = (R0 + R1) / 2, GAP = 1.4, TIP = 2.6;
+      chapters.forEach(c => {
+        const a0 = ang(c.index) - GAP / 2, a1 = ang(c.index + 1) + GAP / 2;
+        const a = svgEl('a', { href: '#' + c.id, class: 'cnav-seg', 'aria-label': `Chapter ${c.num}: ${c.name}` }, rot);
+        const d = [
+          'M', ...pt(R1, a0), 'A', R1, R1, 0, 0, 0, ...pt(R1, a1),
+          'L', ...pt(RM, a1 - TIP), 'L', ...pt(R0, a1),
+          'A', R0, R0, 0, 0, 1, ...pt(R0, a0),
+          'L', ...pt(RM, a0 - TIP), 'Z'
+        ].join(' ');
+        svgEl('path', { d }, a);
+        const t = svgEl('text', { x: -RM, y: 0 }, a);
+        t.textContent = c.name;
+        c.seg = a;
+        c.lab = { el: t, base: ang(c.index + .5), flip: null, x: -RM };
+        a.addEventListener('pointerenter', () => showHub(c, null));
+        a.addEventListener('focus', () => showHub(c, null));
+      });
+
+      // inner ring: one spoke per section heading
+      const items = svgEl('g', { class: 'cnav-items' }, rot);
+      svgEl('circle', { class: 'cnav-ring-bg', r: 276 }, items);
+      const IR = 211;
+      chapters.forEach(c => c.items.forEach(it => {
+        const a = svgEl('a', { href: '#' + it.id, class: 'cnav-item', 'aria-label': `${it.h}. ${it.sub}` }, items);
+        const g = svgEl('g', {}, a);
+        svgEl('rect', { x: -272, y: -10, width: 124, height: 20, rx: 6 }, g);
+        svgEl('circle', { cx: -146, cy: 0, r: 3 }, g);
+        const t = svgEl('text', { x: -IR, y: 0 }, g);
+        t.textContent = it.label;
+        it.spoke = a;
+        it.lab = { el: g, base: ang(it.u), flip: null, x: -IR };
+        a.addEventListener('pointerenter', () => showHub(c, it));
+        a.addEventListener('focus', () => showHub(c, it));
+      }));
+      svgEl('path', { class: 'cnav-pointer', d: 'M -436 -13 L -422 0 L -436 13 Z' }, svg);
+
+      const hub = htmlEl('div', 'cnav-hub', wheel);
+      const hubCh = htmlEl('small', '', hub), hubH = htmlEl('b', '', hub), hubS = htmlEl('span', '', hub), hubHint = htmlEl('em', '', hub, 'Click to jump');
+
+      function showHub(c, it) {
+        hubCh.textContent = `${c.num} · ${c.name}`;
+        hubH.textContent = it ? it.h : c.title;
+        hubS.textContent = it ? it.sub : c.desc;
+      }
+      function hubToActive() {
+        const c = chapters[Math.max(0, act.ch)];
+        showHub(c, act.item >= 0 ? c.items[act.item] : null);
+      }
+
+      // keep text upright: labels on the right half of the open wheel are turned 180°
+      function orient(L, r) {
+        const screen = ((L.base + r) % 360 + 360) % 360;
+        const flip = Math.cos(rad(screen)) > .02;
+        if (flip === L.flip) return;
+        L.flip = flip;
+        const rotate = `rotate(${(L.base - 180).toFixed(2)})`;
+        L.el.setAttribute('transform', flip ? `${rotate} rotate(180 ${L.x} 0)` : rotate);
+      }
+
+      function arc(r, a0, a1) {
+        const span = Math.max(.01, a0 - a1);
+        return ['M', ...pt(r, a0), 'A', r, r, 0, span > 180 ? 1 : 0, 0, ...pt(r, a1)].join(' ');
+      }
+
+      function render() {
+        raf = 0;
+        const k = reduce.matches ? 1 : .14;
+        pShown += (p - pShown) * k;
+        if (Math.abs(p - pShown) < .0008) pShown = p;
+        const r = rotFor(pShown);
+        rot.setAttribute('transform', `rotate(${r.toFixed(3)})`);
+        prog.setAttribute('d', arc(416, ang(0), ang(Math.max(.001, pShown))));
+        chapters.forEach(c => { orient(c.lab, r); c.items.forEach(it => orient(it.lab, r)); });
+        fabRot.setAttribute('transform', `rotate(${r.toFixed(3)})`);
+        if (pShown !== p) raf = requestAnimationFrame(render);
+      }
+      const kick = () => { if (!raf) raf = requestAnimationFrame(render); };
+
+      /* wheel position: hidden → peeking half-circle → fully open */
+      let open = false, hoverT = 0, leaveT = 0;
+      function place() {
+        const W = innerWidth, H = innerHeight, top = 84;
+        const sClosed = Math.max(.5, Math.min(.62, (H - top - 40) / 880));
+        const peek = Math.min(CFG.peek, 424 * sClosed);
+        const sOpen = Math.max(.55, Math.min(.95, (H - top - 30) / 880, (W * .62) / 880));
+        let s, cx, cy;
+        if (open) {
+          s = sOpen;
+          cx = W - 424 * s;   // right edge stays at the screen edge so the pointer never "falls off" while it opens
+          cy = top + (H - top) / 2;
+        } else {
+          s = sClosed;
+          cx = W + 424 * s - peek;
+          cy = top + (H - top) / 2;
+          if (!wheel.classList.contains('is-shown')) cx += 120;
+        }
+        wheel.style.transform = `translate(${(cx - 440).toFixed(1)}px, ${(cy - 440).toFixed(1)}px) scale(${s.toFixed(4)})`;
+      }
+      function setOpen(v, instant) {
+        if (open === v) return;
+        open = v;
+        wheel.classList.toggle('is-open', v);
+        scrim.classList.toggle('is-on', v);
+        if (v) { wheel.classList.remove('is-idle'); hubToActive(); }
+        else if (!instant) markActive();
+        place();
+      }
+      function markActive() { scheduleIdle(); }
+
+      wheel.addEventListener('pointerenter', () => {
+        clearTimeout(leaveT);
+        if (!wheel.classList.contains('is-shown')) return;
+        wheel.classList.remove('is-idle');
+        hoverT = setTimeout(() => setOpen(true), CFG.hoverDelay);
+      });
+      wheel.addEventListener('pointerleave', () => {
+        clearTimeout(hoverT);
+        leaveT = setTimeout(() => { setOpen(false); hubToActive(); }, CFG.closeDelay);
+      });
+      wheel.addEventListener('pointerdown', e => {
+        if (!open && e.pointerType !== 'mouse') { e.preventDefault(); setOpen(true); }
+      });
+      wheel.addEventListener('focusin', () => { clearTimeout(leaveT); setOpen(true); });
+      wheel.addEventListener('focusout', e => { if (!wheel.contains(e.relatedTarget)) setOpen(false); });
+      wheel.addEventListener('keydown', e => {
+        if (e.key === 'Escape') { setOpen(false); document.activeElement?.blur(); }
+      });
+      wheel.addEventListener('pointerleave', e => {
+        // leaving the hub area back to the ring shouldn't flicker the hub text
+        if (open) hubToActive();
+      });
+      wheel.addEventListener('click', e => {
+        const a = e.target.closest('a[href^="#"]');
+        if (!a) return;
+        e.preventDefault();
+        go(a.getAttribute('href').slice(1));
+        clearTimeout(hoverT);
+        setOpen(false);
+        a.blur();
+      });
+
+      function go(id) {
+        const t = document.getElementById(id);
+        if (!t) return;
+        t.scrollIntoView({ behavior: reduce.matches ? 'auto' : 'smooth', block: 'start' });
+        history.replaceState(null, '', '#' + id);
+      }
+
+      function scheduleIdle() {
+        wheel.classList.remove('is-idle');
+        fab.classList.remove('is-idle');
+        clearTimeout(idleT);
+        idleT = setTimeout(() => {
+          if (!open) wheel.classList.add('is-idle');
+          fab.classList.add('is-idle');
+        }, CFG.idleAfter);
+      }
+
+      /* ---------- 4. Mobile: button + bottom sheet ---------- */
+      const fab = htmlEl('button', 'cnav-fab', root);
+      fab.type = 'button';
+      fab.setAttribute('aria-haspopup', 'dialog');
+      fab.setAttribute('aria-expanded', 'false');
+      const fsvg = svgEl('svg', { viewBox: '-26 -26 52 52', 'aria-hidden': 'true' }, fab);
+      const fabRot = svgEl('g', {}, fsvg);
+      chapters.forEach(c => {
+        const a0 = ang(c.index) - 4, a1 = ang(c.index + 1) + 4;
+        c.fabArc = svgEl('path', { d: arc(21, a0, a1) }, fabRot);
+      });
+      svgEl('path', { class: 'cnav-fab-tick', d: 'M -26 -3.5 L -22.5 0 L -26 3.5 Z' }, fsvg);
+      const fabNum = htmlEl('b', '', fab, chapters[0].num);
+      const toast = htmlEl('div', 'cnav-toast', root);
+      toast.setAttribute('aria-hidden', 'true');
+      let toastT = 0;
+
+      const sheet = htmlEl('div', 'cnav-sheet', root);
+      sheet.setAttribute('role', 'dialog');
+      sheet.setAttribute('aria-modal', 'true');
+      sheet.setAttribute('aria-labelledby', 'cnavTitle');
+      const sheetBg = htmlEl('div', 'cnav-sheet-bg', sheet);
+      const panel = htmlEl('div', 'cnav-panel', sheet);
+      const grab = htmlEl('div', 'cnav-grab', panel);
+      htmlEl('i', '', grab);
+      const head = htmlEl('div', 'cnav-head', panel);
+      const headTxt = htmlEl('div', '', head);
+      const ht = htmlEl('h2', '', headTxt, 'Chapters');
+      ht.id = 'cnavTitle';
+      const headSub = htmlEl('p', '', headTxt);
+      const closeBtn = htmlEl('button', 'cnav-close', head);
+      closeBtn.type = 'button';
+      closeBtn.setAttribute('aria-label', 'Close chapters');
+      closeBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+      const list = htmlEl('div', 'cnav-list', panel);
+      const totalItems = chapters.reduce((n, c) => n + c.items.length, 0);
+
+      chapters.forEach(c => {
+        const box = htmlEl('div', 'cnav-ch', list);
+        const btn = htmlEl('button', 'cnav-ch-btn', box);
+        btn.type = 'button';
+        btn.setAttribute('aria-expanded', 'false');
+        btn.setAttribute('aria-controls', 'cnav-ch-' + c.id);
+        htmlEl('span', 'cnav-num', btn, c.num);
+        const tx = htmlEl('span', 'cnav-ch-txt', btn);
+        htmlEl('b', '', tx, c.name);
+        htmlEl('small', '', tx, c.title);
+        const badge = htmlEl('span', 'cnav-badge', btn, 'Reading');
+        badge.hidden = true;
+        btn.insertAdjacentHTML('beforeend', '<svg class="cnav-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>');
+        const wrap = htmlEl('div', 'cnav-ch-items', box);
+        wrap.id = 'cnav-ch-' + c.id;
+        const ul = htmlEl('ul', '', wrap);
+        const mk = (href, label, h, sub) => {
+          const li = htmlEl('li', '', ul);
+          const a = htmlEl('a', '', li);
+          a.href = '#' + href;
+          htmlEl('small', '', a, label);
+          htmlEl('b', '', a, h);
+          if (sub) htmlEl('span', '', a, sub);
+          a.tabIndex = -1;
+          return a;
+        };
+        c.sheetIntro = mk(c.id, 'Chapter ' + c.num, c.title, c.desc);
+        c.items.forEach(it => { it.sheetLink = mk(it.id, it.label, it.h, it.sub); });
+        c.box = box; c.btn = btn; c.badge = badge;
+        btn.addEventListener('click', () => expand(c, !box.classList.contains('is-expanded')));
+      });
+
+      function expand(c, v) {
+        c.box.classList.toggle('is-expanded', v);
+        c.btn.setAttribute('aria-expanded', String(v));
+        c.box.querySelectorAll('.cnav-ch-items a').forEach(a => { a.tabIndex = v ? 0 : -1; });
+      }
+
+      let sheetOpen = false;
+      function openSheet() {
+        sheetOpen = true;
+        chapters.forEach(c => expand(c, c.index === Math.max(0, act.ch)));
+        sheet.classList.add('is-open');
+        panel.style.setProperty('--drag', '0px');
+        document.documentElement.classList.add('cnav-lock');
+        fab.setAttribute('aria-expanded', 'true');
+        requestAnimationFrame(() => {
+          closeBtn.focus({ preventScroll: true });
+          const cur = list.querySelector('a.is-active') || chapters[Math.max(0, act.ch)].btn;
+          const lr = list.getBoundingClientRect(), cr = cur.getBoundingClientRect();
+          if (cr.bottom > lr.bottom - 20 || cr.top < lr.top) list.scrollTop += cr.top - lr.top - 80;
+        });
+      }
+      function closeSheet(then) {
+        if (!sheetOpen) return;
+        sheetOpen = false;
+        sheet.classList.remove('is-open');
+        panel.style.setProperty('--drag', '0px');
+        document.documentElement.classList.remove('cnav-lock');
+        fab.setAttribute('aria-expanded', 'false');
+        if (then) then(); else fab.focus({ preventScroll: true });
+      }
+      fab.addEventListener('click', openSheet);
+      closeBtn.addEventListener('click', () => closeSheet());
+      sheetBg.addEventListener('click', () => closeSheet());
+      sheet.addEventListener('keydown', e => {
+        if (e.key === 'Escape') { e.preventDefault(); closeSheet(); }
+        if (e.key === 'Tab') {
+          const f = [...panel.querySelectorAll('button, a[tabindex="0"]')];
+          const first = f[0], last = f[f.length - 1];
+          if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+          else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        }
+      });
+      list.addEventListener('click', e => {
+        const a = e.target.closest('a[href^="#"]');
+        if (!a) return;
+        e.preventDefault();
+        const id = a.getAttribute('href').slice(1);
+        closeSheet(() => requestAnimationFrame(() => go(id)));
+      });
+
+      // swipe down to close (on the handle, the header, or the list when it is scrolled to the top)
+      let y0 = null, dy = 0, t0 = 0;
+      panel.addEventListener('touchstart', e => {
+        const fromTop = !e.target.closest('.cnav-list') || list.scrollTop <= 0;
+        y0 = fromTop ? e.touches[0].clientY : null;
+        dy = 0; t0 = performance.now();
+      }, { passive: true });
+      panel.addEventListener('touchmove', e => {
+        if (y0 == null) return;
+        dy = e.touches[0].clientY - y0;
+        if (dy <= 0) { if (dy < -6) y0 = null; panel.style.setProperty('--drag', '0px'); return; }
+        if (e.cancelable) e.preventDefault();
+        panel.classList.add('is-dragging');
+        panel.style.setProperty('--drag', dy + 'px');
+      }, { passive: false });
+      panel.addEventListener('touchend', () => {
+        if (y0 == null) return;
+        panel.classList.remove('is-dragging');
+        const v = dy / Math.max(1, performance.now() - t0);
+        if (dy > 110 || (dy > 40 && v > .55)) closeSheet();
+        else panel.style.setProperty('--drag', '0px');
+        y0 = null;
+      });
+
+      /* ---------- 5. Shared: highlight the current chapter & section ---------- */
+      function paintState(chChanged) {
+        const ai = Math.max(0, act.ch);
+        chapters.forEach(c => {
+          const state = act.ch < 0 ? 'up' : c.index < act.ch ? 'done' : c.index === act.ch ? 'active' : 'up';
+          c.seg.classList.toggle('is-done', state === 'done');
+          c.seg.classList.toggle('is-active', state === 'active');
+          c.seg.toggleAttribute('aria-current', state === 'active');
+          c.fabArc.setAttribute('class', state === 'done' ? 'is-done' : state === 'active' ? 'is-active' : '');
+          c.box.classList.toggle('is-done', state === 'done');
+          c.box.classList.toggle('is-active', state === 'active');
+          c.badge.hidden = state !== 'active';
+          c.sheetIntro.classList.toggle('is-active', state === 'active' && act.item < 0);
+          c.items.forEach(it => {
+            const isAct = c.index === act.ch && it.index === act.item;
+            const read = c.index < act.ch || (c.index === act.ch && it.index < act.item);
+            it.spoke.classList.toggle('is-active', isAct);
+            it.spoke.classList.toggle('is-read', read);
+            it.sheetLink.classList.toggle('is-active', isAct);
+            isAct ? it.sheetLink.setAttribute('aria-current', 'location') : it.sheetLink.removeAttribute('aria-current');
+          });
+        });
+        const c = chapters[ai];
+        const it = act.item >= 0 ? c.items[act.item] : null;
+        fabNum.textContent = c.num;
+        fab.setAttribute('aria-label', `Chapter navigation. Now reading chapter ${c.num}, ${c.name}${it ? ': ' + it.h : ''}`);
+        let n = 0;
+        chapters.forEach(x => { if (x.index < ai) n += x.items.length; });
+        headSub.textContent = `Now reading ${c.num} · ${c.name}${it ? ` — section ${n + act.item + 1} of ${totalItems}` : ''}`;
+        if (open) hubToActive();
+        if (chChanged && act.ch >= 0 && mode === 'sheet' && !sheetOpen && fab.classList.contains('is-shown')) {
+          toast.textContent = `${c.num} · ${c.name}`;
+          toast.classList.add('is-on');
+          clearTimeout(toastT);
+          toastT = setTimeout(() => toast.classList.remove('is-on'), 1600);
+        }
+      }
+
+      /* ---------- 6. Wire up ---------- */
+      const mq = matchMedia(CFG.wheelQuery);
+      const setMode = () => {
+        mode = mq.matches ? 'wheel' : 'sheet';
+        root.dataset.mode = mode;
+        if (mode === 'wheel') closeSheet(() => {});
+        else setOpen(false, true);
+        compute(); kick();
+      };
+      mq.addEventListener?.('change', setMode);
+
+      let ticking = false;
+      addEventListener('scroll', () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => { ticking = false; compute(); kick(); scheduleIdle(); });
+      }, { passive: true });
+      addEventListener('resize', () => { compute(); kick(); });
+      addEventListener('load', () => { compute(); kick(); });
+
+      paintState(true);
+      setMode();
+      pShown = p;
+      render();
+      hubToActive();
+      scheduleIdle();
+    }
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
   </script>
 </body>
 
