@@ -5085,7 +5085,7 @@
       size: .20,           // menu diameter as a share of the window width (desktop)
       sizeMin: 240,        // px, smallest diameter
       sizeMax: 320,        // px, largest diameter
-      labels: new URLSearchParams(location.search).get('labels') === 'horizontal' ? 'horizontal' : 'radial', // 'radial' | 'horizontal'
+      labels: new URLSearchParams(location.search).get('labels') === 'radial' ? 'radial' : 'horizontal', // 'horizontal' (default) | 'radial'
       wheelQuery: '(min-width: 1024px) and (hover: hover) and (pointer: fine)'
     };
 
