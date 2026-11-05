@@ -3212,10 +3212,11 @@
     /* =====================================================================
        CIRCULAR CHAPTER NAVIGATION
        ---------------------------------------------------------------------
-       Desktop (≥1024px with a mouse): a compact arc of chapter icons on the
-       right edge. The chapter being read is highlighted, the others are
-       dimmed, and a thin outer ring fills as you read. It fades when you stop
-       scrolling; hovering shows every chapter name.
+       Desktop (≥1024px with a mouse): half of a small wheel of chapter icons
+       peeks in from the right edge and turns as you scroll, keeping the
+       chapter being read at 9 o'clock (others dimmed). A thin outer ring
+       fills as you read. It fades when you stop scrolling; hovering slides
+       out the full wheel with every chapter name.
        Mobile / touch: a small chapter button at the bottom-right opens a
        bottom sheet.
        Built by the "CIRCULAR CHAPTER NAV" script at the end of <body>.
@@ -3250,6 +3251,8 @@
     .cnav-wheel svg { width: 100%; height: 100%; overflow: visible; display: block; }
     .cnav-hit { fill: transparent; pointer-events: all; }
     .cnav-wheel:not(.is-shown) .cnav-hit { pointer-events: none; }
+    .cnav-backdrop { fill: #fbfaf8; stroke: rgba(0, 0, 0, .06); filter: drop-shadow(0 18px 40px rgba(0, 0, 0, .14)); opacity: 0; transition: opacity .35s ease; pointer-events: none; }
+    .cnav-wheel.is-open .cnav-backdrop { opacity: 1; }
 
     /* outer ring: reading progress */
     .cnav-track, .cnav-progress { fill: none; stroke-width: 3; stroke-linecap: round; }
@@ -5060,7 +5063,7 @@
        CIRCULAR CHAPTER NAV
        Reads the chapters (.break[data-chapter]) and sections (section[data-nav])
        from the page and builds:
-         • desktop: compact radial menu of chapter icons + reading-progress ring on the right edge
+         • desktop: rotating radial menu (chapter icons + reading-progress ring) on the right edge
          • mobile / touch: chapter button + bottom sheet
        Settings are in CFG below.
        ===================================================================== -->
@@ -5140,9 +5143,11 @@
       const uEnd = chapters.length + .12;
       // q = reading progress in chapters (0 → 7). Chapter i is being read while i ≤ q < i+1.
       const qOf = p => Math.max(0, Math.min(chapters.length, p - .12));
-      // the menu is an arc down the left side of a circle centred on the screen edge
-      const ARC_TOP = 262, ARC_SPAN = 164;
-      const ang = q => ARC_TOP - ARC_SPAN * q / chapters.length;
+      // chapters are spread evenly around the full circle; the wheel turns so the
+      // reading position always sits at 9 o'clock (the edge facing the content)
+      const STEP = 360 / chapters.length;
+      const ang = q => 180 - STEP * q;          // angle of reading position q on the (unturned) wheel
+      const rotFor = q => 180 - ang(q);         // turn that brings q to 9 o'clock
 
       // chapter icons (24×24 line icons); data-icon on a chapter divider overrides these
       const ICONS = {
@@ -5206,44 +5211,59 @@
       const wheel = htmlEl('div', 'cnav-wheel', root);
       const svg = svgEl('svg', { viewBox: '-300 -300 600 600' }, wheel);
       const R_ICON = 102, R_DOT = 17, R_RING = 138, R_LABEL = 152;
-      svgEl('circle', { class: 'cnav-hit', r: R_RING + 16 }, svg);
+      const backdrop = svgEl('circle', { class: 'cnav-backdrop', r: 250 }, svg);
+      const hit = svgEl('circle', { class: 'cnav-hit', r: R_RING + 16 }, svg);
+      const rot = svgEl('g', {}, svg);
 
-      // outer ring: reading progress
-      svgEl('path', { class: 'cnav-track', d: arc(R_RING, ang(0), ang(chapters.length)) }, svg);
-      const prog = svgEl('path', { class: 'cnav-progress' }, svg);
-      const headHalo = svgEl('circle', { class: 'cnav-head-halo', r: 9 }, svg);
-      const headDot = svgEl('circle', { class: 'cnav-head', r: 4 }, svg);
+      // outer ring: reading progress (turns with the wheel, so its head always sits at 9 o'clock)
+      svgEl('circle', { class: 'cnav-track', r: R_RING }, rot);
+      const prog = svgEl('path', { class: 'cnav-progress' }, rot);
+      const headHalo = svgEl('circle', { class: 'cnav-head-halo', r: 9, cx: -R_RING, cy: 0 }, svg);
+      const headDot = svgEl('circle', { class: 'cnav-head', r: 4, cx: -R_RING, cy: 0 }, svg);
 
-      // inner ring: one icon per chapter, name shown beside it on hover
+      // inner ring: one icon per chapter, spaced evenly round the circle; names show on hover
       chapters.forEach(c => {
-        const a = svgEl('a', { href: '#' + c.id, class: 'cnav-cat', 'aria-label': `Chapter ${c.num}: ${c.name}` }, svg);
+        const a = svgEl('a', { href: '#' + c.id, class: 'cnav-cat', 'aria-label': `Chapter ${c.num}: ${c.name}` }, rot);
         const th = ang(c.index + .5);
         const [x, y] = pt(R_ICON, th);
-        const pill = svgEl('g', { class: 'cnav-pill', transform: `rotate(${(th - 180).toFixed(2)})` }, a);
+        const pill = svgEl('g', { class: 'cnav-pill' }, a);
         const rect = svgEl('rect', { y: -11, height: 22, rx: 11 }, pill);
         const text = svgEl('text', { y: 0 }, pill);
         text.textContent = c.name;
         const at = svgEl('g', { transform: `translate(${x} ${y})` }, a);   // position (attribute) …
-        const dot = svgEl('g', { class: 'cnav-dot' }, at);                       // … kept apart from the CSS hover scale
+        const dot = svgEl('g', { class: 'cnav-dot' }, at);                     // … kept apart from the CSS hover scale
         svgEl('circle', { class: 'bg', r: R_DOT }, dot);
-        const ic = svgEl('g', { class: 'ic', transform: 'translate(-9 -9) scale(.75)' }, dot);
+        const up = svgEl('g', {}, dot);                                        // counter-turn keeps the icon upright
+        const ic = svgEl('g', { class: 'ic', transform: 'translate(-9 -9) scale(.75)' }, up);
         ic.innerHTML = c.icon;
         c.cat = a;
-        c.pill = { rect, text, sized: false };
+        c.up = up;
+        c.pill = { g: pill, rect, text, th, w: 0, flip: null };
       });
 
       // size each name pill to its text (only possible once the menu is displayed)
+      let R_OUT = 250;
       function sizePills() {
+        let max = 0;
         chapters.forEach(c => {
-          if (c.pill.sized) return;
-          const w = c.pill.text.getComputedTextLength();
-          if (!w) return;
-          const W = w + 22;
-          c.pill.rect.setAttribute('x', -(R_LABEL + W));
-          c.pill.rect.setAttribute('width', W);
-          c.pill.text.setAttribute('x', -(R_LABEL + W / 2));
-          c.pill.sized = true;
+          if (!c.pill.w) {
+            const w = c.pill.text.getComputedTextLength();
+            if (w) { c.pill.w = w + 22; c.pill.rect.setAttribute('width', c.pill.w); c.pill.flip = null; }
+          }
+          max = Math.max(max, c.pill.w || 90);
         });
+        R_OUT = R_LABEL + max + 12;
+        backdrop.setAttribute('r', R_OUT);
+      }
+      // names read from the outside in on the left half, and from the inside out on the right half
+      function orientPill(P, r) {
+        const screen = ((P.th + r) % 360 + 360) % 360;
+        const flip = Math.cos(rad(screen)) > .02;
+        if (flip === P.flip || !P.w) return;
+        P.flip = flip;
+        P.g.setAttribute('transform', `rotate(${(flip ? P.th : P.th - 180).toFixed(2)})`);
+        P.rect.setAttribute('x', flip ? R_LABEL : -(R_LABEL + P.w));
+        P.text.setAttribute('x', flip ? R_LABEL + P.w / 2 : -(R_LABEL + P.w / 2));
       }
 
       function arc(r, a0, a1) {
@@ -5253,15 +5273,15 @@
 
       function render() {
         raf = 0;
-        const k = reduce.matches ? 1 : .16;
+        const k = reduce.matches ? 1 : .14;
         pShown += (p - pShown) * k;
         if (Math.abs(p - pShown) < .0008) pShown = p;
         const q = qOf(pShown), n = chapters.length;
-        const a = ang(q);
-        prog.setAttribute('d', q > .002 ? arc(R_RING, ang(0), a) : '');
-        const [hx, hy] = pt(R_RING, a);
-        headDot.setAttribute('cx', hx); headDot.setAttribute('cy', hy);
-        headHalo.setAttribute('cx', hx); headHalo.setAttribute('cy', hy);
+        const r = rotFor(q);
+        rot.setAttribute('transform', `rotate(${r.toFixed(3)})`);
+        const up = `rotate(${(-r).toFixed(3)})`;
+        chapters.forEach(c => { c.up.setAttribute('transform', up); orientPill(c.pill, r); });
+        prog.setAttribute('d', q > .002 ? arc(R_RING, ang(0), ang(Math.min(q, n - .001))) : '');
         // mobile button: same progress, as a full ring starting at 12 o'clock
         const f = q / n;
         fabProg.setAttribute('d', f > .002 ? arc(21, -90, -90 + Math.min(359.9, 360 * f)) : '');
@@ -5269,22 +5289,30 @@
       }
       const kick = () => { if (!raf) raf = requestAnimationFrame(render); };
 
-      /* position: centred on the right screen edge, hidden until the hero has scrolled away */
+      /* position: half the wheel peeks in from the right edge; on hover it slides out in full */
       let open = false, hoverT = 0, leaveT = 0;
       function place() {
         const W = innerWidth, H = innerHeight, top = 84;
-        const d = Math.max(CFG.sizeMin, Math.min(CFG.sizeMax, W * CFG.size, (H - top) * .7));
-        const s = d / (2 * (R_RING + 2));
-        let cx = W, cy = top + (H - top) / 2;
-        if (!wheel.classList.contains('is-shown')) cx += 60;
-        wheel.style.transform = `translate(${(cx - 300).toFixed(1)}px, ${(cy - 300).toFixed(1)}px) scale(${s.toFixed(4)})`;
         sizePills();
+        const d = Math.max(CFG.sizeMin, Math.min(CFG.sizeMax, W * CFG.size, (H - top) * .6));
+        let s = d / (2 * (R_RING + 2));
+        let cx = W, cy = top + (H - top) / 2;
+        if (open) {
+          s = Math.min(s, (H - top - 24) / (2 * R_OUT), (W * .45) / (2 * R_OUT));
+          cx = W - R_OUT * s - 12;
+          hit.setAttribute('r', R_OUT + 24);     // big enough to keep the pointer inside while it slides
+        } else {
+          hit.setAttribute('r', R_RING + 16);
+          if (!wheel.classList.contains('is-shown')) cx += 60;
+        }
+        wheel.style.transform = `translate(${(cx - 300).toFixed(1)}px, ${(cy - 300).toFixed(1)}px) scale(${s.toFixed(4)})`;
       }
       function setOpen(v) {
         if (open === v) return;
         open = v;
         wheel.classList.toggle('is-open', v);
         if (v) wheel.classList.remove('is-idle'); else scheduleIdle();
+        place();
       }
 
       wheel.addEventListener('pointerenter', () => {
