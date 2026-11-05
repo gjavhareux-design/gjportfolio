@@ -3365,28 +3365,50 @@
     }
     .cnav-toast.is-on { opacity: .92; transform: none; }
 
-    /* ---------- Mobile bottom sheet ---------- */
-    .cnav-sheet { position: fixed; inset: 0; z-index: 120; visibility: hidden; transition: visibility 0s linear .4s; }
+    /* ---------- Mobile menu: the button grows into the full list ----------
+       The panel is always full size; a clip (circle → rounded rectangle) makes it
+       start as the 56px button and spring open to fill the screen. */
+    :root {
+      --cn-spring: linear(0, 0.028, 0.097, 0.192, 0.3, 0.41, 0.518, 0.617, 0.705, 0.781, 0.845, 0.898, 0.939, 0.971, 0.994, 1.011, 1.022, 1.028, 1.031, 1.031, 1.03, 1.028, 1.024, 1.021, 1.018, 1.014, 1.011, 1.009, 1.006, 1.004, 1.003, 1.002, 1.001, 1, 1, 0.999, 0.999, 0.999, 0.999, 0.999, 1);   /* gentle spring, ~3% overshoot */
+      --cn-bounce: linear(0, 0.04, 0.141, 0.276, 0.427, 0.576, 0.714, 0.833, 0.929, 1.003, 1.054, 1.087, 1.103, 1.107, 1.101, 1.09, 1.075, 1.059, 1.043, 1.029, 1.016, 1.006, 0.999, 0.994, 0.99, 0.989, 0.989, 0.989, 0.991, 0.992, 0.994, 0.996, 0.997, 0.998, 0.999, 1, 1.001, 1.001, 1.001, 1.001, 1); /* livelier spring for small moves */
+    }
+    @supports not (transition-timing-function: linear(0, 1)) {
+      :root { --cn-spring: cubic-bezier(.2, .9, .3, 1.04); --cn-bounce: cubic-bezier(.34, 1.45, .64, 1); }
+    }
+    .cnav-sheet { position: fixed; inset: 0; z-index: 120; visibility: hidden; transition: visibility 0s linear .5s; }
     .cnav-sheet.is-open { visibility: visible; transition: none; }
     .cnav-sheet-bg { position: absolute; inset: 0; background: rgba(24, 24, 27, .42); opacity: 0; transition: opacity .35s ease; }
     .cnav-sheet.is-open .cnav-sheet-bg { opacity: 1; }
     .cnav-panel {
       position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      max-height: min(84vh, 760px);
+      top: calc(10px + env(safe-area-inset-top, 0px));
+      bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+      left: max(10px, env(safe-area-inset-left, 0px));
+      right: max(10px, env(safe-area-inset-right, 0px));
       display: flex;
       flex-direction: column;
       background: var(--paper);
-      border-radius: 24px 24px 0 0;
-      box-shadow: 0 -12px 40px -16px rgba(0, 0, 0, .3);
-      transform: translateY(100%);
-      transition: transform .42s cubic-bezier(.22, 1, .36, 1);
-      padding-bottom: env(safe-area-inset-bottom, 0px);
+      border-radius: 28px;
+      /* closed: clipped down to the round button (insets set by the script) */
+      clip-path: inset(var(--ct, 50%) var(--cr, 50%) var(--cb, 50%) var(--cl, 50%) round 28px);
+      transform: translateY(var(--drag, 0px));
+      transition: clip-path .42s cubic-bezier(.45, 0, .25, 1), transform .3s ease;
+      will-change: clip-path;
     }
-    .cnav-sheet.is-open .cnav-panel { transform: translateY(var(--drag, 0px)); }
-    .cnav-panel.is-dragging { transition: none; }
+    .cnav-sheet.is-open .cnav-panel { clip-path: inset(0 0 0 0 round 28px); transition: clip-path .66s var(--cn-spring), transform .3s ease; }
+    .cnav-panel.is-dragging { transition: none !important; }
+    /* contents settle in once the shape has opened, and leave first when it closes */
+    .cnav-panel :is(.cnav-grab, .cnav-head, .cnav-ch) {
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity .14s ease, transform .2s ease;
+    }
+    .cnav-sheet.is-open .cnav-panel :is(.cnav-grab, .cnav-head, .cnav-ch) {
+      opacity: 1;
+      transform: none;
+      transition: opacity .3s ease calc(140ms + var(--i, 0) * 32ms), transform .6s var(--cn-bounce) calc(140ms + var(--i, 0) * 32ms);
+    }
+    .cnav-fab.is-shown[aria-expanded="true"] { opacity: 0; transform: scale(.7); transition: opacity .18s ease, transform .3s ease; }
     .cnav-grab { padding: 10px 0 2px; touch-action: none; }
     .cnav-grab i { display: block; width: 40px; height: 5px; border-radius: 3px; background: #d4d4d8; margin: 0 auto; }
     .cnav-head { display: flex; align-items: center; gap: 12px; padding: 6px 12px 12px 20px; border-bottom: 1px solid var(--line); touch-action: none; }
@@ -3418,9 +3440,17 @@
     .cnav-ch-txt b { display: block; font: 700 16px/1.25 'Inter', system-ui, sans-serif; }
     .cnav-ch-txt small { display: block; font: 400 13px/1.35 'Inter', system-ui, sans-serif; color: var(--muted); margin-top: 2px; }
     .cnav-badge { font: 700 10px/1 'Inter', system-ui, sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); padding: 5px 7px; border-radius: 999px; }
-    .cnav-chev { width: 20px; height: 20px; color: #a1a1aa; transition: transform .3s ease; flex-shrink: 0; }
+    .cnav-chev { width: 20px; height: 20px; color: #a1a1aa; transition: transform .5s var(--cn-bounce); flex-shrink: 0; }
     .cnav-ch.is-expanded .cnav-chev { transform: rotate(180deg); }
-    .cnav-ch-items { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .32s ease; }
+    /* chapter drop-down: height eases open, rows drop in one after another with a small bounce */
+    .cnav-ch-items { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .3s cubic-bezier(.4, 0, .2, 1); }
+    .cnav-ch.is-expanded .cnav-ch-items { transition: grid-template-rows .55s var(--cn-spring); }
+    .cnav-ch-items li { opacity: 0; transform: translateY(-10px); transition: opacity .15s ease, transform .2s ease; }
+    .cnav-ch.is-expanded .cnav-ch-items li {
+      opacity: 1;
+      transform: none;
+      transition: opacity .28s ease calc(var(--j, 0) * 34ms), transform .55s var(--cn-bounce) calc(var(--j, 0) * 34ms);
+    }
     .cnav-ch.is-expanded .cnav-ch-items { grid-template-rows: 1fr; }
     .cnav-ch-items > ul { overflow: hidden; list-style: none; margin: 0 0 0 26px; padding: 0 0 0 0; border-left: 2px solid #f1f1f3; }
     .cnav-ch.is-expanded .cnav-ch-items > ul { padding-bottom: 10px; }
@@ -3448,8 +3478,8 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .cnav-wheel, .cnav-wheel.is-shown, .cnav-dot, .cnav-name text, .cnav-fab, .cnav-panel,
-      .cnav-sheet-bg, .cnav-ch-items, .cnav-chev, .cnav-toast { transition-duration: .01s !important; transition-delay: 0s !important; }
+      .cnav-wheel, .cnav-wheel.is-shown, .cnav-dot, .cnav-name text, .cnav-toast { transition-duration: .01s !important; transition-delay: 0s !important; }
+      :root { --cn-spring: cubic-bezier(.2, .8, .2, 1); --cn-bounce: cubic-bezier(.2, .8, .2, 1); }
     }
   </style>
 </head>
@@ -5508,11 +5538,24 @@
       }
 
       let sheetOpen = false;
+      // clip the full-size panel down to the button, so opening/closing morphs between the two
+      function clipToFab() {
+        const pr = panel.getBoundingClientRect(), fr = fab.getBoundingClientRect();
+        const set = (k, v) => panel.style.setProperty(k, Math.max(0, v).toFixed(1) + 'px');
+        set('--ct', fr.top - pr.top); set('--cb', pr.bottom - fr.bottom);
+        set('--cl', fr.left - pr.left); set('--cr', pr.right - fr.right);
+      }
+      // stagger order for the open animation
+      [grab, head, ...chapters.map(c => c.box)].forEach((el, i) => el.style.setProperty('--i', i));
+      chapters.forEach(c => c.box.querySelectorAll('.cnav-ch-items li').forEach((li, j) => li.style.setProperty('--j', j)));
+
       function openSheet() {
         sheetOpen = true;
         chapters.forEach(c => expand(c, c.index === Math.max(0, act.ch)));
-        sheet.classList.add('is-open');
         panel.style.setProperty('--drag', '0px');
+        clipToFab();
+        void panel.offsetWidth;          // start from the button's circle
+        sheet.classList.add('is-open');
         document.documentElement.classList.add('cnav-lock');
         fab.setAttribute('aria-expanded', 'true');
         requestAnimationFrame(() => {
@@ -5525,6 +5568,7 @@
       function closeSheet(then) {
         if (!sheetOpen) return;
         sheetOpen = false;
+        clipToFab();                     // shrink back into the button
         sheet.classList.remove('is-open');
         panel.style.setProperty('--drag', '0px');
         document.documentElement.classList.remove('cnav-lock');
