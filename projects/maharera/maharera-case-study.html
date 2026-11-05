@@ -3212,99 +3212,90 @@
     /* =====================================================================
        CIRCULAR CHAPTER NAVIGATION
        ---------------------------------------------------------------------
-       Desktop (≥1024px with a mouse): a half-wheel peeks in from the right
-       edge, rotates as you scroll, dims when you stop, and opens into the
-       full wheel on hover. Mobile / touch: a small chapter button at the
-       bottom-right opens a bottom sheet.
+       Desktop (≥1024px with a mouse): a compact arc of chapter icons on the
+       right edge. The chapter being read is highlighted, the others are
+       dimmed, and a thin outer ring fills as you read. It fades when you stop
+       scrolling; hovering shows every chapter name.
+       Mobile / touch: a small chapter button at the bottom-right opens a
+       bottom sheet.
        Built by the "CIRCULAR CHAPTER NAV" script at the end of <body>.
        ===================================================================== */
     :root {
-      --cn-upcoming: #ebe8e4;      /* chapters not reached yet */
+      --cn-upcoming: #e9e5e0;      /* chapters not reached yet */
       --cn-done:     #ffd8c1;      /* chapters already read */
       --cn-active:   var(--accent);/* chapter being read */
-      --cn-track:    #e7e3de;      /* thin outer progress track */
+      --cn-track:    #e7e3de;      /* outer progress track */
     }
 
     [data-nav], .break[data-chapter] { scroll-margin-top: 96px; }
 
     .cnav { display: contents; }
 
-    /* ---------- Desktop wheel ---------- */
+    /* ---------- Desktop radial menu ---------- */
     .cnav-wheel {
       position: fixed;
       left: 0;
       top: 0;
-      width: 880px;
-      height: 880px;
-      transform-origin: 440px 440px;
+      width: 600px;
+      height: 600px;
+      transform-origin: 300px 300px;
       z-index: 85;
       pointer-events: none;
       opacity: 0;
       visibility: hidden;
-      transition: transform .65s cubic-bezier(.22, 1, .36, 1), opacity .45s ease, filter .45s ease, visibility 0s linear .65s;
-      will-change: transform;
+      transition: transform .6s cubic-bezier(.22, 1, .36, 1), opacity .45s ease, visibility 0s linear .6s;
     }
-    .cnav-wheel.is-shown { opacity: 1; visibility: visible; transition: transform .65s cubic-bezier(.22, 1, .36, 1), opacity .45s ease, filter .45s ease; }
-    .cnav-wheel.is-shown.is-idle:not(.is-open) { opacity: .42; filter: saturate(.55); }
+    .cnav-wheel.is-shown { opacity: 1; visibility: visible; transition: transform .6s cubic-bezier(.22, 1, .36, 1), opacity .45s ease; }
+    .cnav-wheel.is-shown.is-idle:not(.is-open) { opacity: .45; }
     .cnav-wheel svg { width: 100%; height: 100%; overflow: visible; display: block; }
-
     .cnav-hit { fill: transparent; pointer-events: all; }
-    .cnav-wheel:not(.is-shown) .cnav-hit,
-    .cnav-wheel:not(.is-shown) a { pointer-events: none; }
+    .cnav-wheel:not(.is-shown) .cnav-hit { pointer-events: none; }
 
-    .cnav-rot { transform-box: view-box; }
-    .cnav-seg path { transition: fill .35s ease; fill: var(--cn-upcoming); }
-    .cnav-seg.is-done path { fill: var(--cn-done); }
-    .cnav-seg.is-active path { fill: var(--cn-active); }
-    .cnav-wheel a { cursor: pointer; outline: none; pointer-events: auto; }
-    .cnav-seg > a path:hover { filter: brightness(.97); }
+    /* outer ring: reading progress */
+    .cnav-track, .cnav-progress { fill: none; stroke-width: 3; stroke-linecap: round; }
+    .cnav-track { stroke: var(--cn-track); }
+    .cnav-progress { stroke: var(--accent); }
+    .cnav-head { fill: var(--accent); }
+    .cnav-head-halo { fill: var(--accent); opacity: .18; }
 
-    /* labels inside the ring: chapter name (bold) + section headings */
-    .cnav-wheel text {
+    /* inner ring: one icon + name per chapter */
+    .cnav-cat { cursor: pointer; outline: none; pointer-events: auto; }
+    .cnav-wheel:not(.is-shown) .cnav-cat { pointer-events: none; }
+    .cnav-cat .cnav-dot {
+      transform-box: fill-box;
+      transform-origin: center;
+      transition: transform .35s cubic-bezier(.22, 1, .36, 1), opacity .3s ease;
+      opacity: .42;
+    }
+    .cnav-cat .cnav-dot .bg { fill: var(--paper); stroke: #d6d2cc; stroke-width: 1.25; transition: fill .3s ease, stroke .3s ease; }
+    .cnav-cat .cnav-dot .ic { fill: none; stroke: var(--ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transition: stroke .3s ease; }
+    .cnav-cat.is-done .cnav-dot .bg { stroke: #ffb68a; }
+    .cnav-cat.is-active .cnav-dot { opacity: 1; transform: scale(1.18); }
+    .cnav-cat.is-active .cnav-dot .bg { fill: var(--accent); stroke: var(--accent); }
+    .cnav-cat.is-active .cnav-dot .ic { stroke: #fff; }
+
+    .cnav-pill { opacity: 0; transition: opacity .3s ease, transform .4s cubic-bezier(.22, 1, .36, 1); }
+    .cnav-pill rect { fill: rgba(255, 255, 255, .92); stroke: #d6d2cc; stroke-width: 1; }
+    .cnav-pill text {
+      font: 600 11.5px/1 'Inter', system-ui, sans-serif;
+      letter-spacing: .01em;
+      fill: var(--ink);
       dominant-baseline: central;
-      pointer-events: none;
-      transition: fill .3s ease, opacity .3s ease;
+      text-anchor: middle;
     }
-    .cnav-ch-label text { font: 700 17px/1 'Inter', system-ui, sans-serif; letter-spacing: -.01em; fill: var(--ink); }
-    .cnav-item text { font: 500 12.5px/1 'Inter', system-ui, sans-serif; fill: var(--ink); opacity: .62; }
-    .cnav-wheel rect { fill: transparent; transition: fill .2s ease; }
-    .cnav-ch-label:hover rect, .cnav-ch-label:focus-visible rect,
-    .cnav-item:hover rect, .cnav-item:focus-visible rect { fill: rgba(255, 255, 255, .6); }
-    .cnav-item.is-read text { opacity: .82; }
-    .cnav-item.is-active text { opacity: 1; font-weight: 700; }
-    .cnav-item:hover text, .cnav-item:focus-visible text { opacity: 1; }
-    .cnav-ch-label:focus-visible rect, .cnav-item:focus-visible rect { stroke: var(--ink); stroke-width: 1.5; }
+    .cnav-cat.is-active .cnav-pill rect { fill: var(--accent); stroke: var(--accent); }
+    .cnav-cat.is-active .cnav-pill text { fill: #fff; }
 
-    /* chapter being read: orange segment, white text */
-    .cnav-seg.is-active .cnav-ch-label text, .cnav-item.in-active text { fill: #fff; }
-    .cnav-item.in-active text { opacity: .78; }
-    .cnav-item.in-active.is-active text { opacity: 1; }
-    .cnav-seg.is-active .cnav-ch-label:hover rect, .cnav-item.in-active:hover rect,
-    .cnav-seg.is-active .cnav-ch-label:focus-visible rect, .cnav-item.in-active:focus-visible rect { fill: rgba(255, 255, 255, .2); stroke: #fff; }
-    .cnav-item.in-active.is-active rect { fill: rgba(255, 255, 255, .22); }
-
-    /* section headings only show when the wheel is open */
-    .cnav-items { opacity: 0; transition: opacity .3s ease; }
-    .cnav-wheel.is-open .cnav-items { opacity: 1; transition-delay: .12s; }
-    .cnav-wheel:not(.is-open) .cnav-items a { pointer-events: none; }
-
-    .cnav-track { fill: none; stroke: var(--cn-track); stroke-width: 5; }
-    .cnav-progress { fill: none; stroke: var(--accent); stroke-width: 5; stroke-linecap: round; }
-    .cnav-pointer { fill: var(--accent); }
-
-    .cnav-scrim {
-      position: fixed;
-      inset: 0;
-      z-index: 84;
-      background: rgba(249, 247, 245, .62);
-      -webkit-backdrop-filter: blur(3px);
-      backdrop-filter: blur(3px);
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-      transition: opacity .4s ease, visibility 0s linear .4s;
-    }
-    .cnav-scrim.is-on { opacity: 1; visibility: visible; transition: opacity .4s ease; }
+    /* open (hover / keyboard focus): every name shows, dimmed ones lift a little */
+    .cnav-wheel.is-open .cnav-pill { opacity: .78; }
+    .cnav-wheel.is-open .cnav-cat.is-active .cnav-pill { opacity: 1; }
+    .cnav-wheel.is-open .cnav-dot { opacity: .7; }
+    .cnav-wheel.is-open .cnav-cat.is-active .cnav-dot { opacity: 1; }
+    .cnav-cat:hover .cnav-dot, .cnav-cat:focus-visible .cnav-dot { opacity: 1; transform: scale(1.12); }
+    .cnav-cat.is-active:hover .cnav-dot, .cnav-cat.is-active:focus-visible .cnav-dot { transform: scale(1.24); }
+    .cnav-cat:hover .cnav-pill, .cnav-cat:focus-visible .cnav-pill { opacity: 1; }
+    .cnav-cat:hover .cnav-dot .bg, .cnav-cat:focus-visible .cnav-dot .bg { stroke: var(--accent); }
+    .cnav-cat:focus-visible .cnav-pill rect { stroke: var(--ink); stroke-width: 1.5; }
 
     /* ---------- Mobile button ---------- */
     .cnav-fab {
@@ -3333,11 +3324,10 @@
     .cnav-fab.is-shown { opacity: 1; transform: none; visibility: visible; transition: opacity .35s ease, transform .4s cubic-bezier(.22, 1, .36, 1); }
     .cnav-fab.is-shown.is-idle { opacity: .82; }
     .cnav-fab svg { position: absolute; inset: 3px; width: 48px; height: 48px; overflow: visible; }
-    .cnav-fab path { fill: none; stroke-width: 4; stroke: var(--cn-upcoming); transition: stroke .3s ease; }
-    .cnav-fab path.is-done { stroke: var(--cn-done); }
-    .cnav-fab path.is-active { stroke: var(--accent); }
-    .cnav-fab .cnav-fab-tick { fill: var(--accent); stroke: none; }
-    .cnav-fab b { position: relative; font: 800 14px/1 'Inter', system-ui, sans-serif; color: var(--ink); font-variant-numeric: tabular-nums; }
+    .cnav-fab .cnav-fab-track, .cnav-fab .cnav-fab-prog { fill: none; stroke-width: 3; stroke-linecap: round; }
+    .cnav-fab .cnav-fab-track { stroke: var(--cn-track); }
+    .cnav-fab .cnav-fab-prog { stroke: var(--accent); }
+    .cnav-fab .cnav-fab-ic { position: relative; width: 22px; height: 22px; fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; inset: auto; }
     .cnav-fab:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 
     .cnav-toast {
@@ -3435,14 +3425,13 @@
     .cnav[data-mode="wheel"] .cnav-fab,
     .cnav[data-mode="wheel"] .cnav-toast,
     .cnav[data-mode="wheel"] .cnav-sheet { display: none; }
-    .cnav[data-mode="sheet"] .cnav-wheel,
-    .cnav[data-mode="sheet"] .cnav-scrim { display: none; }
+    .cnav[data-mode="sheet"] .cnav-wheel { display: none; }
     @media (max-width: 1023px) {
       footer { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .cnav-wheel, .cnav-wheel.is-shown, .cnav-items, .cnav-scrim, .cnav-fab, .cnav-panel,
+      .cnav-wheel, .cnav-wheel.is-shown, .cnav-dot, .cnav-pill, .cnav-fab, .cnav-panel,
       .cnav-sheet-bg, .cnav-ch-items, .cnav-chev, .cnav-toast { transition-duration: .01s !important; transition-delay: 0s !important; }
     }
   </style>
@@ -5071,7 +5060,7 @@
        CIRCULAR CHAPTER NAV
        Reads the chapters (.break[data-chapter]) and sections (section[data-nav])
        from the page and builds:
-         • desktop: rotating single-ring half-wheel on the right that opens on hover
+         • desktop: compact radial menu of chapter icons + reading-progress ring on the right edge
          • mobile / touch: chapter button + bottom sheet
        Settings are in CFG below.
        ===================================================================== -->
@@ -5082,8 +5071,9 @@
       idleAfter: 1100,     // ms without scrolling before the wheel dims
       hoverDelay: 110,     // ms the pointer must rest on the wheel before it opens
       closeDelay: 260,     // ms after the pointer leaves before it closes
-      peek: 190,           // px of the wheel visible at the right edge (desktop, closed)
-      sector: 45,          // degrees per chapter (7 × 45° leaves a gap where the story starts/ends)
+      size: .20,           // menu diameter as a share of the window width (desktop)
+      sizeMin: 240,        // px, smallest diameter
+      sizeMax: 320,        // px, largest diameter
       wheelQuery: '(min-width: 1024px) and (hover: hover) and (pointer: fine)'
     };
 
@@ -5147,10 +5137,26 @@
           anchors.push({ el: it.el, u: it.u, ch: i, item: j });
         });
       });
-      const uEnd = chapters.length - .06;
-      const START = 180 + CFG.sector / 2;                 // where chapter 1 begins (just above 9 o'clock)
-      const ang = u => START - CFG.sector * u;          // wheel angle of a position u
-      const rotFor = p => 180 - ang(p);                 // rotation that puts p at the pointer (9 o'clock)
+      const uEnd = chapters.length + .12;
+      // q = reading progress in chapters (0 → 7). Chapter i is being read while i ≤ q < i+1.
+      const qOf = p => Math.max(0, Math.min(chapters.length, p - .12));
+      // the menu is an arc down the left side of a circle centred on the screen edge
+      const ARC_TOP = 262, ARC_SPAN = 164;
+      const ang = q => ARC_TOP - ARC_SPAN * q / chapters.length;
+
+      // chapter icons (24×24 line icons); data-icon on a chapter divider overrides these
+      const ICONS = {
+        book: '<path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/>',
+        search: '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
+        target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/>',
+        pen: '<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+        code: '<path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/>',
+        flask: '<path d="M9 3h6"/><path d="M10 3v7.4L4.6 19.5A1 1 0 0 0 5.5 21h13a1 1 0 0 0 .9-1.5L14 10.4V3"/><path d="M6.5 15h11"/>',
+        rocket: '<path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/>',
+        dot: '<circle cx="12" cy="12" r="4"/>'
+      };
+      const ICON_FOR = { introduction: 'book', discover: 'search', define: 'target', design: 'pen', develop: 'code', test: 'flask', launch: 'rocket' };
+      chapters.forEach(c => { c.icon = ICONS[c.el.dataset.icon] || ICONS[ICON_FOR[c.name.toLowerCase()]] || ICONS.dot; });
 
       /* ---------- 2. State ---------- */
       let p = 0, pShown = 0, act = { ch: -1, item: -1 }, raf = 0, idleT = 0, mode = '';
@@ -5191,118 +5197,95 @@
         const shown = scrollY > (hero ? hero.offsetHeight * .55 : 200);
         wheel.classList.toggle('is-shown', shown);
         fab.classList.toggle('is-shown', shown);
-        if (!shown && open) setOpen(false, true);
+        if (!shown && open) setOpen(false);
         place();
       }
 
-      /* ---------- 3. Desktop wheel ---------- */
+      /* ---------- 3. Desktop radial menu ---------- */
       root.innerHTML = '';
-      const scrim = htmlEl('div', 'cnav-scrim', root);
       const wheel = htmlEl('div', 'cnav-wheel', root);
-      const svg = svgEl('svg', { viewBox: '-440 -440 880 880', role: 'presentation' }, wheel);
-      svgEl('circle', { class: 'cnav-hit', r: 440 }, svg);
-      const rot = svgEl('g', { class: 'cnav-rot' }, svg);
-      svgEl('circle', { class: 'cnav-track', r: 416 }, rot);
-      const prog = svgEl('path', { class: 'cnav-progress' }, rot);
+      const svg = svgEl('svg', { viewBox: '-300 -300 600 600' }, wheel);
+      const R_ICON = 102, R_DOT = 17, R_RING = 138, R_LABEL = 152;
+      svgEl('circle', { class: 'cnav-hit', r: R_RING + 16 }, svg);
 
-      // single ring: one arrow-shaped segment per chapter (look borrowed from the reference).
-      // Inside each segment the chapter name and its section headings fan out like a list.
-      const R1 = 398, R0 = 250, RM = (R0 + R1) / 2, GAP = 1.4, TIP = 2.6, TX = R1 - 16;
-      const segs = svgEl('g', {}, rot), items = svgEl('g', { class: 'cnav-items' }, rot);
-      const spoke = (parent, cls, href, label, u, title) => {
-        const a = svgEl('a', { href: '#' + href, class: cls, 'aria-label': title }, parent);
-        const g = svgEl('g', {}, a);
-        svgEl('rect', { x: -R1 + 4, y: -11, width: R1 - R0 - 8, height: 22, rx: 11 }, g);
-        const t = svgEl('text', { x: -TX, y: 0 }, g);
-        t.textContent = label;
-        return { a, lab: { el: g, text: t, base: ang(u), flip: null } };
-      };
+      // outer ring: reading progress
+      svgEl('path', { class: 'cnav-track', d: arc(R_RING, ang(0), ang(chapters.length)) }, svg);
+      const prog = svgEl('path', { class: 'cnav-progress' }, svg);
+      const headHalo = svgEl('circle', { class: 'cnav-head-halo', r: 9 }, svg);
+      const headDot = svgEl('circle', { class: 'cnav-head', r: 4 }, svg);
+
+      // inner ring: one icon per chapter, name shown beside it on hover
       chapters.forEach(c => {
-        const a0 = ang(c.index) - GAP / 2, a1 = ang(c.index + 1) + GAP / 2;
-        const g = svgEl('g', { class: 'cnav-seg' }, segs);
-        const d = [
-          'M', ...pt(R1, a0), 'A', R1, R1, 0, 0, 0, ...pt(R1, a1),
-          'L', ...pt(RM, a1 - TIP), 'L', ...pt(R0, a1),
-          'A', R0, R0, 0, 0, 1, ...pt(R0, a0),
-          'L', ...pt(RM, a0 - TIP), 'Z'
-        ].join(' ');
-        const bg = svgEl('a', { href: '#' + c.id, tabindex: '-1', 'aria-hidden': 'true' }, g);
-        svgEl('path', { d }, bg);
-        const head = spoke(g, 'cnav-ch-label', c.id, c.name, c.u, `Chapter ${c.num}: ${c.name}`);
-        c.seg = g;
-        c.lab = head.lab;
-        c.items.forEach(it => {
-          const sp = spoke(items, 'cnav-item', it.id, it.label, it.u, it.h);
-          svgEl('title', {}, sp.a).textContent = it.h;
-          it.spoke = sp.a;
-          it.lab = sp.lab;
-          it.spoke.dataset.ch = c.index;
-        });
+        const a = svgEl('a', { href: '#' + c.id, class: 'cnav-cat', 'aria-label': `Chapter ${c.num}: ${c.name}` }, svg);
+        const th = ang(c.index + .5);
+        const [x, y] = pt(R_ICON, th);
+        const pill = svgEl('g', { class: 'cnav-pill', transform: `rotate(${(th - 180).toFixed(2)})` }, a);
+        const rect = svgEl('rect', { y: -11, height: 22, rx: 11 }, pill);
+        const text = svgEl('text', { y: 0 }, pill);
+        text.textContent = c.name;
+        const at = svgEl('g', { transform: `translate(${x} ${y})` }, a);   // position (attribute) …
+        const dot = svgEl('g', { class: 'cnav-dot' }, at);                       // … kept apart from the CSS hover scale
+        svgEl('circle', { class: 'bg', r: R_DOT }, dot);
+        const ic = svgEl('g', { class: 'ic', transform: 'translate(-9 -9) scale(.75)' }, dot);
+        ic.innerHTML = c.icon;
+        c.cat = a;
+        c.pill = { rect, text, sized: false };
       });
-      svgEl('path', { class: 'cnav-pointer', d: 'M -436 -13 L -422 0 L -436 13 Z' }, svg);
 
-      // keep text upright: on the right half of the open wheel a label reads from the centre outwards
-      function orient(L, r) {
-        const screen = ((L.base + r) % 360 + 360) % 360;
-        const flip = Math.cos(rad(screen)) > .02;
-        if (flip === L.flip) return;
-        L.flip = flip;
-        L.el.setAttribute('transform', `rotate(${(flip ? L.base : L.base - 180).toFixed(2)})`);
-        L.text.setAttribute('x', flip ? TX : -TX);
-        L.text.setAttribute('text-anchor', flip ? 'end' : 'start');
-        const rect = L.el.querySelector('rect');
-        rect.setAttribute('x', flip ? R0 + 4 : -R1 + 4);
+      // size each name pill to its text (only possible once the menu is displayed)
+      function sizePills() {
+        chapters.forEach(c => {
+          if (c.pill.sized) return;
+          const w = c.pill.text.getComputedTextLength();
+          if (!w) return;
+          const W = w + 22;
+          c.pill.rect.setAttribute('x', -(R_LABEL + W));
+          c.pill.rect.setAttribute('width', W);
+          c.pill.text.setAttribute('x', -(R_LABEL + W / 2));
+          c.pill.sized = true;
+        });
       }
 
       function arc(r, a0, a1) {
-        const span = Math.max(.01, a0 - a1);
-        return ['M', ...pt(r, a0), 'A', r, r, 0, span > 180 ? 1 : 0, 0, ...pt(r, a1)].join(' ');
+        const span = Math.max(.01, Math.abs(a0 - a1));
+        return ['M', ...pt(r, a0), 'A', r, r, 0, span > 180 ? 1 : 0, a1 > a0 ? 1 : 0, ...pt(r, a1)].join(' ');
       }
 
       function render() {
         raf = 0;
-        const k = reduce.matches ? 1 : .14;
+        const k = reduce.matches ? 1 : .16;
         pShown += (p - pShown) * k;
         if (Math.abs(p - pShown) < .0008) pShown = p;
-        const r = rotFor(pShown);
-        rot.setAttribute('transform', `rotate(${r.toFixed(3)})`);
-        prog.setAttribute('d', arc(416, ang(0), ang(Math.max(.001, pShown))));
-        chapters.forEach(c => { orient(c.lab, r); c.items.forEach(it => orient(it.lab, r)); });
-        fabRot.setAttribute('transform', `rotate(${r.toFixed(3)})`);
+        const q = qOf(pShown), n = chapters.length;
+        const a = ang(q);
+        prog.setAttribute('d', q > .002 ? arc(R_RING, ang(0), a) : '');
+        const [hx, hy] = pt(R_RING, a);
+        headDot.setAttribute('cx', hx); headDot.setAttribute('cy', hy);
+        headHalo.setAttribute('cx', hx); headHalo.setAttribute('cy', hy);
+        // mobile button: same progress, as a full ring starting at 12 o'clock
+        const f = q / n;
+        fabProg.setAttribute('d', f > .002 ? arc(21, -90, -90 + Math.min(359.9, 360 * f)) : '');
         if (pShown !== p) raf = requestAnimationFrame(render);
       }
       const kick = () => { if (!raf) raf = requestAnimationFrame(render); };
 
-      /* wheel position: hidden → peeking half-circle → fully open */
+      /* position: centred on the right screen edge, hidden until the hero has scrolled away */
       let open = false, hoverT = 0, leaveT = 0;
       function place() {
         const W = innerWidth, H = innerHeight, top = 84;
-        const sClosed = Math.max(.5, Math.min(.62, (H - top - 40) / 880));
-        const peek = Math.min(CFG.peek, 424 * sClosed);
-        const sOpen = Math.max(.55, Math.min(.95, (H - top - 30) / 880, (W * .62) / 880));
-        let s, cx, cy;
-        if (open) {
-          s = sOpen;
-          cx = W - 424 * s;   // right edge stays at the screen edge so the pointer never "falls off" while it opens
-          cy = top + (H - top) / 2;
-        } else {
-          s = sClosed;
-          cx = W + 424 * s - peek;
-          cy = top + (H - top) / 2;
-          if (!wheel.classList.contains('is-shown')) cx += 120;
-        }
-        wheel.style.transform = `translate(${(cx - 440).toFixed(1)}px, ${(cy - 440).toFixed(1)}px) scale(${s.toFixed(4)})`;
+        const d = Math.max(CFG.sizeMin, Math.min(CFG.sizeMax, W * CFG.size, (H - top) * .7));
+        const s = d / (2 * (R_RING + 2));
+        let cx = W, cy = top + (H - top) / 2;
+        if (!wheel.classList.contains('is-shown')) cx += 60;
+        wheel.style.transform = `translate(${(cx - 300).toFixed(1)}px, ${(cy - 300).toFixed(1)}px) scale(${s.toFixed(4)})`;
+        sizePills();
       }
-      function setOpen(v, instant) {
+      function setOpen(v) {
         if (open === v) return;
         open = v;
         wheel.classList.toggle('is-open', v);
-        scrim.classList.toggle('is-on', v);
-        if (v) wheel.classList.remove('is-idle');
-        else if (!instant) markActive();
-        place();
+        if (v) wheel.classList.remove('is-idle'); else scheduleIdle();
       }
-      function markActive() { scheduleIdle(); }
 
       wheel.addEventListener('pointerenter', () => {
         clearTimeout(leaveT);
@@ -5313,9 +5296,6 @@
       wheel.addEventListener('pointerleave', () => {
         clearTimeout(hoverT);
         leaveT = setTimeout(() => setOpen(false), CFG.closeDelay);
-      });
-      wheel.addEventListener('pointerdown', e => {
-        if (!open && e.pointerType !== 'mouse') { e.preventDefault(); setOpen(true); }
       });
       wheel.addEventListener('focusin', () => { clearTimeout(leaveT); setOpen(true); });
       wheel.addEventListener('focusout', e => { if (!wheel.contains(e.relatedTarget)) setOpen(false); });
@@ -5355,13 +5335,9 @@
       fab.setAttribute('aria-haspopup', 'dialog');
       fab.setAttribute('aria-expanded', 'false');
       const fsvg = svgEl('svg', { viewBox: '-26 -26 52 52', 'aria-hidden': 'true' }, fab);
-      const fabRot = svgEl('g', {}, fsvg);
-      chapters.forEach(c => {
-        const a0 = ang(c.index) - 4, a1 = ang(c.index + 1) + 4;
-        c.fabArc = svgEl('path', { d: arc(21, a0, a1) }, fabRot);
-      });
-      svgEl('path', { class: 'cnav-fab-tick', d: 'M -26 -3.5 L -22.5 0 L -26 3.5 Z' }, fsvg);
-      const fabNum = htmlEl('b', '', fab, chapters[0].num);
+      svgEl('circle', { class: 'cnav-fab-track', r: 21 }, fsvg);
+      const fabProg = svgEl('path', { class: 'cnav-fab-prog' }, fsvg);
+      const fabIc = svgEl('svg', { class: 'cnav-fab-ic', viewBox: '0 0 24 24', 'aria-hidden': 'true' }, fab);
       const toast = htmlEl('div', 'cnav-toast', root);
       toast.setAttribute('aria-hidden', 'true');
       let toastT = 0;
@@ -5497,28 +5473,22 @@
         const ai = Math.max(0, act.ch);
         chapters.forEach(c => {
           const state = act.ch < 0 ? 'up' : c.index < act.ch ? 'done' : c.index === act.ch ? 'active' : 'up';
-          c.seg.classList.toggle('is-done', state === 'done');
-          c.seg.classList.toggle('is-active', state === 'active');
-          c.lab.el.parentNode.toggleAttribute('aria-current', state === 'active');
-          c.fabArc.setAttribute('class', state === 'done' ? 'is-done' : state === 'active' ? 'is-active' : '');
+          c.cat.classList.toggle('is-done', state === 'done');
+          c.cat.classList.toggle('is-active', state === 'active');
+          state === 'active' ? c.cat.setAttribute('aria-current', 'location') : c.cat.removeAttribute('aria-current');
           c.box.classList.toggle('is-done', state === 'done');
           c.box.classList.toggle('is-active', state === 'active');
           c.badge.hidden = state !== 'active';
           c.sheetIntro.classList.toggle('is-active', state === 'active' && act.item < 0);
           c.items.forEach(it => {
             const isAct = c.index === act.ch && it.index === act.item;
-            const read = c.index < act.ch || (c.index === act.ch && it.index < act.item);
-            it.spoke.classList.toggle('is-active', isAct);
-            it.spoke.classList.toggle('is-read', read);
-            it.spoke.classList.toggle('in-active', c.index === act.ch);
-            it.spoke.classList.toggle('in-done', c.index < act.ch);
             it.sheetLink.classList.toggle('is-active', isAct);
             isAct ? it.sheetLink.setAttribute('aria-current', 'location') : it.sheetLink.removeAttribute('aria-current');
           });
         });
         const c = chapters[ai];
         const it = act.item >= 0 ? c.items[act.item] : null;
-        fabNum.textContent = c.num;
+        fabIc.innerHTML = c.icon;
         fab.setAttribute('aria-label', `Chapter navigation. Now reading chapter ${c.num}, ${c.name}${it ? ': ' + it.h : ''}`);
         let n = 0;
         chapters.forEach(x => { if (x.index < ai) n += x.items.length; });
@@ -5537,7 +5507,7 @@
         mode = mq.matches ? 'wheel' : 'sheet';
         root.dataset.mode = mode;
         if (mode === 'wheel') closeSheet(() => {});
-        else setOpen(false, true);
+        else setOpen(false);
         compute(); kick();
       };
       mq.addEventListener?.('change', setMode);
