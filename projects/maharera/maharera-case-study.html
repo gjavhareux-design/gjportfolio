@@ -5263,21 +5263,35 @@
       const clamp01 = t => Math.max(0, Math.min(1, t));
 
       // wheel ↔ list morph runs on a clock (not per frame) so it looks the same on every screen
-      const MORPH_MS = 720;
+      const MORPH_MS = 820;
       let mShown = 0, mFrom = 0, mTo = 0, mT0 = 0;   // 0 = wheel, 1 = list
       function morphTo(v) {
         mFrom = mShown; mTo = v; mT0 = performance.now();
       }
       // circle → rounded rectangle: every point of the circle at angle φ is paired with the point
       // at the same parameter on a squircle (a rectangle with smooth corners) and moved between them
-      const SQ = 2 / 9;   // squircle corner softness (smaller = squarer)
-      const sq = u => Math.sign(u) * Math.pow(Math.abs(u), SQ);
+      const CORNER = 22;  // corner radius of the list card
+      // point where a ray from the card's centre at angle φ meets the rounded rectangle
+      function boxPt(c, s, box) {
+        const a = box.a, b = box.b, k = Math.min(CORNER, a, b);
+        const t = Math.min(a / Math.max(Math.abs(c), 1e-6), b / Math.max(Math.abs(s), 1e-6));
+        let x = c * t, y = s * t;
+        if (Math.abs(x) > a - k && Math.abs(y) > b - k) {
+          // inside a corner: meet the corner's quarter circle instead
+          const ox = Math.sign(c) * (a - k), oy = Math.sign(s) * (b - k);
+          const B = c * ox + s * oy, C = ox * ox + oy * oy - k * k;
+          const tt = B + Math.sqrt(Math.max(0, B * B - C));
+          x = c * tt; y = s * tt;
+        }
+        return [box.cx + x, y];
+      }
       function shapePt(phi, R, box, e) {
         const c = Math.cos(rad(phi)), s = Math.sin(rad(phi));
-        return [lerp(R * c, box.cx + box.a * sq(c), e), lerp(R * s, box.b * sq(s), e)];
+        const [bx, by] = boxPt(c, s, box);
+        return [lerp(R * c, bx, e), lerp(R * s, by, e)];
       }
       function shapePath(R, box, e, from = 0, to = 360, closed = true) {
-        const steps = Math.max(2, Math.ceil(Math.abs(to - from) / 2.5));
+        const steps = Math.max(2, Math.ceil(Math.abs(to - from) / 1.5));
         let d = '';
         for (let i = 0; i <= steps; i++) {
           const [x, y] = shapePt(from + (to - from) * i / steps, R, box, e);
@@ -5291,7 +5305,7 @@
         const fast = reduce.matches;
         pShown += (p - pShown) * (fast ? 1 : .14);
         if (Math.abs(p - pShown) < .0008) pShown = p;
-        const mt = fast ? 1 : Math.min(1, (performance.now() - mT0) / (MORPH_MS * Math.max(.35, Math.abs(mTo - mFrom))));
+        const mt = Math.min(1, (performance.now() - mT0) / ((fast ? 480 : MORPH_MS) * Math.max(.35, Math.abs(mTo - mFrom))));
         mShown = mFrom + (mTo - mFrom) * mt;
         let busy = pShown !== p || mt < 1;
 
