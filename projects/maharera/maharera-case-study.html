@@ -3214,9 +3214,10 @@
        ---------------------------------------------------------------------
        Desktop (≥1024px with a mouse): half of a small wheel of chapter icons
        peeks in from the right edge and turns as you scroll, keeping the
-       chapter being read at 9 o'clock (others dimmed). A thin outer ring
-       fills as you read. It fades when you stop scrolling; hovering slides
-       out the full wheel with every chapter name.
+       chapter being read at 9 o'clock. Each chapter's name sits between its
+       icon and the centre; the current one is highlighted, the rest dimmed.
+       A thin outer ring fills as you read. When you stop scrolling everything
+       fades back except the current chapter; hovering slides out the full wheel.
        Mobile / touch: a small chapter button at the bottom-right opens a
        bottom sheet.
        Built by the "CIRCULAR CHAPTER NAV" script at the end of <body>.
@@ -3247,12 +3248,12 @@
       transition: transform .6s cubic-bezier(.22, 1, .36, 1), opacity .45s ease, visibility 0s linear .6s;
     }
     .cnav-wheel.is-shown { opacity: 1; visibility: visible; transition: transform .6s cubic-bezier(.22, 1, .36, 1), opacity .45s ease; }
-    .cnav-wheel.is-shown.is-idle:not(.is-open) { opacity: .45; }
     .cnav-wheel svg { width: 100%; height: 100%; overflow: visible; display: block; }
     .cnav-hit { fill: transparent; pointer-events: all; }
     .cnav-wheel:not(.is-shown) .cnav-hit { pointer-events: none; }
-    .cnav-backdrop { fill: #fbfaf8; stroke: rgba(0, 0, 0, .06); filter: drop-shadow(0 18px 40px rgba(0, 0, 0, .14)); opacity: 0; transition: opacity .35s ease; pointer-events: none; }
-    .cnav-wheel.is-open .cnav-backdrop { opacity: 1; }
+    /* a soft disc in the page colour keeps names readable where the wheel overlaps content */
+    .cnav-backdrop { fill: var(--bg); opacity: .9; stroke: rgba(0, 0, 0, 0); transition: opacity .35s ease, filter .35s ease, stroke .35s ease; pointer-events: none; }
+    .cnav-wheel.is-open .cnav-backdrop { fill: #fbfaf8; opacity: 1; stroke: rgba(0, 0, 0, .06); filter: drop-shadow(0 18px 40px rgba(0, 0, 0, .14)); }
 
     /* outer ring: reading progress */
     .cnav-track, .cnav-progress { fill: none; stroke-width: 3; stroke-linecap: round; }
@@ -3276,28 +3277,34 @@
     .cnav-cat.is-active .cnav-dot .bg { fill: var(--accent); stroke: var(--accent); }
     .cnav-cat.is-active .cnav-dot .ic { stroke: #fff; }
 
-    .cnav-pill { opacity: 0; transition: opacity .3s ease, transform .4s cubic-bezier(.22, 1, .36, 1); }
-    .cnav-pill rect { fill: rgba(255, 255, 255, .92); stroke: transparent; stroke-width: 1; }
-    .cnav-pill text {
-      font: 600 11.5px/1 'Inter', system-ui, sans-serif;
+    /* chapter names: between each icon and the centre */
+    .cnav-name text {
+      font: 600 11px/1 'Inter', system-ui, sans-serif;
       letter-spacing: .01em;
       fill: var(--ink);
       dominant-baseline: central;
-      text-anchor: middle;
+      opacity: .5;
+      transition: opacity .35s ease, fill .35s ease;
     }
-    .cnav-cat.is-active .cnav-pill rect { fill: var(--accent); stroke: var(--accent); }
-    .cnav-cat.is-active .cnav-pill text { fill: #fff; }
+    .cnav-cat.is-active .cnav-name text { font-weight: 700; font-size: 12px; fill: var(--accent); opacity: 1; }
 
-    /* open (hover / keyboard focus): every name shows, dimmed ones lift a little */
-    .cnav-wheel.is-open .cnav-pill { opacity: .78; }
-    .cnav-wheel.is-open .cnav-cat.is-active .cnav-pill { opacity: 1; }
+    /* idle (scrolling stopped): everything fades back except the current chapter */
+    .cnav-track, .cnav-progress, .cnav-head, .cnav-head-halo { transition: opacity .45s ease; }
+    .cnav-wheel.is-idle:not(.is-open) :is(.cnav-track, .cnav-progress, .cnav-head) { opacity: .4; }
+    .cnav-wheel.is-idle:not(.is-open) .cnav-head-halo { opacity: .08; }
+    .cnav-wheel.is-idle:not(.is-open) .cnav-cat:not(.is-active) .cnav-dot { opacity: .22; }
+    .cnav-wheel.is-idle:not(.is-open) .cnav-cat:not(.is-active) .cnav-name text { opacity: .3; }
+    .cnav-wheel.is-idle:not(.is-open) .cnav-cat.is-active .cnav-dot { opacity: .9; }
+
+    /* open (hover / keyboard focus): dimmed chapters lift a little */
     .cnav-wheel.is-open .cnav-dot { opacity: .7; }
-    .cnav-wheel.is-open .cnav-cat.is-active .cnav-dot { opacity: 1; }
+    .cnav-wheel.is-open .cnav-name text { opacity: .7; }
+    .cnav-wheel.is-open .cnav-cat.is-active .cnav-dot, .cnav-wheel.is-open .cnav-cat.is-active .cnav-name text { opacity: 1; }
     .cnav-cat:hover .cnav-dot, .cnav-cat:focus-visible .cnav-dot { opacity: 1; transform: scale(1.12); }
     .cnav-cat.is-active:hover .cnav-dot, .cnav-cat.is-active:focus-visible .cnav-dot { transform: scale(1.24); }
-    .cnav-cat:hover .cnav-pill, .cnav-cat:focus-visible .cnav-pill { opacity: 1; }
+    .cnav-cat:hover .cnav-name text, .cnav-cat:focus-visible .cnav-name text { opacity: 1; }
     .cnav-cat:hover .cnav-dot .bg, .cnav-cat:focus-visible .cnav-dot .bg { stroke: var(--accent); }
-    .cnav-cat:focus-visible .cnav-pill rect { stroke: var(--ink); stroke-width: 1.5; }
+    .cnav-cat:focus-visible .cnav-name text { text-decoration: underline; }
 
     /* ---------- Mobile button ---------- */
     .cnav-fab {
@@ -3433,7 +3440,7 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .cnav-wheel, .cnav-wheel.is-shown, .cnav-dot, .cnav-pill, .cnav-fab, .cnav-panel,
+      .cnav-wheel, .cnav-wheel.is-shown, .cnav-dot, .cnav-name text, .cnav-fab, .cnav-panel,
       .cnav-sheet-bg, .cnav-ch-items, .cnav-chev, .cnav-toast { transition-duration: .01s !important; transition-delay: 0s !important; }
     }
   </style>
@@ -5209,8 +5216,8 @@
       root.innerHTML = '';
       const wheel = htmlEl('div', 'cnav-wheel', root);
       const svg = svgEl('svg', { viewBox: '-300 -300 600 600' }, wheel);
-      const R_ICON = 102, R_DOT = 17, R_RING = 138, R_LABEL = 152;
-      const backdrop = svgEl('circle', { class: 'cnav-backdrop', r: 250 }, svg);
+      const R_ICON = 110, R_DOT = 16, R_RING = 140, R_NAME = 88;   // icon ring, icon size, progress ring, where names start
+      const backdrop = svgEl('circle', { class: 'cnav-backdrop', r: R_RING + 12 }, svg);
       const hit = svgEl('circle', { class: 'cnav-hit', r: R_RING + 16 }, svg);
       const rot = svgEl('g', {}, svg);
 
@@ -5220,14 +5227,13 @@
       const headHalo = svgEl('circle', { class: 'cnav-head-halo', r: 9, cx: -R_RING, cy: 0 }, svg);
       const headDot = svgEl('circle', { class: 'cnav-head', r: 4, cx: -R_RING, cy: 0 }, svg);
 
-      // inner ring: one icon per chapter, spaced evenly round the circle; names show on hover
+      // inner ring: one icon per chapter, spaced evenly round the circle, its name between icon and centre
       chapters.forEach(c => {
         const a = svgEl('a', { href: '#' + c.id, class: 'cnav-cat', 'aria-label': `Chapter ${c.num}: ${c.name}` }, rot);
         const th = ang(c.index + .5);
         const [x, y] = pt(R_ICON, th);
-        const pill = svgEl('g', { class: 'cnav-pill' }, a);
-        const rect = svgEl('rect', { y: -11, height: 22, rx: 11 }, pill);
-        const text = svgEl('text', { y: 0 }, pill);
+        const name = svgEl('g', { class: 'cnav-name' }, a);
+        const text = svgEl('text', { y: 0 }, name);
         text.textContent = c.name;
         const at = svgEl('g', { transform: `translate(${x} ${y})` }, a);   // position (attribute) …
         const dot = svgEl('g', { class: 'cnav-dot' }, at);                     // … kept apart from the CSS hover scale
@@ -5237,32 +5243,19 @@
         ic.innerHTML = c.icon;
         c.cat = a;
         c.up = up;
-        c.pill = { g: pill, rect, text, th, w: 0, flip: null };
+        c.name_ = { g: name, text, th, flip: null };
       });
 
-      // size each name pill to its text (only possible once the menu is displayed)
-      let R_OUT = 250;
-      function sizePills() {
-        let max = 0;
-        chapters.forEach(c => {
-          if (!c.pill.w) {
-            const w = c.pill.text.getComputedTextLength();
-            if (w) { c.pill.w = w + 22; c.pill.rect.setAttribute('width', c.pill.w); c.pill.flip = null; }
-          }
-          max = Math.max(max, c.pill.w || 90);
-        });
-        R_OUT = R_LABEL + max + 12;
-        backdrop.setAttribute('r', R_OUT);
-      }
-      // names read from the outside in on the left half, and from the inside out on the right half
-      function orientPill(P, r) {
-        const screen = ((P.th + r) % 360 + 360) % 360;
+      // names always sit on the centre side of their icon: on the left half they read
+      // inwards (left → right), on the right half they are turned so they still read left → right
+      function orientName(N, r) {
+        const screen = ((N.th + r) % 360 + 360) % 360;
         const flip = Math.cos(rad(screen)) > .02;
-        if (flip === P.flip || !P.w) return;
-        P.flip = flip;
-        P.g.setAttribute('transform', `rotate(${(flip ? P.th : P.th - 180).toFixed(2)})`);
-        P.rect.setAttribute('x', flip ? R_LABEL : -(R_LABEL + P.w));
-        P.text.setAttribute('x', flip ? R_LABEL + P.w / 2 : -(R_LABEL + P.w / 2));
+        if (flip === N.flip) return;
+        N.flip = flip;
+        N.g.setAttribute('transform', `rotate(${(flip ? N.th : N.th - 180).toFixed(2)})`);
+        N.text.setAttribute('x', flip ? R_NAME : -R_NAME);
+        N.text.setAttribute('text-anchor', flip ? 'end' : 'start');
       }
 
       function arc(r, a0, a1) {
@@ -5279,7 +5272,7 @@
         const r = rotFor(q);
         rot.setAttribute('transform', `rotate(${r.toFixed(3)})`);
         const up = `rotate(${(-r).toFixed(3)})`;
-        chapters.forEach(c => { c.up.setAttribute('transform', up); orientPill(c.pill, r); });
+        chapters.forEach(c => { c.up.setAttribute('transform', up); orientName(c.name_, r); });
         prog.setAttribute('d', q > .002 ? arc(R_RING, ang(0), ang(Math.min(q, n - .001))) : '');
         // mobile button: same progress, as a full ring starting at 12 o'clock
         const f = q / n;
@@ -5292,14 +5285,12 @@
       let open = false, hoverT = 0, leaveT = 0;
       function place() {
         const W = innerWidth, H = innerHeight, top = 84;
-        sizePills();
         const d = Math.max(CFG.sizeMin, Math.min(CFG.sizeMax, W * CFG.size, (H - top) * .6));
         let s = d / (2 * (R_RING + 2));
         let cx = W, cy = top + (H - top) / 2;
         if (open) {
-          s = Math.min(s, (H - top - 24) / (2 * R_OUT), (W * .45) / (2 * R_OUT));
-          cx = W - R_OUT * s - 12;
-          hit.setAttribute('r', R_OUT + 24);     // big enough to keep the pointer inside while it slides
+          cx = W - (R_RING + 14) * s - 16;
+          hit.setAttribute('r', R_RING + 70);    // big enough to keep the pointer inside while it slides
         } else {
           hit.setAttribute('r', R_RING + 16);
           if (!wheel.classList.contains('is-shown')) cx += 60;
