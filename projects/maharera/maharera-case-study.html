@@ -1724,6 +1724,14 @@
 
 
     /* ================= JOURNEY ================= */
+    /* As-is journey map image: full width on desktop, swipeable on phones */
+    .journey-map { margin: 0; }
+    .journey-map img { display: block; width: 100%; height: auto; border-radius: 12px; }
+    .journey-map figcaption { margin-top: 12px; font-size: 13px; color: var(--muted); }
+    @media(max-width:860px) {
+      .journey-map img { width: 900px; max-width: none; }
+    }
+
     .journey {
       overflow-x: auto;
       padding-bottom: 6px
@@ -4249,82 +4257,21 @@
     <section id="journey" data-nav="Journey map" style="padding-top:20px">
       <div class="wrap">
         <div class="sh rv">
-          <span class="tag lb1">Journey map · Homebuyer</span>
-          <h2 class="sh1">From hopeful to anxious.</h2>
-          <h3 class="sh2">Priya's emotions on the old site, and on the new one</h3>
+          <span class="tag lb1">As-is journey map · Homebuyer</span>
+          <h2 class="sh1">From curious to confused.</h2>
+          <h3 class="sh2">A homebuyer's journey on the old MahaRERA website</h3>
           <p class="sh3">Frustration peaked at search and verification, the two moments that matter most.</p>
         </div>
-        <div class="card rv">
+        <figure class="card rv journey-map">
           <p class="swipe">Swipe to see the full journey →</p>
           <div class="journey">
-            <div class="journey-inner">
-              <div class="stages">
-                <div class="stage">
-                  <div class="i"><i class="fa-solid fa-lightbulb"></i></div><b>Discover</b><small>Hears about a
-                    project</small>
-                </div>
-                <div class="stage">
-                  <div class="i"><i class="fa-solid fa-magnifying-glass"></i></div><b>Search</b><small>Looks it
-                    up</small>
-                </div>
-                <div class="stage">
-                  <div class="i"><i class="fa-solid fa-shield-halved"></i></div><b>Verify</b><small>Checks
-                    registration</small>
-                </div>
-                <div class="stage">
-                  <div class="i"><i class="fa-solid fa-chart-line"></i></div><b>Track</b><small>Follows progress</small>
-                </div>
-                <div class="stage">
-                  <div class="i"><i class="fa-solid fa-gavel"></i></div><b>Act</b><small>Finds how to complain</small>
-                </div>
-              </div>
-              <div class="key"><span><i style="background:var(--bad)"></i>Old website</span><span><i
-                    style="background:var(--good)"></i>Redesigned website</span></div>
-              <svg class="curve" viewBox="0 0 1000 210" preserveAspectRatio="none" aria-label="Emotion curve">
-                <line x1="0" y1="105" x2="1000" y2="105" stroke="#e4e4e7" stroke-dasharray="4 6" />
-                <path class="path" stroke="var(--bad)"
-                  d="M100,70 C200,70 230,170 300,175 S430,190 500,185 S640,120 700,135 S850,195 900,190" />
-                <path class="path after" stroke="var(--good)"
-                  d="M100,70 C200,70 230,60 300,55 S430,40 500,38 S640,50 700,45 S850,62 900,58" />
-                <g fill="var(--bad)">
-                  <circle cx="100" cy="70" r="6" />
-                  <circle cx="300" cy="175" r="6" />
-                  <circle cx="500" cy="185" r="6" />
-                  <circle cx="700" cy="135" r="6" />
-                  <circle cx="900" cy="190" r="6" />
-                </g>
-                <g fill="var(--good)">
-                  <circle cx="300" cy="55" r="6" />
-                  <circle cx="500" cy="38" r="6" />
-                  <circle cx="700" cy="45" r="6" />
-                  <circle cx="900" cy="58" r="6" />
-                </g>
-              </svg>
-              <div class="row-notes">
-                <div>
-                  <div class="note b">"Is this builder legit?"</div>
-                  <div class="note g">One search box on home</div>
-                </div>
-                <div>
-                  <div class="note b">Needs exact reg. number</div>
-                  <div class="note g">Search by name, area or builder</div>
-                </div>
-                <div>
-                  <div class="note b">Wades through PDFs</div>
-                  <div class="note g">Status badge + summary</div>
-                </div>
-                <div>
-                  <div class="note b">No idea if it's delayed</div>
-                  <div class="note g">Visual progress timeline</div>
-                </div>
-                <div>
-                  <div class="note b">Complaint route hidden</div>
-                  <div class="note g">"Raise a concern" on every project</div>
-                </div>
-              </div>
-            </div>
+            <a href="assets/journey-map-as-is.webp" target="_blank" rel="noopener" aria-label="Open the journey map full size">
+              <img src="assets/journey-map-as-is.webp" width="1598" height="935" loading="lazy"
+                alt="As-is user journey map of a homebuyer on the old MahaRERA website, across five stages: Discover, Search, Verify, Evaluate and Decide. Each stage shows user actions, touchpoints, thoughts, pain points and opportunities. Emotion moves from curious at Discover to frustrated at Search, overwhelmed at Verify, cautious at Evaluate and confused at Decide.">
+            </a>
           </div>
-        </div>
+          <figcaption>As-is journey: Discover → Search → Verify → Evaluate → Decide. Pain points (red) lead to the opportunities in the bottom row.</figcaption>
+        </figure>
       </div>
     </section>
 
