@@ -381,10 +381,16 @@
       }
     }
 
+    /* Content is always visible with its real values. Only for a real visitor, sections that start
+       below the fold get .rv-wait (set by the "Reveal" script) and animate in when scrolled to.
+       Crawlers, screenshots, no-JS and reduced-motion all get the finished state straight away. */
     .rv {
-      opacity: 0;
-      transform: translateY(28px);
       transition: opacity .8s cubic-bezier(.2, .7, .2, 1), transform .8s cubic-bezier(.2, .7, .2, 1)
+    }
+
+    .rv.rv-wait {
+      opacity: 0;
+      transform: translateY(28px)
     }
 
     .rv.in {
@@ -671,7 +677,7 @@
         transform: translateY(56px)
       }
 
-      .pgrid .pc.rv:nth-child(even):not(.in) {
+      .pgrid .pc.rv.rv-wait:nth-child(even) {
         transform: translateY(84px)
       }
     }
@@ -1306,11 +1312,12 @@
 
     .bar-fill {
       height: 100%;
-      width: 0;
       border-radius: 99px;
       background: var(--accent);
       transition: width 1.3s cubic-bezier(.2, .7, .2, 1)
     }
+
+    .rv-wait .bar-fill { width: 0 !important; }   /* width itself is written inline from data-w */
 
     .bar-fill.t {
       background: var(--teal)
@@ -1787,9 +1794,11 @@
       stroke-width: 3;
       stroke-linecap: round;
       stroke-dasharray: 1200;
-      stroke-dashoffset: 1200;
+      stroke-dashoffset: 0;
       transition: stroke-dashoffset 2.2s cubic-bezier(.2, .7, .2, 1)
     }
+
+    .rv-wait .curve .path { stroke-dashoffset: 1200; }
 
     .curve.in .path {
       stroke-dashoffset: 0
@@ -1893,8 +1902,10 @@
       transition: transform .6s cubic-bezier(.34, 1.56, .64, 1);
       transform-box: fill-box;
       transform-origin: center;
-      transform: scale(0)
+      transform: scale(1)
     }
+
+    .rv-wait .amap .dot { transform: scale(0); }
 
     .amap.in .dot {
       transform: scale(1)
@@ -1966,9 +1977,9 @@
     .bull .ring {
       transition: transform .9s cubic-bezier(.2, .7, .2, 1);
       transform-origin: 300px 300px;
-      transform: scale(.6);
-      opacity: .0
     }
+
+    .rv-wait .bull .ring { transform: scale(.6); opacity: 0; }
 
     .bull.in .ring {
       transform: scale(1);
@@ -1976,9 +1987,10 @@
     }
 
     .bull .fd {
-      opacity: 0;
       transition: opacity .5s
     }
+
+    .rv-wait .bull .fd { opacity: 0; }
 
     .bull.in .fd {
       opacity: 1
@@ -2660,8 +2672,8 @@
     /* Plot area: value sits on top of its bar; the bottom border is the baseline */
     .sv-plot { width: 100%; height: var(--sv-height); display: flex; flex-direction: column; justify-content: flex-end; align-items: center; border-bottom: 1px solid var(--line); }
     .sv-val { margin-bottom: 6px; }
-    .sv-bar { width: 72%; height: 0; border-radius: 8px 8px 0 0; background: var(--c); transition: height 1.2s cubic-bezier(.2,.7,.2,1); }
-    .sv-why.in .sv-bar { height: calc(var(--v) / var(--sv-max) * (var(--sv-height) - 28px)); }
+    .sv-bar { width: 72%; height: calc(var(--v) / var(--sv-max) * (var(--sv-height) - 28px)); border-radius: 8px 8px 0 0; background: var(--c); transition: height 1.2s cubic-bezier(.2,.7,.2,1); }
+    .rv-wait .sv-bar { height: 0; }
     .sv-lab { padding-top: 12px; }
     .sv-col.sv-key .sv-lab { color: var(--set-heading-color); font-weight: 600; }   /* highlighted reasons */
 
@@ -3842,31 +3854,31 @@
         <div class="rm-grid">
           <article class="rm-card rm-1 rv">
             <img class="rm-ill" src="assets/research-ill-1.webp" alt="Clipboard with checked survey answers" width="290" height="200">
-            <div class="rm-num"><b data-count="312">0</b></div>
+            <div class="rm-num"><b data-count="312">312</b></div>
             <p class="rm-label">survey responses</p>
             <span class="rm-go" aria-hidden="true"><i class="fa-solid fa-chevron-right"></i></span>
           </article>
           <article class="rm-card rm-2 rv d1">
             <img class="rm-ill" src="assets/research-ill-2.webp" alt="Two speech bubbles" width="290" height="200">
-            <div class="rm-num"><b data-count="18">0</b></div>
+            <div class="rm-num"><b data-count="18">18</b></div>
             <p class="rm-label">in-depth interviews</p>
             <span class="rm-go" aria-hidden="true"><i class="fa-solid fa-chevron-right"></i></span>
           </article>
           <article class="rm-card rm-3 rv d2">
             <img class="rm-ill" src="assets/research-ill-3.webp" alt="Group of three people" width="290" height="200">
-            <div class="rm-num"><b data-count="12">0</b></div>
+            <div class="rm-num"><b data-count="12">12</b></div>
             <p class="rm-label">usability test participants</p>
             <span class="rm-go" aria-hidden="true"><i class="fa-solid fa-chevron-right"></i></span>
           </article>
           <article class="rm-card rm-4 rv d3">
             <img class="rm-ill" src="assets/research-ill-4.webp" alt="Analytics dashboard with a clock" width="290" height="200">
-            <div class="rm-num"><b data-count="6">0</b> mo</div>
+            <div class="rm-num"><b data-count="6">6</b> mo</div>
             <p class="rm-label">of website analytics</p>
             <span class="rm-go" aria-hidden="true"><i class="fa-solid fa-chevron-right"></i></span>
           </article>
           <article class="rm-card rm-5 rv">
             <img class="rm-ill" src="assets/research-ill-5.webp" alt="Checklist with a warning sign" width="290" height="200">
-            <div class="rm-num"><b data-count="47">0</b></div>
+            <div class="rm-num"><b data-count="47">47</b></div>
             <p class="rm-label">heuristic &amp; WCAG issues</p>
             <span class="rm-go" aria-hidden="true"><i class="fa-solid fa-chevron-right"></i></span>
           </article>
@@ -3898,7 +3910,7 @@
             <span class="sv-ic sv-ic-o"><i class="fa-regular fa-file-lines"></i></span>
             <div>
               <p class="label">Total survey responses</p>
-              <div class="sv-total"><b data-count="312">0</b></div>
+              <div class="sv-total"><b data-count="312">312</b></div>
               <p class="sv-sub">responses</p>
             </div>
           </div>
@@ -3907,9 +3919,9 @@
             <span class="sv-ic sv-ic-t"><i class="fa-solid fa-mobile-screen-button"></i></span>
             <div class="sv-bars">
               <p class="label">Device used</p>
-              <div class="bar-row"><label>Mobile</label><div class="bar-track"><div class="bar-fill" data-w="71"></div></div><b>71%</b></div>
-              <div class="bar-row"><label>Desktop</label><div class="bar-track"><div class="bar-fill t" data-w="24"></div></div><b>24%</b></div>
-              <div class="bar-row"><label>Tablet</label><div class="bar-track"><div class="bar-fill grey" data-w="5"></div></div><b>5%</b></div>
+              <div class="bar-row"><label>Mobile</label><div class="bar-track"><div class="bar-fill" style="width:71%" data-w="71"></div></div><b>71%</b></div>
+              <div class="bar-row"><label>Desktop</label><div class="bar-track"><div class="bar-fill t" style="width:24%" data-w="24"></div></div><b>24%</b></div>
+              <div class="bar-row"><label>Tablet</label><div class="bar-track"><div class="bar-fill grey" style="width:5%" data-w="5"></div></div><b>5%</b></div>
             </div>
           </div>
           <!-- Found what they came for -->
@@ -3917,10 +3929,10 @@
             <span class="sv-ic sv-ic-b"><i class="fa-solid fa-circle-check"></i></span>
             <div class="sv-bars">
               <p class="label">"I found what I came for"</p>
-              <div class="bar-row"><label>Always</label><div class="bar-track"><div class="bar-fill t" data-w="9"></div></div><b>9%</b></div>
-              <div class="bar-row"><label>Sometimes</label><div class="bar-track"><div class="bar-fill sv-gb" data-w="33"></div></div><b>33%</b></div>
-              <div class="bar-row"><label>Rarely</label><div class="bar-track"><div class="bar-fill" data-w="39"></div></div><b>39%</b></div>
-              <div class="bar-row"><label>Never</label><div class="bar-track"><div class="bar-fill r" data-w="19"></div></div><b>19%</b></div>
+              <div class="bar-row"><label>Always</label><div class="bar-track"><div class="bar-fill t" style="width:9%" data-w="9"></div></div><b>9%</b></div>
+              <div class="bar-row"><label>Sometimes</label><div class="bar-track"><div class="bar-fill sv-gb" style="width:33%" data-w="33"></div></div><b>33%</b></div>
+              <div class="bar-row"><label>Rarely</label><div class="bar-track"><div class="bar-fill" style="width:39%" data-w="39"></div></div><b>39%</b></div>
+              <div class="bar-row"><label>Never</label><div class="bar-track"><div class="bar-fill r" style="width:19%" data-w="19"></div></div><b>19%</b></div>
             </div>
           </div>
         </div>
@@ -3982,11 +3994,11 @@
             <span class="sv-ic sv-ic-o"><i class="fa-regular fa-file-lines"></i></span>
             <div class="sv-bars ut-bars">
               <p class="label">Task success rate</p>
-              <div class="bar-row"><label>Find a project by name</label><div class="bar-track"><div class="bar-fill" style="background:#d83a2b" data-w="25"></div></div><b>25%</b></div>
-              <div class="bar-row"><label>Check if it's delayed</label><div class="bar-track"><div class="bar-fill" style="background:#f07a35" data-w="33"></div></div><b>33%</b></div>
-              <div class="bar-row"><label>Verify an agent</label><div class="bar-track"><div class="bar-fill" style="background:#f6943a" data-w="42"></div></div><b>42%</b></div>
-              <div class="bar-row"><label>Find how to complain</label><div class="bar-track"><div class="bar-fill" style="background:#e04b33" data-w="17"></div></div><b>17%</b></div>
-              <div class="bar-row"><label>Read a project on mobile</label><div class="bar-track"><div class="bar-fill" style="background:#e04b33" data-w="30"></div></div><b>30%</b></div>
+              <div class="bar-row"><label>Find a project by name</label><div class="bar-track"><div class="bar-fill" style="width:25%;background:#d83a2b" data-w="25"></div></div><b>25%</b></div>
+              <div class="bar-row"><label>Check if it's delayed</label><div class="bar-track"><div class="bar-fill" style="width:33%;background:#f07a35" data-w="33"></div></div><b>33%</b></div>
+              <div class="bar-row"><label>Verify an agent</label><div class="bar-track"><div class="bar-fill" style="width:42%;background:#f6943a" data-w="42"></div></div><b>42%</b></div>
+              <div class="bar-row"><label>Find how to complain</label><div class="bar-track"><div class="bar-fill" style="width:17%;background:#e04b33" data-w="17"></div></div><b>17%</b></div>
+              <div class="bar-row"><label>Read a project on mobile</label><div class="bar-track"><div class="bar-fill" style="width:30%;background:#e04b33" data-w="30"></div></div><b>30%</b></div>
             </div>
           </div>
           <!-- System Usability Scale -->
@@ -4580,37 +4592,37 @@
             <div class="cmp">
               <div class="cmp-h">Find a project by name <span>25% → 92%</span></div>
               <div class="bar-track">
-                <div class="bar-fill grey" data-w="25"></div>
+                <div class="bar-fill grey" style="width:25%" data-w="25"></div>
               </div>
               <div class="bar-track">
-                <div class="bar-fill" data-w="92"></div>
+                <div class="bar-fill" style="width:92%" data-w="92"></div>
               </div>
             </div>
             <div class="cmp">
               <div class="cmp-h">Check if it's delayed <span>33% → 92%</span></div>
               <div class="bar-track">
-                <div class="bar-fill grey" data-w="33"></div>
+                <div class="bar-fill grey" style="width:33%" data-w="33"></div>
               </div>
               <div class="bar-track">
-                <div class="bar-fill" data-w="92"></div>
+                <div class="bar-fill" style="width:92%" data-w="92"></div>
               </div>
             </div>
             <div class="cmp">
               <div class="cmp-h">Verify an agent <span>42% → 100%</span></div>
               <div class="bar-track">
-                <div class="bar-fill grey" data-w="42"></div>
+                <div class="bar-fill grey" style="width:42%" data-w="42"></div>
               </div>
               <div class="bar-track">
-                <div class="bar-fill" data-w="100"></div>
+                <div class="bar-fill" style="width:100%" data-w="100"></div>
               </div>
             </div>
             <div class="cmp">
               <div class="cmp-h">Find how to complain <span>17% → 83%</span></div>
               <div class="bar-track">
-                <div class="bar-fill grey" data-w="17"></div>
+                <div class="bar-fill grey" style="width:17%" data-w="17"></div>
               </div>
               <div class="bar-track">
-                <div class="bar-fill" data-w="83"></div>
+                <div class="bar-fill" style="width:83%" data-w="83"></div>
               </div>
             </div>
             <div class="key" style="margin:6px 0 0"><span><i
@@ -4659,19 +4671,19 @@
           </div>
           <div class="grid g4">
             <div class="card stat">
-              <div class="num"><b data-count="58">0</b><span>%</span></div>
+              <div class="num"><b data-count="58">58</b><span>%</span></div>
               <p>fewer "how do I find…" calls</p>
             </div>
             <div class="card stat">
-              <div class="num"><b data-count="3">0</b><span>×</span></div>
+              <div class="num"><b data-count="3">3</b><span>×</span></div>
               <p>more project searches per visit</p>
             </div>
             <div class="card stat">
-              <div class="num"><b data-count="74">0</b><span>%</span></div>
+              <div class="num"><b data-count="74">74</b><span>%</span></div>
               <p>of visits now fully on mobile</p>
             </div>
             <div class="card stat">
-              <div class="num"><b data-count="2">0</b></div>
+              <div class="num"><b data-count="2">2</b></div>
               <p>languages: English &amp; मराठी</p>
             </div>
           </div>
@@ -4931,9 +4943,9 @@
             r: 70,
             stroke: d.c
           });
-          s.style.strokeDasharray = `0 ${C}`;
-          s.style.strokeDashoffset = -off;
           s.dataset.len = (d.v / 100) * C - 2;
+          s.style.strokeDasharray = svg.closest('.rv-wait') ? `0 ${C}` : `${s.dataset.len} ${C}`;
+          s.style.strokeDashoffset = -off;
           off += (d.v / 100) * C;
           svg.appendChild(s);
           legend.insertAdjacentHTML('beforeend',
@@ -4961,20 +4973,39 @@
         svg.append(t1, t2);
       });
 
+      /* ===== Which sections animate =====
+         Real numbers are written in the HTML and every chart starts in its finished state.
+         Only a real visitor gets the scroll animations, and only for sections that start below
+         the fold, so a crawler, screenshot or AI reader never sees a 0 or an empty chart. */
+      const isBot = navigator.webdriver ||
+        /bot|crawl|spider|slurp|headless|lighthouse|pagespeed|gptbot|chatgpt|oai-searchbot|claude|anthropic|perplexity|google-extended|googleother|bingpreview|facebookexternalhit|linkedinbot|embedly|preview|scrape|python|curl|wget|phantom|puppeteer|playwright/i
+        .test(navigator.userAgent);
+      const animate = !reduce && !isBot && 'IntersectionObserver' in window;
+      const waiting = animate
+        ? [...document.querySelectorAll('.rv')].filter(n => n.getBoundingClientRect().top > innerHeight * .92)
+        : [];
+      waiting.forEach(n => n.classList.add('rv-wait'));
+      // anything printed or saved shows everything
+      addEventListener('beforeprint', () => document.querySelectorAll('.rv-wait').forEach(reveal));
+
       /* ===== Gauges ===== */
       document.querySelectorAll('.gauge').forEach(g => {
         const p = g.querySelector('.val'),
           L = p.getTotalLength();
         p.style.stroke = g.dataset.color;
         p.style.strokeDasharray = L;
-        p.style.strokeDashoffset = L;
+        p.dataset.empty = L;
         p.dataset.target = L * (1 - g.dataset.gauge / 100);
+        p.style.transition = 'none';   // set the start state instantly, no sweep on load
+        p.style.strokeDashoffset = g.closest('.rv-wait') ? L : p.dataset.target;
+        p.getBoundingClientRect();
+        p.style.transition = '';
       });
 
-      /* ===== Count-up ===== */
+      /* ===== Count-up (real visitors only; the HTML already holds the final number) ===== */
       const countUp = n => {
         const end = +n.dataset.count;
-        if (reduce) {
+        if (!animate) {
           n.textContent = end;
           return;
         }
@@ -4989,21 +5020,28 @@
       };
 
       /* ===== Reveal ===== */
-      const io = new IntersectionObserver(entries => entries.forEach(e => {
-        if (!e.isIntersecting) return;
-        const t = e.target;
+      function reveal(t) {
+        const wasWaiting = t.classList.contains('rv-wait');
+        t.classList.remove('rv-wait');
         t.classList.add('in');
-        t.querySelectorAll('.bar-fill[data-w]').forEach(b => b.style.width = b.dataset.w + '%');
-        t.querySelectorAll('[data-count]').forEach(countUp);
+        t.querySelectorAll('.curve, .amap, .bull').forEach(c => c.classList.add('in'));
         t.querySelectorAll('svg[data-donut] circle[data-len]').forEach(s => s.style.strokeDasharray =
           `${s.dataset.len} ${2*Math.PI*70}`);
         t.querySelectorAll('.gauge .val').forEach(p => p.style.strokeDashoffset = p.dataset.target);
-        t.querySelectorAll('.curve, .amap, .bull').forEach(c => c.classList.add('in'));
-        io.unobserve(t);
-      }), {
-        threshold: .15
-      });
-      document.querySelectorAll('.rv').forEach(n => io.observe(n));
+        if (wasWaiting) t.querySelectorAll('[data-count]').forEach(countUp);
+      }
+      document.querySelectorAll('.rv:not(.rv-wait)').forEach(n => n.classList.add('in'));
+      document.querySelectorAll('.rv:not(.rv-wait) :is(.curve, .amap, .bull)').forEach(c => c.classList.add('in'));
+      if (waiting.length) {
+        const io = new IntersectionObserver(entries => entries.forEach(e => {
+          if (!e.isIntersecting) return;
+          reveal(e.target);
+          io.unobserve(e.target);
+        }), {
+          threshold: .15
+        });
+        waiting.forEach(n => io.observe(n));
+      }
 
       /* ===== Tabs ===== */
       document.querySelectorAll('.tabs button').forEach(btn => btn.addEventListener('click', () => {
