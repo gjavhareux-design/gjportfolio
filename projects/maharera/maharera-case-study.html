@@ -2278,20 +2278,17 @@
     .ia-grid .ia-card { position: relative; }
 
     /* ================= FEATURE DISCOVERY (feature inventory) ================= */
-    .fd-grid { align-items: start; }
-    .fd-card { min-width: 0; }
-    .fd-head { display: flex; gap: 14px; align-items: flex-start; padding-bottom: 14px; margin-bottom: 6px; border-bottom: 1px solid var(--line); }
-    .fd-ic { flex: none; width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; font-size: 17px; background: var(--accent-soft); color: var(--accent); }
-    .fd-head h4 { margin: 0; font-size: 16.5px; font-weight: 700; line-height: 1.3; color: var(--ink); }
-    .fd-head p { margin: 3px 0 0; font-size: 13px; line-height: 1.4; color: var(--muted); }
-    .fd-list { list-style: none; margin: 0; padding: 0; }
-    .fd-list li { position: relative; padding: 8px 0 8px 22px; font-size: 14px; line-height: 1.45; color: #3f3f46; border-top: 1px dashed #ececef; }
-    .fd-list li:first-child { border-top: 0; }
-    .fd-list li::before { content: ""; position: absolute; left: 2px; top: 13px; width: 9px; height: 9px; border-radius: 50%; border: 2px solid var(--accent); opacity: .55; }
-    .fd-list li.fd-qr { color: var(--ink); font-weight: 600; }
-    .fd-list li.fd-qr::before { background: var(--accent); opacity: 1; }
-    .fd-tag { display: inline-flex; align-items: center; gap: 4px; margin-left: 4px; padding: 2px 7px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-size: 10.5px; font-weight: 800; letter-spacing: .06em; vertical-align: 1px; }
-    .fd-tag i { font-size: 10px; }
+    .fd-hint { margin: 0 0 14px; font-size: 13px; color: var(--muted); }
+    /* boards in a row share one height: each column is as wide as its image's aspect ratio */
+    .fd-row { display: grid; grid-template-columns: var(--cols); gap: 20px; margin-bottom: 20px; align-items: start; }
+    .fd-board { margin: 0; min-width: 0; }
+    .fd-board a { display: block; border-radius: 18px; overflow: hidden; box-shadow: 0 14px 34px -24px rgba(0, 0, 0, .35); transition: transform .3s ease, box-shadow .3s ease; }
+    .fd-board a:hover { transform: translateY(-3px); box-shadow: 0 20px 40px -24px rgba(0, 0, 0, .4); }
+    .fd-board a:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+    .fd-board img { display: block; width: 100%; height: auto; }
+    @media (max-width: 760px) {
+      .fd-row { display: flex; flex-direction: column; gap: 16px; margin-bottom: 16px; }
+    }
     .fd-note { display: flex; gap: 16px; align-items: flex-start; margin-top: 20px; padding: 20px 22px; border-radius: 20px; background: var(--accent-soft); border-left: 4px solid var(--accent); }
     .fd-note-ic { flex: none; width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--accent); color: #fff; font-size: 18px; }
     .fd-note-t { margin: 0 0 6px; font-size: 15px; font-weight: 700; color: var(--ink); }
@@ -4539,102 +4536,42 @@
             needs and mapped the expected features across six categories to create a user-focused feature
             inventory.</p>
         </div>
-        <div class="grid g3 fd-grid">
-          <div class="card fd-card rv">
-            <div class="fd-head">
-              <span class="fd-ic"><i class="fa-solid fa-house"></i></span>
-              <div><h4>Homebuyer corner</h4><p>Discovering and verifying registered projects</p></div>
-            </div>
-            <ul class="fd-list">
-                <li>Search registered projects</li>
-                <li>View project details and registration status</li>
-                <li class="fd-qr">Access project-specific QR codes and project information by scanning <span class="fd-tag"><i class="fa-solid fa-qrcode"></i>QR</span></li>
-                <li>View building, wing and apartment details</li>
-                <li>Check apartment availability and sold/unsold status</li>
-                <li>Review project completion timelines and extensions</li>
-                <li>Access approved plans, commencement certificates and other project documents</li>
-                <li>View promoter details</li>
-                <li>Check project complaints and legal proceedings</li>
-                <li>Review project progress and quarterly updates</li>
-                <li>Search lapsed, revoked and other project-status categories</li>
-            </ul>
-          </div>
-          <div class="card fd-card rv d1">
-            <div class="fd-head">
-              <span class="fd-ic"><i class="fa-solid fa-building"></i></span>
-              <div><h4>Promoter corner</h4><p>Project registration and compliance services</p></div>
-            </div>
-            <ul class="fd-list">
-                <li>New project registration</li>
-                <li>Project registration forms and document checklists</li>
-                <li>Registration fee information</li>
-                <li>Project corrections and modifications</li>
-                <li>Project extension applications</li>
-                <li>Quarterly project progress updates</li>
-                <li>Project details and document updates</li>
-                <li>Access to promoter guidelines and regulatory requirements</li>
-            </ul>
-          </div>
-          <div class="card fd-card rv d2">
-            <div class="fd-head">
-              <span class="fd-ic"><i class="fa-solid fa-user-tie"></i></span>
-              <div><h4>Real estate agent corner</h4><p>Agent registration and regulatory compliance</p></div>
-            </div>
-            <ul class="fd-list">
-                <li>New agent registration</li>
-                <li>Agent renewal</li>
-                <li>Application corrections</li>
-                <li>Registration forms and document requirements</li>
-                <li>Fee structure</li>
-                <li>Agent registration details and verification</li>
-                <li>Agent guidelines and applicable regulations</li>
-            </ul>
-          </div>
-          <div class="card fd-card rv">
-            <div class="fd-head">
-              <span class="fd-ic"><i class="fa-solid fa-gavel"></i></span>
-              <div><h4>Complaint and grievance redressal</h4><p>Accessing complaint-related services</p></div>
-            </div>
-            <ul class="fd-list">
-                <li>File a complaint</li>
-                <li>Track complaint status</li>
-                <li>View hearing dates and schedules</li>
-                <li>Access hearing outcomes and decisions</li>
-                <li>Access complaint-related orders</li>
-                <li>Conciliation forum information and services</li>
-                <li>Complaint-related guidance</li>
-            </ul>
-          </div>
-          <div class="card fd-card rv d1">
-            <div class="fd-head">
-              <span class="fd-ic"><i class="fa-solid fa-file-lines"></i></span>
-              <div><h4>Legal and regulatory resources</h4><p>Accessing official regulatory information</p></div>
-            </div>
-            <ul class="fd-list">
-                <li>Acts and Rules</li>
-                <li>Regulations and Orders</li>
-                <li>Circulars and notifications</li>
-                <li>Judgements and directions</li>
-                <li>Legal proceedings and appeal-related information</li>
-                <li>Government notifications and regulatory updates</li>
-            </ul>
-          </div>
-          <div class="card fd-card rv d2">
-            <div class="fd-head">
-              <span class="fd-ic"><i class="fa-solid fa-book"></i></span>
-              <div><h4>Knowledge and support</h4><p>Finding guidance and assistance</p></div>
-            </div>
-            <ul class="fd-list">
-                <li>FAQs</li>
-                <li>Glossary and real estate terminology</li>
-                <li>User manuals and guidelines</li>
-                <li>Registration guidance</li>
-                <li>Forms and downloadable documents</li>
-                <li>Helpdesk and counselling support</li>
-                <li>RTI information</li>
-                <li>Annual reports and publications</li>
-            </ul>
-          </div>
+        <p class="fd-hint">78 expected features across six groups. Select a board to open it full size.</p>
+        <div class="fd-row" style="--cols:1.1106fr 0.9083fr">
+          <figure class="fd-board rv">
+            <a href="assets/features-homebuyer.webp" target="_blank" rel="noopener" aria-label="Open Homebuyer corner full size">
+              <img src="assets/features-homebuyer.webp" width="1576" height="1419" loading="lazy" alt="Homebuyer corner: 20 features as sticky notes. Search registered projects by project name or registration number; Advanced search by location, pincode, completion date and project type; Search projects by promoter, registered agent and project professional; Filter projects by local authority or approving authority; View projects on an interactive map; Compare shortlisted projects side by side; Scan project QR codes to access verified project information; View project registration status and certificates; Explore building, wing and apartment details; Check apartment availability and sold/unsold status; Review project completion dates, extensions and progress; Access approvals, sanctioned plans and commencement certificates; Check complaints, orders and legal proceedings associated with projects; View promoter and agent details; Access project updates and quarterly progress reports; Identify revoked, lapsed and deregistered projects; Save shortlisted projects; Download project information as a PDF; View recently searched projects; Receive project-status notifications.">
+            </a>
+          </figure>
+          <figure class="fd-board rv d1">
+            <a href="assets/features-promoter.webp" target="_blank" rel="noopener" aria-label="Open Promoter corner full size">
+              <img src="assets/features-promoter.webp" width="1288" height="1418" loading="lazy" alt="Promoter corner: 16 features as sticky notes. New project registration; Registration forms and document checklists; Required declarations and formats; Registration fee structure; Track registration application status; View scrutiny remarks and pending requirements; Apply for project corrections and modifications; Apply for project registration extensions; Submit quarterly and annual project updates; Upload revised approvals and project documents; Access registration certificates and project records; View applicable Acts, Rules, Orders and Circulars; Application progress tracker; Document checklist with completion status; Reminders for pending submissions; Promoter dashboard showing upcoming compliance deadlines.">
+            </a>
+          </figure>
+        </div>
+        <div class="fd-row" style="--cols:0.6949fr 0.7124fr">
+          <figure class="fd-board rv">
+            <a href="assets/features-agent.webp" target="_blank" rel="noopener" aria-label="Open Real estate agent corner full size">
+              <img src="assets/features-agent.webp" width="984" height="1416" loading="lazy" alt="Real estate agent corner: 12 features as sticky notes. New agent registration and renewal; Application forms and document requirements; Registration fee structure; Search and verify registered agents; Access agent registration certificates; Access agent training and certification information; Renewal reminders; Training progress tracker; Downloadable registration credentials; Track application status; Correct or update agent details; View applicable rules, orders and circulars.">
+            </a>
+          </figure>
+          <figure class="fd-board rv d1">
+            <a href="assets/features-complaints.webp" target="_blank" rel="noopener" aria-label="Open Complaint and grievance redressal full size">
+              <img src="assets/features-complaints.webp" width="1033" height="1450" loading="lazy" alt="Complaint and grievance redressal: 10 features as sticky notes. File a complaint; Search and track complaints; View complaint status and case details; Access complaint-related documents; Apply for conciliation; Track conciliation proceedings; Access hearing schedules and cause lists; View hearing outcomes and orders; Notifications when case status changes; Search complaints by project, promoter or complaint number.">
+            </a>
+          </figure>
+        </div>
+        <div class="fd-row" style="--cols:0.7005fr 0.6999fr">
+          <figure class="fd-board rv">
+            <a href="assets/features-legal.webp" target="_blank" rel="noopener" aria-label="Open Legal and regulatory resources full size">
+              <img src="assets/features-legal.webp" width="987" height="1409" loading="lazy" alt="Legal and regulatory resources: 12 features as sticky notes. Search Acts, Rules and Regulations; Search Orders and Judgements; Search Circulars and Notifications; Search by keywords or document number; Access legal guidelines and government notifications; View appellate tribunal orders and cause lists; Related-order recommendations; Bookmarked documents; Alerts for newly published circulars; Search notices and public announcements; Filter documents by date, category and reference number; Download official documents and PDFs.">
+            </a>
+          </figure>
+          <figure class="fd-board rv d1">
+            <a href="assets/features-knowledge.webp" target="_blank" rel="noopener" aria-label="Open Knowledge and support full size">
+              <img src="assets/features-knowledge.webp" width="984" height="1406" loading="lazy" alt="Knowledge and support: 12 features as sticky notes. FAQs for homebuyers, promoters and agents; Glossary of real estate and regulatory terms; Step-by-step registration guides; Helpdesk contact details; Counselling and support information; Chatbot for common queries and navigation; Ticket-based helpdesk tracking; Guided support by user type; RTI information and annual reports; User manuals and downloadable forms; Homebuyer guidance; Video tutorials and walkthroughs.">
+            </a>
+          </figure>
         </div>
         <div class="fd-note rv">
           <span class="fd-note-ic"><i class="fa-solid fa-qrcode"></i></span>
