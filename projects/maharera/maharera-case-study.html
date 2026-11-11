@@ -2274,6 +2274,21 @@
       background: var(--line)
     }
 
+    /* ================= FEATURE CATEGORIES (information architecture) ================= */
+    .ia-nav { display: flex; align-items: center; gap: 18px; margin-bottom: 20px; padding: 10px 12px 10px 22px; background: var(--paper); border: 1px solid var(--line); border-radius: 999px; box-shadow: 0 10px 30px -22px rgba(0, 0, 0, .35); }
+    .ia-brand { flex: none; font-weight: 800; font-size: 15px; letter-spacing: -.01em; color: var(--ink); padding-right: 18px; border-right: 1px solid var(--line); }
+    .ia-scroll { flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+    .ia-scroll::-webkit-scrollbar { display: none; }
+    .ia-nav ul { list-style: none; margin: 0; padding: 0; display: flex; justify-content: space-between; gap: 2px; white-space: nowrap; }
+    .ia-nav li { flex: none; white-space: nowrap; font-size: 13px; font-weight: 600; line-height: 1.2; color: #52525b; padding: 9px 9px; border-radius: 999px; }
+    .ia-nav li.on { background: var(--accent-soft); color: var(--accent); }
+    .ia-grid .ia-card { position: relative; }
+    @media (max-width: 640px) {
+      .ia-nav { border-radius: 18px; padding: 10px 12px; gap: 12px; }
+      .ia-brand { padding-right: 12px; font-size: 14px; }
+      .ia-scroll { -webkit-mask-image: linear-gradient(90deg, #000 80%, transparent); mask-image: linear-gradient(90deg, #000 80%, transparent); }   /* hints the menu scrolls */
+    }
+
     /* ================= FEATURES ================= */
     .feat .ic {
       width: 46px;
@@ -4477,6 +4492,65 @@
               <g id="bullDots"></g>
             </svg>
             <div class="tiers" id="tiers"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Information architecture: feature categories → main navigation -->
+    <section id="categories" data-nav="Feature categories" style="padding-top:20px">
+      <div class="wrap">
+        <div class="sh rv">
+          <span class="tag lb1">Information architecture</span>
+          <h2 class="sh1">Six categories, one clear way in.</h2>
+          <h3 class="sh2">Grouping every feature into the categories that became the main navigation</h3>
+          <p class="sh3">A unified digital platform supporting citizens, homebuyers, promoters and real estate
+            professionals. Each category gathers related features behind one entry point, so people go straight to
+            the information they came for instead of searching across the site.</p>
+        </div>
+        <div class="ia-nav rv" aria-label="The six categories as the website's main menu">
+          <span class="ia-brand">MahaRERA</span>
+          <div class="ia-scroll">
+            <ul>
+              <li class="on">Project Discovery</li>
+              <li>Project Information</li>
+              <li>Documents &amp; Approvals</li>
+              <li>Grievance Redressal</li>
+              <li>Stakeholder Services</li>
+              <li>Knowledge &amp; Resources</li>
+            </ul>
+          </div>
+        </div>
+        <div class="grid g3 ia-grid">
+          <div class="card feat ia-card rv">
+            <div class="ic"><i class="fa-solid fa-magnifying-glass"></i></div>
+            <h4>Project Discovery</h4>
+            <p>Project search, promoter search, agent search and project information.</p>
+          </div>
+          <div class="card feat ia-card rv d1">
+            <div class="ic"><i class="fa-solid fa-building"></i></div>
+            <h4>Project Information</h4>
+            <p>Building details, apartment information, availability and timelines.</p>
+          </div>
+          <div class="card feat ia-card rv d2">
+            <div class="ic"><i class="fa-solid fa-file-lines"></i></div>
+            <h4>Documents &amp; Approvals</h4>
+            <p>Legal records, certificates, approvals and project documents.</p>
+          </div>
+          <div class="card feat ia-card rv">
+            <div class="ic"><i class="fa-solid fa-gavel"></i></div>
+            <h4>Grievance Redressal</h4>
+            <p>Complaints, conciliation, appeals and regulatory orders.</p>
+          </div>
+          <div class="card feat ia-card rv d1">
+            <div class="ic"><i class="fa-solid fa-id-badge"></i></div>
+            <h4>Stakeholder Services</h4>
+            <p>Promoter and agent registration and account services.</p>
+          </div>
+          <div class="card feat ia-card rv d2">
+            <div class="ic"><i class="fa-solid fa-book"></i></div>
+            <h4>Knowledge &amp; Resources</h4>
+            <p>FAQs, acts, rules, circulars, manuals and reports.</p>
           </div>
         </div>
       </div>
