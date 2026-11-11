@@ -1968,7 +1968,8 @@
     .as-list li { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 12px; align-items: start; padding: 12px 0; border-top: 1px solid var(--line); }
     .as-list li:first-child { border-top: 0; padding-top: 2px; }
     .as-n { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--as-c); color: #fff; font-size: 12px; font-weight: 800; font-variant-numeric: tabular-nums; }
-    .as-list p { margin: 0; font-size: 14.5px; line-height: 1.5; color: var(--ink); padding-top: 2px; }
+    .as-list h4 { margin: 0; padding-top: 3px; font-size: 15px; font-weight: 700; line-height: 1.35; color: var(--ink); }
+    .as-list p { margin: 4px 0 0; font-size: 14px; line-height: 1.55; color: #52525b; }
     .as-p { font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 4px 9px; border-radius: 999px; background: var(--as-soft); color: var(--as-c); white-space: nowrap; margin-top: 2px; }
     .as-low .as-p { color: #5f646d; }
     .as-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-variant-numeric: tabular-nums; }
@@ -4396,11 +4397,11 @@
         <div class="sh rv">
           <span class="tag lb1">Assumption prioritisation</span>
           <h2 class="sh1">What do we know, and what are we guessing?</h2>
-          <h3 class="sh2">Twelve assumptions, ranked by priority and validated with users</h3>
+          <h3 class="sh2">Twelve assumptions, ordered by priority and validated with users</h3>
           <p class="sh3">Every assumption was validated through user interviews, testing of the old website, concept
             prototypes and follow-up surveys.</p>
         </div>
-        <!-- Edit assumptions here: class as-high / as-medium / as-low sets the priority colour -->
+        <!-- Edit assumptions here, grouped High → Medium → Low: class as-high / as-medium / as-low sets the priority colour -->
         <div class="as-grid">
           <div class="card rv as-card">
             <div class="as-head">
@@ -4408,18 +4409,18 @@
               <span class="as-legend"><i class="as-high"></i>High <i class="as-medium"></i>Medium <i class="as-low"></i>Low</span>
             </div>
             <ol class="as-list">
-                <li class="as-high"><span class="as-n">1</span><p>Citizens struggle to understand complex legal and regulatory information on the old MahaRERA website.</p><span class="as-p">High</span></li>
-                <li class="as-high"><span class="as-n">2</span><p>Users want to search for a project using simple inputs such as project name, promoter name, location or registration number.</p><span class="as-p">High</span></li>
-                <li class="as-high"><span class="as-n">3</span><p>Homebuyers want a clear overview of project registration status, completion dates, approvals and extensions without navigating multiple sections.</p><span class="as-p">High</span></li>
-                <li class="as-high"><span class="as-n">4</span><p>Users find lengthy document lists difficult to interpret and need explanations of what each document means.</p><span class="as-p">High</span></li>
-                <li class="as-medium"><span class="as-n">5</span><p>Users would prefer visual representations of building details, floor information, apartment types, sold/unsold units and carpet areas instead of large data tables.</p><span class="as-p">Medium</span></li>
-                <li class="as-medium"><span class="as-n">6</span><p>Users want to know whether a project has complaints, regulatory orders or legal proceedings associated with it.</p><span class="as-p">Medium</span></li>
-                <li class="as-high"><span class="as-n">7</span><p>Most users expect the website to work smoothly on mobile devices, as they may access project information while visiting a property.</p><span class="as-p">High</span></li>
-                <li class="as-low"><span class="as-n">8</span><p>Users need a simple way to compare two or more registered projects before making a property decision.</p><span class="as-p">Low</span></li>
-                <li class="as-low"><span class="as-n">9</span><p>Users benefit from contextual help, FAQs and a glossary explaining terms such as carpet area, commencement certificate and proposed completion date.</p><span class="as-p">Low</span></li>
-                <li class="as-high"><span class="as-n">10</span><p>Promoters registering a project want one guidance and document resource: registration forms, the list of required documents, declaration formats, the documents to submit, the fee structure, and the relevant acts, regulations, orders and circulars.</p><span class="as-p">High</span></li>
-                <li class="as-medium"><span class="as-n">11</span><p>Real estate agents registering with MahaRERA want the same guidance: application forms, required documents, declaration formats, the fee structure and the rules that apply to agents.</p><span class="as-p">Medium</span></li>
-                <li class="as-high"><span class="as-n">12</span><p>Complainants and their advocates want to track a complaint in one place: its status, hearing dates, hearing outcomes and decisions.</p><span class="as-p">High</span></li>
+                <li class="as-high"><span class="as-n">1</span><div><h4>Complex legal information</h4><p>Citizens struggle to understand complex legal and regulatory information on the old MahaRERA website.</p></div><span class="as-p">High</span></li>
+                <li class="as-high"><span class="as-n">2</span><div><h4>Simple project search</h4><p>Users want to search for a project using simple inputs such as project name, promoter name, location or registration number.</p></div><span class="as-p">High</span></li>
+                <li class="as-high"><span class="as-n">3</span><div><h4>Project status overview</h4><p>Homebuyers want a clear overview of project registration status, completion dates, approvals and extensions without navigating multiple sections.</p></div><span class="as-p">High</span></li>
+                <li class="as-high"><span class="as-n">4</span><div><h4>Document explanations</h4><p>Users find lengthy document lists difficult to interpret and need explanations of what each document means.</p></div><span class="as-p">High</span></li>
+                <li class="as-high"><span class="as-n">5</span><div><h4>Mobile-friendly access</h4><p>Most users expect the website to work smoothly on mobile devices, as they may access project information while visiting a property.</p></div><span class="as-p">High</span></li>
+                <li class="as-high"><span class="as-n">6</span><div><h4>Promoter registration guidance</h4><p>Promoters want a single resource for project registration forms, required documents, declarations, fees and relevant regulatory guidelines.</p></div><span class="as-p">High</span></li>
+                <li class="as-medium"><span class="as-n">7</span><div><h4>Visual project details</h4><p>Users would prefer visual representations of building details, floor information, apartment types, sold/unsold units and carpet areas instead of large data tables.</p></div><span class="as-p">Medium</span></li>
+                <li class="as-medium"><span class="as-n">8</span><div><h4>Complaints and legal history</h4><p>Users want to know whether a project has complaints, regulatory orders or legal proceedings associated with it.</p></div><span class="as-p">Medium</span></li>
+                <li class="as-medium"><span class="as-n">9</span><div><h4>Agent registration guidance</h4><p>Real estate agents want a single resource for registration forms, required documents, declarations, fees and applicable regulations.</p></div><span class="as-p">Medium</span></li>
+                <li class="as-medium"><span class="as-n">10</span><div><h4>Complaint tracking</h4><p>Complainants and their advocates want one place to track complaint status, hearing dates, outcomes and decisions.</p></div><span class="as-p">Medium</span></li>
+                <li class="as-low"><span class="as-n">11</span><div><h4>Project comparison</h4><p>Users need a simple way to compare two or more registered projects before making a property decision.</p></div><span class="as-p">Low</span></li>
+                <li class="as-low"><span class="as-n">12</span><div><h4>Contextual help and glossary</h4><p>Users benefit from contextual help, FAQs and a glossary explaining terms such as carpet area, commencement certificate and proposed completion date.</p></div><span class="as-p">Low</span></li>
             </ol>
           </div>
           <aside class="as-side">
