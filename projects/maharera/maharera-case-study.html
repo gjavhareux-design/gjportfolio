@@ -1953,6 +1953,43 @@
       white-space: nowrap
     }
 
+    /* ================= ASSUMPTIONS ================= */
+    .as-grid { display: grid; grid-template-columns: 1.35fr 1fr; gap: 20px; align-items: start; }
+    .as-side { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+    .as-card, .as-research { min-width: 0; }
+    .as-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; margin-bottom: 14px; }
+    .as-head .label, .as-research > .label { margin: 0; }
+    .as-legend { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+    .as-legend i { width: 9px; height: 9px; border-radius: 50%; margin-left: 6px; background: var(--as-c); }
+    .as-high { --as-c: var(--accent); --as-soft: var(--accent-soft); }
+    .as-medium { --as-c: #d97706; --as-soft: #fff6e5; }
+    .as-low { --as-c: #8a8f98; --as-soft: #f1f1f3; }
+    .as-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+    .as-list li { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 12px; align-items: start; padding: 12px 0; border-top: 1px solid var(--line); }
+    .as-list li:first-child { border-top: 0; padding-top: 2px; }
+    .as-n { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--as-c); color: #fff; font-size: 12px; font-weight: 800; font-variant-numeric: tabular-nums; }
+    .as-list p { margin: 0; font-size: 14.5px; line-height: 1.5; color: var(--ink); padding-top: 2px; }
+    .as-p { font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 4px 9px; border-radius: 999px; background: var(--as-soft); color: var(--as-c); white-space: nowrap; margin-top: 2px; }
+    .as-low .as-p { color: #5f646d; }
+    .as-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-variant-numeric: tabular-nums; }
+    .as-table th, .as-table td { text-align: left; padding: 11px 0; border-top: 1px solid var(--line); font-size: 14px; }
+    .as-table thead th { border-top: 0; padding-top: 0; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .as-table tbody th { font-weight: 500; color: var(--ink); padding-right: 12px; }
+    .as-table td { text-align: right; font-size: 18px; font-weight: 800; color: var(--ink); white-space: nowrap; }
+    .as-table thead th:last-child { text-align: right; }
+    .as-ok { display: flex; align-items: center; gap: 8px; margin: 14px 0 0; padding: 9px 12px; border-radius: 12px; background: var(--good-soft); color: var(--good); font-size: 13px; font-weight: 700; }
+    .as-note { border-radius: 20px; padding: 20px 22px; background: var(--accent-soft); border-left: 4px solid var(--accent); }
+    .as-note-t { margin: 0 0 8px; font-size: 15px; font-weight: 700; color: var(--ink); }
+    .as-note p:not(.as-note-t) { margin: 0; font-size: 14px; line-height: 1.6; color: #52525b; }
+    .as-note p + p { margin-top: 8px !important; }
+    @media (max-width: 900px) {
+      .as-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 520px) {
+      .as-list li { grid-template-columns: 26px minmax(0, 1fr); }
+      .as-p { grid-column: 2; justify-self: start; margin-top: 0; }
+    }
+
     /* ================= BULLSEYE ================= */
     .bull-wrap {
       display: grid;
@@ -4353,34 +4390,57 @@
     </div>
 
     <!-- Assumption map -->
-    <section id="assumptions" data-nav="Assumption map">
+    <section id="assumptions" data-nav="Assumptions">
       <div class="wrap">
         <div class="sh rv">
           <span class="tag lb1">Assumption prioritisation</span>
           <h2 class="sh1">What do we know, and what are we guessing?</h2>
-          <h3 class="sh2">Nine assumptions mapped by importance and evidence</h3>
-          <p class="sh3">Important assumptions with little evidence were the riskiest, so we tested them first with quick
-            prototypes.</p>
+          <h3 class="sh2">Nine assumptions, ranked by priority and validated with users</h3>
+          <p class="sh3">Every assumption was validated through user interviews, testing of the old website, concept
+            prototypes and follow-up surveys.</p>
         </div>
-        <div class="card rv">
-          <div class="amap-wrap">
-            <svg class="amap" id="amap" viewBox="0 0 520 460" role="img"
-              aria-label="Assumption map with four quadrants">
-              <rect x="50" y="20" width="230" height="200" fill="#e9f8ef" rx="14" />
-              <rect x="285" y="20" width="230" height="200" fill="#fff1e8" rx="14" />
-              <rect x="50" y="225" width="230" height="200" fill="#f6f6f7" rx="14" />
-              <rect x="285" y="225" width="230" height="200" fill="#fff6e5" rx="14" />
-              <text class="q-lbl" x="64" y="44" fill="#16a34a">Build on it</text>
-              <text class="q-lbl" x="299" y="44" fill="#ff5f00">Test first</text>
-              <text class="q-lbl" x="64" y="249" fill="#a1a1aa">Deprioritise</text>
-              <text class="q-lbl" x="299" y="249" fill="#d97706">Research later</text>
-              <text class="ax" x="282" y="452" text-anchor="middle">Evidence → (known ← · → unknown)</text>
-              <text class="ax" transform="translate(28,222) rotate(-90)" text-anchor="middle">Importance → (low ·
-                high)</text>
-              <g id="amapDots"></g>
-            </svg>
-            <ol class="a-list" id="aList"></ol>
+        <!-- Edit assumptions here: class as-high / as-medium / as-low sets the priority colour -->
+        <div class="as-grid">
+          <div class="card rv as-card">
+            <div class="as-head">
+              <p class="label">Assumptions</p>
+              <span class="as-legend"><i class="as-high"></i>High <i class="as-medium"></i>Medium <i class="as-low"></i>Low</span>
+            </div>
+            <ol class="as-list">
+                <li class="as-high"><span class="as-n">1</span><p>Citizens struggle to understand complex legal and regulatory information on the old MahaRERA website.</p><span class="as-p">High</span></li>
+                <li class="as-high"><span class="as-n">2</span><p>Users want to search for a project using simple inputs such as project name, promoter name, location or registration number.</p><span class="as-p">High</span></li>
+                <li class="as-high"><span class="as-n">3</span><p>Homebuyers want a clear overview of project registration status, completion dates, approvals and extensions without navigating multiple sections.</p><span class="as-p">High</span></li>
+                <li class="as-high"><span class="as-n">4</span><p>Users find lengthy document lists difficult to interpret and need explanations of what each document means.</p><span class="as-p">High</span></li>
+                <li class="as-medium"><span class="as-n">5</span><p>Users would prefer visual representations of building details, floor information, apartment types, sold/unsold units and carpet areas instead of large data tables.</p><span class="as-p">Medium</span></li>
+                <li class="as-medium"><span class="as-n">6</span><p>Users want to know whether a project has complaints, regulatory orders or legal proceedings associated with it.</p><span class="as-p">Medium</span></li>
+                <li class="as-high"><span class="as-n">7</span><p>Most users expect the website to work smoothly on mobile devices, as they may access project information while visiting a property.</p><span class="as-p">High</span></li>
+                <li class="as-low"><span class="as-n">8</span><p>Users need a simple way to compare two or more registered projects before making a property decision.</p><span class="as-p">Low</span></li>
+                <li class="as-low"><span class="as-n">9</span><p>Users benefit from contextual help, FAQs and a glossary explaining terms such as carpet area, commencement certificate and proposed completion date.</p><span class="as-p">Low</span></li>
+            </ol>
           </div>
+          <aside class="as-side">
+            <div class="card rv d1 as-research">
+              <p class="label">How we validated</p>
+              <table class="as-table">
+                <thead><tr><th scope="col">Research activity</th><th scope="col">Participants</th></tr></thead>
+                <tbody>
+                  <tr><th scope="row">User interviews</th><td>8–12</td></tr>
+                  <tr><th scope="row">Existing website usability testing</th><td>5–8</td></tr>
+                  <tr><th scope="row">Redesigned prototype testing</th><td>5–8</td></tr>
+                  <tr><th scope="row">Follow-up survey</th><td>30–50+</td></tr>
+                </tbody>
+              </table>
+              <p class="as-ok"><span aria-hidden="true">✓</span>All nine assumptions validated</p>
+            </div>
+            <div class="as-note rv d2">
+              <p class="as-note-t">Why comparing projects ranked low</p>
+              <p>Most visitors are buyers putting their life savings into a home, often their first. By the time they
+                reach MahaRERA they have usually already compared projects elsewhere.</p>
+              <p>They come to validate one project before they commit: its registration, the status of their chosen
+                unit, the completion timeline, complaints, approvals from the local authority, parking, amenities and
+                services, and any legal proceedings. Comparing projects is not their priority.</p>
+            </div>
+          </aside>
         </div>
       </div>
     </section>
@@ -4753,62 +4813,6 @@
       };
 
       /* ===== DATA — edit here ===== */
-      // Assumption map: imp 0–1 (low→high), ev 0–1 (known→unknown)
-      const assumptions = [{
-          t: 'Buyers rarely know the registration number',
-          imp: .92,
-          ev: .14,
-          r: 'Validated'
-        },
-        {
-          t: 'Most visitors use a phone',
-          imp: .84,
-          ev: .28,
-          r: 'Validated'
-        },
-        {
-          t: 'A status badge builds more trust than PDFs',
-          imp: .88,
-          ev: .82,
-          r: 'Validated'
-        },
-        {
-          t: 'Buyers want to verify agents before paying',
-          imp: .76,
-          ev: .66,
-          r: 'Validated'
-        },
-        {
-          t: 'Summarised progress reports will be read',
-          imp: .70,
-          ev: .88,
-          r: 'Partly'
-        },
-        {
-          t: 'Marathi content boosts use outside cities',
-          imp: .34,
-          ev: .86,
-          r: 'Later'
-        },
-        {
-          t: 'Promoters check their own public page',
-          imp: .28,
-          ev: .62,
-          r: 'Later'
-        },
-        {
-          t: 'Agents share project links with clients',
-          imp: .62,
-          ev: .40,
-          r: 'Validated'
-        },
-        {
-          t: 'Users want builder ratings and reviews',
-          imp: .12,
-          ev: .74,
-          r: 'Dropped'
-        }
-      ];
       // Bull's-eye: ring 0 = high, 1 = mid, 2 = low, 3 = discarded
       const features = [
         ['Smart project search', 0],
@@ -4843,48 +4847,6 @@
         n: 'Discarded',
         c: '#a1a1aa'
       }];
-
-      /* ===== Assumption map render ===== */
-      const resStyle = {
-        Validated: ['#e9f8ef', '#16a34a'],
-        Partly: ['#fff6e5', '#d97706'],
-        Later: ['#f4f4f5', '#71717a'],
-        Dropped: ['#fdeeee', '#dc2626']
-      };
-      const quadColor = a => a.imp >= .5 ? (a.ev < .5 ? '#16a34a' : '#ff5f00') : (a.ev < .5 ? '#a1a1aa' :
-      '#d97706');
-      const dots = document.getElementById('amapDots'),
-        aList = document.getElementById('aList');
-      assumptions.forEach((a, i) => {
-        const x = 50 + 20 + a.ev * 425,
-          y = 425 - 20 - a.imp * 365;
-        const g = el('g', {
-          class: 'dot'
-        });
-        g.style.transitionDelay = (i * .08) + 's';
-        g.appendChild(el('circle', {
-          cx: x,
-          cy: y,
-          r: 15,
-          fill: quadColor(a)
-        }));
-        const t = el('text', {
-          x: x,
-          y: y + 4.5,
-          'text-anchor': 'middle',
-          'font-size': 12,
-          'font-weight': 800,
-          fill: '#fff',
-          'font-family': 'Inter'
-        });
-        t.textContent = i + 1;
-        g.appendChild(t);
-        dots.appendChild(g);
-        const [bg, fg] = resStyle[a.r];
-        aList.insertAdjacentHTML('beforeend',
-          `<li><span class="k" style="background:${quadColor(a)}">${i+1}</span><span>${a.t}</span><span class="res" style="background:${bg};color:${fg}">${a.r}</span></li>`
-          );
-      });
 
       /* ===== Bull's-eye render ===== */
       const radii = [52, 138, 211, 270],
