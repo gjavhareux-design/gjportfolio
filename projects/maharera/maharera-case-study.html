@@ -1955,7 +1955,7 @@
 
     /* ================= ASSUMPTIONS ================= */
     .as-grid { display: grid; grid-template-columns: 1.35fr 1fr; gap: 20px; align-items: start; }
-    .as-side { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+    .as-side { display: flex; flex-direction: column; gap: 20px; min-width: 0; position: sticky; top: 100px; }   /* stays beside the long list */
     .as-card, .as-research { min-width: 0; }
     .as-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; margin-bottom: 14px; }
     .as-head .label, .as-research > .label { margin: 0; }
@@ -1984,6 +1984,7 @@
     .as-note p + p { margin-top: 8px !important; }
     @media (max-width: 900px) {
       .as-grid { grid-template-columns: 1fr; }
+      .as-side { position: static; }
     }
     @media (max-width: 520px) {
       .as-list li { grid-template-columns: 26px minmax(0, 1fr); }
@@ -4395,7 +4396,7 @@
         <div class="sh rv">
           <span class="tag lb1">Assumption prioritisation</span>
           <h2 class="sh1">What do we know, and what are we guessing?</h2>
-          <h3 class="sh2">Nine assumptions, ranked by priority and validated with users</h3>
+          <h3 class="sh2">Twelve assumptions, ranked by priority and validated with users</h3>
           <p class="sh3">Every assumption was validated through user interviews, testing of the old website, concept
             prototypes and follow-up surveys.</p>
         </div>
@@ -4416,6 +4417,9 @@
                 <li class="as-high"><span class="as-n">7</span><p>Most users expect the website to work smoothly on mobile devices, as they may access project information while visiting a property.</p><span class="as-p">High</span></li>
                 <li class="as-low"><span class="as-n">8</span><p>Users need a simple way to compare two or more registered projects before making a property decision.</p><span class="as-p">Low</span></li>
                 <li class="as-low"><span class="as-n">9</span><p>Users benefit from contextual help, FAQs and a glossary explaining terms such as carpet area, commencement certificate and proposed completion date.</p><span class="as-p">Low</span></li>
+                <li class="as-high"><span class="as-n">10</span><p>Promoters registering a project want one guidance and document resource: registration forms, the list of required documents, declaration formats, the documents to submit, the fee structure, and the relevant acts, regulations, orders and circulars.</p><span class="as-p">High</span></li>
+                <li class="as-medium"><span class="as-n">11</span><p>Real estate agents registering with MahaRERA want the same guidance: application forms, required documents, declaration formats, the fee structure and the rules that apply to agents.</p><span class="as-p">Medium</span></li>
+                <li class="as-high"><span class="as-n">12</span><p>Complainants and their advocates want to track a complaint in one place: its status, hearing dates, hearing outcomes and decisions.</p><span class="as-p">High</span></li>
             </ol>
           </div>
           <aside class="as-side">
@@ -4430,7 +4434,7 @@
                   <tr><th scope="row">Follow-up survey</th><td>30–50+</td></tr>
                 </tbody>
               </table>
-              <p class="as-ok"><span aria-hidden="true">✓</span>All nine assumptions validated</p>
+              <p class="as-ok"><span aria-hidden="true">✓</span>All twelve assumptions validated</p>
             </div>
             <div class="as-note rv d2">
               <p class="as-note-t">Why comparing projects ranked low</p>
