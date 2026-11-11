@@ -2274,20 +2274,8 @@
       background: var(--line)
     }
 
-    /* ================= FEATURE CATEGORIES (information architecture) ================= */
-    .ia-nav { display: flex; align-items: center; gap: 18px; margin-bottom: 20px; padding: 10px 12px 10px 22px; background: var(--paper); border: 1px solid var(--line); border-radius: 999px; box-shadow: 0 10px 30px -22px rgba(0, 0, 0, .35); }
-    .ia-brand { flex: none; font-weight: 800; font-size: 15px; letter-spacing: -.01em; color: var(--ink); padding-right: 18px; border-right: 1px solid var(--line); }
-    .ia-scroll { flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none; }
-    .ia-scroll::-webkit-scrollbar { display: none; }
-    .ia-nav ul { list-style: none; margin: 0; padding: 0; display: flex; justify-content: space-between; gap: 2px; white-space: nowrap; }
-    .ia-nav li { flex: none; white-space: nowrap; font-size: 13px; font-weight: 600; line-height: 1.2; color: #52525b; padding: 9px 9px; border-radius: 999px; }
-    .ia-nav li.on { background: var(--accent-soft); color: var(--accent); }
+    /* ================= CATEGORIZING USER NEEDS ================= */
     .ia-grid .ia-card { position: relative; }
-    @media (max-width: 640px) {
-      .ia-nav { border-radius: 18px; padding: 10px 12px; gap: 12px; }
-      .ia-brand { padding-right: 12px; font-size: 14px; }
-      .ia-scroll { -webkit-mask-image: linear-gradient(90deg, #000 80%, transparent); mask-image: linear-gradient(90deg, #000 80%, transparent); }   /* hints the menu scrolls */
-    }
 
     /* ================= FEATURES ================= */
     .feat .ic {
@@ -4466,60 +4454,17 @@
       </div>
     </section>
 
-    <!-- Bullseye -->
-    <section id="bullseye" data-nav="Feature bull’s-eye" style="padding-top:20px">
+    <!-- Categorizing user needs: six service categories (later the main navigation) -->
+    <section id="categories" data-nav="Categorizing user needs" style="padding-top:20px">
       <div class="wrap">
         <div class="sh rv">
-          <span class="tag lb1">Feature prioritisation</span>
-          <h2 class="sh1">The bull's-eye.</h2>
-          <h3 class="sh2">Every idea ranked as high, mid, low or discarded</h3>
-          <p class="sh3">The closer to the centre, the more it served our problem statements. Ideas outside the rings didn't fit a
-            regulator's role or our users' needs.</p>
-        </div>
-        <div class="card rv">
-          <div class="bull-wrap">
-            <svg class="bull" id="bull" viewBox="0 0 600 600" role="img"
-              aria-label="Bull's-eye diagram of features by priority">
-              <circle cx="300" cy="300" r="292" fill="none" stroke="#d4d4d8" stroke-width="2" stroke-dasharray="6 8"
-                class="ring" />
-              <circle cx="300" cy="300" r="246" fill="#f6f6f7" class="ring" />
-              <circle cx="300" cy="300" r="176" fill="#fff6e5" class="ring" />
-              <circle cx="300" cy="300" r="100" fill="#ffe1cc" class="ring" />
-              <text class="rl" x="300" y="216" text-anchor="middle" fill="#ff5f00">HIGH</text>
-              <text class="rl" x="300" y="142" text-anchor="middle">MID</text>
-              <text class="rl" x="300" y="72" text-anchor="middle">LOW</text>
-              <text class="rl" x="300" y="22" text-anchor="middle">DISCARDED</text>
-              <g id="bullDots"></g>
-            </svg>
-            <div class="tiers" id="tiers"></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Information architecture: feature categories → main navigation -->
-    <section id="categories" data-nav="Feature categories" style="padding-top:20px">
-      <div class="wrap">
-        <div class="sh rv">
-          <span class="tag lb1">Information architecture</span>
-          <h2 class="sh1">Six categories, one clear way in.</h2>
-          <h3 class="sh2">Grouping every feature into the categories that became the main navigation</h3>
-          <p class="sh3">A unified digital platform supporting citizens, homebuyers, promoters and real estate
-            professionals. Each category gathers related features behind one entry point, so people go straight to
-            the information they came for instead of searching across the site.</p>
-        </div>
-        <div class="ia-nav rv" aria-label="The six categories as the website's main menu">
-          <span class="ia-brand">MahaRERA</span>
-          <div class="ia-scroll">
-            <ul>
-              <li class="on">Project Discovery</li>
-              <li>Project Information</li>
-              <li>Documents &amp; Approvals</li>
-              <li>Grievance Redressal</li>
-              <li>Stakeholder Services</li>
-              <li>Knowledge &amp; Resources</li>
-            </ul>
-          </div>
+          <span class="tag lb1">Categorizing user needs</span>
+          <h2 class="sh1">Six categories, shaped around user needs.</h2>
+          <h3 class="sh2">Organising MahaRERA’s digital services into six user-focused categories</h3>
+          <p class="sh3">I grouped the digital services offered by MahaRERA into six categories and asked users what
+            information and features they would expect to find within each group. This helped validate the structure,
+            understand user expectations and shape a clearer navigation system. Most of these categories later became
+            the platform’s main navigation menu.</p>
         </div>
         <div class="grid g3 ia-grid">
           <div class="card feat ia-card rv">
@@ -4551,6 +4496,37 @@
             <div class="ic"><i class="fa-solid fa-book"></i></div>
             <h4>Knowledge &amp; Resources</h4>
             <p>FAQs, acts, rules, circulars, manuals and reports.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bullseye -->
+    <section id="bullseye" data-nav="Feature bull’s-eye" style="padding-top:20px">
+      <div class="wrap">
+        <div class="sh rv">
+          <span class="tag lb1">Feature prioritisation</span>
+          <h2 class="sh1">The bull's-eye.</h2>
+          <h3 class="sh2">Every idea ranked as high, mid, low or discarded</h3>
+          <p class="sh3">The closer to the centre, the more it served our problem statements. Ideas outside the rings didn't fit a
+            regulator's role or our users' needs.</p>
+        </div>
+        <div class="card rv">
+          <div class="bull-wrap">
+            <svg class="bull" id="bull" viewBox="0 0 600 600" role="img"
+              aria-label="Bull's-eye diagram of features by priority">
+              <circle cx="300" cy="300" r="292" fill="none" stroke="#d4d4d8" stroke-width="2" stroke-dasharray="6 8"
+                class="ring" />
+              <circle cx="300" cy="300" r="246" fill="#f6f6f7" class="ring" />
+              <circle cx="300" cy="300" r="176" fill="#fff6e5" class="ring" />
+              <circle cx="300" cy="300" r="100" fill="#ffe1cc" class="ring" />
+              <text class="rl" x="300" y="216" text-anchor="middle" fill="#ff5f00">HIGH</text>
+              <text class="rl" x="300" y="142" text-anchor="middle">MID</text>
+              <text class="rl" x="300" y="72" text-anchor="middle">LOW</text>
+              <text class="rl" x="300" y="22" text-anchor="middle">DISCARDED</text>
+              <g id="bullDots"></g>
+            </svg>
+            <div class="tiers" id="tiers"></div>
           </div>
         </div>
       </div>
