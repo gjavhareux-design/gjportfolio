@@ -2279,16 +2279,14 @@
 
     /* ================= FEATURE DISCOVERY (feature inventory) ================= */
     .fd-hint { margin: 0 0 14px; font-size: 13px; color: var(--muted); }
-    /* boards in a row share one height: each column is as wide as its image's aspect ratio */
-    .fd-row { display: grid; grid-template-columns: var(--cols); gap: 20px; margin-bottom: 20px; align-items: start; }
-    .fd-board { margin: 0; min-width: 0; }
-    .fd-board a { display: block; border-radius: 18px; overflow: hidden; box-shadow: 0 14px 34px -24px rgba(0, 0, 0, .35); transition: transform .3s ease, box-shadow .3s ease; }
-    .fd-board a:hover { transform: translateY(-3px); box-shadow: 0 20px 40px -24px rgba(0, 0, 0, .4); }
-    .fd-board a:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
-    .fd-board img { display: block; width: 100%; height: auto; }
-    @media (max-width: 760px) {
-      .fd-row { display: flex; flex-direction: column; gap: 16px; margin-bottom: 16px; }
-    }
+    /* six clusters in the affinity-mapping style (.cluster + .sticky), notes laid out as a small wall */
+    .fd-board { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: start; }
+    .fd-notes { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 10px; }
+    .fd-notes .sticky { margin: 0; min-height: 84px; }
+    .fd-notes .sticky:nth-child(3n) { transform: rotate(.6deg); }
+    .sticky.lv { background: #e6dcff; }
+    .sticky.tl { background: #d2f4ef; }
+    @media (max-width: 760px) { .fd-board { grid-template-columns: 1fr; } }
     .fd-note { display: flex; gap: 16px; align-items: flex-start; margin-top: 20px; padding: 20px 22px; border-radius: 20px; background: var(--accent-soft); border-left: 4px solid var(--accent); }
     .fd-note-ic { flex: none; width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--accent); color: #fff; font-size: 18px; }
     .fd-note-t { margin: 0 0 6px; font-size: 15px; font-weight: 700; color: var(--ink); }
@@ -4536,42 +4534,120 @@
             needs and mapped the expected features to the six user-need categories above to create a user-focused
             feature inventory.</p>
         </div>
-        <p class="fd-hint">82 expected features across the six user-need categories. Select a board to open it full size.</p>
-        <div class="fd-row" style="--cols:1.1495fr 0.8757fr">
-          <figure class="fd-board rv">
-            <a href="assets/features-project-discovery.webp" target="_blank" rel="noopener" aria-label="Open Project Discovery board full size">
-              <img src="assets/features-project-discovery.webp" width="1276" height="1110" loading="lazy" alt="Project Discovery: 11 features as sticky notes. Search registered projects by project name or registration number; Advanced search by location, pincode, completion date and project type; Search projects by promoter, registered agent and project professional; Filter projects by local authority or approving authority; View projects on an interactive map; Compare shortlisted projects side by side; Scan project QR codes to access verified project information; Search and verify registered agents; Identify revoked, lapsed and deregistered projects; Save shortlisted projects; View recently searched projects.">
-            </a>
-          </figure>
-          <figure class="fd-board rv d1">
-            <a href="assets/features-project-information.webp" target="_blank" rel="noopener" aria-label="Open Project Information board full size">
-              <img src="assets/features-project-information.webp" width="972" height="1110" loading="lazy" alt="Project Information: 7 features as sticky notes. Explore building, wing and apartment details; Check apartment availability and sold/unsold status; Review project completion dates, extensions and progress; Access project updates and quarterly progress reports; View promoter and agent details; Download project information as a PDF; Receive project-status notifications.">
-            </a>
-          </figure>
-        </div>
-        <div class="fd-row" style="--cols:0.8757fr 1.4234fr">
-          <figure class="fd-board rv">
-            <a href="assets/features-documents-approvals.webp" target="_blank" rel="noopener" aria-label="Open Documents &amp; Approvals board full size">
-              <img src="assets/features-documents-approvals.webp" width="972" height="1110" loading="lazy" alt="Documents &amp; Approvals: 7 features as sticky notes. View project registration status and certificates; Access approvals, sanctioned plans and commencement certificates; Access registration certificates and project records; Upload revised approvals and project documents; Access agent registration certificates; Downloadable registration credentials; Download official documents and PDFs.">
-            </a>
-          </figure>
-          <figure class="fd-board rv d1">
-            <a href="assets/features-grievance-redressal.webp" target="_blank" rel="noopener" aria-label="Open Grievance Redressal board full size">
-              <img src="assets/features-grievance-redressal.webp" width="1580" height="1110" loading="lazy" alt="Grievance Redressal: 14 features as sticky notes. File a complaint; Search and track complaints; View complaint status and case details; Access complaint-related documents; Apply for conciliation; Track conciliation proceedings; Access hearing schedules and cause lists; View hearing outcomes and orders; Notifications when case status changes; Search complaints by project, promoter or complaint number; Check complaints, orders and legal proceedings associated with projects; Search Orders and Judgements; View appellate tribunal orders and cause lists; Related-order recommendations.">
-            </a>
-          </figure>
-        </div>
-        <div class="fd-row" style="--cols:0.9197fr 0.9197fr">
-          <figure class="fd-board rv">
-            <a href="assets/features-stakeholder-services.webp" target="_blank" rel="noopener" aria-label="Open Stakeholder Services board full size">
-              <img src="assets/features-stakeholder-services.webp" width="1580" height="1718" loading="lazy" alt="Stakeholder Services: 21 features as sticky notes. New project registration; Registration forms and document checklists; Required declarations and formats; Promoter registration fee structure; Track registration application status; View scrutiny remarks and pending requirements; Apply for project corrections and modifications; Apply for project registration extensions; Submit quarterly and annual project updates; Application progress tracker; Document checklist with completion status; Reminders for pending submissions; Promoter dashboard showing upcoming compliance deadlines; New agent registration and renewal; Application forms and document requirements; Agent registration fee structure; Track agent application status; Correct or update agent details; Renewal reminders; Access agent training and certification information; Training progress tracker.">
-            </a>
-          </figure>
-          <figure class="fd-board rv d1">
-            <a href="assets/features-knowledge-resources.webp" target="_blank" rel="noopener" aria-label="Open Knowledge &amp; Resources board full size">
-              <img src="assets/features-knowledge-resources.webp" width="1580" height="1718" loading="lazy" alt="Knowledge &amp; Resources: 22 features as sticky notes. FAQs for homebuyers, promoters and agents; Glossary of real estate and regulatory terms; Step-by-step registration guides; Homebuyer guidance; Guided support by user type; Video tutorials and walkthroughs; User manuals and downloadable forms; Helpdesk contact details; Counselling and support information; Chatbot for common queries and navigation; Ticket-based helpdesk tracking; Search Acts, Rules and Regulations; Search Circulars and Notifications; Access legal guidelines and government notifications; View applicable Acts, Rules, Orders and Circulars (promoters); View applicable rules, orders and circulars (agents); Search by keywords or document number; Filter documents by date, category and reference number; Search notices and public announcements; Alerts for newly published circulars; Bookmarked documents; RTI information and annual reports.">
-            </a>
-          </figure>
+        <p class="fd-hint">82 expected features, grouped under the six user-need categories.</p>
+        <div class="fd-board">
+          <div class="cluster fd-cluster rv">
+            <header><b>Project Discovery</b><span>11 features</span></header>
+            <div class="fd-notes">
+              <div class="sticky b">Search registered projects by project name or registration number</div>
+              <div class="sticky b">Advanced search by location, pincode, completion date and project type</div>
+              <div class="sticky b">Search projects by promoter, registered agent and project professional</div>
+              <div class="sticky b">Filter projects by local authority or approving authority</div>
+              <div class="sticky b">View projects on an interactive map</div>
+              <div class="sticky b">Compare shortlisted projects side by side</div>
+              <div class="sticky b">Scan project QR codes to access verified project information</div>
+              <div class="sticky b">Search and verify registered agents</div>
+              <div class="sticky b">Identify revoked, lapsed and deregistered projects</div>
+              <div class="sticky b">Save shortlisted projects</div>
+              <div class="sticky b">View recently searched projects</div>
+            </div>
+          </div>
+          <div class="cluster fd-cluster rv d1">
+            <header><b>Project Information</b><span>7 features</span></header>
+            <div class="fd-notes">
+              <div class="sticky gr">Explore building, wing and apartment details</div>
+              <div class="sticky gr">Check apartment availability and sold/unsold status</div>
+              <div class="sticky gr">Review project completion dates, extensions and progress</div>
+              <div class="sticky gr">Access project updates and quarterly progress reports</div>
+              <div class="sticky gr">View promoter and agent details</div>
+              <div class="sticky gr">Download project information as a PDF</div>
+              <div class="sticky gr">Receive project-status notifications</div>
+            </div>
+          </div>
+          <div class="cluster fd-cluster rv">
+            <header><b>Documents &amp; Approvals</b><span>7 features</span></header>
+            <div class="fd-notes">
+              <div class="sticky lv">View project registration status and certificates</div>
+              <div class="sticky lv">Access approvals, sanctioned plans and commencement certificates</div>
+              <div class="sticky lv">Access registration certificates and project records</div>
+              <div class="sticky lv">Upload revised approvals and project documents</div>
+              <div class="sticky lv">Access agent registration certificates</div>
+              <div class="sticky lv">Downloadable registration credentials</div>
+              <div class="sticky lv">Download official documents and PDFs</div>
+            </div>
+          </div>
+          <div class="cluster fd-cluster rv d1">
+            <header><b>Grievance Redressal</b><span>14 features</span></header>
+            <div class="fd-notes">
+              <div class="sticky p">File a complaint</div>
+              <div class="sticky p">Search and track complaints</div>
+              <div class="sticky p">View complaint status and case details</div>
+              <div class="sticky p">Access complaint-related documents</div>
+              <div class="sticky p">Apply for conciliation</div>
+              <div class="sticky p">Track conciliation proceedings</div>
+              <div class="sticky p">Access hearing schedules and cause lists</div>
+              <div class="sticky p">View hearing outcomes and orders</div>
+              <div class="sticky p">Notifications when case status changes</div>
+              <div class="sticky p">Search complaints by project, promoter or complaint number</div>
+              <div class="sticky p">Check complaints, orders and legal proceedings associated with projects</div>
+              <div class="sticky p">Search Orders and Judgements</div>
+              <div class="sticky p">View appellate tribunal orders and cause lists</div>
+              <div class="sticky p">Related-order recommendations</div>
+            </div>
+          </div>
+          <div class="cluster fd-cluster rv">
+            <header><b>Stakeholder Services</b><span>21 features</span></header>
+            <div class="fd-notes">
+              <div class="sticky y">New project registration</div>
+              <div class="sticky y">Registration forms and document checklists</div>
+              <div class="sticky y">Required declarations and formats</div>
+              <div class="sticky y">Registration fee structure</div>
+              <div class="sticky y">Track registration application status</div>
+              <div class="sticky y">View scrutiny remarks and pending requirements</div>
+              <div class="sticky y">Apply for project corrections and modifications</div>
+              <div class="sticky y">Apply for project registration extensions</div>
+              <div class="sticky y">Submit quarterly and annual project updates</div>
+              <div class="sticky y">Application progress tracker</div>
+              <div class="sticky y">Document checklist with completion status</div>
+              <div class="sticky y">Reminders for pending submissions</div>
+              <div class="sticky y">Promoter dashboard showing upcoming compliance deadlines</div>
+              <div class="sticky y">New agent registration and renewal</div>
+              <div class="sticky y">Application forms and document requirements</div>
+              <div class="sticky y">Registration fee structure</div>
+              <div class="sticky y">Track application status</div>
+              <div class="sticky y">Correct or update agent details</div>
+              <div class="sticky y">Renewal reminders</div>
+              <div class="sticky y">Access agent training and certification information</div>
+              <div class="sticky y">Training progress tracker</div>
+            </div>
+          </div>
+          <div class="cluster fd-cluster rv d1">
+            <header><b>Knowledge &amp; Resources</b><span>22 features</span></header>
+            <div class="fd-notes">
+              <div class="sticky tl">FAQs for homebuyers, promoters and agents</div>
+              <div class="sticky tl">Glossary of real estate and regulatory terms</div>
+              <div class="sticky tl">Step-by-step registration guides</div>
+              <div class="sticky tl">Homebuyer guidance</div>
+              <div class="sticky tl">Guided support by user type</div>
+              <div class="sticky tl">Video tutorials and walkthroughs</div>
+              <div class="sticky tl">User manuals and downloadable forms</div>
+              <div class="sticky tl">Helpdesk contact details</div>
+              <div class="sticky tl">Counselling and support information</div>
+              <div class="sticky tl">Chatbot for common queries and navigation</div>
+              <div class="sticky tl">Ticket-based helpdesk tracking</div>
+              <div class="sticky tl">Search Acts, Rules and Regulations</div>
+              <div class="sticky tl">Search Circulars and Notifications</div>
+              <div class="sticky tl">Access legal guidelines and government notifications</div>
+              <div class="sticky tl">View applicable Acts, Rules, Orders and Circulars</div>
+              <div class="sticky tl">View applicable rules, orders and circulars</div>
+              <div class="sticky tl">Search by keywords or document number</div>
+              <div class="sticky tl">Filter documents by date, category and reference number</div>
+              <div class="sticky tl">Search notices and public announcements</div>
+              <div class="sticky tl">Alerts for newly published circulars</div>
+              <div class="sticky tl">Bookmarked documents</div>
+              <div class="sticky tl">RTI information and annual reports</div>
+            </div>
+          </div>
         </div>
         <div class="fd-note rv">
           <span class="fd-note-ic"><i class="fa-solid fa-qrcode"></i></span>
