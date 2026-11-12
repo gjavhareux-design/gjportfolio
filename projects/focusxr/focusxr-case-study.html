@@ -434,10 +434,16 @@
       }
     }
 
+    /* Content is always visible with its real values. Only for a real visitor, sections that start
+       below the fold get .rv-wait (set by the "Reveal" script) and animate in when scrolled to.
+       Crawlers, screenshots, no-JS and reduced-motion all get the finished state straight away. */
     .rv {
-      opacity: 0;
-      transform: translateY(28px);
       transition: opacity .8s cubic-bezier(.2, .7, .2, 1), transform .8s cubic-bezier(.2, .7, .2, 1)
+    }
+
+    .rv.rv-wait {
+      opacity: 0;
+      transform: translateY(28px)
     }
 
     .rv.in {
@@ -724,7 +730,7 @@
         transform: translateY(56px)
       }
 
-      .pgrid .pc.rv:nth-child(even):not(.in) {
+      .pgrid .pc.rv.rv-wait:nth-child(even) {
         transform: translateY(84px)
       }
     }
@@ -1359,11 +1365,12 @@
 
     .bar-fill {
       height: 100%;
-      width: 0;
       border-radius: 99px;
       background: var(--accent);
       transition: width 1.3s cubic-bezier(.2, .7, .2, 1)
     }
+
+    .rv-wait .bar-fill { width: 0 !important; }   /* width itself is written inline from data-w */
 
     .bar-fill.t {
       background: var(--teal)
@@ -1790,9 +1797,11 @@
       stroke-width: 3;
       stroke-linecap: round;
       stroke-dasharray: 1200;
-      stroke-dashoffset: 1200;
+      stroke-dashoffset: 0;
       transition: stroke-dashoffset 2.2s cubic-bezier(.2, .7, .2, 1)
     }
+
+    .rv-wait .curve .path { stroke-dashoffset: 1200; }
 
     .curve.in .path {
       stroke-dashoffset: 0
@@ -1896,8 +1905,10 @@
       transition: transform .6s cubic-bezier(.34, 1.56, .64, 1);
       transform-box: fill-box;
       transform-origin: center;
-      transform: scale(0)
+      transform: scale(1)
     }
+
+    .rv-wait .amap .dot { transform: scale(0); }
 
     .amap.in .dot {
       transform: scale(1)
@@ -1969,9 +1980,9 @@
     .bull .ring {
       transition: transform .9s cubic-bezier(.2, .7, .2, 1);
       transform-origin: 300px 300px;
-      transform: scale(.6);
-      opacity: .0
     }
+
+    .rv-wait .bull .ring { transform: scale(.6); opacity: 0; }
 
     .bull.in .ring {
       transform: scale(1);
@@ -1979,9 +1990,10 @@
     }
 
     .bull .fd {
-      opacity: 0;
       transition: opacity .5s
     }
+
+    .rv-wait .bull .fd { opacity: 0; }
 
     .bull.in .fd {
       opacity: 1
@@ -2663,8 +2675,8 @@
     /* Plot area: value sits on top of its bar; the bottom border is the baseline */
     .sv-plot { width: 100%; height: var(--sv-height); display: flex; flex-direction: column; justify-content: flex-end; align-items: center; border-bottom: 1px solid var(--line); }
     .sv-val { margin-bottom: 6px; }
-    .sv-bar { width: 72%; height: 0; border-radius: 8px 8px 0 0; background: var(--c); transition: height 1.2s cubic-bezier(.2,.7,.2,1); }
-    .sv-why.in .sv-bar { height: calc(var(--v) / var(--sv-max) * (var(--sv-height) - 28px)); }
+    .sv-bar { width: 72%; height: calc(var(--v) / var(--sv-max) * (var(--sv-height) - 28px)); border-radius: 8px 8px 0 0; background: var(--c); transition: height 1.2s cubic-bezier(.2,.7,.2,1); }
+    .rv-wait .sv-bar { height: 0; }
     .sv-lab { padding-top: 12px; }
     .sv-col.sv-key .sv-lab { color: var(--set-heading-color); font-weight: 600; }   /* highlighted reasons */
 
@@ -3556,15 +3568,15 @@
             <p>head-mounted display market in 2024</p>
           </div>
           <div class="card stat rv d1">
-            <div class="num"><b data-count="48">0</b>.5<span>%</span></div>
+            <div class="num"><b data-count="48">48</b>.5<span>%</span></div>
             <p>projected yearly growth, 2025 – 2035</p>
           </div>
           <div class="card stat rv d2">
-            <div class="num"><b data-count="35">0</b><span>%</span></div>
+            <div class="num"><b data-count="35">35</b><span>%</span></div>
             <p>rise in VR adoption in UK schools in 2024</p>
           </div>
           <div class="card stat rv d3">
-            <div class="num"><b data-count="93">0</b><span>%</span></div>
+            <div class="num"><b data-count="93">93</b><span>%</span></div>
             <p>of teachers say VR improves teaching and engagement</p>
           </div>
         </div>
@@ -3829,7 +3841,7 @@
           <figure class="sp-fig"><img src="assets/sp4-embedded-notes.webp" alt="Holographic panels around a lecturer showing key points, a diagram and a summary of the lecture" loading="lazy"></figure>
           <div class="sp-body">
             <div class="sp-kicker">Superpower 04 <span class="for"><i class="fa-solid fa-user-graduate"></i>For students</span></div>
-            <h3>Embedded notetaking &amp; knowledge persistence</h3>
+            <h3>Embedded note-taking &amp; knowledge persistence</h3>
             <p>Students pin text, sketches or highlights to moments in time or places in the room. After the session,
               key concepts, captions and rewound segments are organised into a transcript they can navigate.</p>
             <ul>
@@ -4147,9 +4159,9 @@
             r: 70,
             stroke: d.c
           });
-          s.style.strokeDasharray = `0 ${C}`;
-          s.style.strokeDashoffset = -off;
           s.dataset.len = (d.v / 100) * C - 2;
+          s.style.strokeDasharray = svg.closest('.rv-wait') ? `0 ${C}` : `${s.dataset.len} ${C}`;
+          s.style.strokeDashoffset = -off;
           off += (d.v / 100) * C;
           svg.appendChild(s);
           legend.insertAdjacentHTML('beforeend',
@@ -4177,20 +4189,39 @@
         svg.append(t1, t2);
       });
 
+      /* ===== Which sections animate =====
+         Real numbers are written in the HTML and every chart starts in its finished state.
+         Only a real visitor gets the scroll animations, and only for sections that start below
+         the fold, so a crawler, screenshot or AI reader never sees a 0 or an empty chart. */
+      const isBot = navigator.webdriver ||
+        /bot|crawl|spider|slurp|headless|lighthouse|pagespeed|gptbot|chatgpt|oai-searchbot|claude|anthropic|perplexity|google-extended|googleother|bingpreview|facebookexternalhit|linkedinbot|embedly|preview|scrape|python|curl|wget|phantom|puppeteer|playwright/i
+        .test(navigator.userAgent);
+      const animate = !reduce && !isBot && 'IntersectionObserver' in window;
+      const waiting = animate
+        ? [...document.querySelectorAll('.rv')].filter(n => n.getBoundingClientRect().top > innerHeight * .92)
+        : [];
+      waiting.forEach(n => n.classList.add('rv-wait'));
+      // anything printed or saved shows everything
+      addEventListener('beforeprint', () => document.querySelectorAll('.rv-wait').forEach(reveal));
+
       /* ===== Gauges ===== */
       document.querySelectorAll('.gauge').forEach(g => {
         const p = g.querySelector('.val'),
           L = p.getTotalLength();
         p.style.stroke = g.dataset.color;
         p.style.strokeDasharray = L;
-        p.style.strokeDashoffset = L;
+        p.dataset.empty = L;
         p.dataset.target = L * (1 - g.dataset.gauge / 100);
+        p.style.transition = 'none';   // set the start state instantly, no sweep on load
+        p.style.strokeDashoffset = g.closest('.rv-wait') ? L : p.dataset.target;
+        p.getBoundingClientRect();
+        p.style.transition = '';
       });
 
-      /* ===== Count-up ===== */
+      /* ===== Count-up (real visitors only; the HTML already holds the final number) ===== */
       const countUp = n => {
         const end = +n.dataset.count;
-        if (reduce) {
+        if (!animate) {
           n.textContent = end;
           return;
         }
@@ -4205,21 +4236,28 @@
       };
 
       /* ===== Reveal ===== */
-      const io = new IntersectionObserver(entries => entries.forEach(e => {
-        if (!e.isIntersecting) return;
-        const t = e.target;
+      function reveal(t) {
+        const wasWaiting = t.classList.contains('rv-wait');
+        t.classList.remove('rv-wait');
         t.classList.add('in');
-        t.querySelectorAll('.bar-fill[data-w]').forEach(b => b.style.width = b.dataset.w + '%');
-        t.querySelectorAll('[data-count]').forEach(countUp);
+        t.querySelectorAll('.curve, .amap, .bull').forEach(c => c.classList.add('in'));
         t.querySelectorAll('svg[data-donut] circle[data-len]').forEach(s => s.style.strokeDasharray =
           `${s.dataset.len} ${2*Math.PI*70}`);
         t.querySelectorAll('.gauge .val').forEach(p => p.style.strokeDashoffset = p.dataset.target);
-        t.querySelectorAll('.curve, .amap, .bull').forEach(c => c.classList.add('in'));
-        io.unobserve(t);
-      }), {
-        threshold: .15
-      });
-      document.querySelectorAll('.rv').forEach(n => io.observe(n));
+        if (wasWaiting) t.querySelectorAll('[data-count]').forEach(countUp);
+      }
+      document.querySelectorAll('.rv:not(.rv-wait)').forEach(n => n.classList.add('in'));
+      document.querySelectorAll('.rv:not(.rv-wait) :is(.curve, .amap, .bull)').forEach(c => c.classList.add('in'));
+      if (waiting.length) {
+        const io = new IntersectionObserver(entries => entries.forEach(e => {
+          if (!e.isIntersecting) return;
+          reveal(e.target);
+          io.unobserve(e.target);
+        }), {
+          threshold: .15
+        });
+        waiting.forEach(n => io.observe(n));
+      }
 
       /* ===== Tabs ===== */
       document.querySelectorAll('.tabs button').forEach(btn => btn.addEventListener('click', () => {
