@@ -1691,7 +1691,6 @@
     /* ================= PROBLEM STATEMENTS · PERSONA CARDS (with HMW questions) =================
        One full-width card per user: persona photo, problem statement and needs on the left,
        HMW questions grouped by theme on the right. Photo panel colours match the user cards. */
-    .ps2-list { display: grid; gap: 28px; }
     .ps2 { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); padding: 0; overflow: hidden; }
     .ps2-hb { --ps2-bg: #f8e6d3; }
     .ps2-pr { --ps2-bg: #bfdcfb; }
@@ -1731,12 +1730,47 @@
 
 
     /* ================= JOURNEY ================= */
-    /* As-is journey map image: full width on desktop, swipeable on phones */
+    /* As-is journey maps: one map per carousel slide (see CAROUSEL below) */
     .journey-map { margin: 0; }
+    .journey-map .jm-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 12px; }
     .journey-map img { display: block; width: 100%; height: auto; border-radius: 12px; }
     .journey-map figcaption { margin-top: 12px; font-size: 13px; color: var(--muted); }
-    @media(max-width:860px) {
-      .journey-map img { width: 900px; max-width: none; }
+
+    /* ================= CAROUSEL (journey maps + persona cards) =================
+       One slide in view at a time. Phones: swipe (native scroll-snap).
+       Larger screens: arrow buttons. Dots below show which slide is showing.
+       Markup: .car > .car-track > .car-slide ×n, then .car-nav (filled by the "Carousels" script). */
+    .car { position: relative; }
+    .car-track {
+      display: flex; gap: 24px; overflow-x: auto; overscroll-behavior-x: contain;
+      overflow-y: hidden; transition: height .35s ease;
+      scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none;
+      padding: 4px 4px 26px; margin: -4px -4px -26px;          /* room for card shadows */
+      align-items: flex-start;
+    }
+    .car-track::-webkit-scrollbar { display: none; }
+    .car-track:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 16px; }
+    .car-slide { flex: 0 0 100%; min-width: 0; scroll-snap-align: start; scroll-snap-stop: always; }
+    .car-nav { display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: 22px; }
+    .car-btn {
+      width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: #fff; color: var(--ink);
+      display: grid; place-items: center; cursor: pointer; font-size: 14px;
+      box-shadow: 0 8px 20px -14px rgba(0,0,0,.4); transition: background .2s, color .2s, opacity .2s;
+    }
+    .car-btn:hover:not(:disabled) { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .car-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .car-btn:disabled { opacity: .35; cursor: default; }
+    .car-btn.car-prev i { transform: rotate(180deg); }
+    .car-dots { display: flex; gap: 8px; }
+    .car-dot { width: 10px; height: 10px; padding: 0; border-radius: 99px; border: 0; background: #d4d4d8; cursor: pointer; transition: width .25s, background .25s; }
+    .car-dot[aria-current="true"] { width: 28px; background: var(--accent); }
+    .car-dot:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .car-count { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; min-width: 34px; text-align: center; }
+    @media (max-width: 640px) { .car-btn { display: none; } }     /* phones swipe instead */
+    @media print {
+      .car-track { display: block; overflow: visible; margin: 0; padding: 0; }
+      .car-slide + .car-slide { margin-top: 24px; }
+      .car-nav { display: none; }
     }
 
     .journey {
@@ -4226,9 +4260,11 @@
           <p class="sh3">Each statement names the user, their need and what gets in the way. The HMW questions turn it into
             design opportunities, grouped by theme.</p>
         </div>
-        <div class="ps2-list">
+        <!-- Persona carousel: one problem-statement card per slide -->
+        <div class="car rv" data-car aria-label="User personas">
+          <div class="car-track">
           <!-- Homebuyer -->
-          <article class="card ps2 ps2-hb rv">
+          <article class="car-slide card ps2 ps2-hb" aria-label="Homebuyer persona">
             <div class="ps2-side">
               <figure class="ps2-photo"><img src="assets/persona-homebuyer.webp" alt="Priya, a first-time homebuyer, holding a laptop with a bag on her shoulder" loading="lazy"></figure>
               <div class="ps2-id">
@@ -4273,7 +4309,7 @@
             </div>
           </article>
           <!-- Promoter -->
-          <article class="card ps2 ps2-pr rv d1">
+          <article class="car-slide card ps2 ps2-pr" aria-label="Promoter persona">
             <div class="ps2-side">
               <figure class="ps2-photo"><img src="assets/persona-promoter.webp" alt="Rajesh, a property developer, holding rolled building plans and a tablet" loading="lazy"></figure>
               <div class="ps2-id">
@@ -4319,7 +4355,7 @@
             </div>
           </article>
           <!-- Agent -->
-          <article class="card ps2 ps2-ag rv d2">
+          <article class="car-slide card ps2 ps2-ag" aria-label="Agent persona">
             <div class="ps2-side">
               <figure class="ps2-photo"><img src="assets/persona-agent.webp" alt="Sneha, a real estate agent wearing an ID lanyard, holding a pen and a tablet" loading="lazy"></figure>
               <div class="ps2-id">
@@ -4366,6 +4402,7 @@
               </div>
             </div>
           </article>
+          </div>
         </div>
       </div>
     </section>
@@ -4374,21 +4411,33 @@
     <section id="journey" data-nav="Journey map" style="padding-top:20px">
       <div class="wrap">
         <div class="sh rv">
-          <span class="tag lb1">As-is journey map · Homebuyer</span>
+          <span class="tag lb1">As-is journey maps · Homebuyer &amp; Complainant</span>
           <h2 class="sh1">From curious to confused.</h2>
-          <h3 class="sh2">A homebuyer's journey on the old MahaRERA website</h3>
+          <h3 class="sh2">Homebuyer and complainant journeys on the old MahaRERA website</h3>
           <p class="sh3">To understand the experience across different user groups, I mapped key journeys for homebuyers and complainants. These journeys highlighted the challenges users faced when accessing project information and navigating regulatory services, helping identify opportunities to simplify the overall platform.</p>
         </div>
-        <figure class="card rv journey-map">
-          <p class="swipe">Swipe to see the full journey →</p>
-          <div class="journey">
-            <a href="assets/journey-map-as-is-v2.webp" target="_blank" rel="noopener" aria-label="Open the journey map full size">
-              <img src="assets/journey-map-as-is-v2.webp" width="1598" height="935" loading="lazy"
-                alt="As-is user journey map of a homebuyer on the old MahaRERA website, across five stages: Discover, Search, Verify, Evaluate and Decide. Each stage shows user actions, touchpoints, thoughts, pain points and opportunities. Emotion moves from curious at Discover to frustrated at Search, overwhelmed at Verify, cautious at Evaluate and confused at Decide.">
-            </a>
+        <!-- Journey map carousel: add a map by copying a .car-slide figure -->
+        <div class="car rv" data-car aria-label="As-is journey maps">
+          <div class="car-track">
+            <figure class="car-slide card journey-map" aria-label="Homebuyer journey map">
+              <p class="jm-title">Homebuyer · Project discovery</p>
+              <a href="assets/journey-map-homebuyer.webp" target="_blank" rel="noopener" aria-label="Open the homebuyer journey map full size">
+                <img src="assets/journey-map-homebuyer.webp" width="1598" height="935" loading="lazy"
+                  alt="As-is user journey map of a homebuyer on the old MahaRERA website, across five stages: Discover, Search, Verify, Evaluate and Decide. Each stage shows user actions, touchpoints, thoughts, pain points and opportunities. Emotion moves from curious at Discover to frustrated at Search, overwhelmed at Verify, cautious at Evaluate and confused at Decide.">
+              </a>
+              <figcaption>Discover → Search → Verify → Evaluate → Decide. Pain points (red) lead to the opportunities in the bottom row.</figcaption>
+            </figure>
+            <figure class="car-slide card journey-map" aria-label="Complainant journey map">
+              <p class="jm-title">Complainant · Complaint to order</p>
+              <a href="assets/journey-map-complainant.webp" target="_blank" rel="noopener" aria-label="Open the complainant journey map full size">
+                <img src="assets/journey-map-complainant.webp" width="1598" height="935" loading="lazy"
+                  alt="As-is user journey map of a complainant on the old MahaRERA website, across five stages. Discover: checks whether the project is registered. Search: looks across multiple pages and tabs for complaint guidance and the File a Complaint option. Verify: gathers the required documents and submits the complaint. Evaluate: returns to find the hearing date. Decide: after the hearing, checks the complaint and order status and tries to download the order. Emotion moves from curious to frustrated, overwhelmed, cautious and confused. Opportunities include a clear route from project search to complaint guidance, a prominent File a Complaint option, a document checklist, an accessible hearing schedule linked to the complaint, and complaint status and orders in one place.">
+              </a>
+              <figcaption>Discover → Search → Verify → Evaluate → Decide. Pain points (red) lead to the opportunities in the bottom row.</figcaption>
+            </figure>
           </div>
-          <figcaption>As-is journey: Discover → Search → Verify → Evaluate → Decide. Pain points (red) lead to the opportunities in the bottom row.</figcaption>
-        </figure>
+        </div>
+        <p class="swipe">Tap a map to open it full size.</p>
       </div>
     </section>
 
@@ -5815,6 +5864,71 @@
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
     else init();
   })();
+  </script>
+  <script>
+    /* ===== Carousels (journey maps, personas) =====
+       Builds the arrows, dots and "1 / n" counter for every [data-car].
+       Swipe is native scrolling (scroll-snap), so it also works without this script. */
+    document.querySelectorAll('[data-car]').forEach((car, ci) => {
+      const track = car.querySelector('.car-track');
+      const slides = [...track.children];
+      if (slides.length < 2) return;
+      const name = car.getAttribute('aria-label') || 'Slides';
+      car.setAttribute('role', 'region');
+      car.setAttribute('aria-roledescription', 'carousel');
+      track.id = track.id || `car-track-${ci}`;
+      track.tabIndex = 0;
+      slides.forEach((s, i) => {
+        s.setAttribute('role', 'group');
+        s.setAttribute('aria-roledescription', 'slide');
+        s.setAttribute('aria-label', `${i + 1} of ${slides.length}: ${s.getAttribute('aria-label') || ''}`.replace(/: $/, ''));
+      });
+
+      const nav = document.createElement('div');
+      nav.className = 'car-nav';
+      nav.innerHTML =
+        `<button type="button" class="car-btn car-prev" aria-controls="${track.id}" aria-label="Previous (${name})"><i class="fa-solid fa-chevron-right"></i></button>` +
+        `<div class="car-dots">${slides.map((s, i) =>
+          `<button type="button" class="car-dot" aria-controls="${track.id}" aria-label="Show slide ${i + 1} of ${slides.length}"></button>`).join('')}</div>` +
+        `<span class="car-count" aria-live="polite"></span>` +
+        `<button type="button" class="car-btn car-next" aria-controls="${track.id}" aria-label="Next (${name})"><i class="fa-solid fa-chevron-right"></i></button>`;
+      car.appendChild(nav);
+      const prev = nav.querySelector('.car-prev'), next = nav.querySelector('.car-next');
+      const dots = [...nav.querySelectorAll('.car-dot')], count = nav.querySelector('.car-count');
+
+      let cur = -1;
+      const go = i => {
+        i = Math.max(0, Math.min(slides.length - 1, i));
+        track.scrollTo({ left: slides[i].offsetLeft - slides[0].offsetLeft, behavior: 'smooth' });
+      };
+      const mark = i => {
+        if (i === cur) return;
+        cur = i;
+        dots.forEach((d, k) => d.setAttribute('aria-current', k === i ? 'true' : 'false'));
+        prev.disabled = i === 0;
+        next.disabled = i === slides.length - 1;
+        count.textContent = `${i + 1} / ${slides.length}`;
+        // keep the page height steady: the track takes the height of the slide in view
+        track.style.height = slides[i].offsetHeight + 30 + 'px';
+      };
+      const current = () => Math.round(track.scrollLeft / (slides[1].offsetLeft - slides[0].offsetLeft));
+
+      prev.addEventListener('click', () => go(cur - 1));
+      next.addEventListener('click', () => go(cur + 1));
+      dots.forEach((d, i) => d.addEventListener('click', () => go(i)));
+      track.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(cur + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(cur - 1); }
+      });
+      let raf;
+      track.addEventListener('scroll', () => {
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => mark(current()));
+      }, { passive: true });
+      addEventListener('resize', () => { const i = cur; cur = -1; mark(i); go(i); });
+      addEventListener('load', () => { const i = cur; cur = -1; mark(i); });
+      mark(0);
+    });
   </script>
 </body>
 
