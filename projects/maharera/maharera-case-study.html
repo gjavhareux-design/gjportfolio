@@ -1770,8 +1770,8 @@
 
     /* Peek variant (personas): the card in view sits in the centre and its neighbours show at the sides.
        Cards keep their own height; side cards are dimmed and can be clicked to bring them to the centre. */
+    .car-peek { --peek-w: min(860px, calc(100vw - 220px)); --bleed: 24px; }  /* vw, not %: % would be measured against the padded track */
     .car-peek .car-track {
-      --peek-w: min(860px, calc(100vw - 220px));   /* vw, not %: % here would be measured against the padded track */
       gap: 22px;
       margin-inline: -24px;                                        /* run to the screen edge (wrap padding) */
       padding-inline: calc((100% - var(--peek-w)) / 2 + 24px);
@@ -1783,9 +1783,22 @@
     .car-peek .car-slide:not(.is-active) { opacity: .45; transform: scale(.96); cursor: pointer; }
     .car-peek .car-slide:not(.is-active) * { pointer-events: none; }
     @media (min-width: 1200px) {        /* let the side cards run out past the text column on wide screens */
-      .car-peek .car-track { --peek-w: 860px; margin-inline: calc((100% - 100vw) / 2); padding-inline: calc((100vw - var(--peek-w)) / 2); scroll-padding-inline: calc((100vw - var(--peek-w)) / 2); }
+      .car-peek { --peek-w: 860px; --bleed: calc((100vw - 100%) / 2); }
+      .car-peek .car-track { margin-inline: calc((100% - 100vw) / 2); padding-inline: calc((100vw - var(--peek-w)) / 2); scroll-padding-inline: calc((100vw - var(--peek-w)) / 2); }
     }
-    @media (max-width: 640px) { .car-peek .car-track { --peek-w: calc(100vw - 84px); gap: 12px; } }
+    @media (max-width: 640px) { .car-peek { --peek-w: calc(100vw - 84px); } .car-peek .car-track { gap: 12px; } }
+
+    /* Peek variant arrows: on the side cards, never over the centred one. They start near the top of the
+       cards and stay in view (sticky) while reading a long card, so there's no scrolling down to reach them. */
+    .car-side { position: absolute; top: 0; bottom: 0; left: calc(-1 * var(--bleed)); right: calc(-1 * var(--bleed)); pointer-events: none; z-index: 3; }
+    .car-side-inner {
+      position: sticky; top: 104px; margin-top: 120px;      /* just under the site header, clear of the chapter wheel */
+      display: flex; justify-content: space-between;
+      padding-inline: max(8px, calc(((100vw - var(--peek-w)) / 2 - 44px) / 2));
+    }
+    .car-side .car-btn { pointer-events: auto; box-shadow: 0 10px 24px -10px rgba(0,0,0,.45); }
+    .car-side .car-btn:disabled { visibility: hidden; }
+    @media (max-width: 640px) { .car-side { display: none; } }
     @media print { .car-peek .car-slide { opacity: 1 !important; transform: none !important; } }
     @media print {
       .car-track { display: block; overflow: visible; margin: 0; padding: 0; }
@@ -5909,6 +5922,13 @@
         `<button type="button" class="car-btn car-next" aria-controls="${track.id}" aria-label="Next (${name})"><i class="fa-solid fa-chevron-right"></i></button>`;
       car.appendChild(nav);
       const prev = nav.querySelector('.car-prev'), next = nav.querySelector('.car-next');
+      if (car.classList.contains('car-peek')) {        // arrows go to the sides, over the neighbouring cards
+        const side = document.createElement('div');
+        side.className = 'car-side';
+        side.innerHTML = '<div class="car-side-inner"></div>';
+        side.firstChild.append(prev, next);
+        car.appendChild(side);
+      }
       const dots = [...nav.querySelectorAll('.car-dot')], count = nav.querySelector('.car-count');
 
       let cur = -1;
