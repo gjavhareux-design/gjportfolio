@@ -239,9 +239,13 @@
       padding: 88px 0
     }
 
+    /* section header: headings keep a readable width, paragraphs run the full width of the section */
     .sh {
-      max-width: 760px;
       margin-bottom: 36px
+    }
+
+    .sh h2, .sh h3 {
+      max-width: 760px
     }
 
     .sh .tag {
@@ -282,7 +286,7 @@
       font-size: 16.5px;
       color: var(--muted);
       margin-top: 12px;
-      max-width: 680px
+      max-width: none
     }
 
     .sh.center {
@@ -2359,7 +2363,7 @@
     .fd-note { display: flex; gap: 16px; align-items: flex-start; margin-top: 20px; padding: 20px 22px; border-radius: 20px; background: var(--accent-soft); border-left: 4px solid var(--accent); }
     .fd-note-ic { flex: none; width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--accent); color: #fff; font-size: 18px; }
     .fd-note-t { margin: 0 0 6px; font-size: 15px; font-weight: 700; color: var(--ink); }
-    .fd-note p:not(.fd-note-t) { margin: 0; font-size: 14px; line-height: 1.6; color: #52525b; max-width: 75ch; }
+    .fd-note p:not(.fd-note-t) { margin: 0; font-size: 14px; line-height: 1.6; color: #52525b; max-width: none; }
     .fd-note p + p { margin-top: 8px !important; }
     .fd-note .fd-note-src { font-size: 13px; color: var(--muted); }
     .fd-note a { color: var(--accent); font-weight: 600; text-underline-offset: 2px; }
@@ -3064,7 +3068,7 @@
       font-size: 16px;
       font-weight: 400;
       line-height: 1.75;
-      max-width: 62ch;
+      max-width: none;
       color: var(--set-body-color);
     }
     .sh p + p { margin-top: 10px; }
