@@ -1692,21 +1692,23 @@
       margin-top: 6px
     }
 
-    /* ================= PROBLEM STATEMENTS · PERSONA CARDS (with HMW questions) =================
+    /* ================= PROBLEM STATEMENTS · PERSONA CARDS (HMW questions follow the carousel) =================
        One full-width card per user: persona photo, problem statement and needs on the left,
        HMW questions grouped by theme on the right. Photo panel colours match the user cards. */
-    .ps2 { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); padding: 0; overflow: hidden; }
+    .ps2 { padding: 0; overflow: hidden; }
+    /* persona only: photo on the left, who they are + problem statement on the right */
+    .ps2-side { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); grid-template-rows: auto 1fr; min-width: 0; height: 100%; }   /* fills the card when a neighbour is taller */
+    .ps2-side .ps2-photo { grid-row: 1 / span 2; height: 100%; min-height: 300px; }
     .ps2-hb { --ps2-bg: #f8e6d3; }
     .ps2-pr { --ps2-bg: #bfdcfb; }
     .ps2-ag { --ps2-bg: #d6f5c3; }
-    .ps2-side { display: flex; flex-direction: column; min-width: 0; }
     .ps2-photo { margin: 0; height: 300px; background: var(--ps2-bg); display: flex; align-items: flex-end; justify-content: center; overflow: hidden; }
     .ps2-photo img { height: 94%; width: auto; max-width: 100%; object-fit: contain; object-position: bottom center; display: block; }
-    .ps2-id { padding: 20px 26px 0; }
+    .ps2-id { padding: 26px 28px 0; }
     .ps2-id .who { padding: 0; margin-bottom: 6px; }
     .ps2-id b { display: block; font-size: 20px; font-weight: 700; color: var(--ink); }
     .ps2-id small { display: block; font-size: 14px; color: var(--muted); margin-top: 2px; }
-    .ps2-body { padding: 16px 26px 26px; }
+    .ps2-body { padding: 16px 28px 28px; }
     .ps2-label { display: block; font-size: 11px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
     .ps2 .stmt { font-family: var(--hand); font-size: 24px; line-height: 1.2; color: var(--ink); }
     .ps2 .stmt u { text-decoration-color: var(--accent); text-decoration-thickness: 2px; text-underline-offset: 3px; }
@@ -1714,20 +1716,34 @@
     .ps2 .needs li { display: flex; gap: 8px; align-items: center; font-size: 14px; color: var(--muted); }
     .ps2 .needs i { color: var(--bad); font-size: 7px; }
 
-    .ps2-hmw { margin: 0; padding: 28px 30px 30px; background: var(--ink); color: #fff; display: flex; flex-direction: column; gap: 22px; }
-    .ps2-hmw-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
-    .ps2-hmw-head small { font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #ffb27a; }
-    .ps2-hmw-head span { font-size: 13px; color: #a1a1aa; }
-    .hmw-group h5 { font-size: 13px; font-weight: 700; color: #fff; margin: 0 0 10px; padding-bottom: 8px; border-bottom: 1px solid rgba(255, 255, 255, .12); }
-    .hmw-group ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-    .hmw-group li { display: grid; grid-template-columns: 30px 1fr; gap: 10px; align-items: start; }
-    .hmw-group li .k { font-size: 12px; font-weight: 800; color: #ffb27a; font-variant-numeric: tabular-nums; padding-top: 2px; }
-    .hmw-group li p { margin: 0; font-size: 15px; line-height: 1.5; color: #e4e4e7; }
+    /* How might we: all questions grouped by theme, below the persona cards */
+    .hmw2 { margin-top: 40px; background: var(--ink); color: #fff; border-radius: 24px; padding: 30px 32px 34px; }
+    .hmw2-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 16px; margin-bottom: 24px; }
+    .hmw2-head h3 { margin: 0; font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -.01em; }
+    .hmw2-head > span { font-size: 13px; color: #a1a1aa; }
+    .hmw2-key { margin-left: auto; display: flex; gap: 6px; }
+    .hmw2-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px 32px; align-items: start; }
+    .hmw2-group h4 { display: flex; align-items: center; gap: 9px; margin: 0 0 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, .14); font-size: 14px; font-weight: 700; color: #fff; }
+    .hmw2-group h4 i { color: #ffb27a; font-size: 14px; }
+    .hmw2-group h4 span { margin-left: auto; font-size: 12px; font-weight: 700; color: #a1a1aa; font-variant-numeric: tabular-nums; }
+    .hmw2-group ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+    .hmw2-group li { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 4px 8px; }
+    .hmw2-group li .k { font-size: 12px; font-weight: 800; color: #ffb27a; font-variant-numeric: tabular-nums; padding-top: 3px; }
+    .hmw2-group li p { margin: 0; font-size: 14.5px; line-height: 1.5; color: #e4e4e7; }
+    .hmw-who { grid-column: 2; justify-self: start; font-style: normal; font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 3px 8px; border-radius: 999px; color: #27272a; }
+    .hmw-hb { background: #f8e6d3; }
+    .hmw-pr { background: #bfdcfb; }
+    .hmw-ag { background: #d6f5c3; }
+    @media (max-width: 1000px) { .hmw2-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 640px) {
+      .hmw2 { padding: 24px 20px 26px; border-radius: 20px; }
+      .hmw2-grid { grid-template-columns: 1fr; }
+      .hmw2-key { margin-left: 0; width: 100%; }
+    }
 
-    @media (max-width: 900px) {
-      .ps2 { grid-template-columns: 1fr; }
-      .ps2-photo { height: 260px; }
-      .ps2-hmw { padding: 24px 22px 26px; }
+    @media (max-width: 700px) {
+      .ps2-side { grid-template-columns: 1fr; }
+      .ps2-side .ps2-photo { grid-row: auto; height: 260px; min-height: 0; }
       .ps2-id { padding: 18px 22px 0; }
       .ps2-body { padding: 14px 22px 22px; }
     }
@@ -4333,33 +4349,6 @@
                 </ul>
               </div>
             </div>
-            <div class="hmw ps2-hmw">
-              <div class="ps2-hmw-head"><small>How might we</small><span>9 questions · 3 themes</span></div>
-              <div class="hmw-group">
-                <h5>Search &amp; discovery</h5>
-                <ol>
-                  <li><span class="k">01</span><p>reduce the number of steps required to find a registered project?</p></li>
-                  <li><span class="k">02</span><p>help homebuyers discover registered projects by location, locality or preferred area?</p></li>
-                  <li><span class="k">03</span><p>help users find projects based on their expected completion date?</p></li>
-                  <li><span class="k">04</span><p>enable homebuyers to search for projects by apartment type, configuration or property size?</p></li>
-                </ol>
-              </div>
-              <div class="hmw-group">
-                <h5>Comparison &amp; decision-making</h5>
-                <ol>
-                  <li><span class="k">05</span><p>help homebuyers compare registered projects side by side to make informed decisions?</p></li>
-                  <li><span class="k">06</span><p>make project registration status, completion timelines and approvals easier to find and understand?</p></li>
-                  <li><span class="k">07</span><p>help homebuyers quickly identify projects that are compliant and on track, based on verified RERA information?</p></li>
-                </ol>
-              </div>
-              <div class="hmw-group">
-                <h5>Trust &amp; engagement</h5>
-                <ol>
-                  <li><span class="k">08</span><p>encourage homebuyers to use the official MahaRERA website instead of relying on commercial property portals that may contain misleading or unverified information?</p></li>
-                  <li><span class="k">09</span><p>build user confidence by making verified project information more accessible and transparent?</p></li>
-                </ol>
-              </div>
-            </div>
           </article>
           <!-- Promoter -->
           <article class="car-slide card ps2 ps2-pr" aria-label="Promoter persona">
@@ -4376,32 +4365,6 @@
                 <li><i class="fa-solid fa-circle"></i>Public project page has no hierarchy</li>
                 <li><i class="fa-solid fa-circle"></i>Circulars are scattered across menus</li>
                 </ul>
-              </div>
-            </div>
-            <div class="hmw ps2-hmw">
-              <div class="ps2-hmw-head"><small>How might we</small><span>7 questions · 3 themes</span></div>
-              <div class="hmw-group">
-                <h5>Project visibility &amp; credibility</h5>
-                <ol>
-                  <li><span class="k">01</span><p>help promoters present their registered projects through clear, structured and easy-to-understand public profiles?</p></li>
-                  <li><span class="k">02</span><p>help promoters make verified project details, approvals and progress information easier for buyers to find?</p></li>
-                             </ol>
-              </div>
-              <div class="hmw-group">
-                <h5>Regulatory information &amp; compliance</h5>
-                <ol>
-                  <li><span class="k">03</span><p>reduce the time promoters spend searching for the latest MahaRERA rules, circulars and regulatory updates?</p></li>
-                  <li><span class="k">04</span><p>organise circulars and compliance guidelines into categories that are relevant to promoters?</p></li>
-                  <li><span class="k">05</span><p>help promoters understand which regulatory requirements and deadlines apply to their projects?</p></li>
-                  <li><span class="k">06</span><p>help promoters quickly identify changes in regulations that may affect their projects?</p></li>
-                </ol>
-              </div>
-              <div class="hmw-group">
-                <h5>Usability &amp; efficiency</h5>
-                <ol>
-                  <li><span class="k">07</span><p>improve the information hierarchy of project pages so buyers can understand key project details at a glance?</p></li>
-                  
-                </ol>
               </div>
             </div>
           </article>
@@ -4422,34 +4385,74 @@
                 </ul>
               </div>
             </div>
-            <div class="hmw ps2-hmw">
-              <div class="ps2-hmw-head"><small>How might we</small><span>9 questions · 3 themes</span></div>
-              <div class="hmw-group">
-                <h5>Agent verification &amp; credibility</h5>
-                <ol>
-                  <li><span class="k">01</span><p>make agent registration details and validity easier to find and understand?</p></li>
-                  <li><span class="k">02</span><p>help registered agents demonstrate their professional credibility?</p></li>
-                </ol>
-              </div>
-              <div class="hmw-group">
-                <h5>Project search &amp; information access</h5>
-                <ol>
-                  <li><span class="k">03</span><p>help agents find registered projects quickly while interacting with clients?</p></li>
-                  <li><span class="k">04</span><p>reduce the time agents spend locating project approvals, registration details and completion information?</p></li>
-                  <li><span class="k">05</span><p>help agents access reliable information without navigating multiple website sections or PDFs?</p></li>
-                  <li><span class="k">06</span><p>help agents quickly identify and validate project details?</p></li>
-                </ol>
-              </div>
-              <div class="hmw-group">
-                <h5>Sharing &amp; client trust</h5>
-                <ol>
-                  <li><span class="k">07</span><p>enable agents to share verified project details with clients through a single, reliable link?</p></li>
-                  <li><span class="k">08</span><p>make shared project information easy for clients to access on mobile devices?</p></li>
-                  <li><span class="k">09</span><p>help agents communicate project registration status and approvals without relying on screenshots or manually shared documents?</p></li>
-                </ol>
-              </div>
-            </div>
           </article>
+          </div>
+        </div>
+
+        <!-- How might we: every HMW question from the three personas, grouped by theme.
+             Each question carries the persona it came from (hmw-hb / hmw-pr / hmw-ag). -->
+        <div class="hmw2 rv">
+          <div class="hmw2-head">
+            <h3>How might we…</h3>
+            <span>25 questions · 6 themes</span>
+            <span class="hmw2-key"><i class="hmw-who hmw-hb">Homebuyer</i><i class="hmw-who hmw-pr">Promoter</i><i class="hmw-who hmw-ag">Agent</i></span>
+          </div>
+          <div class="hmw2-grid">
+          <div class="hmw2-group">
+            <h4><i class="fa-solid fa-magnifying-glass"></i>Search &amp; discovery<span>5</span></h4>
+            <ol>
+                <li><span class="k">01</span><p>reduce the number of steps required to find a registered project?</p><span class="hmw-who hmw-hb">Homebuyer</span></li>
+                <li><span class="k">02</span><p>help homebuyers discover registered projects by location, locality or preferred area?</p><span class="hmw-who hmw-hb">Homebuyer</span></li>
+                <li><span class="k">03</span><p>help users find projects based on their expected completion date?</p><span class="hmw-who hmw-hb">Homebuyer</span></li>
+                <li><span class="k">04</span><p>enable homebuyers to search for projects by apartment type, configuration or property size?</p><span class="hmw-who hmw-hb">Homebuyer</span></li>
+                <li><span class="k">05</span><p>help agents find registered projects quickly while interacting with clients?</p><span class="hmw-who hmw-ag">Agent</span></li>
+            </ol>
+          </div>
+          <div class="hmw2-group">
+            <h4><i class="fa-solid fa-file-lines"></i>Project information &amp; clarity<span>6</span></h4>
+            <ol>
+                <li><span class="k">06</span><p>make project registration status, completion timelines and approvals easier to find and understand?</p><span class="hmw-who hmw-hb">Homebuyer</span></li>
+                <li><span class="k">07</span><p>help promoters make verified project details, approvals and progress information easier for buyers to find?</p><span class="hmw-who hmw-pr">Promoter</span></li>
+                <li><span class="k">08</span><p>improve the information hierarchy of project pages so buyers can understand key project details at a glance?</p><span class="hmw-who hmw-pr">Promoter</span></li>
+                <li><span class="k">09</span><p>reduce the time agents spend locating project approvals, registration details and completion information?</p><span class="hmw-who hmw-ag">Agent</span></li>
+                <li><span class="k">10</span><p>help agents access reliable information without navigating multiple website sections or PDFs?</p><span class="hmw-who hmw-ag">Agent</span></li>
+                <li><span class="k">11</span><p>help agents quickly identify and validate project details?</p><span class="hmw-who hmw-ag">Agent</span></li>
+            </ol>
+          </div>
+          <div class="hmw2-group">
+            <h4><i class="fa-solid fa-chart-column"></i>Comparison &amp; decision-making<span>2</span></h4>
+            <ol>
+                <li><span class="k">12</span><p>help homebuyers compare registered projects side by side to make informed decisions?</p><span class="hmw-who hmw-hb">Homebuyer</span></li>
+                <li><span class="k">13</span><p>help homebuyers quickly identify projects that are compliant and on track, based on verified RERA information?</p><span class="hmw-who hmw-hb">Homebuyer</span></li>
+            </ol>
+          </div>
+          <div class="hmw2-group">
+            <h4><i class="fa-solid fa-shield-halved"></i>Trust &amp; credibility<span>5</span></h4>
+            <ol>
+                <li><span class="k">14</span><p>encourage homebuyers to use the official MahaRERA website instead of relying on commercial property portals that may contain misleading or unverified information?</p><span class="hmw-who hmw-hb">Homebuyer</span></li>
+                <li><span class="k">15</span><p>build user confidence by making verified project information more accessible and transparent?</p><span class="hmw-who hmw-hb">Homebuyer</span></li>
+                <li><span class="k">16</span><p>help promoters present their registered projects through clear, structured and easy-to-understand public profiles?</p><span class="hmw-who hmw-pr">Promoter</span></li>
+                <li><span class="k">17</span><p>make agent registration details and validity easier to find and understand?</p><span class="hmw-who hmw-ag">Agent</span></li>
+                <li><span class="k">18</span><p>help registered agents demonstrate their professional credibility?</p><span class="hmw-who hmw-ag">Agent</span></li>
+            </ol>
+          </div>
+          <div class="hmw2-group">
+            <h4><i class="fa-solid fa-gavel"></i>Regulatory information &amp; compliance<span>4</span></h4>
+            <ol>
+                <li><span class="k">19</span><p>reduce the time promoters spend searching for the latest MahaRERA rules, circulars and regulatory updates?</p><span class="hmw-who hmw-pr">Promoter</span></li>
+                <li><span class="k">20</span><p>organise circulars and compliance guidelines into categories that are relevant to promoters?</p><span class="hmw-who hmw-pr">Promoter</span></li>
+                <li><span class="k">21</span><p>help promoters understand which regulatory requirements and deadlines apply to their projects?</p><span class="hmw-who hmw-pr">Promoter</span></li>
+                <li><span class="k">22</span><p>help promoters quickly identify changes in regulations that may affect their projects?</p><span class="hmw-who hmw-pr">Promoter</span></li>
+            </ol>
+          </div>
+          <div class="hmw2-group">
+            <h4><i class="fa-solid fa-share-nodes"></i>Sharing &amp; mobile access<span>3</span></h4>
+            <ol>
+                <li><span class="k">23</span><p>enable agents to share verified project details with clients through a single, reliable link?</p><span class="hmw-who hmw-ag">Agent</span></li>
+                <li><span class="k">24</span><p>make shared project information easy for clients to access on mobile devices?</p><span class="hmw-who hmw-ag">Agent</span></li>
+                <li><span class="k">25</span><p>help agents communicate project registration status and approvals without relying on screenshots or manually shared documents?</p><span class="hmw-who hmw-ag">Agent</span></li>
+            </ol>
+          </div>
           </div>
         </div>
       </div>
