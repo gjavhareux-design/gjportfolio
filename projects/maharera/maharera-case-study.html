@@ -5481,7 +5481,7 @@
       // clipped every frame to the same ellipse → list shape as the outline
       const glass = htmlEl('div', 'cnav-glass', wheel);
       const svg = svgEl('svg', { viewBox: '-300 -300 600 600' }, wheel);
-      const R_ICON = 110, R_DOT = 16, R_RING = 140;   // icon ring, icon size, progress ring (vertical radii)
+      const R_ICON = 94, R_DOT = 16, R_RING = 140;    // icon ring, icon size, progress ring (vertical radii)
       const KX = .76;                                 // the wheel is an upright ellipse: width = KX × height
       const ROW = 42;                                 // vertical list: row height
       const EDGE = 14;                                // the window's right edge, measured from the wheel's centre
@@ -5613,7 +5613,7 @@
           // keep the name inside the ellipse: slide it right just enough to clear the ring
           const ly = Math.max(-R_RING + 1, Math.min(R_RING - 1, wy - above));
           const ringX = -R_RING * KX * Math.sqrt(1 - (ly / R_RING) ** 2);
-          const push = Math.max(0, ringX + 10 - (wx - w / 2));
+          const push = Math.max(0, ringX + 20 - (wx - w / 2));   // ≥ 20 units clear of the ring
           const nx = lerp(push, R_DOT + 12 + w / 2, e), ny = lerp(-above, 0, e);
           c.nameG.setAttribute('transform', `translate(${(x + nx).toFixed(1)} ${(y + ny).toFixed(1)})`);
           // on the half-wheel, names of icons near the screen edge would be cut off
