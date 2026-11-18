@@ -5608,12 +5608,16 @@
           const e = ease(clamp01((mShown - delay) / (1 - delay)));
           const x = lerp(wx, listX, e), y = lerp(wy, ty, e);
           c.at.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)})`);
-          // name: beside the icon on the centre side on the wheel, to the right of it in the list
-          const w = c.w || 60, d = R_DOT + 15 + 6 * Math.abs(sa);   // gap between icon and name on the wheel
-          const nx = lerp(-ca * (d + w / 2), R_DOT + 12 + w / 2, e), ny = lerp(-sa * d, 0, e);
+          // name: centred above the icon on the wheel, to the right of it in the list
+          const w = c.w || 60, above = R_DOT + 13;                  // gap between icon and name on the wheel
+          // keep the name inside the ellipse: slide it right just enough to clear the ring
+          const ly = Math.max(-R_RING + 1, Math.min(R_RING - 1, wy - above));
+          const ringX = -R_RING * KX * Math.sqrt(1 - (ly / R_RING) ** 2);
+          const push = Math.max(0, ringX + 10 - (wx - w / 2));
+          const nx = lerp(push, R_DOT + 12 + w / 2, e), ny = lerp(-above, 0, e);
           c.nameG.setAttribute('transform', `translate(${(x + nx).toFixed(1)} ${(y + ny).toFixed(1)})`);
           // on the half-wheel, names of icons near the screen edge would be cut off
-          const hide = e < .5 && !open && wx > -32;
+          const hide = e < .5 && !open && wx + push + w / 2 > EDGE - 6;
           // names fade a little mid-morph so they never visibly cross each other
           c.nameG.style.opacity = hide ? '0' : e > .001 && e < .999 ? (1 - .75 * Math.sin(Math.PI * e)).toFixed(3) : '';
           // the wheel is a reading guide (current + what's next, never wrapping round);
