@@ -2721,6 +2721,9 @@
     /* ================= RESEARCH METHODS ("How we found out") =================
        Each card has two colours:  --rm-bg = card tint   --rm-ink = number + arrow colour */
     .rm-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 24px; }
+    .rm-head .sh { margin-bottom: 0; }
+    .rm-body { margin-top: 4px; }
+    .rm-body p:first-child { margin-top: 0; }
     .rm-hero { width: min(260px, 24vw); height: auto; }
     .rm-dot { color: var(--accent); }
     @media (max-width: 760px) { .rm-head { grid-template-columns: 1fr; } .rm-hero { display: none; } }
@@ -4021,11 +4024,16 @@
          and a header illustration (assets/research-hero.webp). Colours: CSS "RESEARCH METHODS". -->
     <section id="research" data-nav="Research methods" class="rm-section" style="padding-top:20px">
       <div class="wrap">
+        <!-- Heading + sub-heading beside the illustration; the paragraphs run full width underneath -->
         <div class="rm-head">
           <div class="sh rv">
             <span class="tag lb1">Research</span>
             <h2 class="sh1">Understanding User Needs<span class="rm-dot">.</span></h2>
             <h3 class="sh2">Good design starts with real pain points</h3>
+          </div>
+          <img class="rm-hero rv d1" src="assets/research-hero.webp" alt="" aria-hidden="true">
+        </div>
+        <div class="sh rm-body rv">
             <p class="sh3"><strong>Two rounds of user research</strong></p>
             <p class="sh3">I conducted two rounds of user research to understand both the challenges users faced with the
               existing MahaRERA website and their expectations from an improved platform.</p>
@@ -4034,8 +4042,6 @@
             <p class="sh3"><strong>Round 2 – Understanding user expectations:</strong> After developing an initial feature
               inventory, I returned to relevant user groups to understand their expectations, validate the proposed features
               and identify missing requirements.</p>
-          </div>
-          <img class="rm-hero rv d1" src="assets/research-hero.webp" alt="" aria-hidden="true">
         </div>
         <div class="rm-grid">
           <article class="rm-card rm-1 rv">
