@@ -3406,12 +3406,22 @@
       transition: transform .6s cubic-bezier(.22, 1, .36, 1), opacity .45s ease, visibility 0s linear .6s;
     }
     .cnav-wheel.is-shown { opacity: 1; visibility: visible; transition: transform .6s cubic-bezier(.22, 1, .36, 1), opacity .45s ease; }
-    .cnav-wheel svg { width: 100%; height: 100%; overflow: visible; display: block; }
+    .cnav-wheel svg { position: relative; width: 100%; height: 100%; overflow: visible; display: block; }   /* above the glass layer */
     .cnav-hit { fill: transparent; pointer-events: all; }
     .cnav-wheel:not(.is-shown) .cnav-hit { pointer-events: none; }
     /* a soft disc in the page colour keeps names readable where the wheel overlaps content */
-    .cnav-backdrop { fill: var(--bg); opacity: .9; pointer-events: none; }
-    .cnav-listbg { fill: #fbfaf8; filter: drop-shadow(0 16px 36px rgba(0, 0, 0, .12)); opacity: 0; pointer-events: none; }
+    /* glass: blur + tint on the HTML layer, a light rim and soft shadow from the SVG outline */
+    .cnav-glass {
+      position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(160deg, rgba(255, 255, 255, .62), rgba(255, 255, 255, .34));
+      -webkit-backdrop-filter: blur(16px) saturate(1.6);
+      backdrop-filter: blur(16px) saturate(1.6);
+    }
+    @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+      .cnav-glass { background: rgba(249, 247, 245, .92); }
+    }
+    .cnav-backdrop { fill: none; stroke: rgba(255, 255, 255, .9); stroke-width: 1.5; filter: drop-shadow(0 14px 30px rgba(24, 24, 27, .14)); pointer-events: none; }
+    .cnav-listbg { fill: rgba(255, 255, 255, .28); opacity: 0; pointer-events: none; }
     .cnav-wheel:not(.is-open) .cnav-hitlist { pointer-events: none; }
     /* chapters already read leave the menu: it only shows where you are and what's next */
     .cnav-cat { transition: opacity .45s ease; }
@@ -5467,16 +5477,20 @@
       /* ---------- 3. Desktop radial menu ---------- */
       root.innerHTML = '';
       const wheel = htmlEl('div', 'cnav-wheel', root);
+      // frosted-glass layer behind the menu: an HTML element (SVG can't blur what's behind it),
+      // clipped every frame to the same ellipse → list shape as the outline
+      const glass = htmlEl('div', 'cnav-glass', wheel);
       const svg = svgEl('svg', { viewBox: '-300 -300 600 600' }, wheel);
-      const R_ICON = 110, R_DOT = 16, R_RING = 140;   // icon ring, icon size, progress ring
+      const R_ICON = 110, R_DOT = 16, R_RING = 140;   // icon ring, icon size, progress ring (vertical radii)
+      const KX = .76;                                 // the wheel is an upright ellipse: width = KX × height
       const ROW = 42;                                 // vertical list: row height
-      const EDGE = 28;                                // the window's right edge, measured from the wheel's centre
+      const EDGE = 14;                                // the window's right edge, measured from the wheel's centre
       // one shape that is a circle on the wheel and a rounded rectangle around the list.
       // backdrop = soft disc in the page colour; card = white card that fades in as it straightens;
       // track = the outline (the progress ring's track on the wheel, the list's border as a list)
       const backdrop = svgEl('path', { class: 'cnav-backdrop' }, svg);
       const card = svgEl('path', { class: 'cnav-listbg' }, svg);
-      const hit = svgEl('circle', { class: 'cnav-hit', r: R_RING + 16 }, svg);
+      const hit = svgEl('ellipse', { class: 'cnav-hit', rx: (R_RING + 16) * KX, ry: R_RING + 16 }, svg);
       const hitList = svgEl('rect', { class: 'cnav-hit cnav-hitlist' }, svg);
       const track = svgEl('path', { class: 'cnav-track' }, svg);
       const prog = svgEl('path', { class: 'cnav-progress' }, svg);
@@ -5533,14 +5547,14 @@
       function shapePt(phi, R, box, e) {
         const c = Math.cos(rad(phi)), s = Math.sin(rad(phi));
         const [bx, by] = boxPt(c, s, box);
-        return [lerp(R * c, bx, e), lerp(R * s, by, e)];
+        return [lerp(R * KX * c, bx, e), lerp(R * s, by, e)];
       }
-      function shapePath(R, box, e, from = 0, to = 360, closed = true) {
+      function shapePath(R, box, e, from = 0, to = 360, closed = true, off = 0) {
         const steps = Math.max(2, Math.ceil(Math.abs(to - from) / 1.5));
         let d = '';
         for (let i = 0; i <= steps; i++) {
           const [x, y] = shapePt(from + (to - from) * i / steps, R, box, e);
-          d += (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1);
+          d += (i ? 'L' : 'M') + (x + off).toFixed(1) + ' ' + (y + off).toFixed(1);
         }
         return closed ? d + 'Z' : d;
       }
@@ -5570,7 +5584,9 @@
         track.setAttribute('d', outline);
         card.setAttribute('d', outline);
         card.style.opacity = eS.toFixed(3);
-        backdrop.setAttribute('d', shapePath(R_RING + 12, { cx: box.cx, a: box.a + 2, b: box.b + 2 }, eS));
+        const bBox = { cx: box.cx, a: box.a + 2, b: box.b + 2 };
+        backdrop.setAttribute('d', shapePath(R_RING + 12, bBox, eS));
+        glass.style.clipPath = `path('${shapePath(R_RING + 12, bBox, eS, 0, 360, true, 300)}')`;
         // reading progress runs along the same shape and fades as it becomes the list border
         const pa = ang(0) + r;   // where the progress starts, on screen
         prog.setAttribute('d', q > .002 ? shapePath(R_RING, box, eS, pa, 180, false) : '');
@@ -5584,7 +5600,7 @@
         chapters.forEach(c => {
           // wheel position
           const a = rad(c.th + r), ca = Math.cos(a), sa = Math.sin(a);
-          const wx = R_ICON * ca, wy = R_ICON * sa;
+          const wx = R_ICON * KX * ca, wy = R_ICON * sa;
           // list position: every chapter, in page order
           const ty = (c.index - (n - 1) / 2) * ROW;
           // stagger radiates out from the current chapter, so it stays put while the rest gather round it
@@ -5597,7 +5613,7 @@
           const nx = lerp(-ca * (d + w / 2), R_DOT + 12 + w / 2, e), ny = lerp(-sa * d, 0, e);
           c.nameG.setAttribute('transform', `translate(${(x + nx).toFixed(1)} ${(y + ny).toFixed(1)})`);
           // on the half-wheel, names of icons near the screen edge would be cut off
-          const hide = e < .5 && !open && wx > -40;
+          const hide = e < .5 && !open && wx > -32;
           // names fade a little mid-morph so they never visibly cross each other
           c.nameG.style.opacity = hide ? '0' : e > .001 && e < .999 ? (1 - .75 * Math.sin(Math.PI * e)).toFixed(3) : '';
           // the wheel is a reading guide (current + what's next, never wrapping round);
