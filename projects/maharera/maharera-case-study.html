@@ -46,6 +46,7 @@
       --set-heading-gap:     28px;        /* space between a section's heading/paragraphs and its content */
       --set-max-width:     1120px;        /* content width on desktop */
       --set-radius:        24px;          /* corner roundness of cards & images */
+      --set-img-radius:    5px;           /* corner roundness of image holders (cards with pictures, boards, screenshots) */
     }
 
     /* ================= TOKENS (internal colour names — linked to PAGE SETTINGS above) ================= */
@@ -3690,6 +3691,11 @@
       .cnav-wheel, .cnav-wheel.is-shown, .cnav-dot, .cnav-name text, .cnav-toast { transition-duration: .01s !important; transition-delay: 0s !important; }
       :root { --cn-spring: cubic-bezier(.2, .8, .2, 1); --cn-bounce: cubic-bezier(.2, .8, .2, 1); }
     }
+    /* ===== IMAGE HOLDERS — one roundness for every picture card (change --set-img-radius) ===== */
+    .uc-card, .pb-card, .pb-img, .browser, .rm-card, .sb-frame,
+    .car-slide.ps3, .car-slide.journey-map, .journey-map img,
+    .uxp-card, .uxp-img, .fd-board a { border-radius: var(--set-img-radius) !important; }
+    .uc-img { border-radius: var(--set-img-radius) 0 0 var(--set-img-radius) !important; }
   </style>
 </head>
 
@@ -3822,7 +3828,7 @@
             resources for citizens and other stakeholders.</p>
         </div>
         <figure class="rv">
-          <img src="assets/intro.webp" alt="About MahaRERA: Maharashtra Real Estate Regulatory Authority, the watchdog for every real estate project in the state. A governing and regulating body of the Government of Maharashtra, India; regulates real estate in Maharashtra state; protects homebuyers and their interests." style="width:100%;height:auto;border-radius:24px">
+          <img src="assets/intro.webp" alt="About MahaRERA: Maharashtra Real Estate Regulatory Authority, the watchdog for every real estate project in the state. A governing and regulating body of the Government of Maharashtra, India; regulates real estate in Maharashtra state; protects homebuyers and their interests." style="width:100%;height:auto;border-radius:var(--set-img-radius)">
         </figure>
       </div>
     </section>
