@@ -1716,6 +1716,11 @@
     .ps2 .needs li { display: flex; gap: 8px; align-items: center; font-size: 14px; color: var(--muted); }
     .ps2 .needs i { color: var(--bad); font-size: 7px; }
 
+    /* Persona cards supplied as images */
+    .ps3 { margin: 0; padding: 0; overflow: hidden; }
+    .ps3 a { display: block; }
+    .ps3 img { display: block; width: 100%; height: auto; }
+
     /* How might we: all questions grouped by theme, below the persona cards */
     .hmw2 { margin-top: 40px; background: var(--ink); color: #fff; border-radius: 24px; padding: 30px 32px 34px; }
     .hmw2-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 16px; margin-bottom: 24px; }
@@ -4329,63 +4334,25 @@
           <p class="sh3">Each statement names the user, their need and what gets in the way. The HMW questions turn it into
             design opportunities, grouped by theme.</p>
         </div>
-        <!-- Persona carousel: one problem-statement card per slide -->
-        <div class="car car-peek rv" data-car data-car-start="1" aria-label="User personas">
+        <!-- Persona carousel: one persona card (image) per slide; full card text is in each image's alt -->
+        <div class="car car-peek rv" data-car data-car-start="0" aria-label="User personas">
           <div class="car-track">
           <!-- Homebuyer -->
-          <article class="car-slide card ps2 ps2-hb" aria-label="Homebuyer persona">
-            <div class="ps2-side">
-              <figure class="ps2-photo"><img src="assets/persona-homebuyer.webp" alt="Priya, a first-time homebuyer, holding a laptop with a bag on her shoulder" loading="lazy"></figure>
-              <div class="ps2-id">
-                <p class="who lb2 who-hb">Homebuyer</p>
-                <b>Priya, 31</b><small>First-time homebuyer · Pune</small>
-              </div>
-              <div class="ps2-body">
-                <small class="ps2-label">Problem statement</small>
-                <p class="stmt">Priya needs to <u>check if a project is registered and on time</u> before investing her savings, but the website asks for a registration number she doesn't have.</p>
-                <ul class="needs">
-                <li><i class="fa-solid fa-circle"></i>Search needs an exact reg. number</li>
-                <li><i class="fa-solid fa-circle"></i>Status hidden in PDFs</li>
-                </ul>
-              </div>
-            </div>
-          </article>
+          <figure class="car-slide card ps3" aria-label="Homebuyer persona: Rohit Kulkarni">
+            <a href="assets/persona-card-homebuyer.webp" target="_blank" rel="noopener" aria-label="Open the homebuyer persona card full size"><img src="assets/persona-card-homebuyer.webp" width="1536" height="1024" loading="lazy" alt="Persona card: Rohit Kulkarni, 32, IT professional and first-time homebuyer in Mumbai, married and planning to buy a home. Quote: “I want to be sure the project is registered and legally compliant before I invest.” Goal: verify a project is registered with MahaRERA, check key project details and approvals, understand the project’s status and timeline, and make a confident, safe purchase decision. Key needs: quick and easy project search; clear, trustworthy project information such as registration, approvals and timelines; simple, easy-to-understand details; access to official documents and updates. Pain points: unclear website structure and navigation; difficulty finding the right project and search option; project details scattered across multiple tabs and documents; information that is complex and not user-friendly. Behaviours: searches for a project by name, location or promoter; checks registration status, approvals and completion date; reviews key documents such as the sanctioned plan and RERA certificate; compares information with other sources before deciding."></a>
+          </figure>
           <!-- Promoter -->
-          <article class="car-slide card ps2 ps2-pr" aria-label="Promoter persona">
-            <div class="ps2-side">
-              <figure class="ps2-photo"><img src="assets/persona-promoter.webp" alt="Rajesh, a property developer, holding rolled building plans and a tablet" loading="lazy"></figure>
-              <div class="ps2-id">
-                <p class="who lb2 who-pr">Promoter</p>
-                <b>Rajesh, 47</b><small>Developer · Mumbai</small>
-              </div>
-              <div class="ps2-body">
-                <small class="ps2-label">Problem statement</small>
-                <p class="stmt">Rajesh needs <u>his project to look credible to buyers</u> and to find the latest rules quickly, but his public page reads like a spreadsheet and circulars are buried.</p>
-                <ul class="needs">
-                <li><i class="fa-solid fa-circle"></i>Public project page has no hierarchy</li>
-                <li><i class="fa-solid fa-circle"></i>Circulars are scattered across menus</li>
-                </ul>
-              </div>
-            </div>
-          </article>
+          <figure class="car-slide card ps3" aria-label="Promoter persona: Sandeep Mehta">
+            <a href="assets/persona-card-promoter.webp" target="_blank" rel="noopener" aria-label="Open the promoter persona card full size"><img src="assets/persona-card-promoter.webp" width="1536" height="1024" loading="lazy" alt="Persona card: Sandeep Mehta, 42, promoter and developer in Mumbai, director of a real estate firm with a team of 20–50. Quote: “I want a clear, efficient process to register my project and stay compliant with MahaRERA.” Goal: register new real estate projects with MahaRERA, meet all compliance requirements for registered projects, keep project information and approvals up to date, and ensure a smooth, penalty-free compliance process. Key needs: a clear, step-by-step project registration process; a single, centralised place for all formats and standard forms such as applications, declarations and compliance templates; a dedicated project compliance list showing all applicable requirements and submission status; transparency on approval and registration status. Pain points: documentation requirements are complex and lengthy; information is spread across multiple pages and circulars; it is difficult to track all compliance requirements for each project; managing compliance across multiple projects is time-consuming. Behaviours: regularly visits MahaRERA to register projects and check compliance requirements; refers to guidelines, circulars and official forms before submissions; coordinates with internal legal, sales and compliance teams to prepare documents; monitors project status and responds to queries from MahaRERA."></a>
+          </figure>
           <!-- Agent -->
-          <article class="car-slide card ps2 ps2-ag" aria-label="Agent persona">
-            <div class="ps2-side">
-              <figure class="ps2-photo"><img src="assets/persona-agent.webp" alt="Sneha, a real estate agent wearing an ID lanyard, holding a pen and a tablet" loading="lazy"></figure>
-              <div class="ps2-id">
-                <p class="who lb2 who-ag">Agent</p>
-                <b>Sneha, 29</b><small>Real estate agent · Thane</small>
-              </div>
-              <div class="ps2-body">
-                <small class="ps2-label">Problem statement</small>
-                <p class="stmt">Sneha needs to <u>prove she is registered</u> and share verified project details with clients, but the site has no simple way to look up or share either.</p>
-                <ul class="needs">
-                <li><i class="fa-solid fa-circle"></i>No public agent lookup</li>
-                <li><i class="fa-solid fa-circle"></i>No shareable project link</li>
-                </ul>
-              </div>
-            </div>
-          </article>
+          <figure class="car-slide card ps3" aria-label="Agent persona: Neha Sharma">
+            <a href="assets/persona-card-agent.webp" target="_blank" rel="noopener" aria-label="Open the agent persona card full size"><img src="assets/persona-card-agent.webp" width="1536" height="1024" loading="lazy" alt="Persona card: Neha Sharma, 34, real estate agent in Mumbai working in brokerage, married with no children. Quote: “I need quick and easy access to project details and registration status so I can share accurate information with my clients.” Goal: verify project registration and compliance details for clients, provide accurate, up-to-date information to support client decisions, and complete and maintain agent registration with MahaRERA. Key needs: quick access to project registration and compliance information; clear, simple project details such as approvals, promoter and timelines; guidance for agent registration including eligibility, process, fees and timelines; a list of required documents, formats, standard forms and declarations; access to the latest circulars, guidelines and updates. Pain points: information is scattered across multiple pages and sections; difficulty finding the latest project updates and approvals; unclear or complex terminology and documentation requirements; slow responses or outdated information in some cases. Behaviours: regularly checks MahaRERA for project registration and compliance status; searches and compares project details before sharing with clients; relies on official government sources for credibility; keeps track of industry updates and regulatory changes."></a>
+          </figure>
+          <!-- Complainant -->
+          <figure class="car-slide card ps3" aria-label="Complainant persona: Priya Deshmukh">
+            <a href="assets/persona-card-complainant.webp" target="_blank" rel="noopener" aria-label="Open the complainant persona card full size"><img src="assets/persona-card-complainant.webp" width="1536" height="1024" loading="lazy" alt="Persona card: Priya Deshmukh, 35, working professional and homebuyer in Pune, works in a private company, married with one child. Quote: “I just want a clear and reliable process to raise my complaint and get a fair resolution.” Goal: raise a formal complaint against the promoter, submit the required documents correctly, track the complaint, hearing date and outcome, and view and download the final order. Key needs: easy access to the complaint process; a clear list of required documents and eligibility; timely updates on hearing and order status. Pain points: hard to find the “File a Complaint” option on the website; unclear guidelines and document requirements; difficult to track hearing dates and updates; orders and next steps are not easy to locate or understand. Behaviours: searches for guidance before filing a complaint; reads multiple pages to collect the right information; prefers clear, step-by-step instructions; relies on official information for trust and accuracy."></a>
+          </figure>
           </div>
         </div>
 
