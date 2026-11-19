@@ -39,7 +39,11 @@
          "TYPE SYSTEM" block at the END of this <style> section. */
 
       /* ---- Layout ---- */
-      --set-section-space: 88px;          /* vertical gap above/below each section */
+      --set-section-top:     24px;        /* space above each section */
+      --set-section-space:   56px;        /* space below each section */
+      --set-chapter-top:     40px;        /* space above a chapter title (01 Introduction …) */
+      --set-after-chapter:   36px;        /* space between a chapter title's line and its first section */
+      --set-heading-gap:     28px;        /* space between a section's heading/paragraphs and its content */
       --set-max-width:     1120px;        /* content width on desktop */
       --set-radius:        24px;          /* corner roundness of cards & images */
     }
@@ -241,7 +245,7 @@
 
     /* section header: headings keep a readable width, paragraphs run the full width of the section */
     .sh {
-      margin-bottom: 36px
+      margin-bottom: var(--set-heading-gap)
     }
 
     .sh h2, .sh h3 {
@@ -285,7 +289,7 @@
     .sh p {
       font-size: 16.5px;
       color: var(--muted);
-      margin-top: 12px;
+      margin-top: 8px;
       max-width: none
     }
 
@@ -2741,11 +2745,11 @@
 
     /* ================= RESEARCH METHODS ("How we found out") =================
        Each card has two colours:  --rm-bg = card tint   --rm-ink = number + arrow colour */
-    .rm-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 24px; }
+    .rm-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 24px; }
     .rm-head .sh { margin-bottom: 0; }
-    .rm-body { margin-top: 4px; }
+    .rm-body { margin-top: -12px; }   /* same heading → paragraph gap as other sections */
     .rm-body p:first-child { margin-top: 0; }
-    .rm-hero { width: min(260px, 24vw); height: auto; }
+    .rm-hero { width: min(210px, 20vw); height: auto; }   /* sized to the heading block so it adds no gap below */
     .rm-dot { color: var(--accent); }
     @media (max-width: 760px) { .rm-head { grid-template-columns: 1fr; } .rm-hero { display: none; } }
 
@@ -2863,8 +2867,13 @@
     @media (max-width: 640px) { .ut-bars .bar-row { grid-template-columns: 1fr 38px; } .ut-bars .bar-row label { grid-column: 1 / -1; margin-bottom: -8px; } }
 
     /* ================= LAYOUT: section spacing (75% on phones) ================= */
-    section { padding-top: var(--set-section-space); padding-bottom: var(--set-section-space); }
-    @media (max-width: 640px) { section { padding-top: calc(var(--set-section-space) * 0.75); padding-bottom: calc(var(--set-section-space) * 0.75); } }
+    section { padding-top: var(--set-section-top); padding-bottom: var(--set-section-space); }
+    .break + section { padding-top: var(--set-after-chapter); }
+    .break .inner { padding-top: var(--set-chapter-top); }
+    @media (max-width: 640px) {
+      section { padding-top: calc(var(--set-section-top) * 0.75); padding-bottom: calc(var(--set-section-space) * 0.75); }
+      .break + section { padding-top: calc(var(--set-after-chapter) * 0.75); }
+    }
 
     /* #####################################################################
        TYPE SYSTEM — every text style on the page lives here
@@ -3095,7 +3104,7 @@
       max-width: none;
       color: var(--set-body-color);
     }
-    .sh p + p { margin-top: 10px; }
+    .sh p + p { margin-top: 8px; }
 
     /* Dark "Impact" panel keeps light text */
     .dark .sh .tag { color: #ffb27a; }
@@ -3819,7 +3828,7 @@
     </section>
 
     <!-- Users -->
-    <section id="users" data-nav="The users" style="padding-top:20px">
+    <section id="users" data-nav="The users">
       <div class="wrap">
         <div class="sh rv">
           <span class="tag lb1">The users</span>
@@ -3910,7 +3919,7 @@
          ===================================================================== -->
 
     <!-- Part 1: Two products -->
-    <section id="products" data-nav="Digital services" style="padding-top:20px">
+    <section id="products" data-nav="Digital services">
       <div class="wrap">
         <div class="sh rv">
           <span class="tag lb1">Digital services</span>
@@ -3959,7 +3968,7 @@
     </section>
 
     <!-- Part 2: Two challenges -->
-    <section id="challenges" data-nav="The challenge" style="padding-top:20px">
+    <section id="challenges" data-nav="The challenge">
       <div class="wrap">
         <div class="sh rv">
           <span class="tag lb1">The challenge</span>
@@ -4009,7 +4018,7 @@
     </section>
 
     <!-- Old website: screenshot (maharera-old-website.jpg), then UX pain point cards (assets/UXP1–UXP5.jpg) -->
-    <section id="old-website" data-nav="The old website" style="padding-top:20px">
+    <section id="old-website" data-nav="The old website">
       <div class="wrap">
         <div class="sh rv">
           <span class="tag lb1">The starting point</span>
@@ -4051,7 +4060,7 @@
 
     <!-- Research methods — tinted stat cards with illustrations (research-ill-1…5.webp)
          and a header illustration (assets/research-hero.webp). Colours: CSS "RESEARCH METHODS". -->
-    <section id="research" data-nav="Research methods" class="rm-section" style="padding-top:20px">
+    <section id="research" data-nav="Research methods" class="rm-section">
       <div class="wrap">
         <!-- Heading + sub-heading beside the illustration; the paragraphs run full width underneath -->
         <div class="rm-head">
@@ -4113,7 +4122,7 @@
     <!-- Survey + analytics — header illustration (assets/survey-hero.webp), three stat cards,
          and a column chart "Why do you use the MahaRERA website?".
          Edit numbers here: bars use data-w="%" ; columns use --v (value) and --c (colour). -->
-    <section id="survey" data-nav="Survey &amp; analytics" style="padding-top:20px">
+    <section id="survey" data-nav="Survey &amp; analytics">
       <div class="wrap">
         <div class="sv-head">
           <div class="sh rv">
@@ -4198,7 +4207,7 @@
 
     <!-- Usability test of old site — illustration (assets/usability-hero.webp), task success bars, SUS gauge.
          Edit bars: data-w = %, style background = bar colour. Gauge: data-gauge = score. -->
-    <section id="usability" data-nav="Usability test" style="padding-top:20px">
+    <section id="usability" data-nav="Usability test">
       <div class="wrap">
         <div class="sv-head">
           <div class="sh rv">
@@ -4333,7 +4342,7 @@
     </section>
 
     <!-- Problem statements -->
-    <section id="problems" data-nav="Problem statements" style="padding-top:20px">
+    <section id="problems" data-nav="Problem statements">
       <div class="wrap">
         <div class="sh rv">
           <span class="tag lb1">Problem statements</span>
@@ -4434,7 +4443,7 @@
     </section>
 
     <!-- Journey -->
-    <section id="journey" data-nav="Journey map" style="padding-top:20px">
+    <section id="journey" data-nav="Journey map">
       <div class="wrap">
         <div class="sh rv">
           <span class="tag lb1">As-is journey maps · Homebuyer &amp; Complainant</span>
@@ -4467,7 +4476,7 @@
       </div>
     </section>
 
-    <section id="pain-points" data-nav="UX pain points" style="padding-top:20px">
+    <section id="pain-points" data-nav="UX pain points">
       <div class="wrap">
         <div class="sh rv">
           <span class="tag lb1">Old website user experience analysis</span>
@@ -4592,7 +4601,7 @@
     </section>
 
     <!-- Categorising user needs: six service categories (later the main navigation) -->
-    <section id="categories" data-nav="Categorising user needs" style="padding-top:20px">
+    <section id="categories" data-nav="Categorising user needs">
       <div class="wrap">
         <div class="sh rv">
           <span class="tag lb1">Categorising user needs</span>
@@ -4639,7 +4648,7 @@
     </section>
 
     <!-- Feature discovery: expected features per stakeholder (feature inventory) -->
-    <section id="feature-discovery" data-nav="Feature discovery" style="padding-top:20px">
+    <section id="feature-discovery" data-nav="Feature discovery">
       <div class="wrap">
         <div class="sh rv">
           <span class="tag lb1">Feature discovery</span>
@@ -4702,7 +4711,7 @@
     </section>
 
     <!-- Bullseye -->
-    <section id="bullseye" data-nav="Feature bull’s-eye" style="padding-top:20px">
+    <section id="bullseye" data-nav="Feature bull’s-eye">
       <div class="wrap">
         <div class="sh rv">
           <span class="tag lb1">Feature prioritisation</span>
@@ -4733,7 +4742,7 @@
     </section>
 
     <!-- Eased flow -->
-    <section id="user-flows" data-nav="User flows" style="padding-top:20px">
+    <section id="user-flows" data-nav="User flows">
       <div class="wrap">
         <div class="sh rv">
           <span class="tag lb1">User flow · Before vs after</span>
@@ -5008,7 +5017,7 @@
     </section>
 
     <!-- Reflection -->
-    <section id="reflection" data-nav="Reflection" style="padding-top:20px">
+    <section id="reflection" data-nav="Reflection">
       <div class="wrap">
         <div class="sh center rv">
           <span class="tag lb1">Reflection</span>
