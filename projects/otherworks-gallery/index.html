@@ -119,44 +119,68 @@
     body:not(.entered) .ui, body:not(.entered) .tip { opacity: 0; pointer-events: none; }
     .ui { transition: opacity 1.2s var(--ease) .5s; }
 
-    /* ============ DETAIL VIEW ============ */
-    .detail { position: fixed; inset: 0; z-index: 30; display: grid; grid-template-columns: minmax(0, 1fr) clamp(320px, 30vw, 440px); visibility: hidden; opacity: 0; transition: opacity .6s var(--ease), visibility .6s; }
-    .detail.open { visibility: visible; opacity: 1; }
-    .detail::before { content: ""; position: absolute; inset: 0; background: rgba(20,16,12,.78); backdrop-filter: blur(14px) saturate(.8); -webkit-backdrop-filter: blur(14px) saturate(.8); }
-    .viewer { position: relative; overflow: hidden; touch-action: none; cursor: zoom-in; }
-    .viewer.zoomed { cursor: grab; }
-    .viewer.panning { cursor: grabbing; }
-    .viewer .frame { position: absolute; inset: clamp(70px, 9vh, 110px) clamp(24px, 5vw, 80px); display: grid; place-items: center; }
-    .viewer img { max-width: 100%; max-height: 100%; box-shadow: 0 40px 90px rgba(0,0,0,.55), 0 0 0 10px #efe7da, 0 0 0 11px rgba(0,0,0,.25); transform-origin: center; user-select: none; -webkit-user-drag: none; transition: opacity .45s var(--ease), transform .45s var(--ease); }
-    .viewer.panning img, .viewer.pinching img { transition: opacity .45s var(--ease); }
-    .viewer img.swap { opacity: 0; }
-    .zoom-bar { position: absolute; left: 50%; bottom: calc(26px + var(--safe-b)); transform: translateX(-50%); display: flex; align-items: center; gap: .25rem; padding: .3rem; border: 1px solid rgba(244,237,226,.16); border-radius: 999px; background: rgba(23,19,15,.5); }
-    .zoom-bar button { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; }
-    .zoom-bar button:hover { background: rgba(244,237,226,.1); }
-    .zoom-bar svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.4; stroke-linecap: round; }
-    .zoom-bar output { min-width: 3.4rem; text-align: center; font-size: .68rem; letter-spacing: .1em; color: var(--muted); font-variant-numeric: tabular-nums; }
+    /* ============ DETAIL VIEW — glass card over the live scene ============ */
+    .detail { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; padding: 104px clamp(16px, 4vw, 64px) 116px; visibility: hidden; pointer-events: none; transition: visibility 0s .7s; }
+    .detail.open { visibility: visible; transition: none; }
+    .detail .scrim { position: absolute; inset: 0; pointer-events: auto; opacity: 0; transition: opacity .7s var(--ease);
+      background: radial-gradient(90% 80% at 50% 50%, rgba(24,18,13,.12), rgba(24,18,13,.5)); }
+    .detail.open .scrim { opacity: 1; }
+    .card { position: relative; pointer-events: auto; width: min(1260px, 100%); max-height: 100%; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); align-items: center;
+      padding: clamp(28px, 4.2vw, 60px) clamp(24px, 4vw, 64px); border-radius: 28px; color: var(--ivory);
+      background: linear-gradient(140deg, rgba(255,244,228,.17) 0%, rgba(255,236,214,.07) 55%, rgba(255,240,222,.11) 100%);
+      border: 1px solid rgba(255,244,228,.3);
+      box-shadow: 0 40px 100px rgba(10,6,3,.4), inset 0 1px 0 rgba(255,255,255,.28), inset 0 0 0 1px rgba(255,255,255,.04);
+      -webkit-backdrop-filter: blur(28px) saturate(1.25); backdrop-filter: blur(28px) saturate(1.25);
+      opacity: 0; transform: translateY(22px) scale(.975); transition: opacity .55s var(--ease), transform .7s var(--ease); }
+    .detail.open .card { opacity: 1; transform: none; }
+    .card::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+      background: radial-gradient(60% 50% at 15% 0%, rgba(255,255,255,.12), transparent 70%); }
+    .actions { position: absolute; top: 22px; right: 22px; display: flex; gap: .7rem; z-index: 3; }
+    .actions a, .actions button { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; transition: background .3s; }
+    .actions a:hover { background: rgba(255,244,228,.12); }
+    .actions button { background: rgba(255,244,228,.14); }
+    .actions button:hover { background: rgba(255,244,228,.26); }
+    .actions svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 
-    .panel { position: relative; background: rgba(239,231,218,.97); color: var(--brown); display: flex; flex-direction: column; padding: clamp(28px, 4vh, 44px) clamp(26px, 2.6vw, 42px) calc(28px + var(--safe-b)); overflow-y: auto; transform: translateX(30px); transition: transform .7s var(--ease); box-shadow: -30px 0 80px rgba(0,0,0,.25); }
-    .detail.open .panel { transform: none; }
-    .panel-top { display: flex; justify-content: space-between; align-items: center; }
-    .panel-top .idx { font-size: .7rem; letter-spacing: .18em; color: #8a7764; font-variant-numeric: tabular-nums; }
-    .panel .close { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(58,44,34,.2); display: grid; place-items: center; transition: background .3s; }
-    .panel .close:hover { background: rgba(58,44,34,.08); }
-    .panel .close svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 1.5; fill: none; stroke-linecap: round; }
-    .panel .meta { margin-top: auto; padding-top: 3rem; transition: opacity .4s var(--ease), transform .4s var(--ease); }
-    .panel .meta.swap { opacity: 0; transform: translateY(8px); }
-    .panel .cat { font-size: .66rem; letter-spacing: .26em; text-transform: uppercase; color: #9a6a2c; }
-    .panel h3 { font-family: var(--serif); font-weight: 500; font-size: clamp(2.1rem, 3vw, 2.9rem); line-height: 1.02; margin: .8rem 0 1.1rem; color: var(--ink); }
-    .panel dl { display: grid; grid-template-columns: auto 1fr; gap: .45rem 1.2rem; font-size: .8rem; padding: 1rem 0; border-top: 1px solid rgba(58,44,34,.15); border-bottom: 1px solid rgba(58,44,34,.15); }
-    .panel dt { color: #8a7764; letter-spacing: .14em; text-transform: uppercase; font-size: .64rem; padding-top: .15rem; }
-    .panel dd { color: var(--brown); }
-    .panel .desc { font-family: var(--serif); font-size: 1.18rem; line-height: 1.5; color: #4a3a2d; margin-top: 1.3rem; }
-    .panel .more { display: inline-flex; gap: .5rem; align-items: center; margin-top: 1.2rem; font-size: .7rem; letter-spacing: .2em; text-transform: uppercase; border-bottom: 1px solid currentColor; padding-bottom: 3px; color: var(--brown); }
-    .panel .more[hidden] { display: none; }
-    .panel-nav { display: flex; gap: .6rem; margin-top: 2rem; }
-    .panel-nav button { flex: 1; display: flex; align-items: center; justify-content: center; gap: .6rem; padding: .95rem; border: 1px solid rgba(58,44,34,.22); border-radius: 999px; font-size: .68rem; letter-spacing: .2em; text-transform: uppercase; transition: background .3s, color .3s; }
-    .panel-nav button:hover { background: var(--brown); color: var(--ivory); }
-    .panel-nav svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+    .media { position: relative; justify-self: center; max-width: 100%; border-radius: 10px; overflow: hidden; background: rgba(12,9,6,.35); box-shadow: 0 24px 60px rgba(0,0,0,.35); touch-action: none; cursor: zoom-in; }
+    .media.zoomed { cursor: grab; } .media.panning { cursor: grabbing; }
+    .media img { display: block; max-width: 100%; max-height: calc(100vh - 340px); min-height: 200px; object-fit: contain; transform-origin: center; user-select: none; -webkit-user-drag: none; transition: opacity .4s var(--ease), transform .4s var(--ease); }
+    .media.panning img, .media.pinching img { transition: opacity .4s var(--ease); }
+    .swap-out { opacity: 0 !important; }
+    .zoom-bar { position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%); display: flex; align-items: center; gap: .15rem; padding: .3rem .4rem; border-radius: 999px;
+      background: rgba(30,22,16,.42); border: 1px solid rgba(255,244,228,.28); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+    .zoom-bar button { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; }
+    .zoom-bar button:hover { background: rgba(255,244,228,.14); }
+    .zoom-bar svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.3; stroke-linecap: round; }
+    .zoom-bar output { min-width: 3.6rem; text-align: center; font-size: .9rem; font-variant-numeric: tabular-nums; }
+    .expand { position: absolute; right: 12px; bottom: 16px; width: 38px; height: 38px; border-radius: 8px; display: grid; place-items: center; }
+    .expand:hover { background: rgba(30,22,16,.4); }
+    .expand svg { width: 22px; height: 22px; stroke: #fff; fill: none; stroke-width: 1.5; stroke-linecap: round; filter: drop-shadow(0 1px 3px rgba(0,0,0,.6)); }
+    /* expanded image: drop the card's blur so the fixed layer can cover the screen */
+    .detail.expanded .card { -webkit-backdrop-filter: none; backdrop-filter: none; transform: none; }
+    .detail.expanded .media { position: fixed; inset: 18px; z-index: 50; max-width: none; justify-self: stretch; align-self: stretch; width: auto; height: auto; display: grid; place-items: center; background: rgba(16,12,9,.94); border-radius: 16px; }
+    .detail.expanded .info, .detail.expanded .actions { visibility: hidden; }
+    body.img-expanded header.top, body.img-expanded .controls { opacity: 0; pointer-events: none; transition-delay: 0s; }
+    .detail.expanded .media img { max-height: calc(100vh - 36px); max-width: calc(100vw - 36px); }
+
+    .info { display: flex; flex-direction: column; min-height: 0; max-height: calc(100vh - 340px); margin-left: clamp(24px, 3.4vw, 48px); padding-left: clamp(24px, 3.4vw, 48px); border-left: 1px solid rgba(255,244,228,.18); transition: opacity .4s var(--ease), transform .4s var(--ease); }
+    .info.swap-out { transform: translateY(8px); }
+    .info .cat { font-size: .66rem; letter-spacing: .26em; text-transform: uppercase; color: var(--amber); }
+    .info h3 { font-family: var(--serif); font-weight: 500; font-size: clamp(2.2rem, 3.6vw, 3.5rem); line-height: 1.02; margin: .5rem 4.5rem 0 0; }
+    .info .sub { font-size: 1.15rem; color: rgba(244,237,226,.75); margin-top: .5rem; }
+    .info .sub i { font-style: normal; margin: 0 .55rem; opacity: .7; }
+    .info dl { display: grid; grid-template-columns: 11rem 1fr; margin-top: 1.6rem; font-size: 1rem; }
+    .info dt, .info dd { padding: .7rem 0; border-bottom: 1px solid rgba(255,244,228,.18); }
+    .info dt { font-weight: 500; }
+    .info dd { color: rgba(244,237,226,.85); }
+    .info .desc { margin-top: 1.4rem; overflow-y: auto; min-height: 3rem; padding-right: 1rem; font-size: 1.06rem; line-height: 1.6; color: rgba(244,237,226,.86);
+      scrollbar-width: thin; scrollbar-color: rgba(255,244,228,.35) transparent; }
+    .info .desc::-webkit-scrollbar { width: 3px; } .info .desc::-webkit-scrollbar-thumb { background: rgba(255,244,228,.35); border-radius: 3px; }
+    .tags { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.4rem; }
+    .tags span { padding: .45rem 1rem; border-radius: 999px; font-size: .9rem; border: 1px solid rgba(255,244,228,.3); background: rgba(255,244,228,.08); }
+
+    body.detail-open header.top, body.detail-open .controls { z-index: 35; }
+    body.detail-open .caption, body.detail-open .hint { opacity: 0; pointer-events: none; transition-delay: 0s; }
 
     /* ============ SEARCH + MENU OVERLAYS ============ */
     .sheet { position: fixed; inset: 0; z-index: 40; background: rgba(24,19,15,.86); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); visibility: hidden; opacity: 0; transition: opacity .5s var(--ease), visibility .5s; overflow-y: auto; }
@@ -199,13 +223,14 @@
       .controls { left: auto; right: 20px; transform: none; gap: .6rem; }
       .ring { width: 64px; height: 64px; }
       .arrow { width: 44px; height: 44px; }
-      .detail { grid-template-columns: 1fr; grid-template-rows: 46vh 1fr; }
-      .viewer .frame { inset: 64px 18px 64px; }
-      .zoom-bar { bottom: 10px; }
-      .panel { transform: translateY(30px); padding-top: 22px; }
-      .panel .meta { padding-top: .8rem; margin-top: .4rem; }
-      .panel h3 { margin: .5rem 0 .8rem; }
-      .panel-nav { margin-top: 1.4rem; }
+      .detail { padding: 84px 14px calc(96px + var(--safe-b)); }
+      .card { grid-template-columns: 1fr; align-items: start; overflow-y: auto; padding: 64px 20px 24px; border-radius: 22px; }
+      .actions { top: 12px; right: 12px; }
+      .media img { max-height: 38vh; }
+      .info { max-height: none; margin: 1.4rem 0 0; padding: 1.4rem 0 0; border-left: 0; border-top: 1px solid rgba(255,244,228,.18); }
+      .info h3 { margin-right: 0; }
+      .info dl { grid-template-columns: 7.5rem 1fr; font-size: .92rem; }
+      .info .desc { overflow: visible; padding-right: 0; }
       .menu-grid { grid-template-columns: 1fr; }
     }
     @media (max-width: 560px) {
@@ -287,7 +312,7 @@
   </div>
 
   <div class="ui hint" aria-hidden="true">
-    <div><kbd>&larr;</kbd> <kbd>&rarr;</kbd> or scroll to walk</div>
+    <div>Scroll to walk &middot; move cursor to look</div>
     <div>Click a work to view</div>
   </div>
 
@@ -298,40 +323,36 @@
     <ol id="srList"></ol>
   </section>
 
-  <!-- ============ DETAIL VIEW ============ -->
+  <!-- ============ DETAIL VIEW (glass card) ============ -->
   <div class="detail" id="detail" role="dialog" aria-modal="true" aria-labelledby="dTitle" aria-hidden="true">
-    <div class="viewer" id="viewer">
-      <div class="frame"><img id="dImg" alt=""></div>
-      <div class="zoom-bar">
-        <button type="button" id="zoomOut" aria-label="Zoom out"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12"/></svg></button>
-        <output id="zoomVal">100%</output>
-        <button type="button" id="zoomIn" aria-label="Zoom in"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12M12 6v12"/></svg></button>
-        <button type="button" id="zoomReset" aria-label="Fit to screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+    <div class="scrim" id="dScrim"></div>
+    <article class="card" id="card">
+      <div class="actions">
+        <a id="dMore" href="#" aria-label="Open case study"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>
+        <button id="dClose" type="button" aria-label="Close and return to the corridor"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
       </div>
-    </div>
-    <aside class="panel">
-      <div class="panel-top">
-        <span class="idx" id="dIdx">01 / 24</span>
-        <button class="close" id="dClose" type="button" aria-label="Close and return to the gallery">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
-        </button>
+      <div class="media" id="media">
+        <img id="dImg" alt="">
+        <div class="zoom-bar">
+          <button type="button" id="zoomOut" aria-label="Zoom out"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></svg></button>
+          <output id="zoomVal">100%</output>
+          <button type="button" id="zoomIn" aria-label="Zoom in"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg></button>
+        </div>
+        <button class="expand" type="button" id="dExpand" aria-label="Expand image"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
       </div>
-      <div class="meta" id="dMeta">
-        <div class="cat" id="dCat"></div>
+      <div class="info" id="dInfo">
+        <div class="cat" id="dIdx">01 / 24</div>
         <h3 id="dTitle"></h3>
+        <div class="sub"><span id="dCat"></span><i>&middot;</i><span id="dYear"></span></div>
         <dl>
           <dt>Artist</dt><dd id="dArtist"></dd>
-          <dt>Year</dt><dd id="dYear"></dd>
           <dt>Medium</dt><dd id="dMedium"></dd>
+          <dt>Collection</dt><dd id="dColl"></dd>
         </dl>
-        <p class="desc" id="dDesc"></p>
-        <a class="more" id="dMore" href="#" hidden>View case study <span aria-hidden="true">&rarr;</span></a>
+        <div class="desc" id="dDesc" tabindex="0"></div>
+        <div class="tags" id="dTags"></div>
       </div>
-      <div class="panel-nav">
-        <button type="button" id="dPrev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>Previous</button>
-        <button type="button" id="dNext">Next<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
-      </div>
-    </aside>
+    </article>
   </div>
 
   <!-- ============ SEARCH ============ -->
@@ -875,7 +896,7 @@
     const nrm = outer ? new THREE.Vector3(-Math.cos(theta), 0, -Math.sin(theta)) : new THREE.Vector3(Math.cos(theta), 0, Math.sin(theta));
     g.lookAt(g.position.clone().add(nrm));
     scene.add(g); g.updateMatrixWorld(true);
-    groups.push({ g, wash, art, artMat, theta, nrm, hover: 0 });
+    groups.push({ g, wash, art, artMat, theta, nrm, ow, oh, hover: 0 });
     artCenters.push(art.getWorldPosition(new THREE.Vector3()));
   });
 
@@ -943,11 +964,15 @@
 
   /* ==========================================================
      MOVEMENT
+     Scroll walks forward/back along the corridor (no auto-turning).
+     The cursor looks around. Clicking a work flies the camera to face it.
      ========================================================== */
   let t = -1.5, target = -1.5, entered = false;
   let k = 3.0;
   const lookNow = new THREE.Vector3().copy(titlePos);
-  const mouse = { x: 0, y: 0, sx: 0, sy: 0 };
+  const mouse = { x: 0, y: 0 };
+  const look = { yaw: 0, pitch: 0, touchYaw: 0 };
+  const focus = { idx: -1, f: 0, goal: 0, cam: new THREE.Vector3(), at: new THREE.Vector3(), panelShown: false };
 
   function enter() {
     if (entered) return;
@@ -960,7 +985,12 @@
   }
   $('enterBtn').addEventListener('click', enter);
 
-  function go(delta) { if (!entered) return; target = Math.round(target) + delta; updateCaption(); }
+  const detailOpen = () => focus.goal === 1;
+  function go(delta) {
+    if (!entered) return;
+    if (detailOpen()) { detailStep(delta); return; }
+    target = Math.round(target) + delta; updateCaption();
+  }
   function goTo(i) {
     if (!entered) enter();
     const cur = Math.round(target), base = cur - mod(cur, N);
@@ -983,20 +1013,21 @@
     }, reduce ? 0 : 260);
   }
 
-  // Wheel: one detent = one step, with a short cool-down so trackpads don't race
-  let wheelAcc = 0, wheelLock = 0;
+  // Wheel: continuous walking. Down = forward, up = back.
   addEventListener('wheel', e => {
-    if (anyOverlayOpen()) return;
+    if (anyOverlayOpen() || detailOpen()) return;
     e.preventDefault(); if (!entered) return;
-    const now = performance.now(); wheelAcc += Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
-    if (now > wheelLock && Math.abs(wheelAcc) > 40) { go(Math.sign(wheelAcc)); wheelAcc = 0; wheelLock = now + 520; }
-    if (now > wheelLock + 300) wheelAcc *= .5;
+    let d = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+    if (e.deltaMode === 1) d *= 33;
+    d = Math.max(-120, Math.min(120, d));
+    target += d * .0042;
+    updateCaption();
   }, { passive: false });
 
   // Keyboard
   addEventListener('keydown', e => {
-    if (e.key === 'Escape') { closeAll(); return; }
-    if ($('detail').classList.contains('open')) {
+    if (e.key === 'Escape') { if (expanded()) { setExpanded(false); return; } closeAll(); return; }
+    if (detailOpen()) {
       if (e.key === 'ArrowRight') detailStep(1); else if (e.key === 'ArrowLeft') detailStep(-1);
       else if (e.key === '+' || e.key === '=') zoomBy(1.4); else if (e.key === '-') zoomBy(1 / 1.4);
       return;
@@ -1008,7 +1039,7 @@
     if (e.key === 'Enter' && entered && document.activeElement === document.body) openDetail(mod(Math.round(target), N));
   });
 
-  // Pointer: hover, click, drag/swipe to walk
+  // Pointer: cursor looks around, hover shows titles, click opens. Touch: drag sideways to look, up/down to walk.
   const raycaster = new THREE.Raycaster(), ndc = new THREE.Vector2();
   let hovered = -1, down = null;
   const tip = $('tip');
@@ -1019,52 +1050,70 @@
     return hit && hit.distance < 16 ? hit.object.userData.index : -1;
   }
   const cvs = renderer.domElement;
-  cvs.addEventListener('pointermove', e => {
-    mouse.x = e.clientX / innerWidth * 2 - 1; mouse.y = e.clientY / innerHeight * 2 - 1;
-    if (down) { if (Math.abs(e.clientX - down.x) > 8) stage.classList.add('is-drag'); return; }
-    if (!entered || e.pointerType === 'touch') return;
-    const i = pick(e.clientX, e.clientY);
+  function setHover(i, x, y) {
     if (i !== hovered) {
       hovered = i; stage.classList.toggle('is-hover', i >= 0);
       if (i >= 0) { $('tipTitle').textContent = ART[i].title; $('tipMeta').textContent = `${ART[i].cat} · ${ART[i].year}`; }
       tip.classList.toggle('on', i >= 0);
     }
-    if (i >= 0) { tip.style.left = e.clientX + 'px'; tip.style.top = e.clientY + 'px'; }
+    if (i >= 0) { tip.style.left = x + 'px'; tip.style.top = y + 'px'; }
+  }
+  cvs.addEventListener('pointermove', e => {
+    if (e.pointerType === 'touch') {
+      if (!down || !entered || detailOpen()) return;
+      const dx = e.clientX - down.lx, dy = e.clientY - down.ly; down.lx = e.clientX; down.ly = e.clientY;
+      if (Math.abs(e.clientX - down.x) + Math.abs(e.clientY - down.y) > 8) down.moved = true;
+      look.touchYaw = Math.max(-.9, Math.min(.9, look.touchYaw + dx * .004));
+      target -= dy * .012; updateCaption();
+      return;
+    }
+    mouse.x = e.clientX / innerWidth * 2 - 1; mouse.y = e.clientY / innerHeight * 2 - 1;
+    if (!entered || detailOpen()) return;
+    setHover(pick(e.clientX, e.clientY), e.clientX, e.clientY);
   });
-  cvs.addEventListener('pointerleave', () => { hovered = -1; tip.classList.remove('on'); stage.classList.remove('is-hover'); mouse.x = mouse.y = 0; });
-  cvs.addEventListener('pointerdown', e => { down = { x: e.clientX, y: e.clientY, t: performance.now() }; cvs.setPointerCapture(e.pointerId); });
+  cvs.addEventListener('pointerleave', e => { if (e.pointerType !== 'touch') setHover(-1); });
+  cvs.addEventListener('pointerdown', e => {
+    down = { x: e.clientX, y: e.clientY, lx: e.clientX, ly: e.clientY, t: performance.now(), moved: false };
+    if (e.pointerType === 'touch') cvs.setPointerCapture(e.pointerId);
+  });
   cvs.addEventListener('pointerup', e => {
     if (!down) return;
-    const dx = e.clientX - down.x, dy = e.clientY - down.y, dt = performance.now() - down.t;
-    stage.classList.remove('is-drag'); down = null;
-    if (!entered) return;
-    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) { go(dx < 0 ? 1 : -1); return; }
-    if (Math.abs(dx) < 8 && Math.abs(dy) < 8 && dt < 500) {
-      const i = pick(e.clientX, e.clientY);
-      if (i >= 0) { goTo(i); openDetail(i); }
-    }
+    const d = down; down = null;
+    if (!entered || detailOpen()) return;
+    const still = !d.moved && Math.abs(e.clientX - d.x) < 8 && Math.abs(e.clientY - d.y) < 8 && performance.now() - d.t < 600;
+    if (still) { const i = pick(e.clientX, e.clientY); if (i >= 0) openDetail(i); }
   });
-  cvs.addEventListener('pointercancel', () => { down = null; stage.classList.remove('is-drag'); });
+  cvs.addEventListener('pointercancel', () => { down = null; });
 
   /* ==========================================================
-     DETAIL VIEW (zoom + pan)
+     DETAIL: fly to the frame, then show the glass card
      ========================================================== */
-  const detail = $('detail'), dImg = $('dImg'), viewer = $('viewer');
+  const detail = $('detail'), dImg = $('dImg'), media = $('media');
   let dIndex = 0, lastFocus = null;
   const z = { s: 1, x: 0, y: 0 };
   const applyZoom = () => {
     if (z.s <= 1.001) { z.s = 1; z.x = z.y = 0; }
-    const rw = dImg.clientWidth * (z.s - 1) / 2 + 40, rh = dImg.clientHeight * (z.s - 1) / 2 + 40;
-    if (z.s > 1) { z.x = Math.max(-rw, Math.min(rw, z.x)); z.y = Math.max(-rh, Math.min(rh, z.y)); }
+    const rw = dImg.clientWidth * (z.s - 1) / 2, rh = dImg.clientHeight * (z.s - 1) / 2;
+    z.x = Math.max(-rw, Math.min(rw, z.x)); z.y = Math.max(-rh, Math.min(rh, z.y));
     dImg.style.transform = `translate(${z.x}px, ${z.y}px) scale(${z.s})`;
     $('zoomVal').textContent = Math.round(z.s * 100) + '%';
-    viewer.classList.toggle('zoomed', z.s > 1);
+    media.classList.toggle('zoomed', z.s > 1);
   };
   function zoomBy(f, cx, cy) {
     const ns = Math.max(1, Math.min(6, z.s * f));
-    const r = viewer.getBoundingClientRect();
-    const px = (cx ?? r.left + r.width / 2) - (r.left + r.width / 2), py = (cy ?? r.top + r.height / 2) - (r.top + r.height / 2);
+    const r = dImg.getBoundingClientRect(), mx = r.left + r.width / 2 - z.x, my = r.top + r.height / 2 - z.y;
+    const px = (cx ?? mx) - mx, py = (cy ?? my) - my;
     z.x = px - (px - z.x) * (ns / z.s); z.y = py - (py - z.y) * (ns / z.s); z.s = ns; applyZoom();
+  }
+  const expanded = () => detail.classList.contains('expanded');
+  function setExpanded(on) { detail.classList.toggle('expanded', on); document.body.classList.toggle('img-expanded', on); $('dExpand').setAttribute('aria-label', on ? 'Shrink image' : 'Expand image'); z.s = 1; requestAnimationFrame(applyZoom); }
+  $('dExpand').addEventListener('click', e => { e.stopPropagation(); setExpanded(!expanded()); });
+
+  function tagsFor(a) {
+    const t = a.cat.split('·').map(s => s.trim());
+    t.push(a.gen ? 'Generative' : 'Portfolio');
+    if (a.medium.toLowerCase().includes('illustration')) t.push('Illustration');
+    return [...new Set(t)].slice(0, 4);
   }
   function fillDetail(i, animate) {
     const a = ART[i];
@@ -1072,53 +1121,72 @@
       dImg.src = a.gen ? (a.full || (a.full = a.canvas.toDataURL('image/jpeg', .92))) : a.src;
       dImg.alt = `${a.title} — ${a.cat}`;
       $('dIdx').textContent = `${pad(i + 1)} / ${pad(N)}`;
-      $('dCat').textContent = a.cat; $('dTitle').textContent = a.title;
-      $('dArtist').textContent = a.artist; $('dYear').textContent = a.year; $('dMedium').textContent = a.medium;
-      $('dDesc').textContent = a.desc;
-      const more = $('dMore'); if (a.link) { more.href = a.link; more.hidden = false; } else more.hidden = true;
+      $('dTitle').textContent = a.title; $('dCat').textContent = a.cat.split('·')[0].trim(); $('dYear').textContent = a.year;
+      $('dArtist').textContent = a.artist; $('dMedium').textContent = a.medium;
+      $('dColl').textContent = a.gen ? 'Generative studies' : 'Portfolio work';
+      $('dDesc').textContent = a.desc; $('dDesc').scrollTop = 0;
+      $('dTags').innerHTML = tagsFor(a).map(x => `<span>${x}</span>`).join('');
+      const more = $('dMore');
+      more.href = a.link || dImg.src; more.target = a.link ? '_self' : '_blank';
+      more.setAttribute('aria-label', a.link ? 'Open case study' : 'Open image in a new tab');
       z.s = 1; applyZoom();
-      dImg.classList.remove('swap'); $('dMeta').classList.remove('swap');
+      dImg.classList.remove('swap-out'); $('dInfo').classList.remove('swap-out');
     };
-    if (animate && !reduce) { dImg.classList.add('swap'); $('dMeta').classList.add('swap'); setTimeout(set, 280); } else set();
+    if (animate && !reduce) { dImg.classList.add('swap-out'); $('dInfo').classList.add('swap-out'); setTimeout(set, 260); } else set();
+  }
+  function showPanel() {
+    focus.panelShown = true;
+    detail.classList.add('open'); detail.setAttribute('aria-hidden', 'false');
+    setTimeout(() => $('dClose').focus({ preventScroll: true }), 60);
   }
   function openDetail(i) {
-    dIndex = i; lastFocus = document.activeElement;
-    fillDetail(i, false);
-    detail.classList.add('open'); detail.setAttribute('aria-hidden', 'false');
-    tip.classList.remove('on');
-    setTimeout(() => $('dClose').focus({ preventScroll: true }), 50);
+    if (!entered) enter();
+    if (focus.goal === 0) lastFocus = document.activeElement;
+    dIndex = i; focus.idx = i; focus.goal = 1; focus.panelShown = false;
+    setHover(-1);
+    document.body.classList.add('detail-open');
+    goTo(i); fillDetail(i, false);
+    if (reduce) showPanel(); // otherwise the frame loop opens it once the camera arrives
+    clearTimeout(focus.timer); focus.timer = setTimeout(() => { if (focus.goal === 1 && !focus.panelShown) showPanel(); }, 1500);
   }
-  function detailStep(d) { dIndex = mod(dIndex + d, N); goTo(dIndex); fillDetail(dIndex, true); }
-  function closeDetail() { detail.classList.remove('open'); detail.setAttribute('aria-hidden', 'true'); if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true }); }
+  function detailStep(d) {
+    dIndex = mod(dIndex + d, N); focus.idx = dIndex;
+    goTo(dIndex); fillDetail(dIndex, true);
+  }
+  function closeDetail() {
+    setExpanded(false);
+    detail.classList.remove('open'); detail.setAttribute('aria-hidden', 'true');
+    focus.goal = 0; focus.panelShown = false;
+    document.body.classList.remove('detail-open');
+    if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+  }
   $('dClose').addEventListener('click', closeDetail);
-  $('dPrev').addEventListener('click', () => detailStep(-1));
-  $('dNext').addEventListener('click', () => detailStep(1));
-  $('zoomIn').addEventListener('click', () => zoomBy(1.5));
-  $('zoomOut').addEventListener('click', () => zoomBy(1 / 1.5));
-  $('zoomReset').addEventListener('click', () => { z.s = 1; applyZoom(); });
-  viewer.addEventListener('wheel', e => { e.preventDefault(); e.stopPropagation(); zoomBy(Math.exp(-e.deltaY * .0022), e.clientX, e.clientY); }, { passive: false });
-  viewer.addEventListener('dblclick', e => { if (e.target.closest('.zoom-bar')) return; z.s > 1 ? (z.s = 1, applyZoom()) : zoomBy(2.5, e.clientX, e.clientY); });
-  // pan + pinch
+  $('dScrim').addEventListener('click', closeDetail);
+  $('zoomIn').addEventListener('click', e => { e.stopPropagation(); zoomBy(1.5); });
+  $('zoomOut').addEventListener('click', e => { e.stopPropagation(); zoomBy(1 / 1.5); });
+  media.addEventListener('wheel', e => { e.preventDefault(); e.stopPropagation(); zoomBy(Math.exp(-e.deltaY * .0022), e.clientX, e.clientY); }, { passive: false });
+  media.addEventListener('dblclick', e => { if (e.target.closest('button')) return; z.s > 1 ? (z.s = 1, applyZoom()) : zoomBy(2.5, e.clientX, e.clientY); });
   const ptrs = new Map(); let pinch0 = 0, s0 = 1, pan0 = null, tapT = 0;
-  viewer.addEventListener('pointerdown', e => {
-    if (e.target.closest('.zoom-bar')) return;
-    viewer.setPointerCapture(e.pointerId); ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    if (ptrs.size === 2) { const [a, b] = [...ptrs.values()]; pinch0 = Math.hypot(a.x - b.x, a.y - b.y); s0 = z.s; viewer.classList.add('pinching'); }
-    else { pan0 = { x: e.clientX - z.x, y: e.clientY - z.y }; if (z.s > 1) viewer.classList.add('panning'); }
+  media.addEventListener('pointerdown', e => {
+    if (e.target.closest('button')) return;
+    media.setPointerCapture(e.pointerId); ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (ptrs.size === 2) { const [a, b] = [...ptrs.values()]; pinch0 = Math.hypot(a.x - b.x, a.y - b.y); s0 = z.s; media.classList.add('pinching'); }
+    else { pan0 = { x: e.clientX - z.x, y: e.clientY - z.y }; if (z.s > 1) media.classList.add('panning'); }
   });
-  viewer.addEventListener('pointermove', e => {
+  media.addEventListener('pointermove', e => {
     if (!ptrs.has(e.pointerId)) return; ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    if (ptrs.size === 2) { const [a, b] = [...ptrs.values()]; const d = Math.hypot(a.x - b.x, a.y - b.y); z.s = Math.max(1, Math.min(6, s0 * d / pinch0)); applyZoom(); }
+    if (ptrs.size === 2) { const [a, b] = [...ptrs.values()]; z.s = Math.max(1, Math.min(6, s0 * Math.hypot(a.x - b.x, a.y - b.y) / pinch0)); applyZoom(); }
     else if (pan0 && z.s > 1) { z.x = e.clientX - pan0.x; z.y = e.clientY - pan0.y; applyZoom(); }
   });
   const endPtr = e => {
-    ptrs.delete(e.pointerId); viewer.classList.remove('panning');
-    if (ptrs.size < 2) viewer.classList.remove('pinching');
-    if (e.pointerType === 'touch' && ptrs.size === 0) { const now = performance.now(); if (now - tapT < 300) { z.s > 1 ? (z.s = 1, applyZoom()) : zoomBy(2.5, e.clientX, e.clientY); } tapT = now; }
+    ptrs.delete(e.pointerId); media.classList.remove('panning');
+    if (ptrs.size < 2) media.classList.remove('pinching');
+    if (e.pointerType === 'touch' && ptrs.size === 0 && !e.target.closest('button')) { const now = performance.now(); if (now - tapT < 300) { z.s > 1 ? (z.s = 1, applyZoom()) : zoomBy(2.5, e.clientX, e.clientY); } tapT = now; }
     pan0 = null;
   };
-  viewer.addEventListener('pointerup', endPtr); viewer.addEventListener('pointercancel', endPtr);
-  addEventListener('resize', () => detail.classList.contains('open') && applyZoom());
+  media.addEventListener('pointerup', endPtr); media.addEventListener('pointercancel', endPtr);
+  addEventListener('resize', () => detailOpen() && applyZoom());
+
 
   /* ---------- Search + menu ---------- */
   const searchSheet = $('searchSheet'), menuSheet = $('menuSheet');
@@ -1126,11 +1194,11 @@
   function closeSheet(el) { el.classList.remove('open'); el.setAttribute('aria-hidden', 'true'); }
   function closeAll() {
     const wasOpen = anyOverlayOpen();
-    if (detail.classList.contains('open')) closeDetail();
+    if (focus.goal === 1) closeDetail();
     [searchSheet, menuSheet].forEach(closeSheet);
     if (wasOpen && lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
   }
-  const anyOverlayOpen = () => detail.classList.contains('open') || searchSheet.classList.contains('open') || menuSheet.classList.contains('open');
+  const anyOverlayOpen = () => searchSheet.classList.contains('open') || menuSheet.classList.contains('open');
   function renderResults(q) {
     q = q.trim().toLowerCase();
     const hits = ART.map((a, i) => [a, i]).filter(([a]) => !q || `${a.title} ${a.cat} ${a.medium} ${a.artist} ${a.year}`.toLowerCase().includes(q));
@@ -1144,7 +1212,7 @@
     const g = e.target.closest('[data-go]');
     if (g) { closeAll(); goTo(+g.dataset.go); return; }
     const o = e.target.closest('[data-open]');
-    if (o) { goTo(+o.dataset.open); openDetail(+o.dataset.open); return; }
+    if (o) { openDetail(+o.dataset.open); return; }
     const c = e.target.closest('[data-close]');
     if (c) { if (c.tagName === 'A' && c.getAttribute('href') === './') e.preventDefault(); closeAll(); }
   });
@@ -1152,10 +1220,11 @@
   /* ==========================================================
      FRAME LOOP
      ========================================================== */
-  const tmp = new THREE.Vector3(), ahead = new THREE.Vector3(), want = new THREE.Vector3(), lpos = new THREE.Vector3();
+  const tmp = new THREE.Vector3(), ahead = new THREE.Vector3(), want = new THREE.Vector3(), lpos = new THREE.Vector3(), corridor = new THREE.Vector3(), fwant = new THREE.Vector3();
   const arc = $('arc'), dot = $('dot'), CIRC = 2 * Math.PI * 32;
   let last = performance.now(), walkPhase = 0, lastSpotKey = '';
   const smooth = x => x * x * (3 - 2 * x);
+  const ease = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
 
   function assignSpots(ti) {
     const c = Math.round(ti), key = String(c);
@@ -1166,6 +1235,14 @@
       s.target.position.copy(gi.art.getWorldPosition(tmp)); s.target.updateMatrixWorld();
     });
   }
+  // Standing spot in front of a work, far enough back for the whole frame to fit
+  function viewSpot(i, out) {
+    const gi = groups[i], c = artCenters[i];
+    const vf = THREE.MathUtils.degToRad(camera.fov) / 2;
+    const fitH = gi.oh / (.62 * 2 * Math.tan(vf)), fitW = gi.ow / (.5 * 2 * Math.tan(vf) * camera.aspect);
+    const dist = Math.max(2.1, Math.min(3.6, Math.max(fitH, fitW)));
+    return out.copy(c).addScaledVector(gi.nrm, dist).setY(c.y - .02);
+  }
 
   function frame(now) {
     const dt = Math.min(.05, (now - last) / 1000); last = now;
@@ -1174,27 +1251,46 @@
     if (Math.abs(target - t) < 1e-4) t = target;
     const speed = Math.abs(t - prevT) / Math.max(dt, 1e-3);
 
+    // 1. Corridor camera: always faces straight down the curve
     const a = t * STEP;
     walkPhase += dt * speed * 9;
-    const bob = reduce ? 0 : Math.sin(walkPhase) * .018 * Math.min(1, speed);
-    camera.position.set(Math.cos(a) * R, EYE + bob, Math.sin(a) * R);
+    const bob = reduce ? 0 : Math.sin(walkPhase) * .016 * Math.min(1, speed);
+    corridor.set(Math.cos(a) * R, EYE + bob, Math.sin(a) * R);
     carry.position.set(Math.cos(a + .12) * R, H - 1.2, Math.sin(a + .12) * R);
-
-    // Where to look: ahead round the curve, turning gently toward the nearest work when you stop
     ahead.set(Math.cos(a + .55) * R, EYE - .04, Math.sin(a + .55) * R);
-    const near = Math.round(t), frac = 1 - Math.min(1, Math.abs(t - near) * 2);
-    want.copy(ahead).lerp(artCenters[mod(near, N)], .58 * smooth(frac));
-    if (t < -.3) want.lerp(titlePos, smooth(Math.min(1, (-t - .3) / 1.0)));
-    lookNow.lerp(want, 1 - Math.exp(-dt * 4.2));
-    camera.lookAt(lookNow);
-    mouse.sx += (mouse.x - mouse.sx) * (1 - Math.exp(-dt * 3)); mouse.sy += (mouse.y - mouse.sy) * (1 - Math.exp(-dt * 3));
-    if (!reduce && !anyOverlayOpen()) { camera.rotateY(-mouse.sx * .07); camera.rotateX(-mouse.sy * .04); }
+    want.copy(ahead);
+    if (t < -.3) want.lerp(titlePos, smooth(Math.min(1, (-t - .3) / 1.0)));   // entrance: look at the title wall
+    lookNow.lerp(want, 1 - Math.exp(-dt * 5));
 
-    assignSpots(t);
+    // 2. Focus: fly to face the chosen frame
+    const fk = 1 - Math.exp(-dt * (reduce ? 40 : 2.2));
+    focus.f += (focus.goal - focus.f) * fk;
+    if (Math.abs(focus.goal - focus.f) < .002) focus.f = focus.goal;
+    if (focus.idx >= 0) {
+      viewSpot(focus.idx, fwant);
+      if (focus.f < .02 && focus.goal === 1) { focus.cam.copy(fwant); focus.at.copy(artCenters[focus.idx]); }
+      const mk = 1 - Math.exp(-dt * (reduce ? 40 : 2.6));
+      focus.cam.lerp(fwant, mk); focus.at.lerp(artCenters[focus.idx], mk);
+    }
+    const e = ease(focus.f);
+    camera.position.lerpVectors(corridor, focus.cam, e);
+    tmp.lerpVectors(lookNow, focus.at, e);
+    camera.lookAt(tmp);
+    if (focus.goal === 1 && !focus.panelShown && focus.f > .82) showPanel();
+    if (focus.goal === 0 && focus.f === 0) focus.idx = -1;
+
+    // 3. Cursor look-around (fades out while focused)
+    const free = (1 - e) * (anyOverlayOpen() ? 0 : 1);
+    const yGoal = reduce ? 0 : -mouse.x * .62 + look.touchYaw, pGoal = reduce ? 0 : -mouse.y * .2;
+    const lk = 1 - Math.exp(-dt * 3.2);
+    look.yaw += (yGoal - look.yaw) * lk; look.pitch += (pGoal - look.pitch) * lk;
+    if (free > 0) { camera.rotateY(look.yaw * free); camera.rotateX(look.pitch * free); }
+
+    assignSpots(focus.goal ? target : t);
 
     // Hover highlight
     groups.forEach((gi, i) => {
-      const goal = i === hovered ? 1 : 0;
+      const goal = i === hovered || (focus.goal && i === focus.idx) ? 1 : 0;
       if (gi.hover !== goal) {
         gi.hover += (goal - gi.hover) * (1 - Math.exp(-dt * 8)); if (Math.abs(goal - gi.hover) < .01) gi.hover = goal;
         gi.artMat.emissiveIntensity = .32 + gi.hover * .22; gi.wash.material.opacity = .36 + gi.hover * .3;
