@@ -120,20 +120,28 @@
     .ui { transition: opacity 1.2s var(--ease) .5s; }
 
     /* ============ DETAIL VIEW — glass card over the live scene ============ */
-    .detail { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; padding: 104px clamp(16px, 4vw, 64px) 116px; visibility: hidden; pointer-events: none; transition: visibility 0s .7s; }
-    .detail.open { visibility: visible; transition: none; }
+    .detail { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; padding: 104px clamp(16px, 4vw, 64px) 116px; visibility: hidden; pointer-events: none; }
+    .detail.open { visibility: visible; }
     .detail .scrim { position: absolute; inset: 0; pointer-events: auto; opacity: 0; transition: opacity .7s var(--ease);
-      background: radial-gradient(90% 80% at 50% 50%, rgba(24,18,13,.12), rgba(24,18,13,.5)); }
+      background: radial-gradient(100% 90% at 50% 50%, rgba(24,18,13,0) 40%, rgba(24,18,13,.32)); }
     .detail.open .scrim { opacity: 1; }
-    .card { position: relative; pointer-events: auto; width: min(1260px, 100%); max-height: 100%; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); align-items: center;
-      padding: clamp(28px, 4.2vw, 60px) clamp(24px, 4vw, 64px); border-radius: 28px; color: var(--ivory);
-      background: linear-gradient(140deg, rgba(255,244,228,.17) 0%, rgba(255,236,214,.07) 55%, rgba(255,240,222,.11) 100%);
+    .detail.closing .scrim { opacity: 0; }
+    .detail.closing .card-head, .detail.closing .info { opacity: 0; transition: opacity .2s; }
+    .card { position: relative; pointer-events: auto; width: min(1200px, 100%); max-height: 100%; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      grid-template-areas: "head head" "media info"; align-items: start; column-gap: clamp(24px, 3.4vw, 48px);
+      padding: clamp(26px, 3vw, 40px) clamp(24px, 3.4vw, 48px) clamp(28px, 3.4vw, 48px); border-radius: 28px; color: var(--ivory); transform-origin: 0 0; will-change: transform, clip-path;
+      background: linear-gradient(140deg, rgba(255,244,228,.12) 0%, rgba(255,236,214,.04) 55%, rgba(255,240,222,.08) 100%);
       border: 1px solid rgba(255,244,228,.3);
       box-shadow: 0 40px 100px rgba(10,6,3,.4), inset 0 1px 0 rgba(255,255,255,.28), inset 0 0 0 1px rgba(255,255,255,.04);
-      -webkit-backdrop-filter: blur(28px) saturate(1.25); backdrop-filter: blur(28px) saturate(1.25);
-      opacity: 0; transform: translateY(22px) scale(.975); transition: opacity .55s var(--ease), transform .7s var(--ease); }
-    .detail.open .card { opacity: 1; transform: none; }
-    .card::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+      -webkit-backdrop-filter: blur(16px) saturate(1.3); backdrop-filter: blur(16px) saturate(1.3); }
+    .card-head { transition: opacity .4s var(--ease); grid-area: head; padding-right: 7rem; margin-bottom: clamp(18px, 2.4vw, 28px); }
+    .card-head .cat { font-size: .64rem; letter-spacing: .26em; text-transform: uppercase; color: var(--amber); }
+    .card-head h3 { font-family: var(--serif); font-weight: 500; font-size: clamp(1.9rem, 2.8vw, 2.7rem); line-height: 1.05; margin-top: .35rem; text-shadow: 0 1px 12px rgba(0,0,0,.18); }
+    .card-head .sub { font-size: .92rem; color: rgba(244,237,226,.78); margin-top: .35rem; }
+    .card-head .sub i { font-style: normal; margin: 0 .5rem; opacity: .7; }
+    .fade-in { animation: fadeUp .5s var(--ease) both; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+        .card::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
       background: radial-gradient(60% 50% at 15% 0%, rgba(255,255,255,.12), transparent 70%); }
     .actions { position: absolute; top: 22px; right: 22px; display: flex; gap: .7rem; z-index: 3; }
     .actions a, .actions button { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; transition: background .3s; }
@@ -142,9 +150,9 @@
     .actions button:hover { background: rgba(255,244,228,.26); }
     .actions svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 
-    .media { position: relative; justify-self: center; max-width: 100%; border-radius: 10px; overflow: hidden; background: rgba(12,9,6,.35); box-shadow: 0 24px 60px rgba(0,0,0,.35); touch-action: none; cursor: zoom-in; }
+    .media { grid-area: media; position: relative; justify-self: center; max-width: 100%; border-radius: 10px; overflow: hidden; background: rgba(12,9,6,.35); box-shadow: 0 24px 60px rgba(0,0,0,.35); touch-action: none; cursor: zoom-in; }
     .media.zoomed { cursor: grab; } .media.panning { cursor: grabbing; }
-    .media img { display: block; max-width: 100%; max-height: calc(100vh - 340px); min-height: 200px; object-fit: contain; transform-origin: center; user-select: none; -webkit-user-drag: none; transition: opacity .4s var(--ease), transform .4s var(--ease); }
+    .media img { display: block; max-width: 100%; max-height: calc(100vh - 400px); min-height: 200px; object-fit: contain; transform-origin: center; user-select: none; -webkit-user-drag: none; transition: opacity .4s var(--ease), transform .4s var(--ease); }
     .media.panning img, .media.pinching img { transition: opacity .4s var(--ease); }
     .swap-out { opacity: 0 !important; }
     .zoom-bar { position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%); display: flex; align-items: center; gap: .15rem; padding: .3rem .4rem; border-radius: 999px;
@@ -163,21 +171,17 @@
     body.img-expanded header.top, body.img-expanded .controls { opacity: 0; pointer-events: none; transition-delay: 0s; }
     .detail.expanded .media img { max-height: calc(100vh - 36px); max-width: calc(100vw - 36px); }
 
-    .info { display: flex; flex-direction: column; min-height: 0; max-height: calc(100vh - 340px); margin-left: clamp(24px, 3.4vw, 48px); padding-left: clamp(24px, 3.4vw, 48px); border-left: 1px solid rgba(255,244,228,.18); transition: opacity .4s var(--ease), transform .4s var(--ease); }
+    .info { grid-area: info; display: flex; flex-direction: column; min-height: 0; max-height: calc(100vh - 400px); padding-left: clamp(22px, 3vw, 40px); border-left: 1px solid rgba(255,244,228,.18); transition: opacity .4s var(--ease), transform .4s var(--ease); }
     .info.swap-out { transform: translateY(8px); }
-    .info .cat { font-size: .66rem; letter-spacing: .26em; text-transform: uppercase; color: var(--amber); }
-    .info h3 { font-family: var(--serif); font-weight: 500; font-size: clamp(2.2rem, 3.6vw, 3.5rem); line-height: 1.02; margin: .5rem 4.5rem 0 0; }
-    .info .sub { font-size: 1.15rem; color: rgba(244,237,226,.75); margin-top: .5rem; }
-    .info .sub i { font-style: normal; margin: 0 .55rem; opacity: .7; }
-    .info dl { display: grid; grid-template-columns: 11rem 1fr; margin-top: 1.6rem; font-size: 1rem; }
-    .info dt, .info dd { padding: .7rem 0; border-bottom: 1px solid rgba(255,244,228,.18); }
+    .info dl { display: grid; grid-template-columns: 8.5rem 1fr; font-size: .88rem; }
+    .info dt, .info dd { padding: .6rem 0; border-bottom: 1px solid rgba(255,244,228,.18); }
     .info dt { font-weight: 500; }
     .info dd { color: rgba(244,237,226,.85); }
-    .info .desc { margin-top: 1.4rem; overflow-y: auto; min-height: 3rem; padding-right: 1rem; font-size: 1.06rem; line-height: 1.6; color: rgba(244,237,226,.86);
+    .info .desc { margin-top: 1.4rem; overflow-y: auto; min-height: 3rem; padding-right: 1rem; font-size: .88rem; line-height: 1.65; color: rgba(244,237,226,.86);
       scrollbar-width: thin; scrollbar-color: rgba(255,244,228,.35) transparent; }
     .info .desc::-webkit-scrollbar { width: 3px; } .info .desc::-webkit-scrollbar-thumb { background: rgba(255,244,228,.35); border-radius: 3px; }
     .tags { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.4rem; }
-    .tags span { padding: .45rem 1rem; border-radius: 999px; font-size: .9rem; border: 1px solid rgba(255,244,228,.3); background: rgba(255,244,228,.08); }
+    .tags span { padding: .38rem .9rem; border-radius: 999px; font-size: .78rem; border: 1px solid rgba(255,244,228,.3); background: rgba(255,244,228,.08); }
 
     body.detail-open header.top, body.detail-open .controls { z-index: 35; }
     body.detail-open .caption, body.detail-open .hint { opacity: 0; pointer-events: none; transition-delay: 0s; }
@@ -224,12 +228,12 @@
       .ring { width: 64px; height: 64px; }
       .arrow { width: 44px; height: 44px; }
       .detail { padding: 84px 14px calc(96px + var(--safe-b)); }
-      .card { grid-template-columns: 1fr; align-items: start; overflow-y: auto; padding: 64px 20px 24px; border-radius: 22px; }
+      .card { grid-template-columns: 1fr; grid-template-areas: "head" "media" "info"; overflow-y: auto; padding: 22px 20px 24px; border-radius: 22px; }
+      .card-head { padding-right: 6.4rem; }
       .actions { top: 12px; right: 12px; }
       .media img { max-height: 38vh; }
       .info { max-height: none; margin: 1.4rem 0 0; padding: 1.4rem 0 0; border-left: 0; border-top: 1px solid rgba(255,244,228,.18); }
-      .info h3 { margin-right: 0; }
-      .info dl { grid-template-columns: 7.5rem 1fr; font-size: .92rem; }
+      .info dl { grid-template-columns: 7rem 1fr; }
       .info .desc { overflow: visible; padding-right: 0; }
       .menu-grid { grid-template-columns: 1fr; }
     }
@@ -331,6 +335,11 @@
         <a id="dMore" href="#" aria-label="Open case study"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>
         <button id="dClose" type="button" aria-label="Close and return to the corridor"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
       </div>
+      <header class="card-head" id="dHead">
+        <div class="cat" id="dIdx">01 / 24</div>
+        <h3 id="dTitle"></h3>
+        <div class="sub"><span id="dCat"></span><i>&middot;</i><span id="dYear"></span></div>
+      </header>
       <div class="media" id="media">
         <img id="dImg" alt="">
         <div class="zoom-bar">
@@ -341,9 +350,6 @@
         <button class="expand" type="button" id="dExpand" aria-label="Expand image"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
       </div>
       <div class="info" id="dInfo">
-        <div class="cat" id="dIdx">01 / 24</div>
-        <h3 id="dTitle"></h3>
-        <div class="sub"><span id="dCat"></span><i>&middot;</i><span id="dYear"></span></div>
         <dl>
           <dt>Artist</dt><dd id="dArtist"></dd>
           <dt>Medium</dt><dd id="dMedium"></dd>
@@ -1067,10 +1073,15 @@
       target -= dy * .012; updateCaption();
       return;
     }
-    mouse.x = e.clientX / innerWidth * 2 - 1; mouse.y = e.clientY / innerHeight * 2 - 1;
     if (!entered || detailOpen()) return;
     setHover(pick(e.clientX, e.clientY), e.clientX, e.clientY);
   });
+  // The cursor steers the view wherever it is on screen (UI included): right edge = look right, left edge = look left
+  addEventListener('pointermove', e => {
+    if (e.pointerType === 'touch') return;
+    mouse.x = e.clientX / innerWidth * 2 - 1; mouse.y = e.clientY / innerHeight * 2 - 1;
+  }, { passive: true });
+  document.addEventListener('mouseleave', () => { mouse.x = 0; mouse.y = 0; });
   cvs.addEventListener('pointerleave', e => { if (e.pointerType !== 'touch') setHover(-1); });
   cvs.addEventListener('pointerdown', e => {
     down = { x: e.clientX, y: e.clientY, lx: e.clientX, ly: e.clientY, t: performance.now(), moved: false };
@@ -1130,13 +1141,67 @@
       more.href = a.link || dImg.src; more.target = a.link ? '_self' : '_blank';
       more.setAttribute('aria-label', a.link ? 'Open case study' : 'Open image in a new tab');
       z.s = 1; applyZoom();
-      dImg.classList.remove('swap-out'); $('dInfo').classList.remove('swap-out');
+      dImg.classList.remove('swap-out'); $('dInfo').classList.remove('swap-out'); $('dHead').classList.remove('swap-out');
     };
-    if (animate && !reduce) { dImg.classList.add('swap-out'); $('dInfo').classList.add('swap-out'); setTimeout(set, 260); } else set();
+    if (animate && !reduce) { dImg.classList.add('swap-out'); $('dInfo').classList.add('swap-out'); $('dHead').classList.add('swap-out'); setTimeout(set, 260); } else set();
+  }
+  /* Dock-style "genie": the window pours out of the framed artwork and
+     pours back into it on close. Built from a transform (artwork rect -> window
+     rect) plus a curved clip-path whose top widens before its bottom. */
+  const card = $('card'), pv = new THREE.Vector3(), pv2 = new THREE.Vector3(), projCam = camera.clone();
+  let cardAnim = null, closing = false;
+  function artScreenRect(i) {
+    const m = groups[i].art, gp = m.geometry.parameters;
+    let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+    m.updateMatrixWorld();
+    // project from where the camera comes to rest in front of this work, so the window always pours out of the frame
+    projCam.copy(camera); viewSpot(i, pv2); projCam.position.copy(pv2); projCam.up.set(0, 1, 0); projCam.lookAt(artCenters[i]); projCam.updateMatrixWorld();
+    for (const [sx, sy] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) {
+      pv.set(sx * gp.width / 2, sy * gp.height / 2, 0).applyMatrix4(m.matrixWorld).project(projCam);
+      const x = (pv.x + 1) / 2 * innerWidth, y = (1 - pv.y) / 2 * innerHeight;
+      x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y);
+    }
+    return { x: x0, y: y0, w: Math.max(40, x1 - x0), h: Math.max(30, y1 - y0) };
+  }
+  const eIO = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+  const eOut = x => 1 - Math.pow(1 - x, 3);
+  const sstep = x => x * x * (3 - 2 * x);
+  function genieFrames(from) {
+    const to = card.getBoundingClientRect();
+    const dx = from.x - to.left, dy = from.y - to.top, sx0 = from.w / to.width, sy0 = from.h / to.height;
+    const below = from.y + from.h / 2 > to.top + to.height / 2;     // pour towards the artwork's side
+    const frames = [], K = 16, S = 9;
+    for (let k = 0; k <= K; k++) {
+      const p = k / K;
+      const ey = eOut(Math.min(1, p * 1.15)), ex = eIO(p);
+      const tx = dx * (1 - ex), ty = dy * (1 - ey);
+      const sx = sx0 + (1 - sx0) * ex, sy = sy0 + (1 - sy0) * ey;
+      // width of the window at its far edge vs the edge nearest the artwork
+      const far = .3 + .7 * eOut(Math.min(1, p * 1.6)), nearW = .3 + .7 * eIO(p);
+      const L = [], Rr = [];
+      for (let j = 0; j <= S; j++) {
+        const y = j / S, t = sstep(below ? y : 1 - y);
+        const w = far + (nearW - far) * t, inset = (1 - w) / 2 * 100;
+        L.push(`${inset.toFixed(2)}% ${(y * 100).toFixed(2)}%`); Rr.unshift(`${(100 - inset).toFixed(2)}% ${(y * 100).toFixed(2)}%`);
+      }
+      frames.push({ offset: p, transform: `translate(${tx}px, ${ty}px) scale(${sx}, ${sy})`, clipPath: `polygon(${L.concat(Rr).join(',')})`, opacity: Math.min(1, .25 + p * 2.2) });
+    }
+    return frames;
+  }
+  function revealContent() {
+    ['dHead', 'dInfo'].forEach((id, n) => { const el = $(id); el.classList.remove('fade-in'); void el.offsetWidth; el.style.animationDelay = (n * 90) + 'ms'; el.classList.add('fade-in'); });
   }
   function showPanel() {
     focus.panelShown = true;
     detail.classList.add('open'); detail.setAttribute('aria-hidden', 'false');
+    if (cardAnim) cardAnim.cancel();
+    if (!reduce && card.animate) {
+      const frames = genieFrames(artScreenRect(focus.idx));
+      ['dHead', 'dInfo'].forEach(id => { $(id).classList.remove('fade-in'); $(id).style.opacity = 0; });
+      cardAnim = card.animate(frames, { duration: 1050, easing: 'linear', fill: 'both' });
+      cardAnim.finished.then(() => { cardAnim && cardAnim.cancel(); cardAnim = null; ['dHead', 'dInfo'].forEach(id => $(id).style.opacity = ''); revealContent(); }).catch(() => {});
+      setTimeout(() => { ['dHead', 'dInfo'].forEach(id => $(id).style.opacity = ''); revealContent(); }, 620);
+    }
     setTimeout(() => $('dClose').focus({ preventScroll: true }), 60);
   }
   function openDetail(i) {
@@ -1147,21 +1212,33 @@
     document.body.classList.add('detail-open');
     goTo(i); fillDetail(i, false);
     if (reduce) showPanel(); // otherwise the frame loop opens it once the camera arrives
-    clearTimeout(focus.timer); focus.timer = setTimeout(() => { if (focus.goal === 1 && !focus.panelShown) showPanel(); }, 1500);
+    clearTimeout(focus.timer); focus.timer = setTimeout(() => { if (focus.goal === 1 && !focus.panelShown) showPanel(); }, 1900);
   }
   function detailStep(d) {
     dIndex = mod(dIndex + d, N); focus.idx = dIndex;
     goTo(dIndex); fillDetail(dIndex, true);
   }
   function closeDetail() {
+    if (closing) return;
     setExpanded(false);
-    detail.classList.remove('open'); detail.setAttribute('aria-hidden', 'true');
-    focus.goal = 0; focus.panelShown = false;
-    document.body.classList.remove('detail-open');
-    if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+    const finish = () => {
+      closing = false;
+      detail.classList.remove('open'); detail.setAttribute('aria-hidden', 'true');
+      if (cardAnim) { cardAnim.cancel(); cardAnim = null; }
+      focus.goal = 0; focus.panelShown = false;
+      document.body.classList.remove('detail-open');
+      if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+    };
+    if (reduce || !focus.panelShown || !card.animate) { finish(); return; }
+    closing = true;
+    if (cardAnim) { cardAnim.cancel(); cardAnim = null; }
+    const frames = genieFrames(artScreenRect(focus.idx)).reverse().map((f, i, a) => ({ ...f, offset: i / (a.length - 1) }));
+    detail.classList.add('closing');
+    cardAnim = card.animate(frames, { duration: 760, easing: 'linear', fill: 'both' });
+    cardAnim.finished.then(() => { detail.classList.remove('closing'); finish(); }).catch(() => { detail.classList.remove('closing'); finish(); });
   }
   $('dClose').addEventListener('click', closeDetail);
-  $('dScrim').addEventListener('click', closeDetail);
+  $('dScrim').addEventListener('click', () => focus.panelShown && closeDetail());
   $('zoomIn').addEventListener('click', e => { e.stopPropagation(); zoomBy(1.5); });
   $('zoomOut').addEventListener('click', e => { e.stopPropagation(); zoomBy(1 / 1.5); });
   media.addEventListener('wheel', e => { e.preventDefault(); e.stopPropagation(); zoomBy(Math.exp(-e.deltaY * .0022), e.clientX, e.clientY); }, { passive: false });
@@ -1276,13 +1353,13 @@
     camera.position.lerpVectors(corridor, focus.cam, e);
     tmp.lerpVectors(lookNow, focus.at, e);
     camera.lookAt(tmp);
-    if (focus.goal === 1 && !focus.panelShown && focus.f > .82) showPanel();
+    if (focus.goal === 1 && !focus.panelShown && focus.f > .93) showPanel();
     if (focus.goal === 0 && focus.f === 0) focus.idx = -1;
 
     // 3. Cursor look-around (fades out while focused)
     const free = (1 - e) * (anyOverlayOpen() ? 0 : 1);
-    const yGoal = reduce ? 0 : -mouse.x * .62 + look.touchYaw, pGoal = reduce ? 0 : -mouse.y * .2;
-    const lk = 1 - Math.exp(-dt * 3.2);
+    const yGoal = reduce ? 0 : -Math.sign(mouse.x) * Math.pow(Math.abs(mouse.x), 1.25) * 1.05 + look.touchYaw, pGoal = reduce ? 0 : -mouse.y * .22;
+    const lk = 1 - Math.exp(-dt * 2.6);
     look.yaw += (yGoal - look.yaw) * lk; look.pitch += (pGoal - look.pitch) * lk;
     if (free > 0) { camera.rotateY(look.yaw * free); camera.rotateX(look.pitch * free); }
 
