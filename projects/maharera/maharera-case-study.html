@@ -220,7 +220,6 @@
       }
     }
 
-
     /* ---- Avatar + menu in header ---- */
     .nav-right { display: flex; align-items: center; gap: 8px; }
     .nav-me { position: relative; }
@@ -238,7 +237,6 @@
     .nav-menu a { display: block; padding: 10px 14px; border-radius: 5px; font-size: 14px; font-weight: 600; color: var(--ink); text-decoration: none; }
     .nav-menu a:hover, .nav-menu a[aria-current="page"] { background: var(--accent-soft); color: var(--accent); }
     @media (max-width: 400px) { .nav-back .lbl { display: none; } .nav-back { padding: 10px 13px; } }
-
 
     /* ================= SECTION PATTERN: Heading → Sub-heading → Text → Image ================= */
     section {
@@ -612,7 +610,6 @@
         display: none
       }
     }
-
 
     /* ================= OLD WEBSITE + PAIN POINTS ================= */
     .old {
@@ -1777,7 +1774,6 @@
       .ps2-body { padding: 14px 22px 22px; }
     }
 
-
     /* ================= JOURNEY ================= */
     /* As-is journey maps: one map per carousel slide (see CAROUSEL below) */
     .journey-map { margin: 0; }
@@ -2630,9 +2626,6 @@
       transform: translateY(-3px)
     }
 
-
-          
-
     /* ================= TWO PRODUCTS / TWO CHALLENGES ================= */
     /* Part 1 — background panel with frosted-glass cards */
     .tp-stage {
@@ -2688,7 +2681,6 @@
     .pb-stmt small { display: block; font-size: 11.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
     .pb-stmt p { font-size: 18px; font-weight: 700; font-style: italic; line-height: 1.4; color: #18181b; }
 
-
     /* ================= USER CARDS ("Who uses it, and why?") =================
        Each card: photo on the left, title + task list on the right.
        Change a card's colours with its two variables:
@@ -2720,7 +2712,6 @@
       display: grid; place-items: center; background: var(--uc-ic); color: #fff; font-size: 14px;
     }
 
-
     /* ================= UX PAIN POINT CARDS =================
        Five cards in a row: image → number badge → title → description.
        --uxp-accent = number badge colour. */
@@ -2740,7 +2731,6 @@
     }
     .uxp-card h4 { margin-bottom: 10px; }
 
-
     /* ================= STORYBOARD =================
        Six frames (UF1–UF6.png). Each image already contains its number and caption.
        --sb-cols = frames per row on desktop. */
@@ -2749,7 +2739,6 @@
     @media (max-width: 560px) { .sb-grid { --sb-cols: 1; } }
     .sb-frame { border-radius: 5px; overflow: hidden; background: #fff; border: 1px solid #eeeae5; box-shadow: 0 18px 40px -32px rgba(0,0,0,.35); }
     .sb-frame img { width: 100%; height: auto; display: block; }
-
 
     /* ---- Out-of-scope card (Application Portal problem card) ----
        Black & white + faded so the website card reads as the focus.
@@ -2761,7 +2750,6 @@
       font-size: 10.5px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
       padding: 5px 10px; border-radius: 5px; background: #3f3f46; color: #fff;
     }
-
 
     /* ================= RESEARCH METHODS ("How we found out") =================
        Each card has two colours:  --rm-bg = card tint   --rm-ink = number + arrow colour */
@@ -2817,7 +2805,6 @@
       .rm-go { width: 26px; height: 26px; right: 10px; bottom: 12px; font-size: 10px; }
     }
 
-
     /* ================= SURVEY & ANALYTICS ("Mostly buyers, mostly on phones") ================= */
     .sv-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 24px; }
     .sv-hero { width: min(460px, 38vw); height: auto; }
@@ -2861,13 +2848,11 @@
     .sv-lab { padding-top: 12px; }
     .sv-col.sv-key .sv-lab { color: var(--set-heading-color); font-weight: 600; }   /* highlighted reasons */
 
-
     /* ================= CHAPTER ILLUSTRATION (right side of a chapter heading) =================
        --ch-ill-h = illustration height on desktop */
     .ch-ill { --ch-ill-h: 170px; margin-left: auto; height: var(--ch-ill-h); width: auto; max-width: 48%; object-fit: contain; align-self: flex-end; mix-blend-mode: multiply; }  /* multiply hides the white image background */
     @media (max-width: 900px) { .ch-ill { --ch-ill-h: 130px; } }
     @media (max-width: 640px) { .ch-ill { margin-left: 0; max-width: 100%; height: auto; width: 100%; } }
-
 
     /* ================= USABILITY TEST ("Simple tasks, low success") =================
        Reuses the survey card styles (.sv-card, .sv-ic, .sv-bars). */
@@ -2925,7 +2910,6 @@
     p, li { text-wrap: pretty; }                   /* avoids single-word last lines */
     em { font-style: normal; }
 
-
     /* =====================================================================
        1. HERO  (top banner, text sits on the dark photo)
        ===================================================================== */
@@ -2967,7 +2951,6 @@
       color: rgba(255, 255, 255, 0.86);
     }
 
-
     /* =====================================================================
        2. HERO META  (Role / Scope / Year grid)
        ===================================================================== */
@@ -2990,7 +2973,6 @@
       line-height: 1.4;
       color: #ffffff;
     }
-
 
     /* =====================================================================
        3. NAVIGATION & FOOTER
@@ -3022,7 +3004,6 @@
       font-weight: 500;
       letter-spacing: 0;
     }
-
 
     /* =====================================================================
        4. LABELS  (small uppercase text above headings, chips, badges)
@@ -3059,7 +3040,6 @@
       text-transform: uppercase;
     }
 
-
     /* =====================================================================
        5. CHAPTER DIVIDERS  (big 01, 02 … between chapters)
        ===================================================================== */
@@ -3090,7 +3070,6 @@
       line-height: 1.6;
       color: var(--muted);
     }
-
 
     /* =====================================================================
        6. SECTION HEADINGS  (label → H2 → H3 → paragraph)
@@ -3130,7 +3109,6 @@
     .dark .sh .tag { color: #ffb27a; }
     .dark .sh h2 { color: #ffffff; }
     .dark .sh h3 { color: #d4d4d8; }
-
 
     /* =====================================================================
        7. CARDS  — one standard for every card on the page
@@ -3180,7 +3158,6 @@
       color: var(--muted);
     }
 
-
     /* =====================================================================
        8. LISTS, CHARTS & CAPTIONS  (text outside cards)
        ===================================================================== */
@@ -3222,7 +3199,6 @@
       line-height: 1.3;
     }
 
-
     /* =====================================================================
        9. NUMBERS  (stats, scores, numbered badges)
        ===================================================================== */
@@ -3256,7 +3232,6 @@
       font-variant-numeric: tabular-nums;
     }
 
-
     /* =====================================================================
        10. CALLOUTS  (emphasised statements)
        ===================================================================== */
@@ -3279,7 +3254,6 @@
       line-height: 1.45;
       color: #ffffff;
     }
-
 
     /* =====================================================================
        11. HANDWRITTEN  (Caveat font — notes and quotes only)
@@ -3311,7 +3285,6 @@
       line-height: 1.15;
       color: #27272a;
     }
-
 
     /* =====================================================================
        12. CHART TEXT  (inside SVG charts)
@@ -3379,7 +3352,6 @@
     .nav-sep { width: 1px; height: 24px; background: #e4e4e7; margin: 0 8px; }
     .nav-right { gap: 0; }
 
-  
     /* Icons: Font Awesome 6.6.0 (free, CC BY 4.0) drawn from built-in images instead of the 100 KB+ icon-font download */
     .fa-solid,.fa-regular,.fa-brands,.fas,.far,.fab{display:inline-block;width:var(--fa-w,1em);height:1em;vertical-align:-0.125em;background-color:currentColor;-webkit-mask:var(--fa-i) center/contain no-repeat;mask:var(--fa-i) center/contain no-repeat;font-style:normal;flex-shrink:0}
     .fa-spin{animation:fa-spin 1s linear infinite}@keyframes fa-spin{to{transform:rotate(360deg)}}
@@ -3740,7 +3712,6 @@
          Give each new section a unique id and a short data-nav label to include it.
        ===================================================================== -->
 
-
   <div class="progress" id="progress"></div>
 
   <!-- Chapter navigation (wheel on desktop, button + sheet on mobile) — filled in by the "CIRCULAR CHAPTER NAV" script -->
@@ -3793,7 +3764,6 @@
       </div>
     </div>
   </nav>
-
 
   <main>
 
@@ -3930,8 +3900,7 @@
           </article>
           
         </div>
-        
-       
+
       </div>
     </section>
 
@@ -4068,10 +4037,6 @@
       </div>
     </section>
 
-    
-
-    
-
     <!-- ======================================================= -->
     <!-- 02 DISCOVER -->
     <!-- ======================================================= -->
@@ -4152,7 +4117,7 @@
     <!-- Survey + analytics — header illustration (assets/survey-hero.webp), three stat cards,
          and a column chart "Why do you use the MahaRERA website?".
          Edit numbers here: bars use data-w="%" ; columns use --v (value) and --c (colour). -->
-    <section id="survey" data-nav="Survey &amp; analytics">
+    <section id="survey" data-nav="Survey">
       <div class="wrap">
         <div class="sv-head">
           <div class="sh rv">
@@ -4279,12 +4244,78 @@
       </div>
     </section>
 
+    <!-- Old website information architecture: site map. Image: assets/site-map.webp -->
+    <section id="information-architecture" data-nav="As-is sitemap">
+      <div class="wrap">
+        <div class="sh rv">
+          <span class="tag lb1">As-is sitemap</span>
+          <h2 class="sh1">Old website information architecture.</h2>
+          <h3 class="sh2">Site map</h3>
+        </div>
+        <p class="fd-hint">Select the site map to open it full size.</p>
+        <figure class="fd-board fd-single ia-map rv">
+          <a href="assets/site-map.webp" target="_blank" rel="noopener" aria-label="Open the site map full size">
+            <img src="assets/site-map.webp" width="2785" height="1215" loading="lazy" alt="Site map of the old MahaRERA website. The home page branches into nine sections: About Us (RTI, Background, Organization Structure, Contacts, Services, Leadership, Media Gallery); Downloads (Maharashtra: Annual Reports, Rules GR and Circulars, Regulations, Orders and circulars, Rulings, FAQ; Daman Diu and Dadra Nagar Haveli: Act, Rules, Circulars; Certificates; New Forms: Architect, Engineer and CA Certificates, Completion Certificate, Audit Report, Forms 1 to 5); Skilling Initiatives (About TOET, Certified trainers, Workers training, Photo Gallery); Registration (Registered Projects, Registered Real Estate Agents, Self Regulatory Organizations, Change of promoter, Lapsed Projects, Registration revoked, Warrant details, Complaints); Non-Registration (Inform Non-Registration, applicant status, Rulings for Non-Registered Projects); Online Application (Complainant's, Promoter's and Agent's Account); Appellate Tribunal (Online Appeals, Tenders, Cause list, Orders, Contact Us, Circulars); Conciliation Forum (About Forum, Online Application, Procedure, Conciliators, Cause list); and Statistics.">
+          </a>
+        </figure>
+      </div>
+    </section>
+
+    <section id="pain-points" data-nav="Pain points">
+      <div class="wrap">
+        <div class="sh rv">
+          <span class="tag lb1">Old website user experience analysis</span>
+          <h2 class="sh1">UX <span style="color:var(--accent)">Pain Points</span></h2>
+          <h3 class="sh2">Key issues that made the MahaRERA website hard to use</h3>
+        </div>
+        <!-- UX pain point cards: image assets/UXP1–UXP5.jpg → number → title → description.
+             Colours and layout are in CSS under "UX PAIN POINT CARDS". -->
+        <div class="uxp-grid">
+          <!-- Pain point 01 -->
+          <article class="uxp-card rv">
+            <img class="uxp-img" src="assets/UXP1.jpg" alt="Old homepage window with a pie chart and four small task icons" loading="lazy">
+            <span class="uxp-num">01</span>
+            <h4>User tasks are buried</h4>
+            <p>Users struggle to find key actions like finding a project, checking a developer, or filing a complaint.</p>
+          </article>
+          <!-- Pain point 02 -->
+          <article class="uxp-card rv d1">
+            <img class="uxp-img" src="assets/UXP2.jpg" alt="Search bar with filter chips: RERA ID, Developer, Location, Project" loading="lazy">
+            <span class="uxp-num">02</span>
+            <h4>No central search</h4>
+            <p>Finding projects, developers, RERA IDs or locations takes extra effort.</p>
+          </article>
+          <!-- Pain point 03 -->
+          <article class="uxp-card rv d2">
+            <img class="uxp-img" src="assets/UXP3.jpg" alt="Long blocks of text next to a few small action links" loading="lazy">
+            <span class="uxp-num">03</span>
+            <h4>Too much information</h4>
+            <p>Dense legal and informational text makes the page difficult to read. Important information is buried instead of being easy to scan.</p>
+          </article>
+          <!-- Pain point 04 -->
+          <article class="uxp-card rv d3">
+            <img class="uxp-img" src="assets/UXP4.jpg" alt="Crowded dropdown menu bar and a cramped mobile screen" loading="lazy">
+            <span class="uxp-num">04</span>
+            <h4>Confusing navigation</h4>
+            <p>Menu labels are unclear, navigation is crowded and hard to use, and important tools are spread across different areas of the website.</p>
+          </article>
+          <!-- Pain point 05 -->
+          <article class="uxp-card rv">
+            <img class="uxp-img" src="assets/UXP5.jpg" alt="Scrolling "Latest Updates" banner, 3D pie chart and phone, tablet and desktop icons" loading="lazy">
+            <span class="uxp-num">05</span>
+            <h4>Outdated and inaccessible interactions</h4>
+            <p>Moving banners and auto-scrolling content can be distracting. The 3D chart is hard to interpret and the layout doesn’t work well across all devices.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
     <!-- =====================================================================
          STORYBOARD — the old website experience in six frames (UF1–UF6.png)
          Grid: 3 columns × 2 rows on desktop, 2 on tablet, 1 on phone.
          Layout settings are in CSS under "STORYBOARD".
          ===================================================================== -->
-    <section id="storyboard" data-nav="User frustrations" style="padding-top:0px">
+    <section id="storyboard" data-nav="User frustrations">
       <div class="wrap">
         <div class="sh rv">
           <h2 class="sh1">User frustrations</h2>
@@ -4372,10 +4403,10 @@
     </section>
 
     <!-- Problem statements -->
-    <section id="problems" data-nav="Problem statements">
+    <section id="problems" data-nav="Personas">
       <div class="wrap">
         <div class="sh rv">
-          <span class="tag lb1">Problem statements</span>
+          <span class="tag lb1">Personas</span>
           <h2 class="sh1">One problem for each user.</h2>
           <h3 class="sh2">Problem statements and "How might we" questions</h3>
           <p class="sh3">Each statement names the user, their need and what gets in the way. The HMW questions turn it into
@@ -4407,7 +4438,7 @@
     </section>
 
     <!-- Journey -->
-    <section id="journey" data-nav="Journey map">
+    <section id="journey" data-nav="As-is journey maps">
       <div class="wrap">
         <div class="sh rv">
           <span class="tag lb1">As-is journey maps · Homebuyer &amp; Complainant</span>
@@ -4440,68 +4471,61 @@
       </div>
     </section>
 
-    <!-- Old website information architecture: site map. Image: assets/site-map.webp -->
-    <section id="information-architecture" data-nav="Old website information architecture">
+    <!-- Assumption map -->
+    <section id="assumptions" data-nav="Assumption validation">
       <div class="wrap">
         <div class="sh rv">
-          <span class="tag lb1">Old website information architecture</span>
-          <h2 class="sh1">Old website information architecture.</h2>
-          <h3 class="sh2">Site map</h3>
+          <span class="tag lb1">Assumption validation</span>
+          <h2 class="sh1">What do we know, and what are we guessing?</h2>
+          <h3 class="sh2">Round 2 – Understanding user expectations:</h3>
+          <p class="sh3">During the interview sessions, I gathered insights from users through conversations, emails and
+            letters, which helped me identify more than 15 initial assumptions. These assumptions were also reviewed with
+            leadership. However, I wanted to validate whether they represented actual user pain points and expectations,
+            and identify any needs I might have overlooked. I therefore returned to users for a follow-up research
+            session, which helped refine the assumptions to 12.</p>
+          <p class="sh3">A subsequent survey revealed that most users did not prioritise project comparison, contextual
+            help or a glossary. Many respondents were first-time homebuyers who used MahaRERA primarily to verify a
+            project's registration and other relevant details before making a purchase. Their priority was validating a
+            shortlisted project rather than comparing multiple registered projects. Glossary and FAQ explanations were
+            also given lower priority, as many real estate terms had become commonly used and familiar to buyers.</p>
         </div>
-        <p class="fd-hint">Select the site map to open it full size.</p>
-        <figure class="fd-board fd-single ia-map rv">
-          <a href="assets/site-map.webp" target="_blank" rel="noopener" aria-label="Open the site map full size">
-            <img src="assets/site-map.webp" width="2785" height="1215" loading="lazy" alt="Site map of the old MahaRERA website. The home page branches into nine sections: About Us (RTI, Background, Organization Structure, Contacts, Services, Leadership, Media Gallery); Downloads (Maharashtra: Annual Reports, Rules GR and Circulars, Regulations, Orders and circulars, Rulings, FAQ; Daman Diu and Dadra Nagar Haveli: Act, Rules, Circulars; Certificates; New Forms: Architect, Engineer and CA Certificates, Completion Certificate, Audit Report, Forms 1 to 5); Skilling Initiatives (About TOET, Certified trainers, Workers training, Photo Gallery); Registration (Registered Projects, Registered Real Estate Agents, Self Regulatory Organizations, Change of promoter, Lapsed Projects, Registration revoked, Warrant details, Complaints); Non-Registration (Inform Non-Registration, applicant status, Rulings for Non-Registered Projects); Online Application (Complainant's, Promoter's and Agent's Account); Appellate Tribunal (Online Appeals, Tenders, Cause list, Orders, Contact Us, Circulars); Conciliation Forum (About Forum, Online Application, Procedure, Conciliators, Cause list); and Statistics.">
-          </a>
-        </figure>
-      </div>
-    </section>
-
-    <section id="pain-points" data-nav="UX pain points">
-      <div class="wrap">
-        <div class="sh rv">
-          <span class="tag lb1">Old website user experience analysis</span>
-          <h2 class="sh1">UX <span style="color:var(--accent)">Pain Points</span></h2>
-          <h3 class="sh2">Key issues that made the MahaRERA website hard to use</h3>
-        </div>
-        <!-- UX pain point cards: image assets/UXP1–UXP5.jpg → number → title → description.
-             Colours and layout are in CSS under "UX PAIN POINT CARDS". -->
-        <div class="uxp-grid">
-          <!-- Pain point 01 -->
-          <article class="uxp-card rv">
-            <img class="uxp-img" src="assets/UXP1.jpg" alt="Old homepage window with a pie chart and four small task icons" loading="lazy">
-            <span class="uxp-num">01</span>
-            <h4>User tasks are buried</h4>
-            <p>Users struggle to find key actions like finding a project, checking a developer, or filing a complaint.</p>
-          </article>
-          <!-- Pain point 02 -->
-          <article class="uxp-card rv d1">
-            <img class="uxp-img" src="assets/UXP2.jpg" alt="Search bar with filter chips: RERA ID, Developer, Location, Project" loading="lazy">
-            <span class="uxp-num">02</span>
-            <h4>No central search</h4>
-            <p>Finding projects, developers, RERA IDs or locations takes extra effort.</p>
-          </article>
-          <!-- Pain point 03 -->
-          <article class="uxp-card rv d2">
-            <img class="uxp-img" src="assets/UXP3.jpg" alt="Long blocks of text next to a few small action links" loading="lazy">
-            <span class="uxp-num">03</span>
-            <h4>Too much information</h4>
-            <p>Dense legal and informational text makes the page difficult to read. Important information is buried instead of being easy to scan.</p>
-          </article>
-          <!-- Pain point 04 -->
-          <article class="uxp-card rv d3">
-            <img class="uxp-img" src="assets/UXP4.jpg" alt="Crowded dropdown menu bar and a cramped mobile screen" loading="lazy">
-            <span class="uxp-num">04</span>
-            <h4>Confusing navigation</h4>
-            <p>Menu labels are unclear, navigation is crowded and hard to use, and important tools are spread across different areas of the website.</p>
-          </article>
-          <!-- Pain point 05 -->
-          <article class="uxp-card rv">
-            <img class="uxp-img" src="assets/UXP5.jpg" alt="Scrolling "Latest Updates" banner, 3D pie chart and phone, tablet and desktop icons" loading="lazy">
-            <span class="uxp-num">05</span>
-            <h4>Outdated and inaccessible interactions</h4>
-            <p>Moving banners and auto-scrolling content can be distracting. The 3D chart is hard to interpret and the layout doesn’t work well across all devices.</p>
-          </article>
+        <!-- Edit assumptions here, grouped High → Medium → Low: class as-high / as-medium / as-low sets the priority colour -->
+        <div class="as-grid">
+          <div class="card rv as-card">
+            <div class="as-head">
+              <p class="label">Assumptions</p>
+              <span class="as-legend"><i class="as-high"></i>High <i class="as-medium"></i>Medium <i class="as-low"></i>Low</span>
+            </div>
+            <ol class="as-list">
+                <li class="as-high"><span class="as-n">1</span><div><h4>Complex legal information</h4><p>Citizens struggle to understand complex legal and regulatory information on the old MahaRERA website.</p></div><span class="as-p">High</span></li>
+                <li class="as-high"><span class="as-n">2</span><div><h4>Simple project search</h4><p>Users want to search for a project using simple inputs such as project name, promoter name, location or registration number.</p></div><span class="as-p">High</span></li>
+                <li class="as-high"><span class="as-n">3</span><div><h4>Project status overview</h4><p>Homebuyers want a clear overview of project registration status, completion dates, approvals and extensions without navigating multiple sections.</p></div><span class="as-p">High</span></li>
+                <li class="as-high"><span class="as-n">4</span><div><h4>Document explanations</h4><p>Users find lengthy document lists difficult to interpret and need explanations of what each document means.</p></div><span class="as-p">High</span></li>
+                <li class="as-high"><span class="as-n">5</span><div><h4>Mobile-friendly access</h4><p>Most users expect the website to work smoothly on mobile devices, as they may access project information while visiting a property.</p></div><span class="as-p">High</span></li>
+                <li class="as-high"><span class="as-n">6</span><div><h4>Promoter registration guidance</h4><p>Promoters want a single resource for project registration forms, required documents, declarations, fees and relevant regulatory guidelines.</p></div><span class="as-p">High</span></li>
+                <li class="as-medium"><span class="as-n">7</span><div><h4>Visual project details</h4><p>Users would prefer visual representations of building details, floor information, apartment types, sold/unsold units and carpet areas instead of large data tables.</p></div><span class="as-p">Medium</span></li>
+                <li class="as-medium"><span class="as-n">8</span><div><h4>Complaints and legal history</h4><p>Users want to know whether a project has complaints, regulatory orders or legal proceedings associated with it.</p></div><span class="as-p">Medium</span></li>
+                <li class="as-medium"><span class="as-n">9</span><div><h4>Agent registration guidance</h4><p>Real estate agents want a single resource for registration forms, required documents, declarations, fees and applicable regulations.</p></div><span class="as-p">Medium</span></li>
+                <li class="as-medium"><span class="as-n">10</span><div><h4>Complaint tracking</h4><p>Complainants and their advocates want one place to track complaint status, hearing dates, outcomes and decisions.</p></div><span class="as-p">Medium</span></li>
+                <li class="as-low"><span class="as-n">11</span><div><h4>Project comparison</h4><p>Users need a simple way to compare two or more registered projects before making a property decision.</p></div><span class="as-p">Low</span></li>
+                <li class="as-low"><span class="as-n">12</span><div><h4>Contextual help and glossary</h4><p>Users benefit from contextual help, FAQs and a glossary explaining terms such as carpet area, commencement certificate and proposed completion date.</p></div><span class="as-p">Low</span></li>
+            </ol>
+          </div>
+          <aside class="as-side">
+            <div class="card rv d1 as-research">
+              <p class="label">How we validated</p>
+              <table class="as-table">
+                <thead><tr><th scope="col">Research activity</th><th scope="col">Participants</th></tr></thead>
+                <tbody>
+                  <tr><th scope="row">User interviews</th><td>8–12</td></tr>
+                  <tr><th scope="row">Existing website usability testing</th><td>5–8</td></tr>
+                  <tr><th scope="row">Redesigned prototype testing</th><td>5–8</td></tr>
+                  <tr><th scope="row">Follow-up survey</th><td>30–50+</td></tr>
+                </tbody>
+              </table>
+              <p class="as-ok"><span aria-hidden="true">✓</span>All twelve assumptions validated</p>
+            </div>
+          </aside>
         </div>
       </div>
     </section>
@@ -4578,6 +4602,22 @@
       </div>
     </section>
 
+    <!-- ======================================================= -->
+    <!-- 04 DESIGN -->
+    <!-- ======================================================= -->
+    <div class="break" id="design" data-chapter="04 · Design">
+      <div class="inner rv">
+        <div class="big ch1">04</div>
+        <div class="txt"><small class="lb1">Chapter four · Design</small>
+          <h3 class="ch2">Deciding what to build first</h3>
+          <p class="ch3">Test the risky ideas, rank every feature, then simplify the key journeys.</p>
+        </div>
+      </div>
+      <div class="rule">
+        <div></div>
+      </div>
+    </div>
+
     <!-- Feature discovery: expected features per stakeholder (feature inventory) -->
     <section id="feature-discovery" data-nav="Feature discovery">
       <div class="wrap">
@@ -4611,10 +4651,10 @@
     </section>
 
     <!-- Categorising user needs: six service categories (later the main navigation) -->
-    <section id="categories" data-nav="Categorising user needs">
+    <section id="categories" data-nav="Information architecture">
       <div class="wrap">
         <div class="sh rv">
-          <span class="tag lb1">Categorising user needs</span>
+          <span class="tag lb1">Information architecture</span>
           <h2 class="sh1">Six categories, shaped around user needs.</h2>
           <h3 class="sh2">Organising MahaRERA’s digital services into six user-focused categories</h3>
           <p class="sh3">I grouped the digital services offered by MahaRERA into six categories and asked users what
@@ -4657,83 +4697,8 @@
       </div>
     </section>
 
-    <!-- ======================================================= -->
-    <!-- 04 DESIGN -->
-    <!-- ======================================================= -->
-    <div class="break" id="design" data-chapter="04 · Design">
-      <div class="inner rv">
-        <div class="big ch1">04</div>
-        <div class="txt"><small class="lb1">Chapter four · Design</small>
-          <h3 class="ch2">Deciding what to build first</h3>
-          <p class="ch3">Test the risky ideas, rank every feature, then simplify the key journeys.</p>
-        </div>
-      </div>
-      <div class="rule">
-        <div></div>
-      </div>
-    </div>
-
-    <!-- Assumption map -->
-    <section id="assumptions" data-nav="Assumptions">
-      <div class="wrap">
-        <div class="sh rv">
-          <span class="tag lb1">Assumption prioritisation</span>
-          <h2 class="sh1">What do we know, and what are we guessing?</h2>
-          <h3 class="sh2">Round 2 – Understanding user expectations:</h3>
-          <p class="sh3">During the interview sessions, I gathered insights from users through conversations, emails and
-            letters, which helped me identify more than 15 initial assumptions. These assumptions were also reviewed with
-            leadership. However, I wanted to validate whether they represented actual user pain points and expectations,
-            and identify any needs I might have overlooked. I therefore returned to users for a follow-up research
-            session, which helped refine the assumptions to 12.</p>
-          <p class="sh3">A subsequent survey revealed that most users did not prioritise project comparison, contextual
-            help or a glossary. Many respondents were first-time homebuyers who used MahaRERA primarily to verify a
-            project's registration and other relevant details before making a purchase. Their priority was validating a
-            shortlisted project rather than comparing multiple registered projects. Glossary and FAQ explanations were
-            also given lower priority, as many real estate terms had become commonly used and familiar to buyers.</p>
-        </div>
-        <!-- Edit assumptions here, grouped High → Medium → Low: class as-high / as-medium / as-low sets the priority colour -->
-        <div class="as-grid">
-          <div class="card rv as-card">
-            <div class="as-head">
-              <p class="label">Assumptions</p>
-              <span class="as-legend"><i class="as-high"></i>High <i class="as-medium"></i>Medium <i class="as-low"></i>Low</span>
-            </div>
-            <ol class="as-list">
-                <li class="as-high"><span class="as-n">1</span><div><h4>Complex legal information</h4><p>Citizens struggle to understand complex legal and regulatory information on the old MahaRERA website.</p></div><span class="as-p">High</span></li>
-                <li class="as-high"><span class="as-n">2</span><div><h4>Simple project search</h4><p>Users want to search for a project using simple inputs such as project name, promoter name, location or registration number.</p></div><span class="as-p">High</span></li>
-                <li class="as-high"><span class="as-n">3</span><div><h4>Project status overview</h4><p>Homebuyers want a clear overview of project registration status, completion dates, approvals and extensions without navigating multiple sections.</p></div><span class="as-p">High</span></li>
-                <li class="as-high"><span class="as-n">4</span><div><h4>Document explanations</h4><p>Users find lengthy document lists difficult to interpret and need explanations of what each document means.</p></div><span class="as-p">High</span></li>
-                <li class="as-high"><span class="as-n">5</span><div><h4>Mobile-friendly access</h4><p>Most users expect the website to work smoothly on mobile devices, as they may access project information while visiting a property.</p></div><span class="as-p">High</span></li>
-                <li class="as-high"><span class="as-n">6</span><div><h4>Promoter registration guidance</h4><p>Promoters want a single resource for project registration forms, required documents, declarations, fees and relevant regulatory guidelines.</p></div><span class="as-p">High</span></li>
-                <li class="as-medium"><span class="as-n">7</span><div><h4>Visual project details</h4><p>Users would prefer visual representations of building details, floor information, apartment types, sold/unsold units and carpet areas instead of large data tables.</p></div><span class="as-p">Medium</span></li>
-                <li class="as-medium"><span class="as-n">8</span><div><h4>Complaints and legal history</h4><p>Users want to know whether a project has complaints, regulatory orders or legal proceedings associated with it.</p></div><span class="as-p">Medium</span></li>
-                <li class="as-medium"><span class="as-n">9</span><div><h4>Agent registration guidance</h4><p>Real estate agents want a single resource for registration forms, required documents, declarations, fees and applicable regulations.</p></div><span class="as-p">Medium</span></li>
-                <li class="as-medium"><span class="as-n">10</span><div><h4>Complaint tracking</h4><p>Complainants and their advocates want one place to track complaint status, hearing dates, outcomes and decisions.</p></div><span class="as-p">Medium</span></li>
-                <li class="as-low"><span class="as-n">11</span><div><h4>Project comparison</h4><p>Users need a simple way to compare two or more registered projects before making a property decision.</p></div><span class="as-p">Low</span></li>
-                <li class="as-low"><span class="as-n">12</span><div><h4>Contextual help and glossary</h4><p>Users benefit from contextual help, FAQs and a glossary explaining terms such as carpet area, commencement certificate and proposed completion date.</p></div><span class="as-p">Low</span></li>
-            </ol>
-          </div>
-          <aside class="as-side">
-            <div class="card rv d1 as-research">
-              <p class="label">How we validated</p>
-              <table class="as-table">
-                <thead><tr><th scope="col">Research activity</th><th scope="col">Participants</th></tr></thead>
-                <tbody>
-                  <tr><th scope="row">User interviews</th><td>8–12</td></tr>
-                  <tr><th scope="row">Existing website usability testing</th><td>5–8</td></tr>
-                  <tr><th scope="row">Redesigned prototype testing</th><td>5–8</td></tr>
-                  <tr><th scope="row">Follow-up survey</th><td>30–50+</td></tr>
-                </tbody>
-              </table>
-              <p class="as-ok"><span aria-hidden="true">✓</span>All twelve assumptions validated</p>
-            </div>
-          </aside>
-        </div>
-      </div>
-    </section>
-
     <!-- Bullseye -->
-    <section id="bullseye" data-nav="Feature bull’s-eye">
+    <section id="bullseye" data-nav="Bull’s-eye prioritisation">
       <div class="wrap">
         <div class="sh rv">
           <span class="tag lb1">Feature prioritisation</span>
@@ -5323,7 +5288,6 @@
         passive: true
       });
       onScroll();
-
 
       /* ===== Avatar menu (tap to open on touch screens) ===== */
       document.querySelectorAll('.nav-me').forEach(me => {
