@@ -13,7 +13,7 @@
   <meta name="theme-color" content="#2b231d">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&family=Courgette&display=swap">
   <script src="../../assets/shared/js/three.min.js"></script>
 
   <style>
@@ -52,23 +52,157 @@
       animation: grain 1.2s steps(6) infinite; }
     @keyframes grain { 0%{transform:translate(0,0)} 20%{transform:translate(-3%,2%)} 40%{transform:translate(2%,-3%)} 60%{transform:translate(-2%,-1%)} 80%{transform:translate(3%,3%)} 100%{transform:translate(0,0)} }
 
-    /* ============ HEADER ============ */
-    .ui { position: fixed; z-index: 10; }
-    header.top { top: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: space-between; padding: 26px clamp(20px, 3.4vw, 48px); }
-    .logo { display: flex; align-items: baseline; gap: .6rem; }
-    .logo .mark { width: 30px; height: 30px; border: 1px solid rgba(244,237,226,.55); border-radius: 50%; display: grid; place-items: center; align-self: center; }
-    .logo .mark i { width: 10px; height: 10px; border-radius: 50%; border: 1px solid var(--ivory); border-right-color: transparent; transform: rotate(-30deg); }
-    .logo b { font-family: var(--serif); font-weight: 500; font-size: 1.45rem; letter-spacing: .01em; }
-    .logo small { font-size: .62rem; letter-spacing: .28em; text-transform: uppercase; color: var(--muted); }
-    nav.links { display: flex; gap: clamp(1.4rem, 2.6vw, 2.6rem); font-size: .74rem; letter-spacing: .2em; text-transform: uppercase; }
-    nav.links a { color: var(--muted); position: relative; padding: 6px 0; transition: color .3s; }
-    nav.links a::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--ivory); transform: scaleX(0); transform-origin: left; transition: transform .45s var(--ease); }
-    nav.links a:hover, nav.links a[aria-current] { color: var(--ivory); }
-    nav.links a:hover::after, nav.links a[aria-current]::after { transform: scaleX(1); }
-    .tools { display: flex; gap: .5rem; }
-    .icon-btn { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; transition: background .3s; }
-    .icon-btn:hover { background: rgba(244,237,226,.08); }
-    .icon-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.4; stroke-linecap: round; }
+    /* ============ HEADER: copied from the case study pages ============ */
+    .nav { --ink: #36383d; --accent: #ff5f00; --line: #e4e4e7; --muted: #71717a; --accent-soft: #fff1e8; color: var(--ink); font-family: 'Inter', system-ui, sans-serif; }
+    .nav a { color: inherit; }
+    .nav {
+      position: fixed;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 2rem);
+      max-width: 1000px;
+      height: 60px;
+      background: rgba(255, 255, 255, .75);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, .6);
+      border-radius: 999px;
+      box-shadow: 0 10px 30px -12px rgba(0, 0, 0, .12);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px 0 16px;
+      z-index: 90
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none
+    }
+
+    .brand svg {
+      width: 28px;
+      height: 28px;
+      overflow: visible
+    }
+
+    .brand .n {
+      display: flex;
+      flex-direction: column;
+      border-left: 2px solid var(--line);
+      padding-left: 10px;
+      line-height: 1
+    }
+
+    .brand .n b {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -.01em
+    }
+
+    .brand .n small {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 4px
+    }
+
+    .nav-chapter {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: opacity .3s
+    }
+
+    .nav-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, .04);
+      border: 1px solid rgba(0, 0, 0, .05);
+      transition: .3s
+    }
+
+    .nav-back:hover {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent)
+    }
+
+    @media(max-width:760px) {
+      .nav-chapter {
+        display: none
+      }
+    }
+
+
+    /* ---- Avatar + menu in header ---- */
+    .nav-right { display: flex; align-items: center; gap: 8px; }
+    .nav-me { position: relative; }
+    .nav-me > button { display: block; padding: 2px; border: 2px solid transparent; border-radius: 50%; background: none; cursor: pointer; transition: border-color .2s; }
+    .nav-me:hover > button, .nav-me.open > button, .nav-me > button:focus-visible { border-color: var(--accent); }
+    .nav-me img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; display: block; background: #e4e4e7; }
+    .nav-menu {
+      position: absolute; right: 0; top: calc(100% + 10px); min-width: 180px; padding: 6px;
+      background: rgba(255,255,255,.97); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 20px 40px -16px rgba(0,0,0,.18);
+      opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity .25s, transform .25s, visibility .25s;
+    }
+    .nav-menu::before { content: ""; position: absolute; left: 0; right: 0; top: -12px; height: 12px; }
+    .nav-me:hover .nav-menu, .nav-me:focus-within .nav-menu, .nav-me.open .nav-menu { opacity: 1; visibility: visible; transform: none; }
+    .nav-menu a { display: block; padding: 10px 14px; border-radius: 10px; font-size: 14px; font-weight: 600; color: var(--ink); text-decoration: none; }
+    .nav-menu a:hover, .nav-menu a[aria-current="page"] { background: var(--accent-soft); color: var(--accent); }
+    @media (max-width: 400px) { .nav-back .lbl { display: none; } .nav-back { padding: 10px 13px; } }
+
+
+    .brand .n b { font-size: 16px; font-weight: 700; letter-spacing: -0.015em; color: var(--ink); }
+    .brand .n small { font-size: 9.5px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #71717a; }
+    .nav-chapter, .nav-back { font-size: 13px; font-weight: 500; color: var(--ink); }
+    .nav-chapter { color: #71717a; }
+    /* ---- Header matched to home page: size, brand, expanding back button, divider ---- */
+    .nav { height: 64px; max-width: 1024px; top: 16px; padding: 0 12px 0 16px; background: rgba(255,255,255,.7);
+           border: 1px solid rgba(255,255,255,.5); box-shadow: 0 10px 15px -3px rgba(228,228,231,.3), 0 4px 6px -4px rgba(228,228,231,.3); }
+    .brand { gap: 12px; }
+    .brand svg { width: 32px; height: 32px; }
+    .brand .n { border-left: 2px solid #e4e4e7; padding-left: 12px; }
+    .brand .n b { font-family: 'Courgette', cursive; font-size: 16px; font-weight: 700; letter-spacing: -0.015em; color: var(--ink); transition: color .2s; }
+    .brand:hover .n b { color: var(--accent); }
+    .brand .n small { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #71717a; margin-top: 4px; }
+
+    .fluid-back {
+      position: relative; display: flex; align-items: center; justify-content: center;
+      width: 40px; height: 40px; border-radius: 20px; overflow: hidden; text-decoration: none;
+      background: rgba(0,0,0,.03); border: 1px solid rgba(0,0,0,.05); color: var(--ink);
+      transition: width .5s cubic-bezier(0.34,1.56,0.64,1), background .3s, color .3s, border-color .3s;
+    }
+    .fluid-back .nav-icon { position: absolute; width: 16px; height: 16px; transition: all .5s cubic-bezier(0.34,1.56,0.64,1); }
+    .fluid-back .nav-text {
+      position: absolute; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+      font-size: .85rem; font-weight: 600; opacity: 0; transform: translateY(20px) scale(.8);
+      transition: all .5s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .fluid-back .nav-text svg { width: 14px; height: 14px; }
+    .fluid-back:hover, .fluid-back:focus-visible { width: 118px; background: var(--accent); border-color: var(--accent); color: #fff; }
+    .fluid-back:hover .nav-icon, .fluid-back:focus-visible .nav-icon { opacity: 0; transform: translateY(-20px) scale(.8); }
+    .fluid-back:hover .nav-text, .fluid-back:focus-visible .nav-text { opacity: 1; transform: none; }
+    .nav-sep { width: 1px; height: 24px; background: #e4e4e7; margin: 0 8px; }
+    .nav-right { gap: 0; }
+
+  
 
     /* ============ BOTTOM BAR ============ */
     .caption { left: clamp(20px, 3.4vw, 48px); bottom: calc(30px + var(--safe-b)); max-width: min(40vw, 420px); }
@@ -120,13 +254,18 @@
     .ui { transition: opacity 1.2s var(--ease) .5s; }
 
     /* ============ DETAIL VIEW — glass card over the live scene ============ */
-    .detail { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; padding: 104px clamp(16px, 4vw, 64px) 116px; visibility: hidden; pointer-events: none; }
+    .genie-layer { position: fixed; inset: 0; pointer-events: none; z-index: 2; }
+    .genie-strip { position: fixed !important; margin: 0 !important; max-height: none !important; transform-origin: 0 0; will-change: transform; backface-visibility: hidden; visibility: visible !important; }
+    /* moving strips skip the live blur (48 blurred layers would stutter) and use a tinted glass instead */
+    .genie-strip { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; background: linear-gradient(140deg, rgba(120,100,82,.62), rgba(96,80,66,.55)) !important; }
+    .card.settle { animation: settle .45s var(--ease) both; }
+    @keyframes settle { from { opacity: .0; } to { opacity: 1; } }
+    .detail { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; padding: 110px clamp(16px, 4vw, 64px) 116px; visibility: hidden; pointer-events: none; }
     .detail.open { visibility: visible; }
     .detail .scrim { position: absolute; inset: 0; pointer-events: auto; opacity: 0; transition: opacity .7s var(--ease);
       background: radial-gradient(100% 90% at 50% 50%, rgba(24,18,13,0) 40%, rgba(24,18,13,.32)); }
     .detail.open .scrim { opacity: 1; }
     .detail.closing .scrim { opacity: 0; }
-    .detail.closing .card-head, .detail.closing .info { opacity: 0; transition: opacity .2s; }
     .card { position: relative; pointer-events: auto; width: min(1200px, 100%); max-height: 100%; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       grid-template-areas: "head head" "media info"; align-items: start; column-gap: clamp(24px, 3.4vw, 48px);
       padding: clamp(26px, 3vw, 40px) clamp(24px, 3.4vw, 48px) clamp(28px, 3.4vw, 48px); border-radius: 28px; color: var(--ivory); transform-origin: 0 0; will-change: transform, clip-path;
@@ -168,7 +307,7 @@
     .detail.expanded .card { -webkit-backdrop-filter: none; backdrop-filter: none; transform: none; }
     .detail.expanded .media { position: fixed; inset: 18px; z-index: 50; max-width: none; justify-self: stretch; align-self: stretch; width: auto; height: auto; display: grid; place-items: center; background: rgba(16,12,9,.94); border-radius: 16px; }
     .detail.expanded .info, .detail.expanded .actions { visibility: hidden; }
-    body.img-expanded header.top, body.img-expanded .controls { opacity: 0; pointer-events: none; transition-delay: 0s; }
+    body.img-expanded .nav, body.img-expanded .controls { opacity: 0; pointer-events: none; transition-delay: 0s; }
     .detail.expanded .media img { max-height: calc(100vh - 36px); max-width: calc(100vw - 36px); }
 
     .info { grid-area: info; display: flex; flex-direction: column; min-height: 0; max-height: calc(100vh - 400px); padding-left: clamp(22px, 3vw, 40px); border-left: 1px solid rgba(255,244,228,.18); transition: opacity .4s var(--ease), transform .4s var(--ease); }
@@ -183,36 +322,8 @@
     .tags { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.4rem; }
     .tags span { padding: .38rem .9rem; border-radius: 999px; font-size: .78rem; border: 1px solid rgba(255,244,228,.3); background: rgba(255,244,228,.08); }
 
-    body.detail-open header.top, body.detail-open .controls { z-index: 35; }
+    body.detail-open .controls { z-index: 35; }
     body.detail-open .caption, body.detail-open .hint { opacity: 0; pointer-events: none; transition-delay: 0s; }
-
-    /* ============ SEARCH + MENU OVERLAYS ============ */
-    .sheet { position: fixed; inset: 0; z-index: 40; background: rgba(24,19,15,.86); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); visibility: hidden; opacity: 0; transition: opacity .5s var(--ease), visibility .5s; overflow-y: auto; }
-    .sheet.open { visibility: visible; opacity: 1; }
-    .sheet-inner { max-width: 980px; margin: 0 auto; padding: 110px clamp(22px, 5vw, 48px) 60px; transform: translateY(14px); transition: transform .6s var(--ease); }
-    .sheet.open .sheet-inner { transform: none; }
-    .sheet .close-sheet { position: fixed; top: 26px; right: clamp(20px, 3.4vw, 48px); }
-    .search-field { display: flex; align-items: center; gap: 1rem; border-bottom: 1px solid rgba(244,237,226,.3); padding-bottom: .8rem; }
-    .search-field svg { width: 22px; height: 22px; stroke: var(--muted); fill: none; stroke-width: 1.3; flex-shrink: 0; }
-    .search-field input { flex: 1; background: none; border: 0; outline: none; color: var(--ivory); font-family: var(--serif); font-size: clamp(2rem, 5vw, 3.4rem); }
-    .search-field input::placeholder { color: rgba(244,237,226,.3); }
-    .results { list-style: none; margin-top: 1.6rem; }
-    .results button, .index-list button { width: 100%; display: grid; grid-template-columns: 3rem 1fr auto; align-items: baseline; gap: 1rem; text-align: left; padding: .95rem 0; border-bottom: 1px solid rgba(244,237,226,.09); transition: padding .35s var(--ease), color .3s; }
-    .results button:hover, .index-list button:hover, .results button:focus-visible { padding-left: .7rem; color: var(--amber); }
-    .results .n, .index-list .n { font-size: .7rem; color: var(--muted); font-variant-numeric: tabular-nums; letter-spacing: .1em; }
-    .results .t, .index-list .t { font-family: var(--serif); font-size: 1.45rem; }
-    .results .c, .index-list .c { font-size: .64rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
-    .empty { color: var(--muted); padding: 1.6rem 0; font-size: .9rem; }
-    .menu-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: clamp(2rem, 6vw, 5rem); }
-    .menu-main a { display: block; font-family: var(--serif); font-size: clamp(2.4rem, 5vw, 3.6rem); line-height: 1.2; color: var(--cream); transition: color .3s, transform .4s var(--ease); }
-    .menu-main a:hover { color: var(--amber); transform: translateX(8px); }
-    .menu-main .sub { margin-top: 2.2rem; font-size: .7rem; letter-spacing: .24em; text-transform: uppercase; color: var(--muted); line-height: 2.4; }
-    .menu-main .sub a { font-family: var(--sans); font-size: .7rem; display: inline; color: var(--muted); }
-    .menu-main .sub a:hover { color: var(--ivory); transform: none; }
-    .index-list h4 { font-size: .66rem; letter-spacing: .26em; text-transform: uppercase; color: var(--muted); font-weight: 500; margin-bottom: .6rem; }
-    .index-list ol { list-style: none; }
-    .index-list .t { font-size: 1.2rem; }
-    .index-list button { padding: .7rem 0; }
 
     .fallback { position: fixed; inset: 0; display: none; place-items: center; text-align: center; padding: 2rem; z-index: 60; background: #2b231d; }
     .fallback.on { display: grid; }
@@ -221,13 +332,12 @@
 
     /* ============ RESPONSIVE ============ */
     @media (max-width: 960px) {
-      nav.links { display: none; }
       .hint { display: none; }
       .caption { max-width: 60vw; bottom: calc(118px + var(--safe-b)); }
       .controls { left: auto; right: 20px; transform: none; gap: .6rem; }
       .ring { width: 64px; height: 64px; }
       .arrow { width: 44px; height: 44px; }
-      .detail { padding: 84px 14px calc(96px + var(--safe-b)); }
+      .detail { padding: 96px 14px calc(96px + var(--safe-b)); }
       .card { grid-template-columns: 1fr; grid-template-areas: "head" "media" "info"; overflow-y: auto; padding: 22px 20px 24px; border-radius: 22px; }
       .card-head { padding-right: 6.4rem; }
       .actions { top: 12px; right: 12px; }
@@ -235,10 +345,8 @@
       .info { max-height: none; margin: 1.4rem 0 0; padding: 1.4rem 0 0; border-left: 0; border-top: 1px solid rgba(255,244,228,.18); }
       .info dl { grid-template-columns: 7rem 1fr; }
       .info .desc { overflow: visible; padding-right: 0; }
-      .menu-grid { grid-template-columns: 1fr; }
     }
     @media (max-width: 560px) {
-      .logo small { display: none; }
       .caption { left: 20px; right: 20px; max-width: none; bottom: calc(108px + var(--safe-b)); }
       .controls { left: 50%; right: auto; transform: translateX(-50%); bottom: calc(22px + var(--safe-b)); }
     }
@@ -254,7 +362,6 @@
 
   <!-- ============ LOADER / ENTRANCE ============ -->
   <section class="loader" id="loader" aria-labelledby="loaderTitle">
-    <a class="back-link" href="../../about.html#other-work">&larr; Portfolio</a>
     <div>
       <small>Ganesh Javhare &middot; Virtual Gallery</small>
       <h1 id="loaderTitle">Other<em>works</em></h1>
@@ -266,27 +373,54 @@
     </div>
   </section>
 
-  <!-- ============ HEADER ============ -->
-  <header class="ui top">
-    <a class="logo" href="../../index.html" aria-label="Otherworks — back to Ganesh Javhare's portfolio">
-      <span class="mark" aria-hidden="true"><i></i></span>
-      <b>Otherworks</b><small>by G. Javhare</small>
+  <!-- ============ HEADER (same as the case study pages) ============ -->
+  <nav class="nav" aria-label="Main">
+    <a href="../../index.html" class="brand" aria-label="Ganesh Javhare — home">
+      <svg id="Layer_2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 317.37 376.83"
+        class="w-full h-full overflow-visible">
+        <defs>
+          <style>
+            .cls-1,
+            .cls-2,
+            .cls-3 {
+              fill: #ff5f00;
+              stroke: #ff5f00;
+              stroke-width: 8px;
+              /* Increased thickness */
+              stroke-linejoin: round;
+            }
+            </style>
+        </defs>
+        <g id="Layer_1-2" data-name="Layer_1">
+          <g>
+            <path class="cls-2"
+              d="M192.9,12.47c-21.83-.35-43.56,5.7-63.41,14.31C69.29,52.25,24.39,108.18,20.17,174.3c-7.76,100.38,77.21,188.92,178.28,181.83,30.27-2.43,62.93-14.17,80.75-39.77,17.74-25.77,15.18-67.35-11.29-86.29-32.01-22.07-75.72.34-78.56,38.69-2.44,20.53,16.97,41.66,38.12,35.79,14.89-3.59,25.12-18.82,23.24-34.01-1.08-10.46-7.3-19.94-16.31-25.45-4.58-2.83-9.88-4.59-15.47-5.23v-.83c10.22-1.19,21.07,2.95,28.35,10.31,15.01,14.77,14.24,40.22-.8,54.78-9.12,9.17-22.87,13.59-35.62,10.98-12.97-2.69-23.63-11.87-29.77-23.34-3.04-5.74-4.96-12.2-5.3-18.95-1.44-25.64,13.8-51.11,37.19-62.06,38.67-18.29,81.29,2.81,92.99,43.3,3.57,12.21,4.27,24.93,2.7,37.56-4.73,39.26-37.24,66.52-73.12,77.69-22.99,7.53-47.58,9.16-71.47,5.99C37,359.32-38.06,218.6,19.85,104.3,41.27,62.01,78.66,27.29,123.61,11.66c16.76-5.74,34.21-8.82,51.8-9.91,5.84-.31,11.66-.45,17.49-.68,0,0,0,11.4,0,11.4h0Z" />
+            <path class="cls-1"
+              d="M18.69,310.17c17.93-1.04,23.41-19.33,29.15-33.67,14.63-38.69,27.52-93.26,73.27-106.16,6.4-1.71,12.9-2.38,19.44-2.24,2.45.11,5.52.1,8.02.04,12.72-.16,38.28-.54,50.99-.84,0,0,50.74-1.25,50.74-1.25,7.11-.38,14.04-2.34,20.21-5.74,12.41-6.77,21.51-19.12,24.64-32.89,1.71-6.26,1.28-16.53,1.4-23.04.13-8.52.33-17.03.67-25.55.7-17.62,1.79-36.62,2.38-54.28,0,0,.05-1.6.05-1.6.31-3.94-2.24-7.98-6-9.15-1.3-.55-3.05-.4-4.44-.47-21.03-.54-49.09-.67-70.25-.92-5.84.01-16.46-.3-22.18-.11-4.84.44-9.71,1.26-14.34,2.71-18.31,6.03-33.34,20.31-42.03,37.31-5.4,10.6-7.26,22.75-7.4,34.58-1.31,29.84-2.93,59.62-5.5,89.41-2.21-25.54-3.62-51.06-4.87-76.64-.31-8.55-1.03-17.46-.79-26.03.79-18.44,8.22-36.99,21.06-50.43,13-13.46,31.55-21.13,50.07-21.97,16.88-.14,60.74-.58,77.07-.82,6.19-.13,12.94-.18,19.16-.35,9.25-.74,17.73,3.81,22.13,11.96,2.12,3.8,2.94,8.21,2.91,12.52,0,0,.1,3.19.1,3.19,0,0,.51,12.77.51,12.77,1.1,23.3,2.41,46.95,2.49,70.25.15,7.16-.22,14.43-1.95,21.41-6.74,29.68-33.92,52.65-64.64,52.47-14.56-.22-36.68-.87-51.44-1.18-16.52-.5-42.67-.55-59.14-1.05-27.39-1.35-43.63,18.61-54.56,41.43-7.38,15-12.97,30.87-19.67,46.34-3.46,8.08-7.26,16.06-12.23,23.46-7.37,11.38-20.76,23.07-35.03,16.52h0Z" />
+            <path class="cls-3"
+              d="M93.48,135.7c.18,9.29-8.53,17.06-17.69,15.57-17.86-3.11-17.86-28.03,0-31.14,9.16-1.48,17.87,6.28,17.69,15.57h0ZM80.4,135.7c.19-5.25-5.77-9.16-10.45-5.85-3.95,2.59-3.95,9.11,0,11.69,4.68,3.32,10.65-.6,10.45-5.85h0Z" />
+          </g>
+        </g>
+      </svg>
+      <span class="n"><b>Ganesh Javhare</b><small>UX Designer</small></span>
     </a>
-    <nav class="links" aria-label="Primary">
-      <a href="./" aria-current="page">Gallery</a>
-      <a href="../../index.html#work">Exhibitions</a>
-      <a href="../../about.html">About</a>
-      <a href="../../articles/designing-for-a-regulator.html">Journal</a>
-    </nav>
-    <div class="tools">
-      <button class="icon-btn" id="searchBtn" type="button" aria-label="Search artworks">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
-      </button>
-      <button class="icon-btn" id="menuBtn" type="button" aria-label="Open menu">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h16M4 15h16"/></svg>
-      </button>
+    <div class="nav-chapter" id="navChapter">Other Work · Otherworks Gallery</div>
+    <div class="nav-right">
+      <a href="../../about.html#other-work" class="fluid-back" aria-label="Back to Other work">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        <span class="nav-text"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> Back</span>
+      </a>
+      <span class="nav-sep" aria-hidden="true"></span>
+      <div class="nav-me">
+        <button type="button" aria-label="Open menu" aria-haspopup="true" aria-expanded="false"><img src="../../assets/shared/images/avatar-sm.webp" width="36" height="36" alt="Ganesh Javhare"></button>
+        <div class="nav-menu">
+          <a href="../../about.html">About Me</a>
+          <a href="../../projects.html">Resume</a>
+          <a href="../../about.html#other-work" aria-current="page">Other Work</a>
+        </div>
+      </div>
     </div>
-  </header>
+  </nav>
 
   <!-- ============ CAPTION / CONTROLS ============ -->
   <div class="ui caption" id="caption" aria-live="polite">
@@ -359,44 +493,6 @@
         <div class="tags" id="dTags"></div>
       </div>
     </article>
-  </div>
-
-  <!-- ============ SEARCH ============ -->
-  <div class="sheet" id="searchSheet" role="dialog" aria-modal="true" aria-label="Search artworks" aria-hidden="true">
-    <button class="icon-btn close-sheet" type="button" data-close aria-label="Close search">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
-    </button>
-    <div class="sheet-inner">
-      <label class="search-field">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
-        <span class="sr-only">Search by title, category or medium</span>
-        <input id="searchInput" type="search" placeholder="Search the collection" autocomplete="off">
-      </label>
-      <ul class="results" id="results"></ul>
-    </div>
-  </div>
-
-  <!-- ============ MENU ============ -->
-  <div class="sheet" id="menuSheet" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">
-    <button class="icon-btn close-sheet" type="button" data-close aria-label="Close menu">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
-    </button>
-    <div class="sheet-inner menu-grid">
-      <div class="menu-main">
-        <a href="./" data-close>Gallery</a>
-        <a href="../../index.html#work">Exhibitions</a>
-        <a href="../../about.html">About</a>
-        <a href="../../articles/designing-for-a-regulator.html">Journal</a>
-        <div class="sub">
-          <a href="../../index.html">&larr; Back to portfolio</a><br>
-          <a href="../../about.html#other-work">Other work</a>
-        </div>
-      </div>
-      <div class="index-list">
-        <h4>The collection &middot; 24 works</h4>
-        <ol id="indexList"></ol>
-      </div>
-    </div>
   </div>
 
   <div class="fallback" id="fallback">
@@ -956,7 +1052,6 @@
     ticks.appendChild(l);
   }
   const listItem = (item, i, cls) => `<button type="button" data-go="${i}"><span class="n">${pad(i + 1)}</span><span class="t">${item.title}</span><span class="c">${item.cat}</span></button>`;
-  $('indexList').innerHTML = ART.map((a, i) => `<li>${listItem(a, i)}</li>`).join('');
   $('srList').innerHTML = ART.map((a, i) => `<li><button type="button" data-open="${i}">Open artwork ${i + 1}: ${a.title}, ${a.cat}</button></li>`).join('');
 
   /* ---------- Loading ---------- */
@@ -978,7 +1073,7 @@
   const lookNow = new THREE.Vector3().copy(titlePos);
   const mouse = { x: 0, y: 0 };
   const look = { yaw: 0, pitch: 0, touchYaw: 0 };
-  const focus = { idx: -1, f: 0, goal: 0, cam: new THREE.Vector3(), at: new THREE.Vector3(), panelShown: false };
+  const focus = { idx: -1, goal: 0 };
 
   function enter() {
     if (entered) return;
@@ -1131,7 +1226,7 @@
     const set = () => {
       dImg.src = a.gen ? (a.full || (a.full = a.canvas.toDataURL('image/jpeg', .92))) : a.src;
       dImg.alt = `${a.title} — ${a.cat}`;
-      $('dIdx').textContent = `${pad(i + 1)} / ${pad(N)}`;
+      $('dIdx').textContent = `${pad(i + 1)} / ${pad(N)}`; $('countNow').textContent = pad(i + 1);
       $('dTitle').textContent = a.title; $('dCat').textContent = a.cat.split('·')[0].trim(); $('dYear').textContent = a.year;
       $('dArtist').textContent = a.artist; $('dMedium').textContent = a.medium;
       $('dColl').textContent = a.gen ? 'Generative studies' : 'Portfolio work';
@@ -1145,100 +1240,157 @@
     };
     if (animate && !reduce) { dImg.classList.add('swap-out'); $('dInfo').classList.add('swap-out'); $('dHead').classList.add('swap-out'); setTimeout(set, 260); } else set();
   }
-  /* Dock-style "genie": the window pours out of the framed artwork and
-     pours back into it on close. Built from a transform (artwork rect -> window
-     rect) plus a curved clip-path whose top widens before its bottom. */
-  const card = $('card'), pv = new THREE.Vector3(), pv2 = new THREE.Vector3(), projCam = camera.clone();
-  let cardAnim = null, closing = false;
+  /* ==========================================================
+     GENIE WINDOW (macOS-style minimise / maximise)
+     The corridor never moves. The whole window (glass, image, text) is
+     sliced into horizontal strips; each strip is stretched and placed on
+     its own, so the window pours out of the artwork and back into it.
+     ========================================================== */
+  const card = $('card'), pv = new THREE.Vector3();
+  const GENIE_STRIPS = 48, OPEN_MS = 1900, CLOSE_MS = 1600;
+  let genie = null, closing = false, opening = false;
+  const clamp01 = x => Math.max(0, Math.min(1, x));
+  const eIO = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+  const eSine = x => -(Math.cos(Math.PI * x) - 1) / 2;
+  const lerp = (a, b, t) => a + (b - a) * t;
+
+  // Where the artwork is on screen right now (current corridor camera).
   function artScreenRect(i) {
     const m = groups[i].art, gp = m.geometry.parameters;
-    let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+    let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9, behind = false;
     m.updateMatrixWorld();
-    // project from where the camera comes to rest in front of this work, so the window always pours out of the frame
-    projCam.copy(camera); viewSpot(i, pv2); projCam.position.copy(pv2); projCam.up.set(0, 1, 0); projCam.lookAt(artCenters[i]); projCam.updateMatrixWorld();
     for (const [sx, sy] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) {
-      pv.set(sx * gp.width / 2, sy * gp.height / 2, 0).applyMatrix4(m.matrixWorld).project(projCam);
+      pv.set(sx * gp.width / 2, sy * gp.height / 2, 0).applyMatrix4(m.matrixWorld).project(camera);
+      if (pv.z > 1) behind = true;
       const x = (pv.x + 1) / 2 * innerWidth, y = (1 - pv.y) / 2 * innerHeight;
       x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y);
     }
-    return { x: x0, y: y0, w: Math.max(40, x1 - x0), h: Math.max(30, y1 - y0) };
+    const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+    const visible = !behind && cx > 0 && cx < innerWidth && cy > 0 && cy < innerHeight;
+    return visible ? { x: x0, y: y0, w: Math.max(24, x1 - x0), h: Math.max(18, y1 - y0) } : null;
   }
-  const eIO = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
-  const eOut = x => 1 - Math.pow(1 - x, 3);
-  const sstep = x => x * x * (3 - 2 * x);
-  function genieFrames(from) {
-    const to = card.getBoundingClientRect();
-    const dx = from.x - to.left, dy = from.y - to.top, sx0 = from.w / to.width, sy0 = from.h / to.height;
-    const below = from.y + from.h / 2 > to.top + to.height / 2;     // pour towards the artwork's side
-    const frames = [], K = 16, S = 9;
-    for (let k = 0; k <= K; k++) {
-      const p = k / K;
-      const ey = eOut(Math.min(1, p * 1.15)), ex = eIO(p);
-      const tx = dx * (1 - ex), ty = dy * (1 - ey);
-      const sx = sx0 + (1 - sx0) * ex, sy = sy0 + (1 - sy0) * ey;
-      // width of the window at its far edge vs the edge nearest the artwork
-      const far = .3 + .7 * eOut(Math.min(1, p * 1.6)), nearW = .3 + .7 * eIO(p);
-      const L = [], Rr = [];
-      for (let j = 0; j <= S; j++) {
-        const y = j / S, t = sstep(below ? y : 1 - y);
-        const w = far + (nearW - far) * t, inset = (1 - w) / 2 * 100;
-        L.push(`${inset.toFixed(2)}% ${(y * 100).toFixed(2)}%`); Rr.unshift(`${(100 - inset).toFixed(2)}% ${(y * 100).toFixed(2)}%`);
-      }
-      frames.push({ offset: p, transform: `translate(${tx}px, ${ty}px) scale(${sx}, ${sy})`, clipPath: `polygon(${L.concat(Rr).join(',')})`, opacity: Math.min(1, .25 + p * 2.2) });
+  // If the work isn't in view (e.g. after stepping with the arrows), use the counter ring, like a dock icon.
+  function sourceRect(i) {
+    const r = artScreenRect(i);
+    if (r) return r;
+    const b = document.querySelector('.ring').getBoundingClientRect();
+    return { x: b.left + b.width * .2, y: b.top + b.height * .2, w: b.width * .6, h: b.height * .6 };
+  }
+
+  function buildGenie(W) {
+    const layer = document.createElement('div'); layer.className = 'genie-layer'; layer.setAttribute('aria-hidden', 'true');
+    const strips = [];
+    for (let j = 0; j < GENIE_STRIPS; j++) {
+      const c = card.cloneNode(true);
+      c.removeAttribute('id'); c.querySelectorAll('[id]').forEach(n => n.removeAttribute('id'));
+      c.classList.add('genie-strip');
+      const y0 = j / GENIE_STRIPS, y1 = (j + 1) / GENIE_STRIPS;
+      const top = y0 * 100, bot = (1 - y1) * 100;   // strips share exact edges: no overlap, so no darker seams in the glass
+      c.style.cssText = `left:${W.left}px;top:${W.top}px;width:${W.width}px;height:${W.height}px;clip-path:inset(${top}% 0 ${bot}% 0);-webkit-clip-path:inset(${top}% 0 ${bot}% 0);`;
+      layer.appendChild(c); strips.push({ el: c, y0, y1 });
     }
-    return frames;
+    detail.appendChild(layer);
+    return { layer, strips, W };
   }
-  function revealContent() {
-    ['dHead', 'dInfo'].forEach((id, n) => { const el = $(id); el.classList.remove('fade-in'); void el.offsetWidth; el.style.animationDelay = (n * 90) + 'ms'; el.classList.add('fade-in'); });
-  }
-  function showPanel() {
-    focus.panelShown = true;
-    detail.classList.add('open'); detail.setAttribute('aria-hidden', 'false');
-    if (cardAnim) cardAnim.cancel();
-    if (!reduce && card.animate) {
-      const frames = genieFrames(artScreenRect(focus.idx));
-      ['dHead', 'dInfo'].forEach(id => { $(id).classList.remove('fade-in'); $(id).style.opacity = 0; });
-      cardAnim = card.animate(frames, { duration: 1050, easing: 'linear', fill: 'both' });
-      cardAnim.finished.then(() => { cardAnim && cardAnim.cancel(); cardAnim = null; ['dHead', 'dInfo'].forEach(id => $(id).style.opacity = ''); revealContent(); }).catch(() => {});
-      setTimeout(() => { ['dHead', 'dInfo'].forEach(id => $(id).style.opacity = ''); revealContent(); }, 620);
+
+  // q = 0: full window.  q = 1: collapsed into the artwork.
+  function genieAt(G, A, q) {
+    const W = G.W, n = G.strips.length;
+    const srcBelow = A.y + A.h / 2 > W.top + W.height / 2;
+    // vertical boundaries: each moves on its own clock, the edge nearest the artwork leading
+    const yb = [];
+    for (let b = 0; b <= n; b++) {
+      const v = b / n, d = srcBelow ? v : 1 - v;                // d = 1 nearest the artwork
+      const s = eIO(clamp01((q - .22 * (1 - d)) / .78));
+      yb.push(lerp(W.top + v * W.height, A.y + v * A.h, s));
     }
-    setTimeout(() => $('dClose').focus({ preventScroll: true }), 60);
+    // horizontal pinch per boundary: starts at the artwork's end and travels along the window
+    const lb = [], rb = [];
+    for (let b = 0; b <= n; b++) {
+      const v = b / n, d = srcBelow ? v : 1 - v;
+      const h = eSine(clamp01(q * 1.55 - (1 - d) * .55));
+      lb.push(lerp(W.left, A.x, h)); rb.push(lerp(W.left + W.width, A.x + A.w, h));
+    }
+    // each strip becomes a slanted band joining its top and bottom boundaries, so the outline curves smoothly
+    G.strips.forEach((st, j) => {
+      const hs = (st.y1 - st.y0) * W.height, y0 = st.y0 * W.height;
+      const wTop = rb[j] - lb[j], wBot = rb[j + 1] - lb[j + 1];
+      const sx = Math.max(.001, (wTop + wBot) / 2 / W.width);
+      const cTop = (lb[j] + rb[j]) / 2, cBot = (lb[j + 1] + rb[j + 1]) / 2;
+      const dd = Math.max(.001, (yb[j + 1] - yb[j]) / hs);
+      const c = (cBot - cTop) / hs;
+      const e = cTop - W.width / 2 * sx - c * y0 - W.left;
+      const f = yb[j] - dd * y0 - W.top;
+      st.el.style.transform = `matrix(${sx}, 0, ${c}, ${dd}, ${e}, ${f})`;
+    });
+    // fade only at the very end so it melts into the painting
+    G.layer.style.opacity = 1 - eIO(clamp01((q - .78) / .22));
   }
-  function openDetail(i) {
+
+  function runGenie(from, to, ms, A, keep) {
+    return new Promise(res => {
+      card.style.visibility = 'hidden';
+      const W = card.getBoundingClientRect();
+      genie = buildGenie(W);
+      genieAt(genie, A, from);
+      const t0 = performance.now();
+      const step = now => {
+        const p = clamp01((now - t0) / (ms * (window.__genieSlow || 1)));
+        genieAt(genie, A, lerp(from, to, p));
+        if (p < 1) requestAnimationFrame(step);
+        else { const l = genie.layer; genie = null; if (keep) { l.style.transition = 'opacity .45s'; requestAnimationFrame(() => l.style.opacity = 0); setTimeout(() => l.remove(), 480); } else l.remove(); res(); }
+      };
+      requestAnimationFrame(step);
+    });
+  }
+
+  async function openDetail(i) {
     if (!entered) enter();
-    if (focus.goal === 0) lastFocus = document.activeElement;
-    dIndex = i; focus.idx = i; focus.goal = 1; focus.panelShown = false;
+    if (opening || closing) return;
+    if (!detailOpen()) lastFocus = document.activeElement;
+    dIndex = i; focus.idx = i; focus.goal = 1;
     setHover(-1);
     document.body.classList.add('detail-open');
-    goTo(i); fillDetail(i, false);
-    if (reduce) showPanel(); // otherwise the frame loop opens it once the camera arrives
-    clearTimeout(focus.timer); focus.timer = setTimeout(() => { if (focus.goal === 1 && !focus.panelShown) showPanel(); }, 1900);
+    fillDetail(i, false);
+    detail.classList.add('open'); detail.setAttribute('aria-hidden', 'false');
+    if (!reduce) {
+      opening = true;
+      const A = sourceRect(i);
+      // wait (briefly) for the picture so the strips aren't empty, but never stall the animation on it
+      await Promise.race([dImg.decode().catch(() => {}), new Promise(r => setTimeout(r, 450))]);
+      await runGenie(1, 0, OPEN_MS, A, true);
+      opening = false;
+    }
+    card.style.visibility = '';
+    card.classList.remove('settle'); void card.offsetWidth; card.classList.add('settle');
+    $('dClose').focus({ preventScroll: true });
   }
   function detailStep(d) {
+    if (opening || closing) return;
     dIndex = mod(dIndex + d, N); focus.idx = dIndex;
-    goTo(dIndex); fillDetail(dIndex, true);
+    fillDetail(dIndex, true);     // the corridor stays where it is
   }
-  function closeDetail() {
-    if (closing) return;
+  async function closeDetail() {
+    if (closing || opening || !detailOpen()) return;
     setExpanded(false);
-    const finish = () => {
+    const i = dIndex;
+    if (!reduce) {
+      closing = true;
+      detail.classList.add('closing');
+      await runGenie(0, 1, CLOSE_MS, sourceRect(i));
+      detail.classList.remove('closing');
       closing = false;
-      detail.classList.remove('open'); detail.setAttribute('aria-hidden', 'true');
-      if (cardAnim) { cardAnim.cancel(); cardAnim = null; }
-      focus.goal = 0; focus.panelShown = false;
-      document.body.classList.remove('detail-open');
-      if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
-    };
-    if (reduce || !focus.panelShown || !card.animate) { finish(); return; }
-    closing = true;
-    if (cardAnim) { cardAnim.cancel(); cardAnim = null; }
-    const frames = genieFrames(artScreenRect(focus.idx)).reverse().map((f, i, a) => ({ ...f, offset: i / (a.length - 1) }));
-    detail.classList.add('closing');
-    cardAnim = card.animate(frames, { duration: 760, easing: 'linear', fill: 'both' });
-    cardAnim.finished.then(() => { detail.classList.remove('closing'); finish(); }).catch(() => { detail.classList.remove('closing'); finish(); });
+    }
+    detail.classList.remove('open'); detail.setAttribute('aria-hidden', 'true');
+    card.style.visibility = '';
+    focus.goal = 0;
+    document.body.classList.remove('detail-open');
+    // if they stepped to a work that isn't in view, walk to it now the window is gone
+    if (!artScreenRect(i)) goTo(i); else updateCaption(true);
+    if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
   }
   $('dClose').addEventListener('click', closeDetail);
-  $('dScrim').addEventListener('click', () => focus.panelShown && closeDetail());
+  $('dScrim').addEventListener('click', () => closeDetail());
   $('zoomIn').addEventListener('click', e => { e.stopPropagation(); zoomBy(1.5); });
   $('zoomOut').addEventListener('click', e => { e.stopPropagation(); zoomBy(1 / 1.5); });
   media.addEventListener('wheel', e => { e.preventDefault(); e.stopPropagation(); zoomBy(Math.exp(-e.deltaY * .0022), e.clientX, e.clientY); }, { passive: false });
@@ -1265,33 +1417,19 @@
   addEventListener('resize', () => detailOpen() && applyZoom());
 
 
-  /* ---------- Search + menu ---------- */
-  const searchSheet = $('searchSheet'), menuSheet = $('menuSheet');
-  function openSheet(el) { closeAll(); lastFocus = document.activeElement; el.classList.add('open'); el.setAttribute('aria-hidden', 'false'); }
-  function closeSheet(el) { el.classList.remove('open'); el.setAttribute('aria-hidden', 'true'); }
-  function closeAll() {
-    const wasOpen = anyOverlayOpen();
-    if (focus.goal === 1) closeDetail();
-    [searchSheet, menuSheet].forEach(closeSheet);
-    if (wasOpen && lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
-  }
-  const anyOverlayOpen = () => searchSheet.classList.contains('open') || menuSheet.classList.contains('open');
-  function renderResults(q) {
-    q = q.trim().toLowerCase();
-    const hits = ART.map((a, i) => [a, i]).filter(([a]) => !q || `${a.title} ${a.cat} ${a.medium} ${a.artist} ${a.year}`.toLowerCase().includes(q));
-    $('results').innerHTML = hits.length ? hits.map(([a, i]) => `<li>${listItem(a, i)}</li>`).join('') : `<li class="empty">Nothing in the collection matches “${q.replace(/[<>&"]/g, '')}”.</li>`;
-  }
-  $('searchBtn').addEventListener('click', () => { openSheet(searchSheet); renderResults(''); $('searchInput').value = ''; setTimeout(() => $('searchInput').focus(), 80); });
-  $('searchInput').addEventListener('input', e => renderResults(e.target.value));
-  $('searchInput').addEventListener('keydown', e => { if (e.key === 'Enter') { const b = $('results').querySelector('[data-go]'); b && b.click(); } });
-  $('menuBtn').addEventListener('click', () => { openSheet(menuSheet); setTimeout(() => menuSheet.querySelector('a').focus(), 80); });
+  /* ---------- Overlays + header menu ---------- */
+  function closeAll() { if (detailOpen()) closeDetail(); }
+  const anyOverlayOpen = () => false;
   document.addEventListener('click', e => {
-    const g = e.target.closest('[data-go]');
-    if (g) { closeAll(); goTo(+g.dataset.go); return; }
     const o = e.target.closest('[data-open]');
     if (o) { openDetail(+o.dataset.open); return; }
-    const c = e.target.closest('[data-close]');
-    if (c) { if (c.tagName === 'A' && c.getAttribute('href') === './') e.preventDefault(); closeAll(); }
+  });
+  // Avatar menu in the header (tap to open on touch screens), same as the case study pages
+  document.querySelectorAll('.nav-me').forEach(me => {
+    const btn = me.querySelector('button');
+    btn.addEventListener('click', e => { e.stopPropagation(); const o = me.classList.toggle('open'); btn.setAttribute('aria-expanded', o); });
+    document.addEventListener('click', () => { me.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); });
+    me.addEventListener('keydown', e => { if (e.key === 'Escape') { me.classList.remove('open'); btn.focus(); } });
   });
 
   /* ==========================================================
@@ -1339,35 +1477,22 @@
     if (t < -.3) want.lerp(titlePos, smooth(Math.min(1, (-t - .3) / 1.0)));   // entrance: look at the title wall
     lookNow.lerp(want, 1 - Math.exp(-dt * 5));
 
-    // 2. Focus: fly to face the chosen frame
-    const fk = 1 - Math.exp(-dt * (reduce ? 40 : 2.2));
-    focus.f += (focus.goal - focus.f) * fk;
-    if (Math.abs(focus.goal - focus.f) < .002) focus.f = focus.goal;
-    if (focus.idx >= 0) {
-      viewSpot(focus.idx, fwant);
-      if (focus.f < .02 && focus.goal === 1) { focus.cam.copy(fwant); focus.at.copy(artCenters[focus.idx]); }
-      const mk = 1 - Math.exp(-dt * (reduce ? 40 : 2.6));
-      focus.cam.lerp(fwant, mk); focus.at.lerp(artCenters[focus.idx], mk);
+    camera.position.copy(corridor);
+    camera.lookAt(lookNow);
+
+    // 2. Cursor look-around. Frozen while a window is open so the corridor stays still behind it.
+    if (!detailOpen()) {
+      const yGoal = reduce ? 0 : -Math.sign(mouse.x) * Math.pow(Math.abs(mouse.x), 1.25) * 1.05 + look.touchYaw, pGoal = reduce ? 0 : -mouse.y * .22;
+      const lk = 1 - Math.exp(-dt * 2.6);
+      look.yaw += (yGoal - look.yaw) * lk; look.pitch += (pGoal - look.pitch) * lk;
     }
-    const e = ease(focus.f);
-    camera.position.lerpVectors(corridor, focus.cam, e);
-    tmp.lerpVectors(lookNow, focus.at, e);
-    camera.lookAt(tmp);
-    if (focus.goal === 1 && !focus.panelShown && focus.f > .93) showPanel();
-    if (focus.goal === 0 && focus.f === 0) focus.idx = -1;
+    camera.rotateY(look.yaw); camera.rotateX(look.pitch);
 
-    // 3. Cursor look-around (fades out while focused)
-    const free = (1 - e) * (anyOverlayOpen() ? 0 : 1);
-    const yGoal = reduce ? 0 : -Math.sign(mouse.x) * Math.pow(Math.abs(mouse.x), 1.25) * 1.05 + look.touchYaw, pGoal = reduce ? 0 : -mouse.y * .22;
-    const lk = 1 - Math.exp(-dt * 2.6);
-    look.yaw += (yGoal - look.yaw) * lk; look.pitch += (pGoal - look.pitch) * lk;
-    if (free > 0) { camera.rotateY(look.yaw * free); camera.rotateX(look.pitch * free); }
-
-    assignSpots(focus.goal ? target : t);
+    assignSpots(t);
 
     // Hover highlight
     groups.forEach((gi, i) => {
-      const goal = i === hovered || (focus.goal && i === focus.idx) ? 1 : 0;
+      const goal = i === hovered || (focus.goal && i === focus.idx && artScreenRect(i)) ? 1 : 0;
       if (gi.hover !== goal) {
         gi.hover += (goal - gi.hover) * (1 - Math.exp(-dt * 8)); if (Math.abs(goal - gi.hover) < .01) gi.hover = goal;
         gi.artMat.emissiveIntensity = .32 + gi.hover * .22; gi.wash.material.opacity = .36 + gi.hover * .3;
