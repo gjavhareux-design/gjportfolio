@@ -258,6 +258,7 @@
     /* ============ DETAIL VIEW — glass card over the live scene ============ */
     .card.settle { animation: settle .45s var(--ease) both; }
     @keyframes settle { from { opacity: .0; } to { opacity: 1; } }
+    .card.settle { animation-duration: .2s; }
     .detail { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; padding: 110px clamp(16px, 4vw, 64px) 116px; visibility: hidden; pointer-events: none; }
     .detail.open { visibility: visible; }
     .detail .scrim { position: absolute; inset: 0; pointer-events: auto; opacity: 0; transition: opacity .7s var(--ease);
@@ -1247,7 +1248,7 @@
      is bent so the window pours out of the artwork and back into it.
      ========================================================== */
   const card = $('card'), pv = new THREE.Vector3();
-  const OPEN_MS = 2000, CLOSE_MS = 1700;
+  const OPEN_MS = 750, CLOSE_MS = 600;
   let genie = null, closing = false, opening = false;
   const clamp01 = x => Math.max(0, Math.min(1, x));
   const eIO = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
@@ -1379,7 +1380,7 @@
       bendWindow(gAnim.W, gAnim.A, lerp(gAnim.from, gAnim.to, p));
       if (p >= 1) { const a = gAnim; gAnim = null; if (a.keep) gFade = 1; else gMesh.visible = false; a.res(); }
     } else if (gFade !== null) {                                       // cross-fade into the live glass window
-      gFade -= dt / .45; gMat.opacity = Math.max(0, gFade);
+      gFade -= dt / .18; gMat.opacity = Math.max(0, gFade);
       if (gFade <= 0) { gFade = null; gMesh.visible = false; }
     }
     if (gMesh.visible) { renderer.autoClear = false; renderer.clearDepth(); renderer.render(ovScene, ovCam); renderer.autoClear = true; }
