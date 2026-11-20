@@ -268,10 +268,10 @@
     .card { position: relative; pointer-events: auto; width: min(1200px, 100%); max-height: 100%; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       grid-template-areas: "head head" "media info"; align-items: start; column-gap: clamp(24px, 3.4vw, 48px);
       padding: clamp(26px, 3vw, 40px) clamp(24px, 3.4vw, 48px) clamp(28px, 3.4vw, 48px); border-radius: 28px; color: var(--ivory); transform-origin: 0 0; will-change: transform, clip-path;
-      background: linear-gradient(140deg, rgba(255,244,228,.12) 0%, rgba(255,236,214,.04) 55%, rgba(255,240,222,.08) 100%);
-      border: 1px solid rgba(255,244,228,.3);
-      box-shadow: 0 40px 100px rgba(10,6,3,.4), inset 0 1px 0 rgba(255,255,255,.28), inset 0 0 0 1px rgba(255,255,255,.04);
-      -webkit-backdrop-filter: blur(16px) saturate(1.3); backdrop-filter: blur(16px) saturate(1.3); }
+      background: linear-gradient(140deg, rgba(14,13,13,.84) 0%, rgba(6,6,6,.8) 55%, rgba(11,10,10,.83) 100%);
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: 0 40px 100px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.12), inset 0 0 0 1px rgba(255,255,255,.04);
+      -webkit-backdrop-filter: blur(18px) saturate(.6); backdrop-filter: blur(18px) saturate(.6); }
     .card-head { transition: opacity .4s var(--ease); grid-area: head; padding-right: 7rem; margin-bottom: clamp(18px, 2.4vw, 28px); }
     .card-head .cat { font-size: .64rem; letter-spacing: .26em; text-transform: uppercase; color: var(--amber); }
     .card-head h3 { font-family: var(--serif); font-weight: 500; font-size: clamp(1.9rem, 2.8vw, 2.7rem); line-height: 1.05; margin-top: .35rem; text-shadow: 0 1px 12px rgba(0,0,0,.18); }
@@ -280,7 +280,7 @@
     .fade-in { animation: fadeUp .5s var(--ease) both; }
     @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
         .card::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
-      background: radial-gradient(60% 50% at 15% 0%, rgba(255,255,255,.12), transparent 70%); }
+      background: radial-gradient(60% 50% at 15% 0%, rgba(255,255,255,.06), transparent 70%); }
     .actions { position: absolute; top: 22px; right: 22px; display: flex; gap: .7rem; z-index: 3; }
     .actions a, .actions button { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; transition: background .3s; }
     .actions a:hover { background: rgba(255,244,228,.12); }
@@ -1309,10 +1309,10 @@
 
     // glass panel
     let g = c.createLinearGradient(0, 0, W.width, W.height);
-    g.addColorStop(0, 'rgba(150,128,108,.80)'); g.addColorStop(.55, 'rgba(118,99,83,.74)'); g.addColorStop(1, 'rgba(134,114,96,.78)');
+    g.addColorStop(0, 'rgba(16,15,15,.9)'); g.addColorStop(.55, 'rgba(7,7,7,.88)'); g.addColorStop(1, 'rgba(12,11,11,.89)');
     rr(.5, .5, W.width - 1, W.height - 1, 28); c.fillStyle = g; c.fill();
-    g = c.createRadialGradient(W.width * .15, 0, 0, W.width * .15, 0, W.width * .6); g.addColorStop(0, 'rgba(255,255,255,.14)'); g.addColorStop(1, 'rgba(255,255,255,0)');
-    c.fillStyle = g; c.fill(); c.strokeStyle = 'rgba(255,244,228,.38)'; c.stroke();
+    g = c.createRadialGradient(W.width * .15, 0, 0, W.width * .15, 0, W.width * .6); g.addColorStop(0, 'rgba(255,255,255,.06)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+    c.fillStyle = g; c.fill(); c.strokeStyle = 'rgba(255,255,255,.16)'; c.stroke();
     // heading, top-left
     text($('dIdx')); text($('dTitle')); text($('dCat')); text(card.querySelector('.card-head .sub i')); text($('dYear'));
     // image + its controls
