@@ -348,9 +348,8 @@
       .caption { left: 20px; right: 20px; max-width: none; bottom: calc(108px + var(--safe-b)); }
       .controls { left: 50%; right: auto; transform: translateX(-50%); bottom: calc(22px + var(--safe-b)); }
     }
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { transition-duration: .01ms !important; animation: none !important; }
-    }
+    /* reduce-motion: only the decorative film grain stops; interface transitions stay */
+    @media (prefers-reduced-motion: reduce) { .grain { animation: none; } }
   </style>
 </head>
 <body>
@@ -565,7 +564,10 @@
   const N = ART.length;
   const STEP = Math.PI * 2 / N;
   const R = 14, RI = 11, RO = 17, H = 6.2, EYE = 1.62, ART_Y = 1.72;
+  // The OS 'reduce motion' setting only switches off decorative motion (head-bob, film grain).
+  // Motion the visitor asks for (walking, looking, the window opening) always plays.
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const decorOnly = reduce;
   const $ = id => document.getElementById(id);
   const pad = n => String(n).padStart(2, '0');
   const mod = (n, m) => ((n % m) + m) % m;
@@ -1077,7 +1079,7 @@
     if (entered) return;
     entered = true; document.body.classList.add('entered');
     loaderEl.classList.add('is-gone');
-    k = reduce ? 30 : 1.25;
+    k = 1.25;
     target = 0;
     setTimeout(() => { k = 3.0; }, 2600);
     updateCaption(true);
@@ -1109,7 +1111,7 @@
     capTimer = setTimeout(() => {
       $('capCat').textContent = a.cat; $('capTitle').textContent = a.title; $('capMeta').textContent = `${a.artist}, ${a.year}`;
       cap.classList.remove('is-out');
-    }, reduce ? 0 : 260);
+    }, 260);
   }
 
   // Wheel: continuous walking. Down = forward, up = back.
@@ -1236,7 +1238,7 @@
       z.s = 1; applyZoom();
       dImg.classList.remove('swap-out'); $('dInfo').classList.remove('swap-out'); $('dHead').classList.remove('swap-out');
     };
-    if (animate && !reduce) { dImg.classList.add('swap-out'); $('dInfo').classList.add('swap-out'); $('dHead').classList.add('swap-out'); setTimeout(set, 260); } else set();
+    if (animate) { dImg.classList.add('swap-out'); $('dInfo').classList.add('swap-out'); $('dHead').classList.add('swap-out'); setTimeout(set, 260); } else set();
   }
   /* ==========================================================
      GENIE WINDOW (macOS-style minimise / maximise)
@@ -1392,9 +1394,9 @@
     setHover(-1);
     document.body.classList.add('detail-open');
     fillDetail(i, false);
-    if (!reduce) card.style.visibility = 'hidden';      // stays hidden until the window has poured out
+    card.style.visibility = 'hidden';      // stays hidden until the window has poured out
     detail.classList.add('open'); detail.setAttribute('aria-hidden', 'false');
-    if (!reduce) {
+    {
       opening = true;
       const A = sourceRect(i);
       // wait (briefly) for the picture so the strips aren't empty, but never stall the animation on it
@@ -1415,7 +1417,7 @@
     if (closing || opening || !detailOpen()) return;
     setExpanded(false);
     const i = dIndex;
-    if (!reduce) {
+    {
       closing = true;
       detail.classList.add('closing');
       await runGenie(0, 1, CLOSE_MS, sourceRect(i));
@@ -1510,7 +1512,7 @@
     // 1. Corridor camera: always faces straight down the curve
     const a = t * STEP;
     walkPhase += dt * speed * 9;
-    const bob = reduce ? 0 : Math.sin(walkPhase) * .016 * Math.min(1, speed);
+    const bob = decorOnly ? 0 : Math.sin(walkPhase) * .016 * Math.min(1, speed);
     corridor.set(Math.cos(a) * R, EYE + bob, Math.sin(a) * R);
     carry.position.set(Math.cos(a + .12) * R, H - 1.2, Math.sin(a + .12) * R);
     ahead.set(Math.cos(a + .55) * R, EYE - .04, Math.sin(a + .55) * R);
@@ -1523,7 +1525,7 @@
 
     // 2. Cursor look-around. Frozen while a window is open so the corridor stays still behind it.
     if (!detailOpen()) {
-      const yGoal = reduce ? 0 : -Math.sign(mouse.x) * Math.pow(Math.abs(mouse.x), 1.25) * 1.05 + look.touchYaw, pGoal = reduce ? 0 : -mouse.y * .22;
+      const yGoal = -Math.sign(mouse.x) * Math.pow(Math.abs(mouse.x), 1.25) * 1.05 + look.touchYaw, pGoal = -mouse.y * .22;
       const lk = 1 - Math.exp(-dt * 2.6);
       look.yaw += (yGoal - look.yaw) * lk; look.pitch += (pGoal - look.pitch) * lk;
     }
