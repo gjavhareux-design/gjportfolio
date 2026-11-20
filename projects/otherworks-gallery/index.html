@@ -52,6 +52,8 @@
       animation: grain 1.2s steps(6) infinite; }
     @keyframes grain { 0%{transform:translate(0,0)} 20%{transform:translate(-3%,2%)} 40%{transform:translate(2%,-3%)} 60%{transform:translate(-2%,-1%)} 80%{transform:translate(3%,3%)} 100%{transform:translate(0,0)} }
 
+    .ui { position: fixed; z-index: 10; }
+
     /* ============ HEADER: copied from the case study pages ============ */
     .nav { --ink: #36383d; --accent: #ff5f00; --line: #e4e4e7; --muted: #71717a; --accent-soft: #fff1e8; color: var(--ink); font-family: 'Inter', system-ui, sans-serif; }
     .nav a { color: inherit; }
@@ -254,10 +256,6 @@
     .ui { transition: opacity 1.2s var(--ease) .5s; }
 
     /* ============ DETAIL VIEW — glass card over the live scene ============ */
-    .genie-layer { position: fixed; inset: 0; pointer-events: none; z-index: 2; }
-    .genie-strip { position: fixed !important; margin: 0 !important; max-height: none !important; transform-origin: 0 0; will-change: transform; backface-visibility: hidden; visibility: visible !important; }
-    /* moving strips skip the live blur (48 blurred layers would stutter) and use a tinted glass instead */
-    .genie-strip { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; background: linear-gradient(140deg, rgba(120,100,82,.62), rgba(96,80,66,.55)) !important; }
     .card.settle { animation: settle .45s var(--ease) both; }
     @keyframes settle { from { opacity: .0; } to { opacity: 1; } }
     .detail { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; padding: 110px clamp(16px, 4vw, 64px) 116px; visibility: hidden; pointer-events: none; }
@@ -1242,12 +1240,12 @@
   }
   /* ==========================================================
      GENIE WINDOW (macOS-style minimise / maximise)
-     The corridor never moves. The whole window (glass, image, text) is
-     sliced into horizontal strips; each strip is stretched and placed on
-     its own, so the window pours out of the artwork and back into it.
+     The corridor never moves. The window (glass, image, text) is drawn
+     into a texture on a finely divided WebGL plane; every frame the plane
+     is bent so the window pours out of the artwork and back into it.
      ========================================================== */
   const card = $('card'), pv = new THREE.Vector3();
-  const GENIE_STRIPS = 48, OPEN_MS = 1900, CLOSE_MS = 1600;
+  const OPEN_MS = 2000, CLOSE_MS = 1700;
   let genie = null, closing = false, opening = false;
   const clamp01 = x => Math.max(0, Math.min(1, x));
   const eIO = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
@@ -1277,72 +1275,114 @@
     return { x: b.left + b.width * .2, y: b.top + b.height * .2, w: b.width * .6, h: b.height * .6 };
   }
 
-  function buildGenie(W) {
-    const layer = document.createElement('div'); layer.className = 'genie-layer'; layer.setAttribute('aria-hidden', 'true');
-    const strips = [];
-    for (let j = 0; j < GENIE_STRIPS; j++) {
-      const c = card.cloneNode(true);
-      c.removeAttribute('id'); c.querySelectorAll('[id]').forEach(n => n.removeAttribute('id'));
-      c.classList.add('genie-strip');
-      const y0 = j / GENIE_STRIPS, y1 = (j + 1) / GENIE_STRIPS;
-      const top = y0 * 100, bot = (1 - y1) * 100;   // strips share exact edges: no overlap, so no darker seams in the glass
-      c.style.cssText = `left:${W.left}px;top:${W.top}px;width:${W.width}px;height:${W.height}px;clip-path:inset(${top}% 0 ${bot}% 0);-webkit-clip-path:inset(${top}% 0 ${bot}% 0);`;
-      layer.appendChild(c); strips.push({ el: c, y0, y1 });
-    }
-    detail.appendChild(layer);
-    return { layer, strips, W };
+  /* ---- The window as a picture: redrawn from the live card's layout ---- */
+  function snapshotCard() {
+    const W = card.getBoundingClientRect(), k = Math.min(2, window.devicePixelRatio || 1);
+    const cv = document.createElement('canvas'); cv.width = Math.round(W.width * k); cv.height = Math.round(W.height * k);
+    const c = cv.getContext('2d'); c.scale(k, k);
+    const rr = (x, y, w, h, r) => { r = Math.min(r, w / 2, h / 2); c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); };
+    const rel = el => { const r = el.getBoundingClientRect(); return { x: r.left - W.left, y: r.top - W.top, w: r.width, h: r.height }; };
+    const text = (el, align) => {
+      if (!el) return;
+      const cs = getComputedStyle(el), r = rel(el);
+      const pl = parseFloat(cs.paddingLeft) || 0, pr = parseFloat(cs.paddingRight) || 0, pt = parseFloat(cs.paddingTop) || 0;
+      const fs = parseFloat(cs.fontSize), lh = parseFloat(cs.lineHeight) || fs * 1.25;
+      c.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+      c.fillStyle = cs.color; c.textBaseline = 'middle';
+      if ('letterSpacing' in c) c.letterSpacing = cs.letterSpacing === 'normal' ? '0px' : cs.letterSpacing;
+      let t = el.textContent.replace(/\s+/g, ' ').trim(); if (cs.textTransform === 'uppercase') t = t.toUpperCase();
+      const maxW = r.w - pl - pr + 1, lines = []; let line = '';
+      for (const w of t.split(' ')) { const tryL = line ? line + ' ' + w : w; if (c.measureText(tryL).width > maxW && line) { lines.push(line); line = w; } else line = tryL; }
+      if (line) lines.push(line);
+      c.save(); c.beginPath(); c.rect(r.x, r.y, r.w, r.h); c.clip();
+      lines.forEach((ln, n) => {
+        const x = align === 'center' ? r.x + r.w / 2 : r.x + pl;
+        c.textAlign = align === 'center' ? 'center' : 'left';
+        c.fillText(ln, x, r.y + (align === 'center' ? r.h / 2 : pt + lh * (n + .5)));
+      });
+      c.restore();
+    };
+    const line = (x1, y1, x2, y2, col) => { c.strokeStyle = col; c.lineWidth = 1; c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2, y2); c.stroke(); };
+
+    // glass panel
+    let g = c.createLinearGradient(0, 0, W.width, W.height);
+    g.addColorStop(0, 'rgba(150,128,108,.80)'); g.addColorStop(.55, 'rgba(118,99,83,.74)'); g.addColorStop(1, 'rgba(134,114,96,.78)');
+    rr(.5, .5, W.width - 1, W.height - 1, 28); c.fillStyle = g; c.fill();
+    g = c.createRadialGradient(W.width * .15, 0, 0, W.width * .15, 0, W.width * .6); g.addColorStop(0, 'rgba(255,255,255,.14)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+    c.fillStyle = g; c.fill(); c.strokeStyle = 'rgba(255,244,228,.38)'; c.stroke();
+    // heading, top-left
+    text($('dIdx')); text($('dTitle')); text($('dCat')); text(card.querySelector('.card-head .sub i')); text($('dYear'));
+    // image + its controls
+    const ir = rel(dImg);
+    c.save(); c.shadowColor = 'rgba(0,0,0,.35)'; c.shadowBlur = 30; c.shadowOffsetY = 14; rr(ir.x, ir.y, ir.w, ir.h, 10); c.fillStyle = '#1c1612'; c.fill(); c.restore();
+    c.save(); rr(ir.x, ir.y, ir.w, ir.h, 10); c.clip(); try { c.drawImage(dImg, ir.x, ir.y, ir.w, ir.h); } catch (e) {} c.restore();
+    const zb = rel(card.querySelector('.zoom-bar'));
+    rr(zb.x, zb.y, zb.w, zb.h, zb.h / 2); c.fillStyle = 'rgba(30,22,16,.5)'; c.fill(); c.strokeStyle = 'rgba(255,244,228,.3)'; c.stroke();
+    text($('zoomVal'), 'center');
+    ['zoomOut', 'zoomIn'].forEach((id, n) => { const b = rel($(id)), cx = b.x + b.w / 2, cy = b.y + b.h / 2; c.strokeStyle = '#f4ede2'; c.lineWidth = 1.2; c.beginPath(); c.arc(cx, cy, 7.5, 0, Math.PI * 2); c.stroke(); line(cx - 3.5, cy, cx + 3.5, cy, '#f4ede2'); if (n) line(cx, cy - 3.5, cx, cy + 3.5, '#f4ede2'); });
+    { const b = rel($('dExpand')), x = b.x + 9, y = b.y + 9, s = b.w - 18; c.strokeStyle = '#fff'; c.lineWidth = 1.5; c.beginPath();
+      c.moveTo(x, y + 5); c.lineTo(x, y); c.lineTo(x + 5, y); c.moveTo(x + s - 5, y); c.lineTo(x + s, y); c.lineTo(x + s, y + 5);
+      c.moveTo(x, y + s - 5); c.lineTo(x, y + s); c.lineTo(x + 5, y + s); c.moveTo(x + s - 5, y + s); c.lineTo(x + s, y + s); c.lineTo(x + s, y + s - 5); c.stroke(); }
+    // info column
+    const inf = rel($('dInfo')); line(inf.x + .5, inf.y, inf.x + .5, inf.y + inf.h, 'rgba(255,244,228,.2)');
+    card.querySelectorAll('.info dt, .info dd').forEach(el => { const r = rel(el); line(r.x, r.y + r.h - .5, r.x + r.w, r.y + r.h - .5, 'rgba(255,244,228,.2)'); text(el); });
+    text($('dDesc'));
+    card.querySelectorAll('.tags span').forEach(el => { const r = rel(el); rr(r.x, r.y, r.w, r.h, r.h / 2); c.fillStyle = 'rgba(255,244,228,.08)'; c.fill(); c.strokeStyle = 'rgba(255,244,228,.32)'; c.stroke(); text(el, 'center'); });
+    // window buttons
+    { const b = rel($('dClose')), cx = b.x + b.w / 2, cy = b.y + b.h / 2; c.fillStyle = 'rgba(255,244,228,.16)'; c.beginPath(); c.arc(cx, cy, b.w / 2, 0, Math.PI * 2); c.fill(); line(cx - 6, cy - 6, cx + 6, cy + 6, '#f4ede2'); line(cx + 6, cy - 6, cx - 6, cy + 6, '#f4ede2'); }
+    { const b = rel($('dMore')), x = b.x + 14, y = b.y + 14, s = b.w - 28; c.strokeStyle = '#f4ede2'; c.lineWidth = 1.4; c.beginPath(); c.moveTo(x + s * .55, y); c.lineTo(x + s, y); c.lineTo(x + s, y + s * .45); c.moveTo(x + s, y); c.lineTo(x + s * .45, y + s * .55); c.moveTo(x + s * .8, y + s * .6); c.lineTo(x + s * .8, y + s); c.lineTo(x, y + s); c.lineTo(x, y + s * .2); c.lineTo(x + s * .4, y + s * .2); c.stroke(); }
+    return { cv, W: { left: W.left, top: W.top, width: W.width, height: W.height } };
   }
 
-  // q = 0: full window.  q = 1: collapsed into the artwork.
-  function genieAt(G, A, q) {
-    const W = G.W, n = G.strips.length;
-    const srcBelow = A.y + A.h / 2 > W.top + W.height / 2;
-    // vertical boundaries: each moves on its own clock, the edge nearest the artwork leading
-    const yb = [];
-    for (let b = 0; b <= n; b++) {
-      const v = b / n, d = srcBelow ? v : 1 - v;                // d = 1 nearest the artwork
-      const s = eIO(clamp01((q - .22 * (1 - d)) / .78));
-      yb.push(lerp(W.top + v * W.height, A.y + v * A.h, s));
-    }
-    // horizontal pinch per boundary: starts at the artwork's end and travels along the window
-    const lb = [], rb = [];
-    for (let b = 0; b <= n; b++) {
-      const v = b / n, d = srcBelow ? v : 1 - v;
-      const h = eSine(clamp01(q * 1.55 - (1 - d) * .55));
-      lb.push(lerp(W.left, A.x, h)); rb.push(lerp(W.left + W.width, A.x + A.w, h));
-    }
-    // each strip becomes a slanted band joining its top and bottom boundaries, so the outline curves smoothly
-    G.strips.forEach((st, j) => {
-      const hs = (st.y1 - st.y0) * W.height, y0 = st.y0 * W.height;
-      const wTop = rb[j] - lb[j], wBot = rb[j + 1] - lb[j + 1];
-      const sx = Math.max(.001, (wTop + wBot) / 2 / W.width);
-      const cTop = (lb[j] + rb[j]) / 2, cBot = (lb[j + 1] + rb[j + 1]) / 2;
-      const dd = Math.max(.001, (yb[j + 1] - yb[j]) / hs);
-      const c = (cBot - cTop) / hs;
-      const e = cTop - W.width / 2 * sx - c * y0 - W.left;
-      const f = yb[j] - dd * y0 - W.top;
-      st.el.style.transform = `matrix(${sx}, 0, ${c}, ${dd}, ${e}, ${f})`;
-    });
-    // fade only at the very end so it melts into the painting
-    G.layer.style.opacity = 1 - eIO(clamp01((q - .78) / .22));
-  }
+  /* ---- A finely divided plane drawn over the corridor, bent every frame ---- */
+  const ovScene = new THREE.Scene();
+  const ovCam = new THREE.OrthographicCamera(0, innerWidth, 0, -innerHeight, -10, 10);
+  const GX = 24, GY = 90;
+  const gGeo = new THREE.PlaneGeometry(1, 1, GX, GY);
+  const gMat = new THREE.MeshBasicMaterial({ transparent: true, toneMapped: false, depthTest: false, depthWrite: false, side: THREE.DoubleSide });
+  const gMesh = new THREE.Mesh(gGeo, gMat); gMesh.frustumCulled = false; gMesh.visible = false; ovScene.add(gMesh);
+  let gAnim = null, gFade = null;
 
+  // q = 0: full window.  q = 1: poured into the artwork.
+  function bendWindow(W, A, q) {
+    const pos = gGeo.attributes.position, srcBelow = A.y + A.h / 2 > W.top + W.height / 2;
+    for (let iy = 0; iy <= GY; iy++) {
+      const v = iy / GY, d = srcBelow ? v : 1 - v;                 // d = 1 at the edge nearest the artwork
+      const s = eIO(clamp01((q - .24 * (1 - d)) / .76));            // vertical travel, nearest edge first
+      const y = lerp(W.top + v * W.height, A.y + v * A.h, s);
+      const h = eSine(clamp01(q * 1.6 - (1 - d) * .6));              // the pinch runs along the window
+      const l = lerp(W.left, A.x, h), r = lerp(W.left + W.width, A.x + A.w, h);
+      for (let ix = 0; ix <= GX; ix++) pos.setXYZ(iy * (GX + 1) + ix, lerp(l, r, ix / GX), -y, 0);
+    }
+    pos.needsUpdate = true;
+    gMat.opacity = 1 - eIO(clamp01((q - .8) / .2));                   // melts into the painting at the very end
+  }
   function runGenie(from, to, ms, A, keep) {
     return new Promise(res => {
+      const snap = snapshotCard();
+      if (gMat.map) gMat.map.dispose();
+      const tx = new THREE.CanvasTexture(snap.cv); tx.encoding = THREE.sRGBEncoding; tx.anisotropy = 4;
+      gMat.map = tx; gMat.needsUpdate = true;
       card.style.visibility = 'hidden';
-      const W = card.getBoundingClientRect();
-      genie = buildGenie(W);
-      genieAt(genie, A, from);
-      const t0 = performance.now();
-      const step = now => {
-        const p = clamp01((now - t0) / (ms * (window.__genieSlow || 1)));
-        genieAt(genie, A, lerp(from, to, p));
-        if (p < 1) requestAnimationFrame(step);
-        else { const l = genie.layer; genie = null; if (keep) { l.style.transition = 'opacity .45s'; requestAnimationFrame(() => l.style.opacity = 0); setTimeout(() => l.remove(), 480); } else l.remove(); res(); }
-      };
-      requestAnimationFrame(step);
+      gFade = null;
+      gAnim = { from, to, ms: ms * (window.__genieSlow || 1), t: 0, A, W: snap.W, res, keep };
+      bendWindow(snap.W, A, from); gMesh.visible = true;
     });
   }
+  // called from the frame loop
+  function tickGenie(dt) {
+    if (gAnim) {
+      gAnim.t += dt * 1000;
+      const p = clamp01(gAnim.t / gAnim.ms);
+      bendWindow(gAnim.W, gAnim.A, lerp(gAnim.from, gAnim.to, p));
+      if (p >= 1) { const a = gAnim; gAnim = null; if (a.keep) gFade = 1; else gMesh.visible = false; a.res(); }
+    } else if (gFade !== null) {                                       // cross-fade into the live glass window
+      gFade -= dt / .45; gMat.opacity = Math.max(0, gFade);
+      if (gFade <= 0) { gFade = null; gMesh.visible = false; }
+    }
+    if (gMesh.visible) { renderer.autoClear = false; renderer.clearDepth(); renderer.render(ovScene, ovCam); renderer.autoClear = true; }
+  }
+  addEventListener('resize', () => { ovCam.right = innerWidth; ovCam.bottom = -innerHeight; ovCam.updateProjectionMatrix(); });
 
   async function openDetail(i) {
     if (!entered) enter();
@@ -1352,6 +1392,7 @@
     setHover(-1);
     document.body.classList.add('detail-open');
     fillDetail(i, false);
+    if (!reduce) card.style.visibility = 'hidden';      // stays hidden until the window has poured out
     detail.classList.add('open'); detail.setAttribute('aria-hidden', 'false');
     if (!reduce) {
       opening = true;
@@ -1507,6 +1548,7 @@
     dot.setAttribute('cx', 40 + Math.cos(da) * 32); dot.setAttribute('cy', 40 + Math.sin(da) * 32);
 
     renderer.render(scene, camera);
+    tickGenie(dt);
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
