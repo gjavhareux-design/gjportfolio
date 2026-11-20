@@ -643,6 +643,24 @@
       display: block
     }
 
+    /* Old website screenshot → opens the prototype; tooltip follows the cursor */
+    .old-proto-link { position: relative; display: block; cursor: pointer; }
+    .old-proto-link img { transition: filter .2s ease; }
+    .old-proto-link:hover img, .old-proto-link:focus-visible img { filter: brightness(.94); }
+    .old-proto-link:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
+    .old-proto-tip {
+      position: absolute; left: 0; top: 0; z-index: 5; pointer-events: none;
+      padding: 8px 12px; border-radius: 8px; background: var(--ink); color: #fff;
+      font-size: 13px; font-weight: 600; line-height: 1.3; white-space: nowrap;
+      box-shadow: 0 8px 20px -8px rgba(0, 0, 0, .45);
+      opacity: 0; transform: translate(var(--tx, 0), var(--ty, 0)) scale(.96);
+      transition: opacity .15s ease, transform .08s linear;
+    }
+    .old-proto-link.tip-on .old-proto-tip { opacity: 1; transform: translate(var(--tx, 0), var(--ty, 0)); }
+    .old-proto-link:focus-visible .old-proto-tip { opacity: 1; --tx: 16px; --ty: 16px; }
+    .old-shot figcaption a { color: var(--accent); font-weight: 600; }
+    @media (hover: none) { .old-proto-tip { display: none; } }
+
     .pains-head small {
       font-size: 12px;
       font-weight: 700;
@@ -4037,10 +4055,14 @@
           <div class="browser">
             <div class="bar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i
                 style="background:#28c840"></i><span class="url">maharera.mahaonline.gov.in</span></div>
-            <img src="assets/maharera-old-website-opt.webp" alt="Full-page screenshot of the old MahaRERA website homepage"
-              loading="lazy">
+            <a class="old-proto-link" href="old-maharera-site/index.html" target="_blank" rel="noopener"
+              aria-label="Open the interactive prototype of the old MahaRERA website (opens in a new tab)">
+              <img src="assets/maharera-old-website-opt.webp" alt="Full-page screenshot of the old MahaRERA website homepage"
+                loading="lazy">
+              <span class="old-proto-tip" aria-hidden="true">Click to open the prototype of the old website ↗</span>
+            </a>
           </div>
-          <figcaption>Old MahaRERA homepage, January 2022</figcaption>
+          <figcaption>Old MahaRERA homepage, January 2022 · <a href="old-maharera-site/index.html" target="_blank" rel="noopener">Open the interactive prototype ↗</a></figcaption>
         </figure>
       </div>
     </section>
@@ -5978,6 +6000,23 @@
       settle();
       addEventListener('load', () => { if (cur === start) settle(); });
     });
+  </script>
+  <script>
+    /* Cursor-following tooltip on the old website screenshot */
+    (function () {
+      var link = document.querySelector('.old-proto-link');
+      if (!link || !matchMedia('(hover: hover)').matches) return;
+      var tip = link.querySelector('.old-proto-tip');
+      link.addEventListener('mousemove', function (e) {
+        var r = link.getBoundingClientRect(), x = e.clientX - r.left + 16, y = e.clientY - r.top + 18;
+        var w = tip.offsetWidth, h = tip.offsetHeight;
+        if (x + w > r.width - 8) x = e.clientX - r.left - w - 12;
+        if (y + h > r.height - 8) y = e.clientY - r.top - h - 12;
+        link.style.setProperty('--tx', x + 'px'); link.style.setProperty('--ty', y + 'px');
+        link.classList.add('tip-on');
+      });
+      link.addEventListener('mouseleave', function () { link.classList.remove('tip-on'); });
+    })();
   </script>
 </body>
 
