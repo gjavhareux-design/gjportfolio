@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Old MahaRERA Site</title>
+<meta name="robots" content="noindex, nofollow">
+<!-- Portfolio recreation of the legacy MahaRERA homepage (as of Jan 2022) for a UX case study. Not the official site. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html { font-size: 16px; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #fff; color: #1E1E1E; font-family: "Inter", Arial, Helvetica, sans-serif; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+  img { display: block; }
+  .container { width: 1240px; max-width: calc(100% - 32px); margin: 0 auto; }
+
+  /* ---------- Top utility bar ---------- */
+  .topbar { margin: 0 36px; height: 36px; background: #F5F5F5; border: 1px solid #E0E0E0; border-top-color: #E0E0E0; }
+  .topbar-inner { height: 100%; display: flex; justify-content: flex-end; align-items: center; padding-right: 116px; font-size: 11px; }
+  .topbar-inner a.util { color: #666; margin-left: 17px; }
+  .topbar-inner a.util:hover { text-decoration: underline; }
+  .fontsize { display: flex; align-items: center; margin-left: 30px; }
+  .fontsize button { border: 0; background: none; font: 600 11px "Inter", Arial, sans-serif; color: #1E1E1E; padding: 0 4px; cursor: pointer; }
+  .fontsize .contrast { width: 20px; height: 16px; background: #333; color: #fff; border-radius: 2px; margin-left: 8px; padding: 0; }
+  .fontsize .lang { height: 16px; background: #CCC; border-radius: 2px; margin-left: 8px; padding: 0 5px; color: #1E1E1E; font: 600 10px "Inter", Arial, sans-serif; line-height: 16px; }
+
+  /* ---------- Header ---------- */
+  .header { height: 110px; }
+  .header .container { height: 100%; display: flex; align-items: center; justify-content: space-between; }
+  .brand { display: flex; align-items: center; padding-left: 7px; }
+  .brand .seal { width: 46px; height: 46px; }
+  .brand .logo { width: 54px; height: 54px; border-radius: 50%; object-fit: cover; margin-left: 9px; }
+  .brand-text { margin-left: 9px; padding-top: 2px; }
+  .brand-text h1 { margin: 0; font-size: 24.5px; line-height: 28px; font-weight: 600; color: #555; letter-spacing: -0.1px; }
+  .brand-text p { margin: 3px 0 0; font-size: 13px; font-weight: 500; color: #FF5A2E; }
+  .cm { display: flex; align-items: center; margin-right: -64px; }
+  .cm-text { text-align: right; }
+  .cm-text strong { display: block; font-size: 14px; font-weight: 600; color: #1E1E1E; line-height: 18px; }
+  .cm-text span { display: block; font-size: 11px; color: #666; line-height: 16px; }
+  .cm-photo { width: 52px; height: 52px; border-radius: 50%; border: 1px solid #CCC; margin-left: 14px; object-fit: cover; padding: 1px; background: #fff; }
+  .cm .divider { width: 1px; height: 40px; background: #E0E0E0; margin: 0 11px 0 13px; }
+  .cm .emblem { height: 58px; width: auto; margin-right: 1px; }
+
+  /* ---------- Main navigation (classic desktop-application style menus) ---------- */
+  .nav { background: #2B3B95; height: 46px; position: relative; z-index: 50; }
+  .nav-toggle { display: none; }
+  .menubar { list-style: none; margin: 0; padding: 0 0 0 0; height: 46px; display: flex; justify-content: center; transform: translateX(-18px); }
+  .menubar > li { position: relative; }
+  .menubar > li > a { display: block; height: 46px; line-height: 46px; padding: 0 10.8px; font-size: 13px; font-weight: 500; color: #D1D6F0; white-space: nowrap; }
+  .menubar > li > a.active { color: #fff; font-weight: 600; }
+  .menubar > li:hover > a, .menubar > li:focus-within > a { color: #fff; background: #3A4BA8; }
+
+  .menu { display: none; position: absolute; list-style: none; margin: 0; padding: 3px 0;
+          min-width: 210px; background: #F0F0F0; border: 1px solid #979797;
+          box-shadow: 3px 3px 4px rgba(0,0,0,.35); font: 12px "Segoe UI", Tahoma, Arial, sans-serif; color: #000; }
+  .menubar > li > .menu { top: 46px; left: 0; }
+  .menu li { position: relative; }
+  .menu a { display: flex; align-items: center; justify-content: space-between; padding: 4px 26px 4px 24px; white-space: nowrap; color: #000; line-height: 16px; }
+  .menu li.has-sub > a::after { content: "\25B6"; font-size: 8px; color: #333; position: absolute; right: 9px; }
+  .menu li:hover > a, .menu li:focus-within > a { background: #91C9F7; box-shadow: inset 0 0 0 1px #6FA7D8; }
+  .menu li.sep { height: 1px; margin: 3px 2px 3px 22px; background: #D7D7D7; border-bottom: 1px solid #fff; }
+  .menu .menu { top: -4px; left: 100%; margin-left: -2px; }
+  .menubar li:hover > .menu, .menubar li:focus-within > .menu { display: block; }
+
+  /* ---------- Ticker ---------- */
+  .ticker { width: 1252px; max-width: 100%; margin: 0 auto 0 130px; height: 38px; background: #F37021; display: flex; align-items: center; padding: 0 100px; }
+  .ticker-track { flex: 1; overflow: hidden; white-space: nowrap; position: relative; height: 38px; }
+  .ticker-track span { position: absolute; top: 0; left: 0; line-height: 38px; font-size: 13px; font-weight: 600; color: #fff; animation: tick 22s linear infinite; padding-left: 100%; }
+  .ticker-track span { padding-left: 0; animation-delay: 4s; }
+  @keyframes tick { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+  .ticker.paused .ticker-track span { animation-play-state: paused; }
+  .ticker-btns { display: flex; gap: 4px; margin-left: 20px; }
+  .ticker-btns button { width: 24px; height: 24px; border: 0; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
+  .ticker-btns .pause { background: #0984FF; }
+  .ticker-btns .next { background: #024D9F; }
+  .ticker-btns .pause i { display: block; width: 8px; height: 10px; border: 2px solid #fff; border-radius: 1.5px; background: linear-gradient(90deg, #fff 0 2px, transparent 2px 4px, #fff 4px); border: 0; }
+  .ticker.paused .ticker-btns .pause i { width: 0; height: 0; border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 8px solid #fff; background: none; border-radius: 0; }
+  .ticker-btns .next svg { width: 10px; height: 10px; }
+
+  /* ---------- Banner ---------- */
+  .banner img { width: 100%; height: auto; aspect-ratio: 1512 / 282; object-fit: fill; }
+
+  /* ---------- Main content ---------- */
+  .main { display: flex; align-items: flex-start; gap: 24px; }
+  .welcome { width: 780px; flex: 0 0 780px; }
+  .welcome-head { background: #E05B26; height: 122px; padding: 13px 47px; }
+  .welcome-head h2 { margin: 0; font-size: 24px; line-height: 29px; font-weight: 700; color: #fff; }
+  .welcome-head p { margin: 0; font-size: 13px; font-weight: 600; color: #F2D8CC; line-height: 18px; }
+  .welcome-body { background: #F9F9F9; border: 1px solid #E0E0E0; border-top: 0; padding: 23px 25px 46px 49px; font-size: 0.875rem; line-height: 1.5; }
+  .welcome-body p { margin: 0; }
+  .welcome-body .gap { margin-top: 1.1rem; }
+  .welcome-body .gap-sm { margin-top: 3px; }
+  .welcome-body .gap-lg { margin-top: 1.35rem; }
+  .welcome-body h3 { margin: 0; font-size: 0.875rem; font-weight: 700; }
+  .welcome-body ul { margin: 0; padding-left: 21px; }
+  .welcome-body li::marker { font-size: 0.8em; }
+
+  .side { width: 436px; flex: 0 0 436px; }
+  .wn-head { background: #E05B26; height: 122px; padding: 10px 20px; }
+  .wn-head h2 { margin: 0; font-size: 20px; line-height: 24px; font-weight: 700; color: #fff; }
+  .wn-head a { font-size: 12.5px; font-weight: 700; color: #FFE0B2; }
+  .wn-head a:hover { text-decoration: underline; }
+  .wn-body { background: #232E7A; border: 1px solid #1A255D; height: 270px; overflow: hidden; position: relative; }
+  .wn-list { list-style: none; margin: 0; padding: 0 19px; position: absolute; left: 0; right: 0; top: 0; }
+  .wn-list li { display: flex; align-items: flex-start; height: 116px; padding-top: 19px; border-bottom: 1px solid rgba(255,255,255,.133); }
+  .wn-list li:nth-child(2n) { padding-left: 0; }
+  .wn-list li:nth-child(2n+1) { padding-left: 6px; }
+  .wn-logo { width: 52px; height: 53px; border-radius: 50%; background: #fff; flex: 0 0 52px; display: flex; align-items: center; justify-content: center; }
+  .wn-logo img { width: 46px; height: 46px; border-radius: 50%; }
+  .wn-item { margin-left: 19px; width: 240px; padding-top: 1px; }
+  .wn-item a.t { display: block; font-size: 12.5px; font-weight: 600; color: #fff; line-height: 16px; }
+  .wn-item a.more { display: inline-block; margin-top: 3px; height: 17px; line-height: 17px; padding: 0 8px; background: #F37021; color: #fff; font-size: 10.5px; font-weight: 700; border-radius: 2px; }
+  .wn-controls { display: flex; justify-content: flex-end; gap: 5px; margin-top: 1px; }
+  .wn-controls button { height: 20px; border: 1px solid #D0CECF; background: #fff; padding: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .wn-controls .w24 { width: 25px; } .wn-controls .w19 { width: 20px; }
+  .wn-controls img { height: 14px; width: auto; }
+  .wn-controls button.on { background: #E8E8E8; }
+
+  .side-btn { display: block; height: 54px; line-height: 54px; padding: 0 20px; color: #fff; font-size: 18px; font-weight: 700; }
+  .side-btn:hover { filter: brightness(1.08); }
+  .side-btn.orange { background: #E05B26; margin-top: 51px; }
+  .side-btn.navy { background: #232E7A; }
+  .side-btn.blue { background: #0984FF; margin-top: 38px; }
+
+  /* ---------- Partner logos ---------- */
+  .partners { display: flex; align-items: center; justify-content: space-between; height: 95px; margin: 53px auto 53px; width: 1140px; max-width: calc(100% - 32px); }
+  .partners a { display: block; }
+  .partners .di img { width: 139px; }
+  .partners .mg img { width: 156px; }
+  .partners .gm img { width: 81px; }
+  .partners .mo img { width: 247px; }
+  .partners .as img { width: 170px; }
+
+  /* ---------- Footer ---------- */
+  .footer { background: #232E7A; min-height: 115px; }
+  .footer .inner { width: 1206px; max-width: calc(100% - 32px); margin: 0 auto; padding-left: 11px; display: flex; justify-content: space-between; padding-top: 26px; }
+  .footer ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 16.5px; }
+  .footer ul a { font-size: 12px; color: #D1D6F0; }
+  .footer ul a:hover { color: #fff; text-decoration: underline; }
+  .footer .copy { margin: 18px 0 0; font-size: 12px; color: #D1D6F0; }
+  .footer .right { text-align: right; padding-top: 7px; }
+  .footer .right strong { display: block; font-size: 12px; font-weight: 600; color: #fff; }
+  .footer .right span { display: block; margin-top: 17px; font-size: 12px; color: #D1D6F0; padding-right: 1px; }
+
+  /* ---------- High contrast toggle ---------- */
+  body.hc, body.hc .welcome-body, body.hc .header, body.hc .topbar { background: #000; color: #fff; }
+  body.hc .brand-text h1, body.hc .cm-text strong, body.hc .cm-text span, body.hc .topbar-inner a.util, body.hc .fontsize button:not(.contrast) { color: #FFEB3B; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 1500px) {
+    .cm { margin-right: 0; }
+    .topbar-inner { padding-right: 24px; }
+    .ticker { margin: 0 auto; }
+  }
+  @media (max-width: 1240px) {
+    .menubar > li > a { padding: 0 7px; font-size: 12px; }
+    .menubar { transform: none; }
+    .ticker { padding: 0 24px; }
+  }
+  @media (max-width: 1100px) {
+    .main { flex-direction: column; }
+    .welcome, .side { width: 100%; flex: none; }
+    .partners { flex-wrap: wrap; justify-content: center; gap: 30px 50px; height: auto; }
+  }
+  @media (max-width: 960px) {
+    .nav { height: auto; }
+    .nav-toggle { display: flex; align-items: center; gap: 8px; width: 100%; height: 46px; padding: 0 16px; background: none; border: 0; color: #fff; font: 600 14px "Inter", Arial, sans-serif; cursor: pointer; }
+    .nav-toggle b { display: inline-block; width: 18px; height: 2px; background: #fff; box-shadow: 0 -6px 0 #fff, 0 6px 0 #fff; }
+    .menubar { display: none; flex-direction: column; height: auto; background: #2B3B95; padding-bottom: 8px; }
+    .nav.open .menubar { display: flex; }
+    .menubar > li > a { height: 40px; line-height: 40px; padding: 0 16px; font-size: 13px; border-top: 1px solid rgba(255,255,255,.1); }
+    .menubar li:hover > .menu, .menubar li:focus-within > .menu { display: none; }
+    .menu, .menubar > li > .menu, .menu .menu { position: static; display: none; box-shadow: none; border: 0; border-left: 3px solid #91C9F7; margin: 0 0 0 16px; min-width: 0; }
+    .menubar li.expanded > .menu { display: block; }
+    .menu li.has-sub > a::after { content: "\25BC"; position: static; margin-left: 10px; }
+    .menu a { padding: 8px 14px; }
+    .menubar > li.has-sub > a::after { content: " \25BE"; }
+    .header { height: auto; padding: 14px 0; }
+    .header .container { flex-wrap: wrap; gap: 12px; }
+    .ticker { padding: 0 12px; }
+  }
+  @media (max-width: 640px) {
+    .topbar { margin: 0; }
+    .topbar-inner { justify-content: center; padding: 0 8px; }
+    .topbar-inner a.util:first-child { margin-left: 0; }
+    .fontsize { margin-left: 14px; }
+    .brand-text h1 { font-size: 18px; line-height: 22px; }
+    .cm { width: 100%; justify-content: flex-end; }
+    .welcome-head { height: auto; padding: 16px 20px 30px; }
+    .banner img { aspect-ratio: 900 / 282; object-fit: cover; object-position: 54% 50%; }
+    .side-btn.orange { margin-top: 24px; } .side-btn.blue { margin-top: 16px; }
+    .welcome-body { padding: 20px; }
+    .wn-item { width: auto; }
+    .footer .inner { flex-direction: column; gap: 16px; padding-bottom: 20px; }
+    .footer .right { text-align: left; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Top utility bar -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <a class="util" href="#sitemap">Sitemap</a>
+    <a class="util" href="#main-content">Go to main content</a>
+    <div class="fontsize" role="group" aria-label="Text size and contrast">
+      <button type="button" data-size="14" title="Decrease font size">A-</button>
+      <button type="button" data-size="16" title="Normal font size">A</button>
+      <button type="button" data-size="18" title="Increase font size">A+</button>
+      <button type="button" class="contrast" title="High contrast">A</button>
+      <a class="lang" href="#" lang="mr">मराठी</a>
+    </div>
+  </div>
+</div>
+
+<!-- Header -->
+<header class="header">
+  <div class="container">
+    <div class="brand">
+      <img class="seal" src="old-maharera-assets/maharashtra-seal.png" alt="Government of Maharashtra seal">
+      <img class="logo" src="old-maharera-assets/maharera-logo.jpg" alt="MahaRERA logo">
+      <div class="brand-text">
+        <h1>Maharashtra Real Estate Regulatory Authority</h1>
+        <p>ISO 9001:2015 certified</p>
+      </div>
+    </div>
+    <div class="cm">
+      <div class="cm-text">
+        <strong>Shri. Uddhav Thakare</strong>
+        <span>Hon’ble Chief Minister</span>
+      </div>
+      <img class="cm-photo" src="old-maharera-assets/chief-minister.jpg" alt="Shri. Uddhav Thakare, Hon’ble Chief Minister">
+      <div class="divider"></div>
+      <img class="emblem" src="old-maharera-assets/national-emblem.png" alt="National Emblem of India – Satyamev Jayate">
+    </div>
+  </div>
+</header>
+
+<!-- Main navigation -->
+<nav class="nav" id="nav" aria-label="Main">
+  <button class="nav-toggle" type="button" aria-expanded="false"><b></b> Menu</button>
+  <ul class="menubar">
+    <li><a class="active" href="#">Home</a></li>
+
+    <li class="has-sub"><a href="#">About us</a>
+      <ul class="menu">
+        <li><a href="#">RTI</a></li>
+        <li><a href="#">Background</a></li>
+        <li><a href="#">Organization Structure</a></li>
+        <li class="sep"></li>
+        <li><a href="#">Contacts</a></li>
+        <li><a href="#">Services</a></li>
+        <li><a href="#">Leadership</a></li>
+        <li class="sep"></li>
+        <li><a href="#">Media Gallery</a></li>
+      </ul>
+    </li>
+
+    <li class="has-sub"><a href="#">Downloads</a>
+      <ul class="menu">
+        <li class="has-sub"><a href="#">Maharashtra</a>
+          <ul class="menu">
+            <li><a href="#">Annual Reports</a></li>
+            <li><a href="#">Rules, GR and Circulars</a></li>
+            <li><a href="#">Regulations</a></li>
+            <li><a href="#">Orders and circulars</a></li>
+            <li><a href="#">Rulings</a></li>
+            <li class="sep"></li>
+            <li><a href="#">FAQ</a></li>
+          </ul>
+        </li>
+        <li class="has-sub"><a href="#">Daman Diu</a>
+          <ul class="menu"><li><a href="#">Act, Rules, Circulars</a></li></ul>
+        </li>
+        <li class="has-sub"><a href="#">Dadra Nagar Haveli</a>
+          <ul class="menu"><li><a href="#">Act, Rules, Circulars</a></li></ul>
+        </li>
+        <li class="sep"></li>
+        <li><a href="#">Certificates</a></li>
+        <li class="has-sub"><a href="#">New Forms</a>
+          <ul class="menu">
+            <li><a href="#">Architect Certificate (Form 1)</a></li>
+            <li><a href="#">Engineer Certificate (Form 2)</a></li>
+            <li><a href="#">CA Certificate (Form 3)</a></li>
+            <li><a href="#">Completion Certificate (Form 4)</a></li>
+            <li><a href="#">Audit Report (Form 5)</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+
+    <li class="has-sub"><a href="#">Skilling Initiative</a>
+      <ul class="menu">
+        <li><a href="#">About TOET</a></li>
+        <li><a href="#">Certified trainers</a></li>
+        <li><a href="#">Workers training</a></li>
+        <li class="sep"></li>
+        <li><a href="#">Photo Gallery</a></li>
+      </ul>
+    </li>
+
+    <li class="has-sub"><a href="#">Registration</a>
+      <ul class="menu">
+        <li><a href="#">Registered Projects</a></li>
+        <li><a href="#">Registered Real Estate Agents</a></li>
+        <li><a href="#">SRO - Self Regulatory Organizations</a></li>
+        <li class="sep"></li>
+        <li><a href="#">Change of promoter</a></li>
+        <li><a href="#">Lapsed Projects</a></li>
+        <li><a href="#">Registration revoked</a></li>
+        <li><a href="#">Warrant details</a></li>
+        <li class="sep"></li>
+        <li><a href="#">Complaints</a></li>
+      </ul>
+    </li>
+
+    <li class="has-sub"><a href="#">Non- Registration</a>
+      <ul class="menu">
+        <li><a href="#">Inform Non-Registration</a></li>
+        <li><a href="#">Non-Registration applicant status</a></li>
+        <li><a href="#">Rulings for Non-Registered Projects</a></li>
+      </ul>
+    </li>
+
+    <li class="has-sub"><a href="#">Online Application</a>
+      <ul class="menu">
+        <li><a href="#">Complainant's Account</a></li>
+        <li><a href="#">Promoter's Account</a></li>
+        <li><a href="#">Agent's Account</a></li>
+      </ul>
+    </li>
+
+    <li class="has-sub"><a href="#">Appellate Tribunal</a>
+      <ul class="menu">
+        <li><a href="#">Online Appeals</a></li>
+        <li><a href="#">Tenders</a></li>
+        <li><a href="#">Cause list</a></li>
+        <li><a href="#">Orders</a></li>
+        <li class="sep"></li>
+        <li><a href="#">Contact Us</a></li>
+        <li><a href="#">Circulars</a></li>
+      </ul>
+    </li>
+
+    <li class="has-sub"><a href="#">Conciliation Forum</a>
+      <ul class="menu">
+        <li><a href="#">About Forum</a></li>
+        <li><a href="#">Online Application</a></li>
+        <li><a href="#">Procedure</a></li>
+        <li><a href="#">Conciliators</a></li>
+        <li class="sep"></li>
+        <li><a href="#">Cause list</a></li>
+      </ul>
+    </li>
+
+    <li><a href="#">Statistics</a></li>
+  </ul>
+</nav>
+
+<!-- News ticker -->
+<div class="ticker" id="ticker">
+  <div class="ticker-track"><span>Submit Form No १, २, ३ to the bank for withdrawal from designated bank account...</span></div>
+  <div class="ticker-btns">
+    <button type="button" class="pause" aria-label="Pause ticker"><i></i></button>
+    <button type="button" class="next" aria-label="Next announcement">
+      <svg viewBox="0 0 10 10"><path d="M3 1.5 6.5 5 3 8.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- Banner: complaint status -->
+<div class="banner">
+  <img src="old-maharera-assets/banner-complaint-status.jpg" alt="Justice Delayed is Justice Denied – MahaRERA aims at ensuring speedy dispute resolution. Distribution of complaints received with the Authority: 16,579 complaints received; 11,068 (67%) orders passed; 5,511 (33%) in process of hearing. MahaRERA has disposed more than 67% of the total complaints received. Data as on 06th January 2022.">
+</div>
+
+<!-- Main content -->
+<main class="container main" id="main-content">
+  <section class="welcome">
+    <div class="welcome-head">
+      <h2>Welcome to</h2>
+      <p>Maharashtra Real Estate Regulatory Authority</p>
+    </div>
+    <div class="welcome-body">
+      <p>The Government of India enacted the Real Estate (Regulation and Development) Act 2016 and all the sections of the Act came into force with effect from 1st May, 2017. The key objective of the Act was to bring greater transparency, accountability, financial discipline, speedy dispute redressal and homebuyer/ allotees centricity.</p>
+      <p class="gap-sm">The Government of Maharashtra has established the Maharashtra Real Estate Regulatory Authority (MahaRERA), vide Notification No. 23 dated 8th March 2017, for regulation and promotion of real estate sector in the State.</p>
+      <p class="gap">Subsequently, MahaRERA was also made the regulatory authority for Daman &amp; Diu and Dadra Nagar Haveli.</p>
+      <p>MahaRERA aims at transforming the Real Estate Sector into a transparent and professional sector, wherein every stakeholders’ interests are protected and thus trust and confidence is established. MahaRERA strives to efficiently implement the Act in its letter and spirit, ensure compliance, promote transparency, accountability, financial discipline, homebuyers/ allottees centricity.</p>
+      <p class="gap-lg">The key components of Real Estate (Regulation and Development) Act, 2016 are as follows:</p>
+      <p class="gap-lg">Under this Act, appropriate Government has to establish Real Estate Regulatory Authority for regulation and promotion of the real estate sector in the State/ Union Territories (UTs’). The Authority shall strive to facilitate the growth and promotion of a healthy, transparent, efficient, and competitive real estate sector while protecting the interest of homebuyers/ allottees, promoters and real estate agents. The authority shall also establish an adjudicating mechanism for speedy dispute redressal regarding registered real estate projects. The key responsibilities of the Authority shall be as follows:</p>
+
+      <h3 class="gap-lg">Real Estate Project Registration</h3>
+      <p>सNo promoter shall advertise, market, book, sell or offer for sale, or invite persons to purchase in any manner any plot, apartment or building, as the case may be, in any real estate project or part of it, in any planning area within Maharashtra, without registering the real estate project with the Real Estate Regulatory Authority. All commercial and residential real estate projects will have to register except in projects where;</p>
+      <ul>
+        <li>Area of land proposed to be developed does not exceed five hundred square meters</li>
+        <li>Number of apartments proposed to be developed does not exceed eight inclusive of all phases</li>
+        <li>Promoter has received completion certificate for a real estate project prior to commencement of the Act</li>
+        <li>Where the real estate project is related to renovation or repair or re-development which does not involve marketing, advertising selling or new allotment of any apartment, plot or building, as the case may be, under the real estate project.</li>
+      </ul>
+
+      <h3>Real Estate Agent Registration</h3>
+      <p>All Real Estate Agents should register themselves under this Act. No real estate agent shall facilitate the sale or purchase of or act on behalf of any person or facilitate the sale or purchase of any plot, apartment or building, as the case may be, in a real estate project or part of it, without obtaining registration.</p>
+
+      <h3>Filing of Complaints</h3>
+      <p>Any aggrieved person may file a complaint with the Authority or the adjudicating officer, as the case may be, with respect to any registered real estate project, for any violation or contravention of the provisions of the Act or the rules and regulations made there under.</p>
+      <p>Any person aggrieved by any direction or decision, or order made by Authority or by an adjudicating officer may file an appeal before the Appellate Tribunal</p>
+      <p>Any person aggrieved by any decision or order of the Appellate Tribunal, may file an appeal to the High Court.</p>
+
+      <h3>Maharashtra Real Estate Appellate Tribunal (MahaREAT)</h3>
+      <p>The appropriate government shall establish an Appellate Tribunal to hear appeals against the decisions, directions, or orders passed by the Real Estate Regulatory Authority. Any person aggrieved by a decision, direction, or order of the Authority or the adjudicating officer may file an appeal before the Appellate Tribunal, and the said appeal must be heard as expeditiously as possible and disposed of within a period of sixty days.</p>
+    </div>
+  </section>
+
+  <aside class="side">
+    <div class="wn-head">
+      <h2>Whats New</h2>
+      <a href="#">View All</a>
+    </div>
+    <div class="wn-body" id="wnBody">
+      <ul class="wn-list" id="wnList">
+        <li>
+          <div class="wn-logo"><img src="old-maharera-assets/maharera-logo.jpg" alt=""></div>
+          <div class="wn-item">
+            <a class="t" href="#">Form 3 (CA Certificate for withdrawal from...</a>
+            <a class="more" href="#">+ more</a>
+          </div>
+        </li>
+        <li>
+          <div class="wn-logo"><img src="old-maharera-assets/maharera-logo.jpg" alt=""></div>
+          <div class="wn-item">
+            <a class="t" href="#">Form 1 (Architect's certificate for construction completion...</a>
+            <a class="more" href="#">+ more</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="wn-controls">
+      <button type="button" class="w24" data-act="prev" aria-label="Previous"><img src="old-maharera-assets/ctl-rewind.png" alt=""></button>
+      <button type="button" class="w24" data-act="next" aria-label="Next"><img src="old-maharera-assets/ctl-forward.png" alt=""></button>
+      <button type="button" class="w19 on" data-act="play" aria-label="Play"><img src="old-maharera-assets/ctl-play.png" alt=""></button>
+      <button type="button" class="w19" data-act="pause" aria-label="Pause"><img src="old-maharera-assets/ctl-pause.png" alt=""></button>
+    </div>
+
+    <a class="side-btn orange" href="#">Monthly Cause List</a>
+    <a class="side-btn navy" href="#">View Cause list</a>
+    <a class="side-btn blue" href="#">View Orders</a>
+  </aside>
+</main>
+
+<!-- Partner logos -->
+<div class="partners">
+  <a class="di" href="#"><img src="old-maharera-assets/logo-digital-india.png" alt="Digital India – Power To Empower"></a>
+  <a class="mg" href="#"><img src="old-maharera-assets/logo-mygov.png" alt="MyGov – मेरी सरकार"></a>
+  <a class="gm" href="#"><img src="old-maharera-assets/logo-govt-maharashtra.png" alt="Government of Maharashtra"></a>
+  <a class="mo" href="#"><img src="old-maharera-assets/logo-mahaonline.png" alt="MahaOnline Limited"></a>
+  <a class="as" href="#"><img src="old-maharera-assets/logo-aaple-sarkar.png" alt="Aaple Sarkar"></a>
+</div>
+
+<!-- Footer -->
+<footer class="footer" id="sitemap">
+  <div class="inner">
+    <div>
+      <ul>
+        <li><a href="#">Terms &amp; Conditions</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Copyright Policy</a></li>
+        <li><a href="#">Hyperlinking Policy</a></li>
+        <li><a href="#">Disclaimer</a></li>
+        <li><a href="#">Accessibility Statement</a></li>
+        <li><a href="#">Help</a></li>
+      </ul>
+      <p class="copy">Copyright © 2021 Maharashtra Real Estate Regulatory Authority, India. All Rights Reserved.</p>
+    </div>
+    <div class="right">
+      <strong>Visitors: 241253</strong>
+      <span>Last Updated: 06 January, 2022</span>
+    </div>
+  </div>
+</footer>
+
+<!-- Portfolio label: this page is a recreation, not the official site -->
+<div class="proto-badge" role="note">
+  Prototype recreation of the 2022 MahaRERA homepage for a UX case study, not the official site.
+  <a href="../maharera-case-study.html#old-website">Back to case study</a>
+  <button type="button" aria-label="Hide this note" onclick="this.parentNode.remove()">&times;</button>
+</div>
+<style>
+  .proto-badge { position: fixed; left: 12px; bottom: 12px; z-index: 999; max-width: 340px; padding: 8px 30px 8px 12px; background: rgba(30,30,30,.92); color: #fff; font: 12px/1.45 "Inter", Arial, sans-serif; border-radius: 6px; box-shadow: 0 4px 14px rgba(0,0,0,.25); }
+  .proto-badge a { color: #FFB27D; text-decoration: underline; margin-left: 2px; }
+  .proto-badge button { position: absolute; top: 4px; right: 6px; border: 0; background: none; color: #fff; font-size: 16px; line-height: 1; cursor: pointer; padding: 2px; }
+</style>
+
+<script>
+(function () {
+  // Font size + contrast
+  document.querySelectorAll('.fontsize [data-size]').forEach(function (b) {
+    b.addEventListener('click', function () { document.documentElement.style.fontSize = b.dataset.size + 'px'; });
+  });
+  document.querySelector('.fontsize .contrast').addEventListener('click', function () { document.body.classList.toggle('hc'); });
+
+  // Ticker
+  var ticker = document.getElementById('ticker');
+  ticker.querySelector('.pause').addEventListener('click', function () { ticker.classList.toggle('paused'); });
+  ticker.querySelector('.next').addEventListener('click', function () {
+    var s = ticker.querySelector('.ticker-track span');
+    s.style.animation = 'none'; void s.offsetWidth; s.style.animation = ''; s.style.animationDelay = '0s';
+    ticker.classList.remove('paused');
+  });
+
+  // Mobile menu: hamburger + tap-to-expand submenus
+  var nav = document.getElementById('nav'), toggle = nav.querySelector('.nav-toggle');
+  var mq = window.matchMedia('(max-width: 960px)');
+  toggle.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open);
+  });
+  nav.querySelectorAll('li.has-sub > a').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      if (!mq.matches) return;
+      e.preventDefault();
+      a.parentNode.classList.toggle('expanded');
+    });
+  });
+
+  // What's New vertical scroller (old-style auto scroll with controls)
+  var list = document.getElementById('wnList');
+  list.innerHTML += list.innerHTML; // duplicate for seamless loop
+  var t0 = Date.now(), itemH = 116, pos = 0, playing = true, setH = list.children.length / 2 * itemH;
+  function render() { list.style.transform = 'translateY(' + (-pos) + 'px)'; }
+  setInterval(function () {
+    if (!playing) return;
+    if (Date.now() - t0 < 4000) return; pos += 0.5; if (pos >= setH) pos -= setH; render();
+  }, 40);
+  var btns = document.querySelectorAll('.wn-controls button');
+  btns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      var act = b.dataset.act;
+      if (act === 'play' || act === 'pause') {
+        playing = act === 'play';
+        btns.forEach(function (x) { x.classList.toggle('on', x.dataset.act === act); });
+      } else {
+        var step = act === 'next' ? itemH : -itemH;
+        pos = (Math.round(pos / itemH) * itemH + step + setH) % setH; render();
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>
