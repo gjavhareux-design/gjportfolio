@@ -1271,9 +1271,11 @@
     return visible ? { x: x0, y: y0, w: Math.max(24, x1 - x0), h: Math.max(18, y1 - y0) } : null;
   }
   // If the work isn't in view (e.g. after stepping with the arrows), use the counter ring, like a dock icon.
+  // The window grows out of (and shrinks back into) a thin strip along the image's top border.
+  const STRIP_H = 3;
   function sourceRect(i) {
     const r = artScreenRect(i);
-    if (r) return r;
+    if (r) return { x: r.x, y: r.y, w: r.w, h: STRIP_H };
     const b = document.querySelector('.ring').getBoundingClientRect();
     return { x: b.left + b.width * .2, y: b.top + b.height * .2, w: b.width * .6, h: b.height * .6 };
   }
