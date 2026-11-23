@@ -1843,6 +1843,21 @@
     .vd-list li { display: grid; grid-template-columns: 18px 1fr; gap: 8px; }
     .vd-list .vd-y { color: #15803d; font-weight: 700; }
     .vd-list .vd-n { color: #dc2626; font-weight: 700; }
+    .vd-std { margin-top: 20px; }
+    .vd-std > p { margin: 0 0 18px; font-size: 14.5px; color: var(--muted); line-height: 1.7; max-width: 78ch; }
+    .vd-std table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .vd-std th, .vd-std td { text-align: left; vertical-align: top; padding: 12px 14px 12px 0; border-top: 1px solid var(--line); }
+    .vd-std thead th { border-top: 0; font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 700; padding-top: 0; }
+    .vd-std tbody th { font-weight: 600; color: var(--ink); width: 24%; }
+    .vd-std td { color: var(--muted); line-height: 1.55; }
+    .vd-std td.ref { width: 22%; font-size: 12.5px; }
+    .vd-std .ref span { display: inline-block; margin: 0 4px 4px 0; padding: 2px 8px; border-radius: 99px; background: #eeedf8; color: #3f3a86; font-weight: 600; white-space: nowrap; }
+    .vd-std .ref span.w { background: #e8f4ec; color: #166534; }
+    @media (max-width: 760px) {
+      .vd-std thead { display: none; }
+      .vd-std tr { display: grid; grid-template-columns: 1fr; border-top: 1px solid var(--line); padding: 12px 0; }
+      .vd-std th, .vd-std td { border: 0; padding: 2px 0; width: auto !important; }
+    }
     @media (max-width: 960px) {
       .vd-story { grid-template-columns: 1fr; }
       .vd-palette { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -5039,6 +5054,37 @@
               <li><span class="vd-y" aria-hidden="true">✓</span>Links shown by colour or underline, not position alone</li>
             </ul>
           </div>
+        </div>
+
+        <div class="card vd-std rv">
+          <div class="label">Standards that shaped the design</div>
+          <p>As a government website, MahaRERA had to meet the Guidelines for Indian Government Websites (GIGW), the 115
+            mandatory checkpoints set by the National Informatics Centre, as well as WCAG 2.1 AA. Rather than treating them
+            as a final audit, I used them as design inputs from the start, so accessibility and government identity were
+            part of every layout decision, not added at the end.</p>
+          <table>
+            <thead><tr><th scope="col">Guideline</th><th scope="col">Design decision</th><th scope="col">Reference</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Government identity</th>
+                <td>Emblem and MahaRERA logo top left on every page, ownership shown in header and footer, and strict logo usage rules.</td>
+                <td class="ref"><span>GIGW 1, 2, 62, 64</span></td></tr>
+              <tr><th scope="row">Contrast &amp; colour</th>
+                <td>Primary indigo at 7.9 : 1 on white; the light secondary kept for borders and fills only; project status shown with a text label as well as colour.</td>
+                <td class="ref"><span>GIGW 68, 69</span><span class="w">WCAG 1.4.1, 1.4.3</span></td></tr>
+              <tr><th scope="row">Readable at any size</th>
+                <td>A− / A / A+ text resizing, a clear Poppins type scale, and pages that still read correctly when printed on A4.</td>
+                <td class="ref"><span>GIGW 66, 67</span><span class="w">WCAG 1.4.4</span></td></tr>
+              <tr><th scope="row">Bilingual by design</th>
+                <td>English / मराठी toggle on every page, a Marathi font tested across browsers, and the page language marked so screen readers switch voice.</td>
+                <td class="ref"><span>GIGW 56, 61, 65</span><span class="w">WCAG 3.1.1, 3.1.2</span></td></tr>
+              <tr><th scope="row">Consistent navigation &amp; search</th>
+                <td>The same header, navigation and search box on every page, a link home from every page, and a "Skip to main content" link.</td>
+                <td class="ref"><span>GIGW 76, 77, 80, 81</span><span class="w">WCAG 2.4.1, 3.2.3</span></td></tr>
+              <tr><th scope="row">Keyboard &amp; assistive tech</th>
+                <td>Everything operable by keyboard with a visible focus order, alt text for images, labelled form fields, and errors described in text.</td>
+                <td class="ref"><span>GIGW 70, 89, 92–95, 100</span><span class="w">WCAG 1.1.1, 2.1.1, 2.4.3, 3.3.1</span></td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </section>
