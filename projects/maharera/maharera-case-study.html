@@ -11,8 +11,8 @@
   <meta property="og:image" content="assets/maharera-hero.webp">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&family=Caveat:wght@500;700&family=Courgette&display=swap" media="print" onload="this.media='all'">
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&family=Caveat:wght@500;700&family=Courgette&display=swap"></noscript>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&family=Caveat:wght@500;700&family=Courgette&family=Poppins:wght@400;500;600;700&family=Tiro+Devanagari+Marathi&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&family=Caveat:wght@500;700&family=Courgette&family=Poppins:wght@400;500;600;700&family=Tiro+Devanagari+Marathi&display=swap"></noscript>
 
   <style>
     /* =====================================================================
@@ -1780,6 +1780,75 @@
     .journey-map .jm-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 12px; }
     .journey-map img { display: block; width: 100%; height: auto; border-radius: 5px; }
     .journey-map figcaption { margin-top: 12px; font-size: 13px; color: var(--muted); }
+
+    /* ================= VISUAL DESIGN (colour exercise + style guide) ================= */
+    .vd { --vd-p: #4B469C; --vd-s: #ACACFF; --vd-a: #FE5858; }
+    .vd-story { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 20px; align-items: stretch; }
+    .vd-wheel { margin: 0; display: flex; flex-direction: column; }
+    .vd-wheel img { display: block; width: 100%; height: auto; border-radius: 12px; }
+    .vd-wheel figcaption { margin-top: 12px; font-size: 13px; color: var(--muted); }
+    .vd-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 18px; counter-reset: vd; }
+    .vd-steps li { display: grid; grid-template-columns: 34px 1fr; gap: 14px; align-items: start; counter-increment: vd; }
+    .vd-steps li::before { content: counter(vd); width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center;
+      background: var(--vd-p); color: #fff; font-weight: 700; font-size: 14px; }
+    .vd-steps b { display: block; font-size: 15px; color: var(--ink); margin-bottom: 2px; }
+    .vd-steps p { margin: 0; font-size: 14px; color: var(--muted); line-height: 1.6; }
+    .vd-shift { margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--line); display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .vd-shift .sw { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--ink); }
+    .vd-shift .sw i { width: 22px; height: 22px; border-radius: 6px; display: inline-block; }
+    .vd-shift .sw.old { color: var(--muted); text-decoration: line-through; }
+    .vd-shift .to { color: var(--muted); }
+    .vd-shift small { flex-basis: 100%; font-size: 13px; color: var(--muted); }
+
+    .vd-palette { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+    .vd-sw { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: #fff; }
+    .vd-sw .chip-c { height: 110px; display: flex; align-items: flex-end; padding: 12px 14px; font: 600 13px Poppins, sans-serif; }
+    .vd-sw .vd-meta { padding: 12px 14px 14px; font-size: 12.5px; color: var(--muted); line-height: 1.6; }
+    .vd-sw .vd-meta b { display: block; color: var(--ink); font-size: 14px; margin-bottom: 2px; }
+    .vd-sw .vd-meta code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; color: var(--ink); }
+
+    .vd-guide { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; margin-top: 20px; }
+    .vd-guide .card h4 { margin: 0 0 6px; font-size: 16px; }
+    .vd-guide .card > p { margin: 0 0 16px; font-size: 14px; color: var(--muted); line-height: 1.6; }
+    .vd-type { font-family: Poppins, sans-serif; color: #1f1d3d; }
+    .vd-type .aa { font-size: 44px; font-weight: 600; line-height: 1; color: var(--vd-p); }
+    .vd-type table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 13px; }
+    .vd-type td { padding: 7px 0; border-bottom: 1px solid var(--line); }
+    .vd-type td:last-child { text-align: right; color: var(--muted); font-family: Inter, sans-serif; }
+    .vd-mr { margin-top: 14px; font-family: 'Tiro Devanagari Marathi', serif; font-size: 22px; color: var(--vd-p); }
+    .vd-mr small { display: block; font-family: Inter, sans-serif; font-size: 12px; color: var(--muted); }
+    .vd-grid12 { display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px; padding: 0 12px; height: 86px;
+      border: 1px dashed #f1a7a7; border-radius: 8px; align-items: stretch; padding-block: 8px; }
+    .vd-grid12 span { background: rgba(75,70,156,.12); border-radius: 3px; }
+    .vd-dims { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; margin-top: 14px; font-size: 13px; color: var(--muted); }
+    .vd-dims span { display: flex; justify-content: space-between; border-bottom: 1px solid var(--line); padding-bottom: 6px; }
+    .vd-dims b { color: var(--ink); }
+    .vd-icons { display: flex; align-items: center; gap: 18px; }
+    .vd-ic24 { width: 72px; height: 72px; border-radius: 10px; flex: none;
+      background-image: linear-gradient(rgba(75,70,156,.15) 1px, transparent 1px), linear-gradient(90deg, rgba(75,70,156,.15) 1px, transparent 1px);
+      background-size: 12px 12px; display: grid; place-items: center; border: 1px solid var(--line); }
+    .vd-ic24 svg, .vd-iconrow svg { width: 40px; height: 40px; stroke: var(--vd-p); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+    .vd-iconrow { display: flex; gap: 10px; flex-wrap: wrap; }
+    .vd-iconrow svg { width: 24px; height: 24px; }
+    .vd-btns { display: grid; gap: 10px; }
+    .vd-btns .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .vd-b { font: 500 13px Poppins, sans-serif; border-radius: 99px; padding: 9px 20px; display: inline-flex; align-items: center; gap: 6px;
+      border: 1.5px solid var(--vd-p); background: var(--vd-p); color: #fff; cursor: default; }
+    .vd-b.ol { background: #fff; color: var(--vd-p); border-color: var(--vd-s); }
+    .vd-b.tx { background: none; border-color: transparent; color: var(--vd-p); padding-inline: 4px; }
+    .vd-b:hover { background: var(--vd-a); border-color: var(--vd-a); color: #fff; }
+    .vd-b svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
+    .vd-sizes { font-size: 12px; color: var(--muted); margin-top: 6px; }
+    .vd-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; font-size: 13.5px; color: var(--muted); line-height: 1.5; }
+    .vd-list li { display: grid; grid-template-columns: 18px 1fr; gap: 8px; }
+    .vd-list .vd-y { color: #15803d; font-weight: 700; }
+    .vd-list .vd-n { color: #dc2626; font-weight: 700; }
+    @media (max-width: 960px) {
+      .vd-story { grid-template-columns: 1fr; }
+      .vd-palette { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .vd-guide { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 640px) { .vd-guide { grid-template-columns: 1fr; } }
 
     /* ================= CAROUSEL (journey maps + persona cards) =================
        One slide in view at a time. Phones: swipe (native scroll-snap).
@@ -4854,6 +4923,123 @@
           </div>
         </div>
         <p class="swipe">Tap an image to open it full size.</p>
+      </div>
+    </section>
+
+    <!-- Visual design: gamified colour exercise + style guide (from the website style guide & design specifications) -->
+    <section id="visual-design" class="vd" data-nav="Visual design">
+      <div class="wrap">
+        <div class="sh rv">
+          <span class="tag lb1">Visual design · Colour &amp; style guide</span>
+          <h2 class="sh1">Colours chosen with people, not for them.</h2>
+          <h3 class="sh2">A gamified colour exercise, then a style guide to keep every page consistent</h3>
+          <p class="sh3">I took a gamified approach to choosing the colours and visual style of the website. I printed a colour
+            psychology wheel and gave it to stakeholders, leadership and website users, and asked which colours and emotions
+            they connected with MahaRERA. Their responses decided the palette. It completely changed MahaRERA's initial
+            accent colour, orange, which some participants criticised for its association with a political party. Letting
+            people choose the colours also brought transparency to a decision that is usually made behind closed doors.</p>
+        </div>
+
+        <div class="vd-story">
+          <figure class="card vd-wheel rv">
+            <a href="assets/colour-psychology-wheel.webp" target="_blank" rel="noopener" aria-label="Open the colour psychology wheel full size">
+              <img src="assets/colour-psychology-wheel.webp" width="679" height="679" loading="lazy"
+                alt="Colour psychology wheel: a circle of colour segments, each labelled with the emotions and qualities it is linked to, for example blue with freedom, reliability, loyalty, honesty and security, and purple with spirituality, wisdom, royalty and dignity.">
+            </a>
+            <figcaption>The printed colour wheel participants used to link colours with emotions.</figcaption>
+          </figure>
+          <div class="card rv d1">
+            <div class="label">How the colour was chosen</div>
+            <ol class="vd-steps">
+              <li><div><b>Print the wheel</b><p>A colour psychology wheel, printed and handed out so everyone could hold, point and discuss.</p></div></li>
+              <li><div><b>Ask three groups</b><p>Stakeholders, leadership and users of the website each picked the colours and emotions they connect with MahaRERA.</p></div></li>
+              <li><div><b>Collect the responses</b><p>Choices were gathered and compared across all three groups.</p></div></li>
+              <li><div><b>Select the palette</b><p>The colours people chose became the primary, secondary and accent colours of the style guide.</p></div></li>
+            </ol>
+            <div class="vd-shift">
+              <span class="sw old"><i style="background:#f97316"></i>Orange accent</span>
+              <span class="to" aria-hidden="true">→</span>
+              <span class="sw"><i style="background:var(--vd-p)"></i>Indigo primary</span>
+              <span class="sw"><i style="background:var(--vd-a)"></i>Coral accent</span>
+              <small>The original orange accent was dropped after some participants linked it to a political party.</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="card rv" style="margin-top:20px">
+          <div class="label">Colour palette</div>
+          <div class="vd-palette">
+            <div class="vd-sw"><div class="chip-c" style="background:#4B469C;color:#fff">#4B469C</div>
+              <div class="vd-meta"><b>Primary</b>Headers, buttons and other prominent elements.<br><code>RGB 75, 70, 156</code><br>7.9 : 1 on white (AA, AAA)</div></div>
+            <div class="vd-sw"><div class="chip-c" style="background:#ACACFF;color:#1f1d3d">#ACACFF</div>
+              <div class="vd-meta"><b>Secondary</b>Buttons, borders and supporting elements.<br><code>RGB 172, 172, 255</code><br>Decorative use, not for text</div></div>
+            <div class="vd-sw"><div class="chip-c" style="background:#FE5858;color:#fff">#FE5858</div>
+              <div class="vd-meta"><b>Accent</b>Hover states and icon buttons, used sparingly to draw attention.<br><code>RGB 254, 88, 88</code></div></div>
+            <div class="vd-sw"><div class="chip-c" style="background:#fff;color:#1f1d3d;border-bottom:1px solid var(--line)">#FFFFFF</div>
+              <div class="vd-meta"><b>Background</b>The whole site sits on white for clarity and contrast.<br><code>RGB 255, 255, 255</code></div></div>
+          </div>
+        </div>
+
+        <div class="vd-guide">
+          <div class="card rv">
+            <h4>Typography</h4>
+            <p>One typeface for headings and body keeps pages calm and readable, with a dedicated Marathi font.</p>
+            <div class="vd-type">
+              <div class="aa">Aa</div>
+              <div style="margin-top:6px;font-size:14px">Poppins · sans-serif</div>
+              <table>
+                <tr><td style="font-weight:700;font-size:16px">Heading 3 · Bold</td><td>32 px</td></tr>
+                <tr><td style="font-weight:600;font-size:15px">Heading 4 · Semibold</td><td>28 px</td></tr>
+                <tr><td style="font-weight:500">Heading 5 · Medium</td><td>16 px</td></tr>
+                <tr><td>Body · Regular</td><td>14 px</td></tr>
+              </table>
+            </div>
+            <div class="vd-mr" lang="mr">महाराष्ट्र स्थावर संपदा नियामक प्राधिकरण<small>Marathi · Tiro Devanagari Marathi</small></div>
+          </div>
+          <div class="card rv d1">
+            <h4>Layout grid</h4>
+            <p>A responsive 12-column grid for desktop, tablet and mobile keeps text, images and functions aligned on every page.</p>
+            <div class="vd-grid12" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+            <div class="vd-dims"><span>Columns <b>12</b></span><span>Column <b>84 px</b></span><span>Gutter <b>32 px</b></span><span>Margin <b>108 px</b></span></div>
+          </div>
+          <div class="card rv d2">
+            <h4>Iconography</h4>
+            <p>One icon family with the same rules throughout: a 24 × 24 grid and a 1.5 px centre stroke.</p>
+            <div class="vd-icons">
+              <div class="vd-ic24"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4M8.5 14h1M11.5 14h1M14.5 14h1M8.5 17h1M11.5 17h1"/></svg></div>
+              <div class="vd-iconrow"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V8l6-3v15M10 20V10l10 3v7M3 20h18M13 15h1M17 15h1M13 18h1M17 18h1M6.5 11h1M6.5 14h1"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 12h5M10 16h5"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 5 5 5M11 8l5 5M12.5 6.5l-5 5 3 3 5-5M8.5 14.5 4 19M14 21h6"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1.2-3.6 4-5.2 7-5.2s5.8 1.6 7 5.2"/></svg></div>
+            </div>
+          </div>
+          <div class="card rv">
+            <h4>Buttons</h4>
+            <p>A consistent button set, with clear hover and active states. Hover over a button to see the accent.</p>
+            <div class="vd-btns">
+              <div class="row"><span class="vd-b">Search</span><span class="vd-b ol">Search</span><span class="vd-b tx">Search</span></div>
+              <div class="row"><span class="vd-b">Search <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg></span><span class="vd-b ol">Search <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg></span><span class="vd-b tx">Search <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg></span></div>
+              <div class="vd-sizes">Solid · Outline · Text, with or without an icon. Sizes: 75 × 30, 183 × 46 and 150 × 70 px.</div>
+            </div>
+          </div>
+          <div class="card rv d1">
+            <h4>Logo usage</h4>
+            <p>The logo sits top left at its original 377 × 65 px, with clear space around it.</p>
+            <ul class="vd-list">
+              <li><span class="vd-y" aria-hidden="true">✓</span>Use the high-resolution original, horizontal or stacked</li>
+              <li><span class="vd-n" aria-hidden="true">✕</span>Don't distort, rotate or recolour it</li>
+              <li><span class="vd-n" aria-hidden="true">✕</span>Don't add a drop shadow or change letter spacing</li>
+              <li><span class="vd-n" aria-hidden="true">✕</span>Don't place it on a background without contrast</li>
+            </ul>
+          </div>
+          <div class="card rv d2">
+            <h4>Accessibility</h4>
+            <p>Built in from the start, following WCAG guidelines.</p>
+            <ul class="vd-list">
+              <li><span class="vd-y" aria-hidden="true">✓</span>Sufficient colour contrast for text and backgrounds</li>
+              <li><span class="vd-y" aria-hidden="true">✓</span>Every interactive element reachable by keyboard</li>
+              <li><span class="vd-y" aria-hidden="true">✓</span>Alt text for images and labels for icon buttons</li>
+              <li><span class="vd-y" aria-hidden="true">✓</span>Links shown by colour or underline, not position alone</li>
+            </ul>
+          </div>
+        </div>
       </div>
     </section>
 
