@@ -1781,6 +1781,27 @@
     .journey-map img { display: block; width: 100%; height: auto; border-radius: 5px; }
     .journey-map figcaption { margin-top: 12px; font-size: 13px; color: var(--muted); }
 
+    /* ================= PROTOTYPES: text between figures + key-priority callout ================= */
+    .pt-fig { margin: 0 0 var(--set-heading-gap); }
+    .pt-text { margin: 0 0 var(--set-heading-gap); max-width: 860px; }
+    .pt-text p + p { margin-top: 14px; }
+    .pt-key {
+      display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: start;
+      margin: 0 0 var(--set-heading-gap); padding: 26px 28px; border-radius: var(--radius);
+      background: linear-gradient(135deg, #2f2b6b, #4B469C); color: #fff; box-shadow: 0 18px 40px -24px rgba(47,43,107,.7);
+    }
+    .pt-key-ic { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.14); }
+    .pt-key-ic svg { width: 24px; height: 24px; fill: none; stroke: #fff; stroke-width: 1.8; stroke-linecap: round; }
+    .pt-key .k-label { font-size: 11.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #c9c6ff; margin: 0 0 6px; }
+    .pt-key h4 { margin: 0 0 8px; font-size: 22px; line-height: 1.25; color: #fff; }
+    .pt-key p { margin: 0; font-size: 15.5px; line-height: 1.65; color: #e7e5ff; max-width: 70ch; }
+    .pt-key strong { color: #fff; }
+    @media (max-width: 560px) { .pt-key { grid-template-columns: 1fr; padding: 22px; } .pt-key h4 { font-size: 19px; } }
+
+    /* ================= CONTENT DESIGN ================= */
+    .ct-table:empty { display: none; }   /* slot for the content table, hidden until it has content */
+    .ct-table { margin-top: var(--set-heading-gap); }
+
     /* ================= VISUAL DESIGN (colour exercise + style guide) ================= */
     .vd { --vd-p: #4B469C; --vd-s: #ACACFF; --vd-a: #FE5858; }
     .vd-story { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 20px; align-items: stretch; }
@@ -4911,33 +4932,76 @@
         <div class="sh rv">
           <span class="tag lb1">Wireframes &amp; prototypes · Mid-fi to hi-fi</span>
           <h2 class="sh1">Options first, then iterate.</h2>
-          <h3 class="sh2">Three homepage directions, tested with real users</h3>
-          <p class="sh3">I initially created several design options to identify key design decisions and tested these
-            prototypes with users of the website. They were able to locate some of the information but still struggled to
-            find the Search feature. I therefore observed which options users looked for most, iterated the design
-            accordingly, and removed or moved unnecessary information to internal content pages.</p>
+          <h3 class="sh2">From wireframes to meaningful design decisions</h3>
+          <p class="sh3">Testing early concepts revealed that stakeholders needed more context to evaluate the proposed
+            experience. I initially created mid-fidelity homepage prototypes to gather feedback from MahaRERA officers.
+            However, during the sessions, I noticed that they struggled to understand the proposed structure and the purpose
+            of individual buttons. I often had to spend more time explaining the layouts and interactions than discussing the
+            actual design decisions.</p>
         </div>
-        <div class="car rv" data-car aria-label="Homepage wireframes and prototypes">
-          <div class="car-track">
-            <figure class="car-slide card journey-map" aria-label="Mid-fidelity wireframes">
-              <p class="jm-title">Mid-fidelity wireframes · Three homepage options</p>
-              <a href="assets/homepage-midfi-wireframes.webp" target="_blank" rel="noopener" aria-label="Open the mid-fidelity wireframes full size">
+
+        <figure class="card journey-map pt-fig rv">
+          <p class="jm-title">Mid-fidelity wireframes · Three homepage options</p>
+          <a href="assets/homepage-midfi-wireframes.webp" target="_blank" rel="noopener" aria-label="Open the mid-fidelity wireframes full size">
                 <img src="assets/homepage-midfi-wireframes.webp" width="6334" height="4442" loading="lazy"
                   alt="Three mid-fidelity greyscale wireframes of the MahaRERA homepage, side by side. Each explores a different arrangement of the header and navigation, hero banner, notification bar, statistics row, welcome and leadership block, news and orders, service shortcuts, tenders and circulars, media gallery and footer.">
               </a>
-              <figcaption>Three layout options used to test key design decisions with website users.</figcaption>
-            </figure>
-            <figure class="car-slide card journey-map" aria-label="High-fidelity prototypes">
-              <p class="jm-title">High-fidelity prototypes · Three homepage directions</p>
-              <a href="assets/homepage-hifi-prototypes.webp" target="_blank" rel="noopener" aria-label="Open the high-fidelity prototypes full size">
+          <figcaption>The mid-fidelity homepage prototypes first shown to MahaRERA officers.</figcaption>
+        </figure>
+
+        <div class="sh pt-text rv">
+          <p class="sh3">To make the process more intuitive, I changed my approach. Instead of relying on wireframes alone, I
+            presented three high-fidelity homepage concepts, allowing officers to understand the interface, visual hierarchy
+            and intended actions more clearly.</p>
+          <p class="sh3">This helped them navigate the proposed designs, identify the information and services they were
+            looking for, and provide more meaningful feedback.</p>
+        </div>
+
+        <figure class="card journey-map pt-fig rv">
+          <p class="jm-title">High-fidelity prototypes · Three homepage concepts</p>
+          <a href="assets/homepage-hifi-prototypes.webp" target="_blank" rel="noopener" aria-label="Open the high-fidelity prototypes full size">
                 <img src="assets/homepage-hifi-prototypes.webp" width="1584" height="1237" loading="lazy"
                   alt="Three high-fidelity prototypes of the MahaRERA homepage. The first uses a blue theme with a skyline hero reading 'Aim of the Act is to protect buyers and help investment in real estate sector', a statistics row, What's New, Orders, service shortcuts, Circulars, Cause List, Tenders, Photos and Videos. The second uses an orange theme with service shortcuts directly under the hero, a welcome block with a Maharashtra map, statistics, news, announcements, judgments and a media gallery. The third uses a blue and orange theme with a search box in the header, notifications, a welcome block, latest news, statistics, orders and circulars, a skilling initiative, service shortcuts, tenders and a media gallery.">
               </a>
-              <figcaption>The same three directions in high fidelity, iterated after testing.</figcaption>
-            </figure>
+          <figcaption>Three high-fidelity homepage concepts that made the structure and actions clear to officers.</figcaption>
+        </figure>
+
+        <aside class="pt-key rv" aria-label="Key finding">
+          <span class="pt-key-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r=".9" fill="#fff"/></svg></span>
+          <div>
+            <p class="k-label">Key finding</p>
+            <h4>Three directions, one key priority</h4>
+            <p>Although the three concepts generated useful feedback, none fully addressed the primary objective:
+              <strong>making project discovery and project registration information prominent and easy to access.</strong></p>
           </div>
+        </aside>
+
+        <div class="sh pt-text rv" style="margin-bottom:0">
+          <p class="sh3">The feedback helped me understand what was working, what was missing and how the homepage needed to
+            evolve. These insights informed the final homepage design, with greater emphasis on project discovery and access
+            to essential regulatory services.</p>
         </div>
-        <p class="swipe">Tap an image to open it full size.</p>
+      </div>
+    </section>
+
+    <!-- Content design: content strategy developed alongside the design -->
+    <section id="content-design" data-nav="Content design">
+      <div class="wrap">
+        <div class="sh rv" style="margin-bottom:0">
+          <span class="tag lb1">Content design · Content strategy</span>
+          <h2 class="sh1">Developing content alongside the design.</h2>
+          <p class="sh3">In parallel with the design exploration, I began working on the website's content strategy. Since much
+            of the existing content was already available, I distributed it across the relevant departments for review,
+            revision and validation. This included organisational information, rules and regulations, forms, formats and
+            other regulatory resources.</p>
+          <p class="sh3">I also introduced dedicated guidance for four key user groups: homebuyers, promoters, agents and
+            complainants. Working with officials from the legal, finance and technical departments, I developed step-by-step
+            guidance to help users understand relevant processes and requirements.</p>
+          <p class="sh3">The reviewed content was then organised into appropriate sections and incorporated into the website's
+            internal pages, making regulatory information easier to find, understand and use.</p>
+        </div>
+        <!-- CONTENT TABLE SLOT: put the table inside this div. It stays hidden while empty. -->
+        <div class="ct-table rv"></div>
       </div>
     </section>
 
